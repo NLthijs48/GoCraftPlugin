@@ -1,0 +1,39 @@
+###################################################
+# English language file for the GoCraft plugin    #
+###################################################
+# Copy this file and change the strings to your   #
+# favor. Then change the 'language' setting in    #
+# the config to the filename (excluding .yml)     #
+###################################################
+
+########## LOGGING
+signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
+signNotifyLine: "%0% placed sign: %1%&0|&r%2%&0|&r%3%&0|&r%4% &7(%5%,%6%,%7%,%8%)"
+
+########## KILLREWARD
+recievedReward: "You recieved %0% for this first kill"
+recievedRewardMultiple: "You recieved %0% for this %1%th kill"
+resetstats-noPermission: "You don't have permission to reset stats of a player"
+resetstats-help: "/g resetstats <player>"
+resetstats-success: "Stats of player %0% have been reset"
+resetstats-noPlayer: "Player %0% is not registered"
+
+resetall-success: "Stats of all players have been reset"
+resetall-noPermission: "You don't have permission to reset all stats"
+resetall-confirm: "&4Are you sure you want to reset all stats? Run the command again to do it"
+
+########## HELP
+help-header: "Help page, commands that you can execute"
+help-alias: "Command aliases: /gocraft, /g"
+help-resetstats: "&6/g resetstats &7-&r Reset the stats of a player"
+help-resetall: "&6/g resetallstats &7-&r Reset stats from all players"
+help-stats:  "&6/g stats <player> &7-&r Check your or another players stats"
+help-noPermission: "You don't have permission for GoCraft commands"
+
+########## COMMANDS
+tempban-redirected: "Banned %0% for %1% by name and ip: &7%2%"
+tempban-failed: "Failed to ban correctly, check the errors above"
+tempban-help: "/tempban <playername> <timeDiff> <reason>"
+
+########## SIGN LIMITING
+tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn! Check /as to see all shop commands"

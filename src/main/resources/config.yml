@@ -1,0 +1,53 @@
+##############################################
+# config.yml of the GoCraft plugin           #
+# This plugin has been created by NLThijs48  #
+##############################################
+
+########## OPTIONS
+chatPrefix: "&2[Go-Craft]&r "
+debug: true
+
+########## BLOCKS
+disableBlockBreaking: false
+disableBedrockBreak: false
+disableBedrockPlace: false
+disableDispensers: false
+disableTradeSignPlacing: false
+disableAnvilBreak: false
+
+########## GENERAL
+disableRain: false
+disableMobSpawning: false
+disableHungerLoss: false
+enablePotionEffectsOnJoin: false
+potionEffectsOnJoin:
+enableRegionPotionEffects: false
+regionPotionEffects:
+spawnTeleport: false
+
+########## ITEMS
+disableItemDrops: false
+disableItemSpawning: false
+disablePotionSplash: false
+disablePotionThrow: false
+disablePotionInvisibleDrink: false
+disableXpBottleThrow: false
+disableFirework: false
+disableEnderpearl: false
+disableEyeOfEnder: false
+disableBooks: false
+
+########## LOGGING
+signLoggingEnabled: false
+signLogTimeFormat: 'dd-MM-yyyy HH:mm:ss'
+
+########## PVP
+disablePlayerDamage: false
+disableFallDamage: false
+
+########## COMMANDS
+redirectTempban: true
+changePrivateMessages: true
+
+########## OTHER
+enableExpiredPlotsRestoration: false

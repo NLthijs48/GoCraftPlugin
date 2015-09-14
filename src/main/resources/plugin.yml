@@ -1,0 +1,22 @@
+name: GoCraft
+main: nl.evolutioncoding.gocraft.GoCraft
+version: 1.0
+depend: [WorldGuard]
+permissions:
+  gocraft.*:
+    description: Give access to all commands of GoCraft (only for Admins)
+    children:
+      gocraft.signLog: false
+      gocraft.signTell: true
+      gocraft.help: true
+      gocraft.resetstats: true
+      gocraft.resetalll: true
+  gocraft.signLog:
+    description: Log signs of players with this permission
+    default: not op
+  gocraft.signTell:
+    description: Tell players with this permission placed signs
+    default: op
+  gocraft.help:
+    description: Check the help page with all commands
+    default: true
