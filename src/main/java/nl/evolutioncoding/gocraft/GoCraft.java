@@ -16,6 +16,7 @@ import nl.evolutioncoding.gocraft.blocks.DisableBedrockPlace;
 import nl.evolutioncoding.gocraft.blocks.DisableBlockBreaking;
 import nl.evolutioncoding.gocraft.blocks.DisableDispensers;
 import nl.evolutioncoding.gocraft.blocks.DisableTradeSignPlacing;
+import nl.evolutioncoding.gocraft.commands.PingCommand;
 import nl.evolutioncoding.gocraft.commands.TempbanCommand;
 import nl.evolutioncoding.gocraft.general.DisableHungerLoss;
 import nl.evolutioncoding.gocraft.general.DisableMobSpawning;
@@ -52,7 +53,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
@@ -77,22 +77,24 @@ public final class GoCraft extends JavaPlugin {
 		this.debug = getConfig().getBoolean("debug");
 
 		Plugin wg = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (!(wg instanceof WorldGuardPlugin)) {
-			getLogger()
-					.info("Error: WorldGuard plugin is not present or has not loaded correctly");
+		if (wg == null || !(wg instanceof WorldGuardPlugin)) {
+			getLogger().warning("Error: WorldGuard plugin is not present or has not loaded correctly");
 		} else {
 			this.worldGuard = ((WorldGuardPlugin) wg);
 		}
 		this.languageManager = new LanguageManager(this);
 
 		addListeners();
+			
 		
 		// TESTING
+		/*
 		new BukkitRunnable() {
 			public void run() {
 				testStorage();
 			}
 		}.runTaskLater(this, 1L);
+		*/
 	}
 
 	
@@ -150,6 +152,8 @@ public final class GoCraft extends JavaPlugin {
 		this.listeners.add(new TempbanCommand(this));
 
 		this.listeners.add(new ResetExpiredPlots(this));
+		
+		new PingCommand(this);
 	}
 
 	public WorldGuardPlugin getWorldGuard() {

@@ -20,3 +20,11 @@ permissions:
   gocraft.help:
     description: Check the help page with all commands
     default: true
+  gocraft.ping:
+    description: Check the ping of players.
+    defaultL: trues
+commands:
+  Ping:
+    description: 'Check the ping for a player.'
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+    aliases: [p]

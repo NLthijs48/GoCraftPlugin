@@ -48,6 +48,7 @@ disableFallDamage: false
 ########## COMMANDS
 redirectTempban: true
 changePrivateMessages: true
+enablePingCommand: true
 
 ########## OTHER
 enableExpiredPlotsRestoration: false
