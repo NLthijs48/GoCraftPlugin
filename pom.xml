@@ -3,7 +3,9 @@
   <groupId>nl.evolutioncoding</groupId>
   <artifactId>gocraft</artifactId>
   <version>1.0</version>
-  
+  <name>GoCraft</name>
+
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -18,7 +20,7 @@
       <url>http://maven.sk89q.com/artifactory/repo/</url>
     </repository>
   </repositories>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.sk89q</groupId>
@@ -40,14 +42,8 @@
       <version>1.8.8-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>AuraCheck</groupId>
-      <artifactId>AuraCheck</artifactId>
-      <version>1.0</version>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
-  
+
   <build>
     <directory>target</directory>
     <finalName>GoCraft</finalName>
@@ -89,7 +85,7 @@
 	    <artifactId>maven-antrun-plugin</artifactId>
 	    <configuration>
 	      <tasks>
-	        <copy file="./target/${project.build.finalName}.jar" tofile="C:\Games\Minecraft\Spigot 1.8.8\plugins\${project.build.finalName}.jar"/>
+	        <copy file="./target/${project.build.finalName}.jar" tofile="C:\Games\Minecraft\Spigot\plugins\${project.build.finalName}.jar"/>
 	      </tasks>
 	    </configuration>
 	    <executions>
