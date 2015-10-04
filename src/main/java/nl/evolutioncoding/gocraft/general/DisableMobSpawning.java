@@ -26,7 +26,7 @@ public class DisableMobSpawning implements Listener {
 		if(plugin.onThisWorld(configLine, event.getLocation())
 				&& event.getSpawnReason() != SpawnReason.SPAWNER
 				&& event.getSpawnReason() != SpawnReason.DEFAULT 
-				&& event.getSpawnReason() != SpawnReason.DEFAULT) {
+				&& event.getSpawnReason() != SpawnReason.CUSTOM) {
 			event.setCancelled(true);
 		}
 		//plugin.debug("Spawn event, type=" + event.getEntityType() + ", reason=" + event.getSpawnReason() + ", cancelled=" + event.isCancelled());
