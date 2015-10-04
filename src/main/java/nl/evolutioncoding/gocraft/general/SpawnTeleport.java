@@ -1,15 +1,18 @@
 package nl.evolutioncoding.gocraft.general;
 
 import nl.evolutioncoding.gocraft.GoCraft;
+import nl.evolutioncoding.gocraft.utils.Utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class SpawnTeleport implements Listener {
 	
-	public final String configLine = "spawnTeleport";
+	public final String configLine = "spawnTeleport"; // Same as in SetspawnCommand.java
 	private GoCraft plugin;
 	
 	public SpawnTeleport(GoCraft plugin) {
@@ -19,20 +22,19 @@ public class SpawnTeleport implements Listener {
 		}
 	}
 
-	// Prevent rain and thunder
+	// Spawn the player at the spawnlocation
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if(plugin.onThisWorld(configLine, event.getPlayer())) {
-			event.getPlayer().teleport(Bukkit.getWorld("world").getSpawnLocation());
-			/*
-			final Player player = event.getPlayer();
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-			    @Override
-			    public void run() {
-			        player.teleport(Bukkit.getWorld("world").getSpawnLocation());
-			    }
-			}, 10L);
-			*/
+			ConfigurationSection section = plugin.getLocalStorage().getConfigurationSection("spawnLocation");
+			Location location = null;
+			if(section != null) {
+				location = Utils.configToLocation(section);
+			}
+			if(location == null) {
+				location = Bukkit.getWorld("world").getSpawnLocation();
+			}
+			event.getPlayer().teleport(location);
 		}
 	}
 }

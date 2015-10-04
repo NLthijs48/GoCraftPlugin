@@ -22,9 +22,15 @@ permissions:
     default: true
   gocraft.ping:
     description: Check the ping of players.
-    defaultL: trues
+    default: true
+  gocraft.setspawn:
+    description: Set the spawn location of the spawnteleport
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
     aliases: [p]
+  SetGSpawn:
+    description: "Set the spawn location of the spawnteleport."
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

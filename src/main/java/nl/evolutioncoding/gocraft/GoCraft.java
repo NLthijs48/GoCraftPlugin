@@ -2,8 +2,11 @@ package nl.evolutioncoding.gocraft;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +20,7 @@ import nl.evolutioncoding.gocraft.blocks.DisableBlockBreaking;
 import nl.evolutioncoding.gocraft.blocks.DisableDispensers;
 import nl.evolutioncoding.gocraft.blocks.DisableTradeSignPlacing;
 import nl.evolutioncoding.gocraft.commands.PingCommand;
+import nl.evolutioncoding.gocraft.commands.SetspawnCommand;
 import nl.evolutioncoding.gocraft.commands.TempbanCommand;
 import nl.evolutioncoding.gocraft.general.DisableHungerLoss;
 import nl.evolutioncoding.gocraft.general.DisableMobSpawning;
@@ -40,6 +44,7 @@ import nl.evolutioncoding.gocraft.pvp.DisableFallDamage;
 import nl.evolutioncoding.gocraft.pvp.DisablePlayerDamage;
 import nl.evolutioncoding.gocraft.storage.Database;
 import nl.evolutioncoding.gocraft.storage.MySQLDatabase;
+import nl.evolutioncoding.gocraft.storage.UTF8Config;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,6 +59,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.base.Charsets;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 public final class GoCraft extends JavaPlugin {
@@ -69,6 +75,7 @@ public final class GoCraft extends JavaPlugin {
 	private boolean debug = false;
 	private String chatprefix = null;
 	private static GoCraft instance = null;
+	private UTF8Config localStorage = null;
 
 	public void onEnable() {
 		instance = this;
@@ -83,20 +90,21 @@ public final class GoCraft extends JavaPlugin {
 			this.worldGuard = ((WorldGuardPlugin) wg);
 		}
 		this.languageManager = new LanguageManager(this);
-
-		addListeners();
-			
 		
-		// TESTING
-		/*
-		new BukkitRunnable() {
-			public void run() {
-				testStorage();
-			}
-		}.runTaskLater(this, 1L);
-		*/
+		loadLocalStorage();
+		addListeners();
 	}
-
+	
+	public void onDisable() {
+	}
+	
+	/**
+	 * Get the localStorage config file
+	 * @return The UTF8Config localStorage file
+	 */
+	public UTF8Config getLocalStorage() {
+		return localStorage;
+	}
 	
 	public void testStorage() {
 		String host = "localhost";
@@ -154,6 +162,7 @@ public final class GoCraft extends JavaPlugin {
 		this.listeners.add(new ResetExpiredPlots(this));
 		
 		new PingCommand(this);
+		new SetspawnCommand(this);
 	}
 
 	public WorldGuardPlugin getWorldGuard() {
@@ -266,6 +275,42 @@ public final class GoCraft extends JavaPlugin {
 			result = result.replaceAll("&r", ChatColor.RESET.toString());
 		}
 		return result;
+	}
+	
+	/**
+	 * Save the localStorage file
+	 */
+	public void saveLocalStorage() {
+		File file = new File(this.getDataFolder(), "localStorage.yml");
+		try {
+			localStorage.save(file);
+		} catch (IOException e) {
+			this.getLogger().warning("Failed to save localStorage.yml:");
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Load the localStorage.yml file
+	 * @return true if it has been loaded successfully, otherwise false
+	 */
+	public boolean loadLocalStorage() {
+		File localStorageFile = new File(getDataFolder(), "localStorage.yml");
+		// Load localStorage.yml from the plugin folder
+		InputStreamReader reader = null;
+		try {
+			reader = new InputStreamReader(new FileInputStream(localStorageFile), Charsets.UTF_8);
+		} catch (FileNotFoundException e) {}
+		if(reader != null) {
+			localStorage = UTF8Config.loadConfiguration(reader);
+			try {
+				reader.close();
+			} catch (IOException e) {}
+		}
+		if(localStorage == null) {
+			localStorage = new UTF8Config();
+		}
+		return localStorage != null;
 	}
 
 	public void _debug(String message) {
