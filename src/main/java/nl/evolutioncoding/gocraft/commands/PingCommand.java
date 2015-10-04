@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PingCommand implements CommandExecutor{
+public class PingCommand implements CommandExecutor {
 
 
 	public final String configLine = "enablePingCommand";
