@@ -1,21 +1,23 @@
 package nl.evolutioncoding.gocraft.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import nl.evolutioncoding.gocraft.GoCraft;
-
+import nl.evolutioncoding.gocraft.utils.Utils;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TempbanCommand implements Listener {
 	
 	public final String configLine = "redirectTempban";
 	private GoCraft plugin;
-	private ArrayList<String> tempbanCommands = new ArrayList<String>(Arrays.asList(
-			"tempban", "banmanager:tempban", "bmtempban", "banmanager:bmtempban", 
+	private ArrayList<String> tempbanCommands = new ArrayList<>(Arrays.asList(
+			"tempban", "banmanager:tempban", "bmtempban", "banmanager:bmtempban",
 			"tempbanip", "banmanager:tempbanip", "bmtempbanip", "banmanager:bmtempbanip"));	
 	
 	public TempbanCommand(GoCraft plugin) {
@@ -27,10 +29,8 @@ public class TempbanCommand implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommand(PlayerCommandPreprocessEvent event) {
-		//plugin.debug("CommandPreprocess: " + event.getMessage());
-		//plugin.debug("  player: " + event.getPlayer().getName());		
 		String fullMessage = event.getMessage();
-		boolean hasArguments = fullMessage.indexOf(" ") != -1;
+		boolean hasArguments = fullMessage.contains(" ");
 		String command, arguments = "";
 		if(hasArguments) {
 			command = fullMessage.substring(1, fullMessage.indexOf(" "));
@@ -55,14 +55,25 @@ public class TempbanCommand implements Listener {
 					}
 				}
 			}
-			boolean success = true;
-			success = success & event.getPlayer().performCommand("banmanager:tempban " + arguments);
+			boolean success = event.getPlayer().performCommand("banmanager:tempban " + arguments);
 			success = success & event.getPlayer().performCommand("banmanager:tempbanip " + arguments);
-			if(success) {
-				plugin.message(event.getPlayer(), "tempban-redirected", argumentArray[0], argumentArray[1], reason);
-			} else {
-				plugin.message(event.getPlayer(), "tempban-failed");
-			}
+			final boolean finalSuccess = success;
+			final Player finalPlayer = event.getPlayer();
+			final String finalReason = reason;
+			final String finalTarget = argumentArray[0];
+			final String finalLength = argumentArray[1];
+			// Delay message to first let the BanManager messages come through
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					if(finalSuccess) {
+						plugin.message(finalPlayer, "tempban-redirected", finalTarget, finalLength, finalReason);
+					} else {
+						plugin.message(finalPlayer, "tempban-failed");
+					}
+					Utils.sendStaffMessage("Ban", finalPlayer.getName() + " banned " + finalTarget + " for " + finalLength + ": " + finalReason);
+				}
+			}.runTaskLater(plugin, 10L);
 			event.setCancelled(true);
 		}
 	}

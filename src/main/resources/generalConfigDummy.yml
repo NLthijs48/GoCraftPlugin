@@ -1,0 +1,9 @@
+##############################################
+# general config.yml of the GoCraft plugin   #
+# dummy file to show the layout              #
+# This plugin has been created by NLThijs48  #
+##############################################
+
+servers:
+  <directory name>:
+    name: <display name>

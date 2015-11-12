@@ -1,8 +1,9 @@
 package nl.evolutioncoding.gocraft.utils;
 
 import net.minecraft.server.v1_8_R3.EntityPlayer;
-
+import nl.evolutioncoding.gocraft.GoCraft;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -50,7 +51,7 @@ public class Utils {
 	
 	/**
 	 * Create a location from a map, reconstruction from the config values
-	 * @param map The map to reconstruct from
+	 * @param config The config section to reconstruct from
 	 * @return The location
 	 */
 	public static Location configToLocation(ConfigurationSection config) {
@@ -63,15 +64,37 @@ public class Utils {
 			return null;
 		}
 		Location result = new Location(
-				Bukkit.getWorld(config.getString("world")), 
-				(Double)config.getDouble("x"), 
-				(Double)config.getDouble("y"), 
-				(Double)config.getDouble("z"));
+				Bukkit.getWorld(config.getString("world")),
+				config.getDouble("x"),
+				config.getDouble("y"),
+				config.getDouble("z"));
 		if(config.isString("yaw") && config.isString("pitch")) {
 			result.setPitch(Float.parseFloat(config.getString("pitch")));
 			result.setYaw(Float.parseFloat(config.getString("yaw")));
 		}
 		return result;
+	}
+
+	public static void sendStaffMessage(String type, String message) {
+		String result = GoCraft.getInstance().getLanguageManager().getLang("staffbroadcast-template", GoCraft.getInstance().getServerName(), type, message);
+		// Display in console
+		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(GoCraft.getInstance().fixColors(result)));
+		// Send to other servers
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage " + result);
+	}
+
+	public static void displayStaffMessage(String message) {
+		message = GoCraft.getInstance().fixColors(message);
+		// Display to all staff members
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			if(player.hasPermission("gocraft.staff")) {
+				player.sendMessage(message);
+			}
+		}
+	}
+
+	public static void consoleCommand(String command) {
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}
 
 }

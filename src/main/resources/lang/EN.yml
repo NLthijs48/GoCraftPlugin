@@ -25,5 +25,14 @@ setspawn-noPermission: "You don't have permission to set the spawnpoint."
 setspawn-onlyByPlayers: "You can only set the spawn as a player."
 setspawn-success: "The spawn location has been set to your current location and direction."
 
+staffbroadcast-noPermission: "You don't have permission to send a message to all staff."
+staffbroadcast-help: "/staffbroadcast <type> <message...>."
+staffbroadcast-template: "&9&l>>> %0% [%1%] &r&9%2%"
+staffbroadcast-success: "Message broadcasted: [%0%] %1%"
+
+displaystaffmessage-noPermission: "You don't have permission to display staff messages."
+displaystaffmessage-help: "/displaystaffmessage <message...>."
+
+
 ########## SIGN LIMITING
 tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn! Check /as to see all shop commands."

@@ -16,8 +16,8 @@
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
     <repository>
-      <id>sk89q-repo-wg</id>
-      <url>http://maven.sk89q.com/artifactory/repo/</url>
+      <id>sk89q-repo</id>
+      <url>http://maven.sk89q.com/repo/</url>
     </repository>
   </repositories>
 
@@ -41,6 +41,13 @@
       <artifactId>spigot</artifactId>
       <version>1.8.8-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>me.confuser</groupId>
+      <artifactId>BanManager</artifactId>
+      <version>4.0</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/dependencies/BanManager.jar</systemPath>
     </dependency>
   </dependencies>
 
@@ -94,9 +101,6 @@
 	        <goals>
 	          <goal>run</goal>
 	        </goals>
-	        <configuration>
-	          <target failonerror="false"></target>
-	        </configuration>
 	      </execution>
 	    </executions>
       </plugin>

@@ -2,6 +2,7 @@ name: GoCraft
 main: nl.evolutioncoding.gocraft.GoCraft
 version: 1.0
 depend: [WorldGuard]
+softdepend: [BanManager]
 permissions:
   gocraft.*:
     description: Give access to all commands of GoCraft (only for Admins)
@@ -11,6 +12,7 @@ permissions:
       gocraft.help: true
       gocraft.resetstats: true
       gocraft.resetalll: true
+      gocraft.staff: true
   gocraft.signLog:
     description: Log signs of players with this permission
     default: not op
@@ -26,6 +28,15 @@ permissions:
   gocraft.setspawn:
     description: Set the spawn location of the spawnteleport
     default: op
+  gocraft.staff:
+    description: 'Indicates that this is a staff member, mostly for messages'
+    default: op
+  gocraft.sendStaffBroadcast:
+    description: Send message to all staff on the network.
+    default: op
+  gocraft.displayStaffMessage:
+    description: Display a message to all staff on this server.
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'
@@ -33,4 +44,10 @@ commands:
     aliases: [p]
   SetGSpawn:
     description: "Set the spawn location of the spawnteleport."
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  StaffBroadcast:
+    description: Send message to all staff on the network.
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  DisplayStaffMessage:
+    description: Display a message to all staff on this server.
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
