@@ -87,7 +87,7 @@ public final class GoCraft extends JavaPlugin {
 		String result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
 		if(result != null) {
 			result = result.substring(1);
-			String realName = getGeneralConfig().getString("server." + result + ".name");
+			String realName = getGeneralConfig().getString("servers." + result + ".name");
 			if(realName != null) {
 				result = realName;
 			}
@@ -267,12 +267,12 @@ public final class GoCraft extends JavaPlugin {
 		String result = null;
 		if (input != null) {
 			result = input.replaceAll("(&([a-f0-9]))", "§$2");
-			result = result.replaceAll("&k", ChatColor.MAGIC.toString());
-			result = result.replaceAll("&l", ChatColor.BOLD.toString());
-			result = result.replaceAll("&m", ChatColor.STRIKETHROUGH.toString());
-			result = result.replaceAll("&n", ChatColor.UNDERLINE.toString());
-			result = result.replaceAll("&o", ChatColor.ITALIC.toString());
-			result = result.replaceAll("&r", ChatColor.RESET.toString());
+			result = result.replace("&k", ChatColor.MAGIC.toString());
+			result = result.replace("&l", ChatColor.BOLD.toString());
+			result = result.replace("&m", ChatColor.STRIKETHROUGH.toString());
+			result = result.replace("&n", ChatColor.UNDERLINE.toString());
+			result = result.replace("&o", ChatColor.ITALIC.toString());
+			result = result.replace("&r", ChatColor.RESET.toString());
 		}
 		return result;
 	}
@@ -296,20 +296,19 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public boolean loadLocalStorage() {
 		File localStorageFile = new File(this.getDataFolder(), "localStorage.yml");
-		InputStreamReader reader = null;
-		try {
-			reader = new InputStreamReader(new FileInputStream(localStorageFile), Charsets.UTF_8);
-		} catch (FileNotFoundException e) {}
-		if(reader != null) {
-			localStorage = UTF8Config.loadConfiguration(reader);
-			try {
-				reader.close();
-			} catch (IOException e) {}
+		if(localStorageFile.exists()) {
+			try(
+					InputStreamReader reader = new InputStreamReader(new FileInputStream(localStorageFile), Charsets.UTF_8)
+			) {
+				localStorage = UTF8Config.loadConfiguration(reader);
+			} catch(IOException e) {
+				getLogger().warning("Could not load localstorage: " + localStorageFile.getAbsolutePath());
+			}
 		}
 		if(localStorage == null) {
 			localStorage = new UTF8Config();
 		}
-		return localStorage != null;
+		return true;
 	}
 
 	/**
@@ -319,22 +318,17 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public boolean loadGeneralConfig() {
 		File commonConfigFile = new File(generalFolder, generalConfigName);
-		InputStreamReader reader = null;
-		try {
-			reader = new InputStreamReader(new FileInputStream(commonConfigFile), Charsets.UTF_8);
-		} catch(FileNotFoundException e) {
-		}
-		if(reader != null) {
+		try(
+				InputStreamReader reader = new InputStreamReader(new FileInputStream(commonConfigFile), Charsets.UTF_8)
+		) {
 			generalConfig = UTF8Config.loadConfiguration(reader);
-			try {
-				reader.close();
-			} catch(IOException e) {
-			}
+		} catch(IOException e) {
+			getLogger().warning("Could not find common config: " + commonConfigFile.getAbsolutePath());
 		}
 		if(generalConfig == null) {
 			generalConfig = new UTF8Config();
 		}
-		return generalConfig != null;
+		return true;
 	}
 
 	public void _debug(String message) {

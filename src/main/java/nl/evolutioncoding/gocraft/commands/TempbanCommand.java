@@ -71,7 +71,7 @@ public class TempbanCommand implements Listener {
 					} else {
 						plugin.message(finalPlayer, "tempban-failed");
 					}
-					Utils.sendStaffMessage("Ban", finalPlayer.getName() + " banned " + finalTarget + " for " + finalLength + ": " + finalReason);
+					Utils.sendStaffMessage("Ban", finalTarget + " for " + finalLength + " by " + finalPlayer.getName() + ": " + finalReason);
 				}
 			}.runTaskLater(plugin, 10L);
 			event.setCancelled(true);

@@ -12,19 +12,20 @@ import org.bukkit.entity.Player;
 
 public class Utils {
 
-	private Utils() {}
+	private Utils() {
+	}
 
 	/**
 	 * Get the ping of a player
 	 * @param player The player to check
 	 * @return The ping in ms
 	 */
-	public static int getPing(Player player) { 
-		CraftPlayer cp = (CraftPlayer) player; 
-		EntityPlayer ep = cp.getHandle(); 
-		return ep.ping; 
+	public static int getPing(Player player) {
+		CraftPlayer cp = (CraftPlayer)player;
+		EntityPlayer ep = cp.getHandle();
+		return ep.ping;
 	}
-	
+
 	/**
 	 * Create a map from a location, to save it in the config
 	 * @param location The location to transform
@@ -41,14 +42,15 @@ public class Utils {
 		result.set("z", location.getZ());
 		if(setPitchYaw) {
 			result.set("yaw", Float.toString(location.getYaw()));
-			result.set("pitch", Float.toString(location.getPitch()));		
+			result.set("pitch", Float.toString(location.getPitch()));
 		}
 		return result;
 	}
+
 	public static ConfigurationSection locationToConfig(Location location) {
 		return locationToConfig(location, false);
 	}
-	
+
 	/**
 	 * Create a location from a map, reconstruction from the config values
 	 * @param config The config section to reconstruct from
