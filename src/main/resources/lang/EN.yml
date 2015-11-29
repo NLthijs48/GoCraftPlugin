@@ -6,6 +6,8 @@
 # the config to the filename (excluding .yml)     #
 ###################################################
 
+staff-noPermission: "You are not a staff member."
+
 ########## LOGGING
 signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
 signNotifyLine: "%0% placed sign: %1%&0|&r%2%&0|&r%3%&0|&r%4% &7(%5%,%6%,%7%,%8%)"
@@ -33,6 +35,10 @@ staffbroadcast-success: "Message broadcasted: [%0%] %1%"
 displaystaffmessage-noPermission: "You don't have permission to display staff messages."
 displaystaffmessage-help: "/displaystaffmessage <message...>."
 
+update-noPermission: "You do not have permission to update the plugins."
+update-started: "Starting update process..."
+update-done: "Updated %1% jar files of %0% plugins."
+update-pushedPluginTo: "&7%0% pushed to %1%."
 
 ########## SIGN LIMITING
 tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn! Check /as to see all shop commands."

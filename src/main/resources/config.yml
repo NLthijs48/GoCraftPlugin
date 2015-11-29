@@ -50,6 +50,7 @@ redirectTempban: true
 changePrivateMessages: true
 enablePingCommand: true
 enableStaffMessageCommands: true
+enableUpdateCommand: true
 
 ########## OTHER
 enableExpiredPlotsRestoration: false

@@ -29,6 +29,11 @@ public class TempbanCommand implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCommand(PlayerCommandPreprocessEvent event) {
+		if(!event.getPlayer().hasPermission("gocraft.staff")) {
+			plugin.message(event.getPlayer(), "staff-noPermission");
+			event.setCancelled(true);
+			return;
+		}
 		String fullMessage = event.getMessage();
 		boolean hasArguments = fullMessage.contains(" ");
 		String command, arguments = "";

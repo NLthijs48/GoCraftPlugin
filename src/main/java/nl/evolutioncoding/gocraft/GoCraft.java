@@ -3,10 +3,8 @@ package nl.evolutioncoding.gocraft;
 import com.google.common.base.Charsets;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import nl.evolutioncoding.gocraft.blocks.*;
-import nl.evolutioncoding.gocraft.commands.PingCommand;
-import nl.evolutioncoding.gocraft.commands.SetspawnCommand;
-import nl.evolutioncoding.gocraft.commands.StaffMessagesCommands;
-import nl.evolutioncoding.gocraft.commands.TempbanCommand;
+import nl.evolutioncoding.gocraft.commands.*;
+import nl.evolutioncoding.gocraft.distribution.DistributionManager;
 import nl.evolutioncoding.gocraft.general.*;
 import nl.evolutioncoding.gocraft.items.*;
 import nl.evolutioncoding.gocraft.logging.LogSigns;
@@ -40,8 +38,10 @@ public final class GoCraft extends JavaPlugin {
 	public static final String signLog = "signs";
 	public static final String generalFolderName = "GENERAL";
 	public static final String generalConfigName = "config.yml";
+	public static final String generalPluginDataFoldername = "plugins";
 	private ArrayList<Listener> listeners;
 	private LanguageManager languageManager;
+	private DistributionManager distributionManager;
 	private WorldGuardPlugin worldGuard = null;
 	private boolean debug = false;
 	private String chatprefix = null;
@@ -67,6 +67,7 @@ public final class GoCraft extends JavaPlugin {
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + generalFolderName);
 
 		loadGeneralConfig();
+		distributionManager = new DistributionManager(this);
 		loadLocalStorage();
 		addListeners();
 	}
@@ -98,6 +99,13 @@ public final class GoCraft extends JavaPlugin {
 		return result;
 	}
 
+	/**
+	 * Get the folder where the general files are located
+	 * @return The folder where the general files are located
+	 */
+	public File getGeneralFolder() {
+		return generalFolder;
+	}
 
 	/**
 	 * Get the generalConfig config file
@@ -171,6 +179,7 @@ public final class GoCraft extends JavaPlugin {
 		new PingCommand(this);
 		new SetspawnCommand(this);
 		new StaffMessagesCommands(this);
+		new UpdateCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
 	}
@@ -199,6 +208,14 @@ public final class GoCraft extends JavaPlugin {
 		for (Listener listener : this.listeners) {
 			HandlerList.unregisterAll(listener);
 		}
+	}
+
+	/**
+	 * Get the DistributionManager
+	 * @return The DistributionManager
+	 */
+	public DistributionManager getDistributionManager() {
+		return distributionManager;
 	}
 
 	public void logLine(String fileName, String message) {
@@ -248,7 +265,7 @@ public final class GoCraft extends JavaPlugin {
 		return this.languageManager;
 	}
 
-	public void message(Object target, String key, Object... params) {
+	public void message(final Object target, final String key, final Object... params) {
 		String langString = fixColors(this.languageManager.getLang(key, params));
 		if (langString == null) {
 			getLogger().info("Something is wrong with the language file, could not find key: " + key);

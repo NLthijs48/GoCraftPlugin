@@ -13,6 +13,7 @@ permissions:
       gocraft.resetstats: true
       gocraft.resetalll: true
       gocraft.staff: true
+      gocraft.update: true
   gocraft.signLog:
     description: Log signs of players with this permission
     default: not op
@@ -37,6 +38,9 @@ permissions:
   gocraft.displayStaffMessage:
     description: Display a message to all staff on this server.
     default: op
+  gocraft.update:
+    description: Update all plugins from the global source
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'
@@ -50,4 +54,7 @@ commands:
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
   DisplayStaffMessage:
     description: Display a message to all staff on this server.
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  Update:
+    description: 'Update plugins from global source.'
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

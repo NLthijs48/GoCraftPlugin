@@ -7,3 +7,9 @@
 servers:
   <directory name>:
     name: <display name>
+serverGroups:
+  <name>: "serverIds, comma-separated"
+plugins:
+  <name>:
+    pushTo: "<server/group, comma-separated>"
+    extraFiles: "AsyncWorldEditInjector etc" # TODO
