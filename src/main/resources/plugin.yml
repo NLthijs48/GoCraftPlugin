@@ -14,6 +14,7 @@ permissions:
       gocraft.resetalll: true
       gocraft.staff: true
       gocraft.update: true
+      gocraft.reload: true
   gocraft.signLog:
     description: Log signs of players with this permission
     default: not op
@@ -41,6 +42,9 @@ permissions:
   gocraft.update:
     description: Update all plugins from the global source
     default: op
+  gocraft.reload:
+    description: Reload the plugin data
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'
@@ -57,4 +61,7 @@ commands:
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
   Update:
     description: 'Update plugins from global source.'
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  GCReload:
+    description: Reload the plugin data
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

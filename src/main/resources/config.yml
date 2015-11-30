@@ -51,6 +51,7 @@ changePrivateMessages: true
 enablePingCommand: true
 enableStaffMessageCommands: true
 enableUpdateCommand: true
+enableReloadCommand: true
 
 ########## OTHER
 enableExpiredPlotsRestoration: false

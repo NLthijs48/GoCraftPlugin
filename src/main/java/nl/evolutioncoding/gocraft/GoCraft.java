@@ -77,6 +77,8 @@ public final class GoCraft extends JavaPlugin {
 	}
 	
 	public void onDisable() {
+		Bukkit.getScheduler().cancelTasks(this);
+		HandlerList.unregisterAll(this);
 	}
 
 
@@ -180,6 +182,7 @@ public final class GoCraft extends JavaPlugin {
 		new SetspawnCommand(this);
 		new StaffMessagesCommands(this);
 		new UpdateCommand(this);
+		new ReloadCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
 	}
@@ -208,6 +211,14 @@ public final class GoCraft extends JavaPlugin {
 		for (Listener listener : this.listeners) {
 			HandlerList.unregisterAll(listener);
 		}
+	}
+
+	/**
+	 * Reload the plugin data
+	 */
+	public void reload() {
+		onDisable();
+		onEnable();
 	}
 
 	/**
