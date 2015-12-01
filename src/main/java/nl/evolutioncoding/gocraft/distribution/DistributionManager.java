@@ -92,26 +92,37 @@ public class DistributionManager {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				List<String> warnings = new ArrayList<>();
+				List<String> generalWarnings = new ArrayList<>();
 				int pluginsUpdated = 0;
 				int jarsUpdated = 0;
 				ConfigurationSection pushPlugins = plugin.getGeneralConfig().getConfigurationSection("plugins");
 				if(pushPlugins == null) {
-					warnings.add("No pushPlugins section");
+					generalWarnings.add("No pushPlugins section");
 					return;
 				}
 
 				// All files in the pluginData folder
 				File[] files = pluginDataFolder.listFiles();
 				if(files == null) {
-					warnings.add("No files found in the pluginData folder: " + pluginDataFolder.getAbsolutePath());
+					generalWarnings.add("No files found in the pluginData folder: " + pluginDataFolder.getAbsolutePath());
 					return;
 				}
 
 				// Execute all plugin pushing
 				for(String pushPlugin : pushPlugins.getKeys(false)) {
+					List<String> pluginWarnings = new ArrayList<>();
 					ConfigurationSection pushPluginSection = pushPlugins.getConfigurationSection(pushPlugin);
-					List<String> servers = resolveServers(pushPluginSection.getString("pushTo"));
+					String pushTo;
+					if(pushPluginSection != null) {
+						pushTo = pushPluginSection.getString("pushTo");
+					} else {
+						pushTo = pushPlugins.getString(pushPlugin);
+					}
+					if(pushTo == null) {
+						pluginWarnings.add("Did not find a pushTo specification");
+						continue;
+					}
+					List<String> servers = resolveServers(pushTo);
 
 					// Search jarfile to push
 					File newPluginJar = null;
@@ -120,12 +131,12 @@ public class DistributionManager {
 							if(newPluginJar == null) {
 								newPluginJar = file;
 							} else {
-								warnings.add("Found second .jar file match: " + file.getAbsolutePath() + ", first=" + newPluginJar.getAbsolutePath());
+								pluginWarnings.add("Found second .jar file match: " + file.getAbsolutePath() + ", first=" + newPluginJar.getAbsolutePath());
 							}
 						}
 					}
 					if(newPluginJar == null) {
-						warnings.add("No new plugin jar found for " + pushPlugin);
+						pluginWarnings.add("No new plugin jar found for " + pushPlugin);
 						continue;
 					}
 
@@ -146,7 +157,7 @@ public class DistributionManager {
 									if(oldPluginJar == null) {
 										oldPluginJar = file;
 									} else {
-										warnings.add("Found second old .jar file: " + file.getAbsolutePath());
+										pluginWarnings.add("Found second old .jar file: " + file.getAbsolutePath());
 									}
 								}
 							}
@@ -156,7 +167,7 @@ public class DistributionManager {
 						if(oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
 							// Delete old one
 							if(oldPluginJar != null && !oldPluginJar.delete()) {
-								warnings.add("Could not delete old plugin: " + oldPluginJar.getAbsolutePath());
+								pluginWarnings.add("Could not delete old plugin: " + oldPluginJar.getAbsolutePath());
 							}
 
 							File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + pushPlugin + " DISTRIBUTED.jar");
@@ -166,26 +177,32 @@ public class DistributionManager {
 								permissionsResult = permissionsResult && newFileName.setReadable(true, false);
 								permissionsResult = permissionsResult && newFileName.setWritable(true, false);
 								if(!permissionsResult) {
-									warnings.add("Could not correctly set permissions: " + newFileName.getAbsolutePath());
+									pluginWarnings.add("Could not correctly set permissions: " + newFileName.getAbsolutePath());
 								}
 								jarsUpdated++;
 								pushedTo.add(plugin.getServerName(server));
 							} catch(IOException e) {
-								warnings.add("Could not copy plugin to target " + newFileName.getAbsolutePath() + ", exception:");
+								pluginWarnings.add("Could not copy plugin to target " + newFileName.getAbsolutePath() + ", exception:");
 								e.printStackTrace();
 							}
 						}
 					}
 					if(pushedTo.size() > 0) {
-						plugin.message(executor, "update-pluginHeader", pushPlugin);
-						plugin.message(executor, "update-pushedPluginTo", StringUtils.join(pushedTo, ", "));
-						for(String warning : warnings) {
-							plugin.message(executor, "update-warning", warning);
+						plugin.messageNoPrefix(executor, "update-pluginHeader", pushPlugin);
+						plugin.messageNoPrefix(executor, "update-pushedPluginTo", StringUtils.join(pushedTo, ", "));
+						for(String warning : pluginWarnings) {
+							plugin.messageNoPrefix(executor, "update-warning", warning);
 						}
 						pluginsUpdated++;
 					}
 				}
-				plugin.message(executor, "update-done", pluginsUpdated, jarsUpdated);
+				if(generalWarnings.size() > 0) {
+					plugin.messageNoPrefix(executor, "update-generalWarnings");
+					for(String warning : generalWarnings) {
+						plugin.messageNoPrefix(executor, "update-warning", warning);
+					}
+				}
+				plugin.messageNoPrefix(executor, "update-done", pluginsUpdated, jarsUpdated);
 
 			}
 		}.runTaskAsynchronously(plugin);
