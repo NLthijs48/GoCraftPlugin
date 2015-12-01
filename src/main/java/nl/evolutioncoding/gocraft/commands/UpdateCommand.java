@@ -27,6 +27,10 @@ public class UpdateCommand implements CommandExecutor {
 		String filter = null;
 		if(args.length > 0) {
 			filter = args[0];
+			for(int i = 1; i < args.length; i++) {
+				filter += ", " + args[i];
+			}
+			filter = args[0];
 		}
 		plugin.getDistributionManager().updatePluginData(sender, filter);
 		return true;
