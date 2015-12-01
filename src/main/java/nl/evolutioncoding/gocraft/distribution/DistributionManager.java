@@ -86,8 +86,9 @@ public class DistributionManager {
 	 * Perform an update on the plugin data
 	 * @param executor The CommandSender that executed the update
 	 */
-	public void updatePluginData(final CommandSender executor) {
+	public void updatePluginData(final CommandSender executor, final String filter) {
 		plugin.message(executor, "update-started");
+		final List<String> include = resolveServers(filter);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -131,7 +132,12 @@ public class DistributionManager {
 					List<String> pushedTo = new ArrayList<>();
 					// Push to the specified servers
 					for(String server : servers) {
-						// Remove existing plugin file
+						// Skip filtered servers
+						if(include != null && !include.contains(server)) {
+							continue;
+						}
+
+						// Find existing jar file
 						File oldPluginJar = null;
 						File[] existingFiles = serverPluginFolders.get(server).listFiles();
 						if(existingFiles != null) {
@@ -206,6 +212,9 @@ public class DistributionManager {
 	 * @return The list of servers indicated by the serverSpecifier
 	 */
 	public List<String> resolveServers(String serverSpecifier) {
+		if(serverSpecifier == null) {
+			return null;
+		}
 		List<String> result = new ArrayList<>();
 		for(String id : serverSpecifier.split(", ")) {
 			List<String> groupContent = serverGroups.get(id);
