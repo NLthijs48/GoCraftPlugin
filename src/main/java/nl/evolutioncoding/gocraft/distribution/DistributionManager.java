@@ -88,11 +88,12 @@ public class DistributionManager {
 	 */
 	public void updatePluginData(final CommandSender executor, final String filter) {
 		plugin.message(executor, "update-started");
-		final List<String> include = resolveServers(filter);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
 				List<String> generalWarnings = new ArrayList<>();
+				final List<String> include = resolveServers(filter, generalWarnings);
+
 				int pluginsUpdated = 0;
 				int jarsUpdated = 0;
 				ConfigurationSection pushPlugins = plugin.getGeneralConfig().getConfigurationSection("plugins");
@@ -122,7 +123,7 @@ public class DistributionManager {
 						pluginWarnings.add("Did not find a pushTo specification");
 						continue;
 					}
-					List<String> servers = resolveServers(pushTo);
+					List<String> servers = resolveServers(pushTo, pluginWarnings);
 
 					// Search jarfile to push
 					File newPluginJar = null;
@@ -228,7 +229,7 @@ public class DistributionManager {
 	 * @param serverSpecifier The server specification (comma-separated list)
 	 * @return The list of servers indicated by the serverSpecifier
 	 */
-	public List<String> resolveServers(String serverSpecifier) {
+	public List<String> resolveServers(String serverSpecifier, List<String> warnings) {
 		if(serverSpecifier == null) {
 			return null;
 		}
@@ -241,7 +242,7 @@ public class DistributionManager {
 				if(plugin.getGeneralConfig().isSet("servers." + id)) {
 					result.add(id);
 				} else {
-					plugin.getLogger().warning("server-/group-id '" + id + "' cannot be resolved");
+					warnings.add("server-/group-id '" + id + "' cannot be resolved");
 				}
 			}
 		}
