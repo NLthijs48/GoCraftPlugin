@@ -1,7 +1,6 @@
 package nl.evolutioncoding.gocraft.pvp;
 
 import nl.evolutioncoding.gocraft.GoCraft;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,8 +22,8 @@ public class DisablePlayerDamage implements Listener {
 	@EventHandler
 	public void onDamage(EntityDamageEvent event) {
 		if(plugin.onThisWorld(configLine, event.getEntity())) {
-			event.setCancelled(true);
 			if(event.getEntity() instanceof Player) {
+				event.setCancelled(true);
 				((Player)(event.getEntity())).setHealth(20.0);
 			}
 		}
