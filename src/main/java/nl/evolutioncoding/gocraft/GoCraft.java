@@ -51,6 +51,7 @@ public final class GoCraft extends JavaPlugin {
 	private File generalFolder = null;
 
 	public void onEnable() {
+		reloadConfig();
 		instance = this;
 		saveDefaultConfig();
 		this.chatprefix = getConfig().getString("chatPrefix");
@@ -87,9 +88,22 @@ public final class GoCraft extends JavaPlugin {
 	 * @return The display name of this server
 	 */
 	public String getServerName() {
-		String result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
+		return getServerName(null);
+	}
+
+	/**
+	 * Get the name of this server
+	 * @param result The id of the server to get the name for
+	 * @return The display name of this server
+	 */
+	public String getServerName(String result) {
+		if(result == null) {
+			result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
+			if(result != null) {
+				result = result.substring(1);
+			}
+		}
 		if(result != null) {
-			result = result.substring(1);
 			String realName = getGeneralConfig().getString("servers." + result + ".name");
 			if(realName != null) {
 				result = realName;
@@ -177,7 +191,7 @@ public final class GoCraft extends JavaPlugin {
 		this.listeners.add(new DisablePlayerDamage(this));
 		this.listeners.add(new DisableFallDamage(this));
 		// Commands
-		this.listeners.add(new TempbanCommand(this));		
+		this.listeners.add(new TempbanCommand(this));
 		new PingCommand(this);
 		new SetspawnCommand(this);
 		new StaffMessagesCommands(this);
@@ -276,12 +290,17 @@ public final class GoCraft extends JavaPlugin {
 		return this.languageManager;
 	}
 
-	public void message(final Object target, final String key, final Object... params) {
+	public void configurableMessage(boolean prefix, Object target, String key, Object... params) {
 		String langString = fixColors(this.languageManager.getLang(key, params));
 		if (langString == null) {
 			getLogger().info("Something is wrong with the language file, could not find key: " + key);
 		} else if ((target instanceof Player)) {
-			((Player)target).sendMessage(fixColors(this.chatprefix) + langString);
+			String message = langString;
+			if(prefix) {
+				message = this.chatprefix + message;
+			}
+			message = fixColors(message);
+			((Player)target).sendMessage(message);
 		} else if ((target instanceof CommandSender)) {
 			((CommandSender) target).sendMessage(langString);
 		} else if ((target instanceof Logger)) {
@@ -289,6 +308,14 @@ public final class GoCraft extends JavaPlugin {
 		} else {
 			getLogger().info("Could not send message, target is wrong: " + langString);
 		}
+	}
+
+	public void message(Object target, String key, Object... params) {
+		configurableMessage(true, target, key, params);
+	}
+
+	public void messageNoPrefix(Object target, String key, Object... params) {
+		configurableMessage(false, target, key, params);
 	}
 
 	public String fixColors(String input) {

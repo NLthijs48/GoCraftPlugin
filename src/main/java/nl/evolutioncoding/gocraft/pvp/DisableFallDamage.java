@@ -1,7 +1,6 @@
 package nl.evolutioncoding.gocraft.pvp;
 
 import nl.evolutioncoding.gocraft.GoCraft;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,7 +1,6 @@
 package nl.evolutioncoding.gocraft.other;
 
 import nl.evolutioncoding.gocraft.GoCraft;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;

@@ -1,10 +1,6 @@
 package nl.evolutioncoding.gocraft.logging;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import nl.evolutioncoding.gocraft.GoCraft;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -12,6 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class LogSigns implements Listener {
 	

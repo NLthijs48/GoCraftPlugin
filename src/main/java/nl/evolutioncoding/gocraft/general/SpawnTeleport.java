@@ -2,7 +2,6 @@ package nl.evolutioncoding.gocraft.general;
 
 import nl.evolutioncoding.gocraft.GoCraft;
 import nl.evolutioncoding.gocraft.utils.Utils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;

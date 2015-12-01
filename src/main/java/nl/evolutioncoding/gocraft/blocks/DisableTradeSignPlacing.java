@@ -1,7 +1,6 @@
 package nl.evolutioncoding.gocraft.blocks;
 
 import nl.evolutioncoding.gocraft.GoCraft;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;

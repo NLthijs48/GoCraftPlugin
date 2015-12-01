@@ -39,6 +39,8 @@ update-noPermission: "You do not have permission to update the plugins."
 update-started: "Starting update process..."
 update-done: "Updated %1% jar files of %0% plugins."
 update-pushedPluginTo: "&7%0% pushed to %1%."
+update-warnings: "Warnings about the update progress:"
+update-warning: "&c> %0%."
 
 reload-noPermission: "You do not have permission to reload the plugin."
 reload-success: "Plugin data and config files have been reloaded."

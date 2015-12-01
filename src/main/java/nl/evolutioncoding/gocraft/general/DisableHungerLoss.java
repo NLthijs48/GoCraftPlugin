@@ -1,7 +1,6 @@
 package nl.evolutioncoding.gocraft.general;
 
 import nl.evolutioncoding.gocraft.GoCraft;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
