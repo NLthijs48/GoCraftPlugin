@@ -3,6 +3,8 @@
 # This plugin has been created by NLThijs48  #
 ##############################################
 
+forcePush: 1
+
 ########## OPTIONS
 chatPrefix: "&2[Go-Craft]&r "
 debug: true
