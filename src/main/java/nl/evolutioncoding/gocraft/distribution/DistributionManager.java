@@ -88,6 +88,7 @@ public class DistributionManager {
 	 */
 	public void updatePluginData(final CommandSender executor, final String filter) {
 		plugin.message(executor, "update-started");
+		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		new BukkitRunnable() {
 			@Override
 			public void run() {
