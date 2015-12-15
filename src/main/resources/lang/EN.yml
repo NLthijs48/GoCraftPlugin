@@ -37,7 +37,7 @@ displaystaffmessage-help: "/displaystaffmessage <message...>."
 
 update-noPermission: "You do not have permission to update the plugins."
 update-started: "Starting update process..."
-update-done: "Updated %1% jar files of %0% plugins."
+update-done: "&2&lUpdated %1% jar files of %0% plugins."
 update-pluginHeader: "&7&l>>> %0%:"
 update-pushedPluginTo:  "  &7Pushed to: %0%."
 update-warning: "  &c%0%."
