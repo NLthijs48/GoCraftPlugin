@@ -22,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -91,6 +92,7 @@ public final class GoCraft extends JavaPlugin {
 	public void onDisable() {
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
+		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName());
 	}
 
 
@@ -115,9 +117,15 @@ public final class GoCraft extends JavaPlugin {
 			}
 		}
 		if(result != null) {
-			String realName = getGeneralConfig().getString("servers." + result + ".name");
-			if(realName != null) {
-				result = realName;
+			ConfigurationSection servers = getGeneralConfig().getConfigurationSection("servers");
+			if(servers != null) {
+				for(String id : servers.getKeys(false)) {
+					if(result.equalsIgnoreCase(id)
+							|| result.equalsIgnoreCase(servers.getString(id+".name"))
+							|| result.equalsIgnoreCase(servers.getString(id+".directory"))) {
+						result = servers.getString(id+".name");
+					}
+				}
 			}
 		}
 		if(result == null || result.length() == 0) {
@@ -329,7 +337,7 @@ public final class GoCraft extends JavaPlugin {
 		} else if ((target instanceof CommandSender)) {
 			((CommandSender) target).sendMessage(langString);
 		} else if ((target instanceof Logger)) {
-			((Logger) target).info(langString);
+			((Logger)target).info(ChatColor.stripColor(langString));
 		} else {
 			getLogger().info("Could not send message, target is wrong: " + langString);
 		}

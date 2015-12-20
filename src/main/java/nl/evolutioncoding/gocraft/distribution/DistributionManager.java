@@ -78,8 +78,156 @@ public class DistributionManager {
 	}
 
 	/**
-	 * Perform an update on the plugin data
+	 * Perform an update on the plugin data sync
 	 * @param executor The CommandSender that executed the update
+	 * @param filter The filter specifying which servers should be pushed to
+	 */
+	public void updatePluginDataNow(CommandSender executor, String filter) {
+		List<String> generalWarnings = new ArrayList<>();
+		final List<String> include = resolveServers(filter, generalWarnings);
+
+		int pluginsUpdated = 0;
+		int jarsUpdated = 0;
+		int configsUpdated = 0;
+		ConfigurationSection pushPlugins = plugin.getGeneralConfig().getConfigurationSection("plugins");
+		if(pushPlugins == null) {
+			generalWarnings.add("No pushPlugins section");
+			return;
+		}
+
+		// All files in the pluginData folder
+		File[] files = pluginDataFolder.listFiles();
+		if(files == null) {
+			generalWarnings.add("No files found in the pluginData folder: "+pluginDataFolder.getAbsolutePath());
+			return;
+		}
+
+		// Execute all plugin pushing
+		for(String pushPlugin : pushPlugins.getKeys(false)) {
+			List<String> pluginWarnings = new ArrayList<>();
+			ConfigurationSection pushPluginSection = pushPlugins.getConfigurationSection(pushPlugin);
+			String pushTo;
+			if(pushPluginSection != null) {
+				pushTo = pushPluginSection.getString("pushTo");
+			} else {
+				pushTo = pushPlugins.getString(pushPlugin);
+			}
+			if(pushTo == null) {
+				pluginWarnings.add("Did not find a pushTo specification");
+				continue;
+			}
+			List<String> servers = resolveServers(pushTo, pluginWarnings);
+
+			// Search jarfile to push
+			File newPluginJar = null;
+			File newPluginConfig = null;
+			for(File file : files) {
+				if(file.isFile() && matchPluginFileName(pushPlugin, file)) {
+					if(newPluginJar == null) {
+						newPluginJar = file;
+					} else {
+						pluginWarnings.add("Found second .jar file match: "+file.getAbsolutePath()+", first="+newPluginJar.getAbsolutePath());
+					}
+				} else if(file.isDirectory() && matchPluginFileName(pushPlugin, file)) {
+					if(newPluginConfig == null) {
+						newPluginConfig = file;
+					} else {
+						pluginWarnings.add("Found second config folder match: "+file.getAbsolutePath()+", first="+newPluginConfig.getAbsolutePath());
+					}
+				}
+			}
+
+			List<String> pushedJarTo = new ArrayList<>();
+			List<String> pushedConfigTo = new ArrayList<>();
+			// Push to the specified servers
+			for(String server : servers) {
+				// Skip filtered servers
+				if(include != null && !include.contains(server)) {
+					continue;
+				}
+
+				if(newPluginJar != null) {
+					// Find existing jar file
+					File oldPluginJar = null;
+					File[] existingFiles = serverPluginFolders.get(server).listFiles();
+					if(existingFiles != null) {
+						for(File file : existingFiles) {
+							if(matchPluginFileName(pushPlugin, file)) {
+								if(oldPluginJar == null) {
+									oldPluginJar = file;
+								} else {
+									pluginWarnings.add("Found second old .jar file: "+file.getAbsolutePath());
+								}
+							}
+						}
+					}
+
+					// Determine to push or not
+					if(oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
+						// Delete old one
+						if(oldPluginJar != null && !oldPluginJar.delete()) {
+							pluginWarnings.add("Deleting failed: "+oldPluginJar.getAbsolutePath());
+						}
+
+						File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin+" DISTRIBUTED.jar");
+						try {
+							FileUtils.copyFile(newPluginJar, newFileName);
+							boolean permissionsResult = newFileName.setExecutable(true, false);
+							permissionsResult = permissionsResult && newFileName.setReadable(true, false);
+							permissionsResult = permissionsResult && newFileName.setWritable(true, false);
+							if(!permissionsResult) {
+								pluginWarnings.add("Setting permissions failed: "+newFileName.getAbsolutePath());
+							}
+							jarsUpdated++;
+							pushedJarTo.add(plugin.getServerName(server));
+						} catch(IOException e) {
+							pluginWarnings.add("Copy failed: "+newFileName.getAbsolutePath()+", exception:");
+							e.printStackTrace();
+						}
+					}
+				}
+
+				// Push config if required
+				if(newPluginConfig != null) {
+					File targetFolder = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin);
+					List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig);
+					if(result.size() > 0) {
+						configsUpdated += result.size();
+						pushedConfigTo.add(plugin.getServerName(server));
+					}
+				}
+			}
+			if(pushedJarTo.size() > 0 || pushedConfigTo.size() > 0) {
+				plugin.messageNoPrefix(executor, "update-pluginHeader", pushPlugin);
+				if(pushedJarTo.size() > 0) {
+					plugin.messageNoPrefix(executor, "update-pushedPluginTo", StringUtils.join(pushedJarTo, ", "));
+				}
+				if(pushedConfigTo.size() > 0) {
+					plugin.messageNoPrefix(executor, "update-pushedConfigTo", StringUtils.join(pushedConfigTo, ", "));
+				}
+				for(String warning : pluginWarnings) {
+					plugin.messageNoPrefix(executor, "update-warning", warning);
+				}
+				pluginsUpdated++;
+			}
+		}
+		if(generalWarnings.size() > 0) {
+			plugin.messageNoPrefix(executor, "update-generalWarnings");
+			for(String warning : generalWarnings) {
+				plugin.messageNoPrefix(executor, "update-warning", warning);
+			}
+		}
+		if(pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0) {
+			plugin.messageNoPrefix(executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated);
+		} else {
+			plugin.messageNoPrefix(executor, "update-none");
+		}
+	}
+
+	/**
+	 * Perform an update on the plugin data async
+	 * @param executor The CommandSender that executed the update
+	 * @param filter   The filter specifying which servers should be pushed to
 	 */
 	public void updatePluginData(final CommandSender executor, final String filter) {
 		plugin.message(executor, "update-started");
@@ -87,146 +235,7 @@ public class DistributionManager {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				List<String> generalWarnings = new ArrayList<>();
-				final List<String> include = resolveServers(filter, generalWarnings);
-
-				int pluginsUpdated = 0;
-				int jarsUpdated = 0;
-				int configsUpdated = 0;
-				ConfigurationSection pushPlugins = plugin.getGeneralConfig().getConfigurationSection("plugins");
-				if(pushPlugins == null) {
-					generalWarnings.add("No pushPlugins section");
-					return;
-				}
-
-				// All files in the pluginData folder
-				File[] files = pluginDataFolder.listFiles();
-				if(files == null) {
-					generalWarnings.add("No files found in the pluginData folder: " + pluginDataFolder.getAbsolutePath());
-					return;
-				}
-
-				// Execute all plugin pushing
-				for(String pushPlugin : pushPlugins.getKeys(false)) {
-					List<String> pluginWarnings = new ArrayList<>();
-					ConfigurationSection pushPluginSection = pushPlugins.getConfigurationSection(pushPlugin);
-					String pushTo;
-					if(pushPluginSection != null) {
-						pushTo = pushPluginSection.getString("pushTo");
-					} else {
-						pushTo = pushPlugins.getString(pushPlugin);
-					}
-					if(pushTo == null) {
-						pluginWarnings.add("Did not find a pushTo specification");
-						continue;
-					}
-					List<String> servers = resolveServers(pushTo, pluginWarnings);
-
-					// Search jarfile to push
-					File newPluginJar = null;
-					File newPluginConfig = null;
-					for(File file : files) {
-						if(file.isFile() && matchPluginFileName(pushPlugin, file)) {
-							if(newPluginJar == null) {
-								newPluginJar = file;
-							} else {
-								pluginWarnings.add("Found second .jar file match: " + file.getAbsolutePath() + ", first=" + newPluginJar.getAbsolutePath());
-							}
-						} else if(file.isDirectory() && matchPluginFileName(pushPlugin, file)) {
-							if(newPluginConfig == null) {
-								newPluginConfig = file;
-							} else {
-								pluginWarnings.add("Found second config folder match: "+file.getAbsolutePath()+", first="+newPluginConfig.getAbsolutePath());
-							}
-						}
-					}
-
-					List<String> pushedJarTo = new ArrayList<>();
-					List<String> pushedConfigTo = new ArrayList<>();
-					// Push to the specified servers
-					for(String server : servers) {
-						// Skip filtered servers
-						if(include != null && !include.contains(server)) {
-							continue;
-						}
-
-						if(newPluginJar != null) {
-							// Find existing jar file
-							File oldPluginJar = null;
-							File[] existingFiles = serverPluginFolders.get(server).listFiles();
-							if(existingFiles != null) {
-								for(File file : existingFiles) {
-									if(matchPluginFileName(pushPlugin, file)) {
-										if(oldPluginJar == null) {
-											oldPluginJar = file;
-										} else {
-											pluginWarnings.add("Found second old .jar file: "+file.getAbsolutePath());
-										}
-									}
-								}
-							}
-
-							// Determine to push or not
-							if(oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
-								// Delete old one
-								if(oldPluginJar != null && !oldPluginJar.delete()) {
-									pluginWarnings.add("Deleting failed: "+oldPluginJar.getAbsolutePath());
-								}
-
-								File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin+" DISTRIBUTED.jar");
-								try {
-									FileUtils.copyFile(newPluginJar, newFileName);
-									boolean permissionsResult = newFileName.setExecutable(true, false);
-									permissionsResult = permissionsResult && newFileName.setReadable(true, false);
-									permissionsResult = permissionsResult && newFileName.setWritable(true, false);
-									if(!permissionsResult) {
-										pluginWarnings.add("Setting permissions failed: "+newFileName.getAbsolutePath());
-									}
-									jarsUpdated++;
-									pushedJarTo.add(plugin.getServerName(server));
-								} catch(IOException e) {
-									pluginWarnings.add("Copy failed: "+newFileName.getAbsolutePath()+", exception:");
-									e.printStackTrace();
-								}
-							}
-						}
-
-						// Push config if required
-						if(newPluginConfig != null) {
-							File targetFolder = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin);
-							List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig);
-							if(result.size() > 0) {
-								configsUpdated += result.size();
-								pushedConfigTo.add(plugin.getServerName(server));
-							}
-						}
-					}
-					if(pushedJarTo.size() > 0 || pushedConfigTo.size() > 0) {
-						plugin.messageNoPrefix(executor, "update-pluginHeader", pushPlugin);
-						if(pushedJarTo.size() > 0) {
-							plugin.messageNoPrefix(executor, "update-pushedPluginTo", StringUtils.join(pushedJarTo, ", "));
-						}
-						if(pushedConfigTo.size() > 0) {
-							plugin.messageNoPrefix(executor, "update-pushedConfigTo", StringUtils.join(pushedConfigTo, ", "));
-						}
-						for(String warning : pluginWarnings) {
-							plugin.messageNoPrefix(executor, "update-warning", warning);
-						}
-						pluginsUpdated++;
-					}
-				}
-				if(generalWarnings.size() > 0) {
-					plugin.messageNoPrefix(executor, "update-generalWarnings");
-					for(String warning : generalWarnings) {
-						plugin.messageNoPrefix(executor, "update-warning", warning);
-					}
-				}
-				if(pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0) {
-					plugin.messageNoPrefix(executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated);
-				} else {
-					plugin.messageNoPrefix(executor, "update-none");
-				}
-
+				updatePluginDataNow(executor, filter);
 			}
 		}.runTaskAsynchronously(plugin);
 	}
