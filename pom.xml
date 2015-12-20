@@ -45,9 +45,8 @@
     <dependency>
       <groupId>me.confuser</groupId>
       <artifactId>BanManager</artifactId>
-      <version>4.0</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/dependencies/BanManager.jar</systemPath>
+      <version>5.7.2-CUSTOM</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

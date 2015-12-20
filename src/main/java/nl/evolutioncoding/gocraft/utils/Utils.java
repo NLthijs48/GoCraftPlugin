@@ -87,14 +87,33 @@ public class Utils {
 		return result;
 	}
 
+	/**
+	 * Display a message to all staff in all servers
+	 * @param type    The type of message to indicate what the message is about
+	 * @param message The message, already prefixed by the type so no need to repeat that
+	 */
 	public static void sendStaffMessage(String type, String message) {
 		String result = GoCraft.getInstance().getLanguageManager().getLang("staffbroadcast-template", GoCraft.getInstance().getServerName(), type, message);
 		// Display in console
 		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(GoCraft.getInstance().fixColors(result)));
 		// Send to other servers
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage " + result);
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage "+result);
 	}
 
+	/**
+	 * Display a message to all staff in this server
+	 * @param type    The type of message to indicate what the message is about
+	 * @param message The message, already prefixed by the type so no need to repeat that
+	 */
+	public static void displayStaffMessage(String type, String message) {
+		String result = GoCraft.getInstance().getLanguageManager().getLang("staffbroadcast-template", GoCraft.getInstance().getServerName(), type, message);
+		displayStaffMessage(result);
+	}
+
+	/**
+	 * Display a raw message to all staff in thes server (used as receiver of messages from other servers)
+	 * @param message The raw message
+	 */
 	public static void displayStaffMessage(String message) {
 		message = GoCraft.getInstance().fixColors(message);
 		// Display to all staff members

@@ -1,7 +1,6 @@
 package nl.evolutioncoding.gocraft.commands;
 
 import nl.evolutioncoding.gocraft.GoCraft;
-import nl.evolutioncoding.gocraft.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -76,7 +75,6 @@ public class TempbanCommand implements Listener {
 					} else {
 						plugin.message(finalPlayer, "tempban-failed");
 					}
-					Utils.sendStaffMessage("Ban", finalTarget + " for " + finalLength + " by " + finalPlayer.getName() + ": " + finalReason);
 				}
 			}.runTaskLater(plugin, 10L);
 			event.setCancelled(true);

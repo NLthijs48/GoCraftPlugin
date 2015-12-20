@@ -185,6 +185,7 @@ public final class GoCraft extends JavaPlugin {
 		this.listeners.add(new EnablePotionEffectsOnJoin(this));
 		this.listeners.add(new SpawnTeleport(this));
 		this.listeners.add(new EnableRegionPotionEffects(this));
+		this.listeners.add(new PunishmentNotifications(this));
 		// Items
 		this.listeners.add(new DisableItemDrops(this));
 		this.listeners.add(new DisableItemSpawning(this));
