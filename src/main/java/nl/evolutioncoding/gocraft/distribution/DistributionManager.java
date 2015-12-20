@@ -48,11 +48,11 @@ public class DistributionManager {
 	private void initializeServerPluginFolders() {
 		serverPluginFolders = new HashMap<>();
 		for(String serverId : getServerIds()) {
-			File serverFile = new File(plugin.getGeneralFolder().getParent() + File.separator + serverId + File.separator + "plugins");
+			File serverFile = new File(plugin.getGeneralFolder().getParent()+File.separator+plugin.getGeneralConfig().getString("servers."+serverId+".directory")+File.separator+"plugins");
 			if(serverFile.isDirectory()) {
 				serverPluginFolders.put(serverId, serverFile);
 			} else {
-				plugin.getLogger().warning("Incorrect serverPluginFolder file: " + serverFile.getAbsolutePath());
+				plugin.getLogger().warning("Incorrect serverPluginFolder file: "+serverFile.getAbsolutePath()+"serverId="+serverId);
 			}
 		}
 	}
@@ -65,19 +65,14 @@ public class DistributionManager {
 		ConfigurationSection serverGroupsSection = plugin.getGeneralConfig().getConfigurationSection("serverGroups");
 		if(serverGroupsSection != null) {
 			for(String serverGroup : serverGroupsSection.getKeys(false)) {
-				List<String> serverGroupContent = new ArrayList<>();
 				String serverGroupString = serverGroupsSection.getString(serverGroup);
-				if(serverGroupString == null) {
-					continue;
-				}
-				for(String serverId : serverGroupString.split(", ")) {
-					if(plugin.getGeneralConfig().isSet("servers." + serverId)) {
-						serverGroupContent.add(serverId);
-					} else {
-						plugin.getLogger().warning("Invalid serverId '" + serverId + "' for serverGroup " + serverGroup);
-					}
-				}
+				List<String> warnings = new ArrayList<>();
+				List<String> serverGroupContent = resolveServers(serverGroupString, warnings);
 				serverGroups.put(serverGroup, serverGroupContent);
+				for(String warning : warnings) {
+					plugin.getLogger().warning("Warnings for serverGroup "+serverGroup+":");
+					plugin.getLogger().warning("  "+warning);
+				}
 			}
 		}
 	}
@@ -97,6 +92,7 @@ public class DistributionManager {
 
 				int pluginsUpdated = 0;
 				int jarsUpdated = 0;
+				int configsUpdated = 0;
 				ConfigurationSection pushPlugins = plugin.getGeneralConfig().getConfigurationSection("plugins");
 				if(pushPlugins == null) {
 					generalWarnings.add("No pushPlugins section");
@@ -128,21 +124,25 @@ public class DistributionManager {
 
 					// Search jarfile to push
 					File newPluginJar = null;
+					File newPluginConfig = null;
 					for(File file : files) {
-						if(matchPluginFileName(pushPlugin, file)) {
+						if(file.isFile() && matchPluginFileName(pushPlugin, file)) {
 							if(newPluginJar == null) {
 								newPluginJar = file;
 							} else {
 								pluginWarnings.add("Found second .jar file match: " + file.getAbsolutePath() + ", first=" + newPluginJar.getAbsolutePath());
 							}
+						} else if(file.isDirectory() && matchPluginFileName(pushPlugin, file)) {
+							if(newPluginConfig == null) {
+								newPluginConfig = file;
+							} else {
+								pluginWarnings.add("Found second config folder match: "+file.getAbsolutePath()+", first="+newPluginConfig.getAbsolutePath());
+							}
 						}
 					}
-					if(newPluginJar == null) {
-						pluginWarnings.add("No new plugin jar found for " + pushPlugin);
-						continue;
-					}
 
-					List<String> pushedTo = new ArrayList<>();
+					List<String> pushedJarTo = new ArrayList<>();
+					List<String> pushedConfigTo = new ArrayList<>();
 					// Push to the specified servers
 					for(String server : servers) {
 						// Skip filtered servers
@@ -150,48 +150,65 @@ public class DistributionManager {
 							continue;
 						}
 
-						// Find existing jar file
-						File oldPluginJar = null;
-						File[] existingFiles = serverPluginFolders.get(server).listFiles();
-						if(existingFiles != null) {
-							for(File file : existingFiles) {
-								if(matchPluginFileName(pushPlugin, file)) {
-									if(oldPluginJar == null) {
-										oldPluginJar = file;
-									} else {
-										pluginWarnings.add("Found second old .jar file: " + file.getAbsolutePath());
+						if(newPluginJar != null) {
+							// Find existing jar file
+							File oldPluginJar = null;
+							File[] existingFiles = serverPluginFolders.get(server).listFiles();
+							if(existingFiles != null) {
+								for(File file : existingFiles) {
+									if(matchPluginFileName(pushPlugin, file)) {
+										if(oldPluginJar == null) {
+											oldPluginJar = file;
+										} else {
+											pluginWarnings.add("Found second old .jar file: "+file.getAbsolutePath());
+										}
 									}
 								}
 							}
+
+							// Determine to push or not
+							if(oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
+								// Delete old one
+								if(oldPluginJar != null && !oldPluginJar.delete()) {
+									pluginWarnings.add("Deleting failed: "+oldPluginJar.getAbsolutePath());
+								}
+
+								File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin+" DISTRIBUTED.jar");
+								try {
+									FileUtils.copyFile(newPluginJar, newFileName);
+									boolean permissionsResult = newFileName.setExecutable(true, false);
+									permissionsResult = permissionsResult && newFileName.setReadable(true, false);
+									permissionsResult = permissionsResult && newFileName.setWritable(true, false);
+									if(!permissionsResult) {
+										pluginWarnings.add("Setting permissions failed: "+newFileName.getAbsolutePath());
+									}
+									jarsUpdated++;
+									pushedJarTo.add(plugin.getServerName(server));
+								} catch(IOException e) {
+									pluginWarnings.add("Copy failed: "+newFileName.getAbsolutePath()+", exception:");
+									e.printStackTrace();
+								}
+							}
 						}
 
-						// Determine to push or not
-						if(oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
-							// Delete old one
-							if(oldPluginJar != null && !oldPluginJar.delete()) {
-								pluginWarnings.add("Could not delete old plugin: " + oldPluginJar.getAbsolutePath());
-							}
-
-							File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + pushPlugin + " DISTRIBUTED.jar");
-							try {
-								FileUtils.copyFile(newPluginJar, newFileName);
-								boolean permissionsResult = newFileName.setExecutable(true, false);
-								permissionsResult = permissionsResult && newFileName.setReadable(true, false);
-								permissionsResult = permissionsResult && newFileName.setWritable(true, false);
-								if(!permissionsResult) {
-									pluginWarnings.add("Could not correctly set permissions: " + newFileName.getAbsolutePath());
-								}
-								jarsUpdated++;
-								pushedTo.add(plugin.getServerName(server));
-							} catch(IOException e) {
-								pluginWarnings.add("Could not copy plugin to target " + newFileName.getAbsolutePath() + ", exception:");
-								e.printStackTrace();
+						// Push config if required
+						if(newPluginConfig != null) {
+							File targetFolder = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin);
+							List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig);
+							if(result.size() > 0) {
+								configsUpdated += result.size();
+								pushedConfigTo.add(plugin.getServerName(server));
 							}
 						}
 					}
-					if(pushedTo.size() > 0) {
+					if(pushedJarTo.size() > 0 || pushedConfigTo.size() > 0) {
 						plugin.messageNoPrefix(executor, "update-pluginHeader", pushPlugin);
-						plugin.messageNoPrefix(executor, "update-pushedPluginTo", StringUtils.join(pushedTo, ", "));
+						if(pushedJarTo.size() > 0) {
+							plugin.messageNoPrefix(executor, "update-pushedPluginTo", StringUtils.join(pushedJarTo, ", "));
+						}
+						if(pushedConfigTo.size() > 0) {
+							plugin.messageNoPrefix(executor, "update-pushedConfigTo", StringUtils.join(pushedConfigTo, ", "));
+						}
 						for(String warning : pluginWarnings) {
 							plugin.messageNoPrefix(executor, "update-warning", warning);
 						}
@@ -204,10 +221,60 @@ public class DistributionManager {
 						plugin.messageNoPrefix(executor, "update-warning", warning);
 					}
 				}
-				plugin.messageNoPrefix(executor, "update-done", pluginsUpdated, jarsUpdated);
+				if(pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0) {
+					plugin.messageNoPrefix(executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated);
+				} else {
+					plugin.messageNoPrefix(executor, "update-none");
+				}
 
 			}
 		}.runTaskAsynchronously(plugin);
+	}
+
+	/**
+	 * Push a directory structure to another place, only replaces files that are newer in the source
+	 * @param source The source directory
+	 * @param target The target directory
+	 * @param warnings The warnings list
+	 * @param rootSource The root source to format messages with
+	 * @return List with the file names that are pushed
+	 */
+	public List<String> pushStructure(File source, File target, List<String> warnings, File rootSource) {
+		List<String> result = new ArrayList<>();
+		File[] files = source.listFiles();
+		if(files == null) {
+			warnings.add("Incorrect directory, no files: "+source.getAbsolutePath());
+			return result;
+		}
+		for(File file : files) {
+			File fileTarget = new File(target.getAbsolutePath()+File.separator+file.getName());
+			if(file.isDirectory()) {
+				pushStructure(file, fileTarget, warnings, rootSource);
+			} else if(file.isFile()) {
+				if(fileTarget.exists() && !fileTarget.isFile()) {
+					warnings.add("Target exists but is not a file: "+fileTarget.getAbsolutePath());
+					continue;
+				}
+				if(!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
+					try {
+						FileUtils.copyFile(file, fileTarget);
+						boolean permissionsResult = fileTarget.setExecutable(true, false);
+						permissionsResult = permissionsResult && fileTarget.setReadable(true, false);
+						permissionsResult = permissionsResult && fileTarget.setWritable(true, false);
+						if(!permissionsResult) {
+							warnings.add("Setting permissions failed: "+fileTarget.getAbsolutePath());
+						}
+						result.add(file.getAbsolutePath().replace(rootSource.getAbsolutePath(), "")); // Directory structure + filename starting from plugin folder to the file
+					} catch(IOException e) {
+						warnings.add("Copy failed: "+fileTarget.getAbsolutePath()+", exception: "+e.getMessage());
+						e.printStackTrace();
+					}
+				}
+			} else {
+				warnings.add("Incorrect file: "+file.getAbsolutePath());
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -218,10 +285,10 @@ public class DistributionManager {
 	 */
 	public boolean matchPluginFileName(String test, File match) {
 		test = test.toLowerCase();
-		if(!match.isFile() || match.getName().lastIndexOf(".") < 0 || !match.getName().substring(match.getName().lastIndexOf("."), match.getName().length()).equalsIgnoreCase(".jar")) {
-			return false;
+		String name = match.getName().toLowerCase();
+		if(name.endsWith(".jar")) {  // Strip .jar
+			name = name.substring(0, match.getName().lastIndexOf(".")).toLowerCase();
 		}
-		String name = match.getName().substring(0, match.getName().lastIndexOf(".")).toLowerCase(); // Strip .jar
 		return name.startsWith(test + " ") || name.equalsIgnoreCase(test);
 	}
 
@@ -238,11 +305,25 @@ public class DistributionManager {
 		for(String id : serverSpecifier.split(", ")) {
 			List<String> groupContent = serverGroups.get(id);
 			if(groupContent != null) {
+				if(groupContent.size() == 0) {
+					warnings.add("Empty group: "+id);
+				}
 				result.addAll(groupContent);
 			} else {
-				if(plugin.getGeneralConfig().isSet("servers." + id)) {
-					result.add(id);
-				} else {
+				ConfigurationSection serverSection = plugin.getGeneralConfig().getConfigurationSection("servers");
+				boolean found = false;
+				if(serverSection != null) {
+					for(String key : serverSection.getKeys(false)) {
+						if(id.equalsIgnoreCase(key)
+								|| id.equalsIgnoreCase(serverSection.getString(key+".name"))
+								|| id.equalsIgnoreCase(serverSection.getString(key+".directory"))) {
+							result.add(key);
+							found = true;
+							break;
+						}
+					}
+				}
+				if(!found) {
 					warnings.add("server-/group-id '" + id + "' cannot be resolved");
 				}
 			}
