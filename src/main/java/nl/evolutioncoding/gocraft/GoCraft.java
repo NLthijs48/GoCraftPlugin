@@ -2,12 +2,14 @@ package nl.evolutioncoding.gocraft;
 
 import com.google.common.base.Charsets;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import me.confuser.banmanager.BanManager;
 import nl.evolutioncoding.gocraft.blocks.*;
 import nl.evolutioncoding.gocraft.commands.*;
 import nl.evolutioncoding.gocraft.distribution.DistributionManager;
 import nl.evolutioncoding.gocraft.general.*;
 import nl.evolutioncoding.gocraft.items.*;
 import nl.evolutioncoding.gocraft.logging.LogSigns;
+import nl.evolutioncoding.gocraft.other.AboveNetherPrevention;
 import nl.evolutioncoding.gocraft.other.ResetExpiredPlots;
 import nl.evolutioncoding.gocraft.pvp.DisableFallDamage;
 import nl.evolutioncoding.gocraft.pvp.DisablePlayerDamage;
@@ -43,6 +45,7 @@ public final class GoCraft extends JavaPlugin {
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
 	private WorldGuardPlugin worldGuard = null;
+	private BanManager banManager = null;
 	private boolean debug = false;
 	private String chatprefix = null;
 	private static GoCraft instance = null;
@@ -63,6 +66,14 @@ public final class GoCraft extends JavaPlugin {
 		} else {
 			this.worldGuard = ((WorldGuardPlugin) wg);
 		}
+
+		Plugin bm = getServer().getPluginManager().getPlugin("BanManager");
+		if(bm == null || !(bm instanceof BanManager)) {
+			getLogger().warning("Error: BanManager plugin is not present or has not loaded correctly");
+		} else {
+			this.banManager = ((BanManager)bm);
+		}
+
 		this.languageManager = new LanguageManager(this);
 
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + generalFolderName);
@@ -199,10 +210,23 @@ public final class GoCraft extends JavaPlugin {
 		new ReloadCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
+		this.listeners.add(new AboveNetherPrevention(this));
 	}
 
+	/**
+	 * Get the BanManager plugin
+	 * @return The BanManager plugin instance
+	 */
 	public WorldGuardPlugin getWorldGuard() {
 		return this.worldGuard;
+	}
+
+	/**
+	 * Get the BanManager plugin
+	 * @return The BanManager plugin instance
+	 */
+	public BanManager getBanManager() {
+		return this.banManager;
 	}
 
 	public void showHelp(CommandSender target) {
