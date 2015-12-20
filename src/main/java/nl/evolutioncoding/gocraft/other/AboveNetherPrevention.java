@@ -14,7 +14,6 @@ public class AboveNetherPrevention implements Listener {
 	public final String configLine = "enableAboveNetherPrevention";
 
 	public AboveNetherPrevention(final GoCraft plugin) {
-		GoCraft.debug("prevention: "+plugin.getConfig().getBoolean(configLine));
 		if(plugin.getConfig().getBoolean(configLine)) {
 			new BukkitRunnable() {
 				@Override

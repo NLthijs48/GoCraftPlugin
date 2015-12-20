@@ -152,7 +152,7 @@ public class DistributionManager {
 					File[] existingFiles = serverPluginFolders.get(server).listFiles();
 					if(existingFiles != null) {
 						for(File file : existingFiles) {
-							if(matchPluginFileName(pushPlugin, file)) {
+							if(file.isFile() && matchPluginFileName(pushPlugin, file)) {
 								if(oldPluginJar == null) {
 									oldPluginJar = file;
 								} else {
@@ -307,10 +307,14 @@ public class DistributionManager {
 	 * @return The list of servers indicated by the serverSpecifier
 	 */
 	public List<String> resolveServers(String serverSpecifier, List<String> warnings) {
-		if(serverSpecifier == null) {
-			return null;
-		}
 		List<String> result = new ArrayList<>();
+		if(serverSpecifier == null) {
+			ConfigurationSection serverSection = plugin.getGeneralConfig().getConfigurationSection("servers");
+			if(serverSection != null) {
+				result.addAll(serverSection.getKeys(false));
+			}
+			return result;
+		}
 		for(String id : serverSpecifier.split(", ")) {
 			List<String> groupContent = serverGroups.get(id);
 			if(groupContent != null) {

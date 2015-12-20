@@ -6,6 +6,7 @@
 
 servers:
   <directory name>:
+    id: <id> # To be used in other sections
     name: <display name>
 serverGroups:
   <name>: "serverIds, comma-separated"
