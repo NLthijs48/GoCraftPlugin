@@ -186,6 +186,7 @@ public final class GoCraft extends JavaPlugin {
 		this.listeners.add(new DisableTradeSignPlacing(this));
 		this.listeners.add(new DisableBlockBreaking(this));
 		this.listeners.add(new DisableAnvilBreak(this));
+		this.listeners.add(new DisableWitherDamage(this));
 		// General
 		this.listeners.add(new DisableRain(this));
 		this.listeners.add(new DisableMobSpawning(this));

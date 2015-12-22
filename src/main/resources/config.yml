@@ -16,6 +16,7 @@ disableBedrockPlace: false
 disableDispensers: false
 disableTradeSignPlacing: false
 disableAnvilBreak: false
+disableWitherDamage: false
 
 ########## GENERAL
 disableRain: false
