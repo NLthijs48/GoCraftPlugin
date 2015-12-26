@@ -20,27 +20,27 @@ public class PunishmentNotifications implements Listener {
 
 	@EventHandler
 	public void onBan(PlayerBannedEvent event) {
-		Utils.displayStaffMessage("Ban", event.getBan().getPlayer().getName()+" until "+timeToString(event.getBan().getExpires())+" by "+event.getBan().getActor().getName()+": "+event.getBan().getReason());
+		Utils.sendStaffMessage("Ban", event.getBan().getPlayer().getName() + " until " + timeToString(event.getBan().getExpires()) + " by " + event.getBan().getActor().getName() + ": " + event.getBan().getReason());
 	}
 
 	@EventHandler
 	public void onUnban(PlayerUnbanEvent event) {
-		Utils.displayStaffMessage("Unban", event.getBan().getPlayer().getName()+" (was banned for: "+event.getBan().getReason()+")");
+		Utils.sendStaffMessage("Unban", event.getBan().getPlayer().getName() + " (was banned for: " + event.getBan().getReason() + ")");
 	}
 
 	@EventHandler
 	public void onMute(PlayerMutedEvent event) {
-		Utils.displayStaffMessage("Mute", event.getMute().getPlayer().getName()+" until "+timeToString(event.getMute().getExpires())+" by "+event.getMute().getActor().getName()+": "+event.getMute().getReason());
+		Utils.sendStaffMessage("Mute", event.getMute().getPlayer().getName() + " until " + timeToString(event.getMute().getExpires()) + " by " + event.getMute().getActor().getName() + ": " + event.getMute().getReason());
 	}
 
 	@EventHandler
 	public void onUnmute(PlayerUnmuteEvent event) {
-		Utils.displayStaffMessage("Unmute", event.getMute().getPlayer().getName()+" (was muted for: "+event.getMute().getReason()+")");
+		Utils.sendStaffMessage("Unmute", event.getMute().getPlayer().getName() + " (was muted for: " + event.getMute().getReason() + ")");
 	}
 
 	@EventHandler
 	public void onWarn(PlayerWarnedEvent event) {
-		Utils.displayStaffMessage("Warn", event.getWarning().getPlayer().getName()+" by "+event.getWarning().getActor().getName()+": "+event.getWarning().getReason());
+		Utils.sendStaffMessage("Warn", event.getWarning().getPlayer().getName() + " by " + event.getWarning().getActor().getName() + ": " + event.getWarning().getReason());
 	}
 
 	private String timeToString(long time) {
