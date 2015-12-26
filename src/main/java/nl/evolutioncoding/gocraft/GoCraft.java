@@ -90,9 +90,9 @@ public final class GoCraft extends JavaPlugin {
 	}
 	
 	public void onDisable() {
+		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName());
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
-		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName());
 	}
 
 
@@ -117,6 +117,7 @@ public final class GoCraft extends JavaPlugin {
 			}
 		}
 		if(result != null) {
+			//GoCraft.debug("generalconfig null="+(getGeneralConfig()==null));
 			ConfigurationSection servers = getGeneralConfig().getConfigurationSection("servers");
 			if(servers != null) {
 				for(String id : servers.getKeys(false)) {

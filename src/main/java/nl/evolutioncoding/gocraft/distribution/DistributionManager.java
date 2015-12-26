@@ -83,8 +83,10 @@ public class DistributionManager {
 	 * @param filter The filter specifying which servers should be pushed to
 	 */
 	public void updatePluginDataNow(CommandSender executor, String filter) {
+		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		List<String> generalWarnings = new ArrayList<>();
 		final List<String> include = resolveServers(filter, generalWarnings);
+		GoCraft.debug("include=" + include.toString());
 
 		int pluginsUpdated = 0;
 		int jarsUpdated = 0;
@@ -231,7 +233,6 @@ public class DistributionManager {
 	 */
 	public void updatePluginData(final CommandSender executor, final String filter) {
 		plugin.message(executor, "update-started");
-		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		new BukkitRunnable() {
 			@Override
 			public void run() {
