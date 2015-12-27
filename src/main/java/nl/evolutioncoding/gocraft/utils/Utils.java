@@ -12,6 +12,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,22 @@ public class Utils {
 		CraftPlayer cp = (CraftPlayer)player;
 		EntityPlayer ep = cp.getHandle();
 		return ep.ping;
+	}
+
+	/**
+	 * Get the number of free slots in the inventory of the player
+	 *
+	 * @param player The player to check
+	 * @return The number of free slots in the inventory
+	 */
+	public static int inventoryRoom(Player player) {
+		int result = 0;
+		for (ItemStack stack : player.getInventory().getContents()) {
+			if (stack == null) {
+				result++;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -124,6 +141,10 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Perform a command in the console
+	 * @param command The command to execute
+	 */
 	public static void consoleCommand(String command) {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 	}

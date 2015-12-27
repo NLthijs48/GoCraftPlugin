@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemBuilder {
 	private ItemStack item;
+	private boolean hasCustomName = false;
 
 	// CONSTRUCTORS
 	public ItemBuilder(Material material) {
@@ -46,6 +47,7 @@ public class ItemBuilder {
 	 * @return this
 	 */
 	public ItemBuilder setName(String name) {
+		hasCustomName = true;
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(GoCraft.getInstance().fixColors(name));
 		item.setItemMeta(meta);
@@ -79,6 +81,15 @@ public class ItemBuilder {
 	 */
 	public ItemStack getItemStack() {
 		return item;
+	}
+
+	/**
+	 * Check if the item has a custom name
+	 *
+	 * @return true if the item has a custom name, otherwise false
+	 */
+	public boolean hasCustomName() {
+		return hasCustomName;
 	}
 
 }
