@@ -86,7 +86,6 @@ public class DistributionManager {
 		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		List<String> generalWarnings = new ArrayList<>();
 		final List<String> include = resolveServers(filter, generalWarnings);
-		GoCraft.debug("include=" + include.toString());
 
 		int pluginsUpdated = 0;
 		int jarsUpdated = 0;
