@@ -53,3 +53,12 @@ tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn
 
 ########## OTHER
 netherGlitching: "You may not go above the nether ceiling!"
+
+timeleft-years: "%0% years"
+timeleft-months: "%0% months"
+timeleft-days: "%0% days"
+timeleft-hours: "%0% hours"
+timeleft-minutes: "%0% minutes"
+timeleft-second: "%0% second"
+timeleft-seconds: "%0% seconds"
+timeleft-ended: "Expired"

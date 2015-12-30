@@ -20,7 +20,7 @@ public class PunishmentNotifications implements Listener {
 
 	@EventHandler
 	public void onBan(PlayerBannedEvent event) {
-		Utils.sendStaffMessage("Ban", event.getBan().getPlayer().getName() + " until " + timeToString(event.getBan().getExpires()) + " by " + event.getBan().getActor().getName() + ": " + event.getBan().getReason());
+		Utils.sendStaffMessage("Ban", event.getBan().getPlayer().getName() + " until " + timeToString(event.getBan().getExpires() * 1000) + " by " + event.getBan().getActor().getName() + ": " + event.getBan().getReason());
 	}
 
 	@EventHandler
@@ -30,7 +30,7 @@ public class PunishmentNotifications implements Listener {
 
 	@EventHandler
 	public void onMute(PlayerMutedEvent event) {
-		Utils.sendStaffMessage("Mute", event.getMute().getPlayer().getName() + " until " + timeToString(event.getMute().getExpires()) + " by " + event.getMute().getActor().getName() + ": " + event.getMute().getReason());
+		Utils.sendStaffMessage("Mute", event.getMute().getPlayer().getName() + " until " + timeToString(event.getMute().getExpires() * 1000) + " by " + event.getMute().getActor().getName() + ": " + event.getMute().getReason());
 	}
 
 	@EventHandler

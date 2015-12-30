@@ -12,10 +12,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class Utils {
 
@@ -212,4 +215,81 @@ public class Utils {
 		return true;
 	}
 
+	public static boolean giveItems(Player player, Collection<ItemStack> items) {
+		boolean result = true;
+		Inventory inventory = player.getInventory();
+		for (ItemStack item : items) {
+			// TODO: Make 1.9 compatible?
+			for (int i = 9; i < 44; i++) {
+				ItemStack current = inventory.getItem(i);
+				if (current == null) {
+					inventory.setItem(i, item);
+					break;
+				} else if (current.getType() == item.getType() && current.getAmount() < current.getMaxStackSize()) {
+					int left = current.getMaxStackSize() - current.getAmount();
+					if (item.getAmount() <= left) {
+
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Add action to the lores of an item
+	 *
+	 * @param lores  Current lores
+	 * @param action The action string to add
+	 * @return The list with the action added
+	 */
+	public static List<String> addItemAction(List<String> lores, String action) {
+		if (lores == null) {
+			lores = new ArrayList<>();
+		}
+		lores.add(lores.size(), ChatColor.BLUE + "" + ChatColor.BOLD + "<" + action + ">");
+		return lores;
+	}
+
+	/**
+	 * Convert milliseconds to a human readable format
+	 *
+	 * @param milliseconds The amount of milliseconds to convert
+	 * @return A formatted string based on the language file
+	 */
+	public static String millisToHumanFormat(long milliseconds) {
+		long timeLeft = milliseconds + 500;
+		// To seconds
+		timeLeft = timeLeft / 1000;
+		if (timeLeft <= 0) {
+			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-ended");
+		} else if (timeLeft == 1) {
+			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-second", timeLeft);
+		} else if (timeLeft <= 120) {
+			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-seconds", timeLeft);
+		}
+		// To minutes
+		timeLeft = timeLeft / 60;
+		if (timeLeft <= 120) {
+			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-minutes", timeLeft);
+		}
+		// To hours
+		timeLeft = timeLeft / 60;
+		if (timeLeft <= 48) {
+			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-hours", timeLeft);
+		}
+		// To days
+		timeLeft = timeLeft / 24;
+		if (timeLeft <= 60) {
+			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-days", timeLeft);
+		}
+		// To months
+		timeLeft = timeLeft / 30;
+		if (timeLeft <= 24) {
+			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-months", timeLeft);
+		}
+		// To years
+		timeLeft = timeLeft / 12;
+		return GoCraft.getInstance().getLanguageManager().getLang("timeleft-years", timeLeft);
+	}
 }
