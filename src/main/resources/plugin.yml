@@ -1,5 +1,5 @@
 name: GoCraft
-main: nl.evolutioncoding.gocraft.GoCraft
+main: me.wiefferink.gocraft.GoCraft
 version: 1.0
 depend: [WorldGuard]
 softdepend: [BanManager]
