@@ -31,7 +31,7 @@ permissions:
     description: Set the spawn location of the spawnteleport
     default: op
   gocraft.staff:
-    description: 'Indicates that this is a staff member, mostly for messages'
+    description: 'Indicates that this is a staff member'
     default: op
   gocraft.sendStaffBroadcast:
     description: Send message to all staff on the network.
@@ -64,4 +64,8 @@ commands:
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
   GCReload:
     description: Reload the plugin data
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  Inspect:
+    description: Inspect players while being in Spectator mode
+    aliases: [in]
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

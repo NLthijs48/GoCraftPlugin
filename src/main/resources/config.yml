@@ -25,6 +25,7 @@ potionEffectsOnJoin:
 enableRegionPotionEffects: false
 regionPotionEffects:
 spawnTeleport: false
+enableInspecting: true
 
 ########## ITEMS
 disableItemDrops: false

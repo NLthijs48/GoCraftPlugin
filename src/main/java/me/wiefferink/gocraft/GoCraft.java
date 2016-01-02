@@ -7,6 +7,8 @@ import me.wiefferink.gocraft.blocks.*;
 import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
 import me.wiefferink.gocraft.general.*;
+import me.wiefferink.gocraft.inspector.InspectionManager;
+import me.wiefferink.gocraft.integration.MapInfo;
 import me.wiefferink.gocraft.items.*;
 import me.wiefferink.gocraft.logging.LogSigns;
 import me.wiefferink.gocraft.other.AboveNetherPrevention;
@@ -16,6 +18,7 @@ import me.wiefferink.gocraft.pvp.DisablePlayerDamage;
 import me.wiefferink.gocraft.storage.Database;
 import me.wiefferink.gocraft.storage.MySQLDatabase;
 import me.wiefferink.gocraft.storage.UTF8Config;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -45,6 +49,7 @@ public final class GoCraft extends JavaPlugin {
 	private ArrayList<Listener> listeners;
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
+	private InspectionManager inspectionManager;
 	private WorldGuardPlugin worldGuard = null;
 	private BanManager banManager = null;
 	private boolean debug = false;
@@ -53,6 +58,9 @@ public final class GoCraft extends JavaPlugin {
 	private UTF8Config generalConfig = null;
 	private UTF8Config localStorage = null;
 	private File generalFolder = null;
+	private MapInfo mapInfo = null;
+	private boolean hasMapSwitcher = false;
+	private Economy economy = null;
 
 	public void onEnable() {
 		reloadConfig();
@@ -61,6 +69,7 @@ public final class GoCraft extends JavaPlugin {
 		this.chatprefix = getConfig().getString("chatPrefix");
 		this.debug = getConfig().getBoolean("debug");
 
+		// Check if WorldGuard is present
 		Plugin wg = getServer().getPluginManager().getPlugin("WorldGuard");
 		if (wg == null || !(wg instanceof WorldGuardPlugin)) {
 			getLogger().warning("Error: WorldGuard plugin is not present or has not loaded correctly");
@@ -68,11 +77,29 @@ public final class GoCraft extends JavaPlugin {
 			this.worldGuard = ((WorldGuardPlugin) wg);
 		}
 
+		// Check if BanManager is present
 		Plugin bm = getServer().getPluginManager().getPlugin("BanManager");
 		if(bm == null || !(bm instanceof BanManager)) {
 			getLogger().warning("Error: BanManager plugin is not present or has not loaded correctly");
 		} else {
 			this.banManager = ((BanManager)bm);
+		}
+
+		// Check if MapSwitcher is present
+		Plugin ms = getServer().getPluginManager().getPlugin("MapSwitcher");
+		if (ms == null) {
+			debug("  No MapSwitcher plugin found");
+		} else {
+			mapInfo = new MapInfo();
+			hasMapSwitcher = true;
+		}
+
+		// Check if Vault is present
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+		if (economyProvider != null) {
+			economy = economyProvider.getProvider();
+		} else {
+			getLogger().info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
 		}
 
 		this.languageManager = new LanguageManager(this);
@@ -82,6 +109,8 @@ public final class GoCraft extends JavaPlugin {
 		loadGeneralConfig();
 		distributionManager = new DistributionManager(this);
 		loadLocalStorage();
+
+		inspectionManager = new InspectionManager(this);
 		addListeners();
 	}
 
@@ -90,6 +119,7 @@ public final class GoCraft extends JavaPlugin {
 	}
 	
 	public void onDisable() {
+		inspectionManager.handleServerStop();
 		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName());
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
@@ -159,6 +189,33 @@ public final class GoCraft extends JavaPlugin {
 	public UTF8Config getLocalStorage() {
 		return localStorage;
 	}
+
+	/**
+	 * Get link to MapSwitcher plugin
+	 *
+	 * @return MapInfo
+	 */
+	public MapInfo getMapInfo() {
+		return mapInfo;
+	}
+
+	/**
+	 * Get the Economy running on the server
+	 *
+	 * @return The Economy provider
+	 */
+	public Economy getEconomy() {
+		return economy;
+	}
+
+	/**
+	 * Check if MapSwitcher is available
+	 *
+	 * @return true if MapSwitcher is available, otherwise false
+	 */
+	public boolean hasMapSwitcher() {
+		return hasMapSwitcher;
+	}
 	
 	public void testStorage() {
 		String host = "localhost";
@@ -173,11 +230,13 @@ public final class GoCraft extends JavaPlugin {
 		// ORDER not kept! running as async tasks
 		for(int i=0; i<10; i++) {
 			debug("Doing: i="+i);
-			db.execute("INSERT INTO combat VALUES (?, ?)", i, 10-i);
+			db.execute("INSERT INTO combat VALUES (?, ?)", i, 10 - i);
 		}
 	}
-	
-	
+
+	/**
+	 * Register all listener and command classes
+	 */
 	public void addListeners() {
 		this.listeners = new ArrayList<>();
 		// Blocks
@@ -219,6 +278,7 @@ public final class GoCraft extends JavaPlugin {
 		new StaffMessagesCommands(this);
 		new UpdateCommand(this);
 		new ReloadCommand(this);
+		new InspectCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
 		this.listeners.add(new AboveNetherPrevention(this));
@@ -230,6 +290,15 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public WorldGuardPlugin getWorldGuard() {
 		return this.worldGuard;
+	}
+
+	/**
+	 * Get the InspectionManager
+	 *
+	 * @return The InspectionManager
+	 */
+	public InspectionManager getInspectionManager() {
+		return inspectionManager;
 	}
 
 	/**

@@ -1,5 +1,8 @@
 package me.wiefferink.gocraft.utils;
 
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.wiefferink.gocraft.GoCraft;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.Bukkit;
@@ -77,6 +80,12 @@ public class Utils {
 		return result;
 	}
 
+	/**
+	 * Create a config section from a location, without pitch and yaw
+	 *
+	 * @param location The location to save
+	 * @return ConfigurationSection containing all details about a location
+	 */
 	public static ConfigurationSection locationToConfig(Location location) {
 		return locationToConfig(location, false);
 	}
@@ -291,5 +300,17 @@ public class Utils {
 		// To years
 		timeLeft = timeLeft / 12;
 		return GoCraft.getInstance().getLanguageManager().getLang("timeleft-years", timeLeft);
+	}
+
+	/**
+	 * Check if a player is in PVP area
+	 *
+	 * @param player The player to check
+	 * @return true if the player is in a PVP area, otherwise false
+	 */
+	public static boolean isInPvpArea(Player player) {
+		RegionManager manager = GoCraft.getInstance().getWorldGuard().getRegionManager(Bukkit.getWorld("world"));
+		ApplicableRegionSet regions = manager.getApplicableRegions(player.getLocation());
+		return regions.testState(GoCraft.getInstance().getWorldGuard().wrapPlayer(player), DefaultFlag.PVP);
 	}
 }

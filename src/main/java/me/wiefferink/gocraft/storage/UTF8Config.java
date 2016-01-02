@@ -2,8 +2,8 @@ package me.wiefferink.gocraft.storage;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import me.wiefferink.gocraft.GoCraft;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConstructor;
@@ -13,7 +13,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
-import java.util.logging.Level;
 
 public class UTF8Config extends YamlConfiguration {
 
@@ -45,10 +44,8 @@ public class UTF8Config extends YamlConfiguration {
 
         try {
             config.load(reader);
-        } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot load configuration from stream", ex);
-        } catch (InvalidConfigurationException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Cannot load configuration from stream", ex);
+        } catch (InvalidConfigurationException | IOException ex) {
+            GoCraft.getInstance().getLogger().warning("Could not load configuration from stream: " + ex);
         }
 
         return config;
@@ -57,20 +54,14 @@ public class UTF8Config extends YamlConfiguration {
     @Override
     public void save(File file) throws IOException {
         Validate.notNull(file, "File cannot be null");
-
         Files.createParentDirs(file);
-
         String data = saveToString();
 
-        Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8);
-
-        try {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
             writer.write(data);
-        } finally {
-            writer.close();
+        } catch (IOException e) {
+            GoCraft.getInstance().getLogger().warning("Could not save config file: " + file.getAbsolutePath());
         }
     }
-    
-    
 
 }
