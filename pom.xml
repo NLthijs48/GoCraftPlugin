@@ -55,6 +55,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>me.wiefferink</groupId>
+      <artifactId>GoPVP</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>net.milkbowl</groupId>
       <artifactId>vault</artifactId>
       <version>1.4.1</version>

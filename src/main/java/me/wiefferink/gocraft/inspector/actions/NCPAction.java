@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,7 +19,7 @@ public class NCPAction extends InventoryAction {
 
     @Override
     public boolean isActive() {
-        return inspection.hasInspected() && inspection.getInspected().isOnline();
+        return Bukkit.getServer().getPluginManager().getPlugin("NoCheatPlus") != null && inspection.hasInspected() && inspection.getInspected().isOnline();
     }
 
     @Override

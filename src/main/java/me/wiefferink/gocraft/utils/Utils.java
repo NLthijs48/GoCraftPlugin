@@ -1,27 +1,25 @@
 package me.wiefferink.gocraft.utils;
 
+import com.mojang.authlib.GameProfile;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.wiefferink.gocraft.GoCraft;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import net.minecraft.server.v1_8_R3.MinecraftServer;
+import net.minecraft.server.v1_8_R3.PlayerInteractManager;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class Utils {
 
@@ -241,6 +239,50 @@ public class Utils {
 					}
 				}
 			}
+		}
+		return result;
+	}
+
+
+	/**
+	 * Load player data of a (possibly) offline player by UUID
+	 *
+	 * @param uuid The UUID of the player to load
+	 * @return The Player object of the target player
+	 */
+	public static Player loadPlayer(UUID uuid) {
+		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+		if (player == null || !player.hasPlayedBefore()) {
+			return null;
+		}
+		// Check if the player is online
+		if (player.getPlayer() != null) {
+			return player.getPlayer();
+		}
+		// Load offline player data
+		GameProfile profile = new GameProfile(uuid, player.getName());
+		MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
+		EntityPlayer entity = new EntityPlayer(server, server.getWorldServer(0), profile, new PlayerInteractManager(server.getWorldServer(0)));
+
+		// Get the bukkit entity
+		Player target = entity.getBukkitEntity();
+		if (target != null) {
+			target.loadData();
+		}
+		return target;
+	}
+
+	/**
+	 * Load player data of a (possibly) offline player by name
+	 *
+	 * @param name The name of the player to get
+	 * @return The Player object of the target player
+	 */
+	public static Player loadPlayer(String name) {
+		OfflinePlayer player = Bukkit.getOfflinePlayer(name);
+		Player result = null;
+		if (player != null) {
+			result = loadPlayer(player.getUniqueId());
 		}
 		return result;
 	}

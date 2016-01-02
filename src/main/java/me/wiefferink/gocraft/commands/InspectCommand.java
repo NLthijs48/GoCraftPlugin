@@ -3,7 +3,6 @@ package me.wiefferink.gocraft.commands;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -51,13 +50,13 @@ public class InspectCommand implements CommandExecutor {
                 plugin.message(inspector, "inspect-inNonPVP");
                 return true;
             }
-            Player inspected = Bukkit.getPlayer(args[0]);
-            if (inspected == null) {
-                plugin.message(inspector, "inspect-notOnline", args[0]);
+            Player inspected = Utils.loadPlayer(args[0]);
+            if (inspected == null) { // Only possible if the player never played
+                plugin.message(inspector, "inspect-notAvailable", args[0]);
                 return true;
             }
-            /*
-			if (inspector.getUniqueId().equals(inspected.getUniqueId())) {
+            /* TODO enable
+            if (inspector.getUniqueId().equals(inspected.getUniqueId())) {
 				plugin.message(inspector, "inspect-self");
 				return true;
 			}

@@ -36,7 +36,7 @@ public class ChestAction extends InventoryAction {
 
     @Override
     public void handleClick() {
-        inspection.getInspected().closeInventory(); // close existing
+        inspection.getInspector().closeInventory(); // close existing
         inspection.getInspector().performCommand("openinv:openinv " + inspection.getInspected().getName());
     }
 

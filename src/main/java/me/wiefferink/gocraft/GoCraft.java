@@ -8,7 +8,8 @@ import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
 import me.wiefferink.gocraft.general.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
-import me.wiefferink.gocraft.integration.MapInfo;
+import me.wiefferink.gocraft.integration.GoPVPLink;
+import me.wiefferink.gocraft.integration.MapSwitcherLink;
 import me.wiefferink.gocraft.items.*;
 import me.wiefferink.gocraft.logging.LogSigns;
 import me.wiefferink.gocraft.other.AboveNetherPrevention;
@@ -33,6 +34,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.sql.PreparedStatement;
@@ -58,8 +60,8 @@ public final class GoCraft extends JavaPlugin {
 	private UTF8Config generalConfig = null;
 	private UTF8Config localStorage = null;
 	private File generalFolder = null;
-	private MapInfo mapInfo = null;
-	private boolean hasMapSwitcher = false;
+	private MapSwitcherLink mapSwitcherLink = null;
+	private GoPVPLink goPVPLink = null;
 	private Economy economy = null;
 
 	public void onEnable() {
@@ -90,8 +92,7 @@ public final class GoCraft extends JavaPlugin {
 		if (ms == null) {
 			debug("  No MapSwitcher plugin found");
 		} else {
-			mapInfo = new MapInfo();
-			hasMapSwitcher = true;
+			mapSwitcherLink = new MapSwitcherLink();
 		}
 
 		// Check if Vault is present
@@ -102,10 +103,20 @@ public final class GoCraft extends JavaPlugin {
 			getLogger().info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
 		}
 
+		// Check if GoPVP is present
+		new BukkitRunnable() {
+			public void run() {
+				Plugin gp = getServer().getPluginManager().getPlugin("GoPVP");
+				if (gp == null) {
+					debug("  No GoPVP plugin found");
+				} else {
+					goPVPLink = new GoPVPLink();
+				}
+			}
+		}.runTask(this);
+
 		this.languageManager = new LanguageManager(this);
-
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + generalFolderName);
-
 		loadGeneralConfig();
 		distributionManager = new DistributionManager(this);
 		loadLocalStorage();
@@ -114,6 +125,11 @@ public final class GoCraft extends JavaPlugin {
 		addListeners();
 	}
 
+	/**
+	 * Get the GoCraft instance
+	 *
+	 * @return The GoCraft instance
+	 */
 	public static GoCraft getInstance() {
 		return instance;
 	}
@@ -191,12 +207,21 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
-	 * Get link to MapSwitcher plugin
+	 * Get the link to the MapSwitcher plugin
 	 *
-	 * @return MapInfo
+	 * @return MapSwitcherLink
 	 */
-	public MapInfo getMapInfo() {
-		return mapInfo;
+	public MapSwitcherLink getMapSwitcherLink() {
+		return mapSwitcherLink;
+	}
+
+	/**
+	 * Get the link to the GoPVP plugin
+	 *
+	 * @return GoPVPLink
+	 */
+	public GoPVPLink getGoPVPLink() {
+		return goPVPLink;
 	}
 
 	/**
@@ -206,15 +231,6 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public Economy getEconomy() {
 		return economy;
-	}
-
-	/**
-	 * Check if MapSwitcher is available
-	 *
-	 * @return true if MapSwitcher is available, otherwise false
-	 */
-	public boolean hasMapSwitcher() {
-		return hasMapSwitcher;
 	}
 	
 	public void testStorage() {

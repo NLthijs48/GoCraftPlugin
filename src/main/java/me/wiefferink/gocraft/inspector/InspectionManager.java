@@ -37,12 +37,12 @@ public class InspectionManager {
         loadInspectors();
 
         // Keep inspectors inside the map
-        if (plugin.hasMapSwitcher()) {
+        if (plugin.getMapSwitcherLink() != null) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     for (Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
-                        if (!plugin.getMapInfo().get().isInsideCurrentMap(inspection.getInspector())) {
+                        if (!plugin.getMapSwitcherLink().get().isInsideCurrentMap(inspection.getInspector())) {
                             plugin.message(inspection.getInspector(), "inspect-outsideMap");
                             inspection.teleportToInspected();
                         }
@@ -246,17 +246,14 @@ public class InspectionManager {
      * Register or deregister updater as needed
      */
     public void registerUpdater() {
-        GoCraft.debug("registerUpdater");
         if (currentInspections.isEmpty() && updaterRegistered) {
             HandlerList.unregisterAll(updateListener);
             updaterRegistered = false;
             updateListener = null;
-            GoCraft.debug("  disabled");
         } else if (!currentInspections.isEmpty() && !updaterRegistered) {
             updateListener = new UpdateListener(plugin);
             plugin.getServer().getPluginManager().registerEvents(updateListener, plugin);
             updaterRegistered = true;
-            GoCraft.debug("  enabled");
         }
     }
 

@@ -36,7 +36,7 @@ public class EnableRegionPotionEffects implements Listener {
 	 * Refresh all potion effects
 	 */
 	public void refreshPotionEffects() {
-		List<Player> playersFirst = new ArrayList<Player>();
+		List<Player> playersFirst = new ArrayList<>();
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			playersFirst.add(player);
 		}

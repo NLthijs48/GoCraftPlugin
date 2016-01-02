@@ -42,4 +42,13 @@ public abstract class InventoryAction {
     public boolean isActive() {
         return true;
     }
+
+    /**
+     * Indicates if this action should be updated
+     *
+     * @return true if the item should be updated, otherwise false
+     */
+    public boolean doUpdates() {
+        return true;
+    }
 }

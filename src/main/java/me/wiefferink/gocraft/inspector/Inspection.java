@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.inspector;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.actions.*;
+import me.wiefferink.gocraft.utils.Utils;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -137,24 +138,26 @@ public class Inspection {
      * Setup the inventory actions that will be active for this inspection
      */
     private void prepareInventoryActions() {
-        Set<InventoryAction> sourceActions = new HashSet<>();
-        sourceActions.add(new PotionAction(this));
+        List<InventoryAction> sourceActions = new ArrayList<>();
         sourceActions.add(new CompassAction(this));
         sourceActions.add(new ChestAction(this));
         sourceActions.add(new EnderchestAction(this));
-        sourceActions.add(new NCPAction(this));
         sourceActions.add(new KillAuraCheckAction(this));
+        sourceActions.add(new PotionAction(this));
+        sourceActions.add(new NCPAction(this));
         sourceActions.add(new ExitAction(this));
         // Determine layout
         actions = new HashMap<>();
         int currentSlot = 0;
         for (InventoryAction action : sourceActions) {
-            int toSlot = action.getItemSlot();
-            if (toSlot == -1) {
-                toSlot = currentSlot;
-                currentSlot++;
+            if (action.isActive()) {
+                int toSlot = action.getItemSlot();
+                if (toSlot == -1) {
+                    toSlot = currentSlot;
+                    currentSlot++;
+                }
+                actions.put(toSlot, action);
             }
-            actions.put(toSlot, action);
         }
     }
 
@@ -194,7 +197,10 @@ public class Inspection {
         // Setup inventory actions
         int currentSlot = 0;
         for (Integer slot : actions.keySet()) {
-            inventory.setItem(slot, actions.get(slot).getItem());
+            InventoryAction action = actions.get(slot);
+            if (action.doUpdates() || inventory.getItem(slot) == null) {
+                inventory.setItem(slot, action.getItem());
+            }
         }
     }
 
@@ -248,17 +254,17 @@ public class Inspection {
             currentScore++;
 
             // Display ping
-            int ping = getPing(getInspected());
-            if (ping >= 1000) {
-                ping = 999;
+            if (getInspected().isOnline()) {
+                int ping = getPing(getInspected());
+                if (ping >= 1000) {
+                    ping = 999;
+                }
+                objective.getScore(ChatColor.GRAY + "Ping: " + ChatColor.WHITE + ping + " ms").setScore(currentScore);
+                currentScore++;
             }
-            objective.getScore(ChatColor.GRAY + "Ping: " + ChatColor.WHITE + ping + " ms").setScore(currentScore);
-            currentScore++;
 
             // Display XP levels
-            objective.getScore(ChatColor.WHITE + " " + getInspected().getLevel()).setScore(currentScore);
-            currentScore++;
-            objective.getScore(ChatColor.GRAY + "XP levels:").setScore(currentScore);
+            objective.getScore(ChatColor.GRAY + "XP levels: " + ChatColor.RESET + getInspected().getLevel()).setScore(currentScore);
             currentScore++;
 
             // Display hours played
@@ -278,27 +284,43 @@ public class Inspection {
             objective.getScore(" \u20ac" + balance).setScore(currentScore);
             currentScore++;
             objective.getScore(ChatColor.GRAY + "Money:").setScore(currentScore);
-            //currentScore++;
+            currentScore++;
 
-			/* TODO do this conditionally
-            // Display kills
-			objective.getScore(ChatColor.GRAY + "Kills:").setScore(14);
-			objective.getScore(ChatColor.WHITE + " " + plugin.getFileManager().getKills(getInspected().getName())).setScore(13);
-			// Display deaths
-			objective.getScore(ChatColor.GRAY + "Deaths:").setScore(12);
-			objective.getScore(ChatColor.RESET + " " + plugin.getFileManager().getDeaths(getInspected().getName())).setScore(11);
-			// Display K/D ratio
-			objective.getScore(ChatColor.GRAY + "Kills/Deaths:").setScore(10);
-			double kd = ((double)plugin.getFileManager().getKills(getInspected().getName())) / ((double)plugin.getFileManager().getDeaths(getInspected().getName()));
-			if(!((Double)kd).isNaN() && !((Double)kd).isInfinite()) {
-				BigDecimal bigDecimal = new BigDecimal(kd);
-				bigDecimal = bigDecimal.setScale(3, RoundingMode.HALF_UP);
-				kd = bigDecimal.doubleValue();
-				objective.getScore(" " + kd).setScore(9);
-			} else {
-				objective.getScore(" -").setScore(9);
-			}
-			*/
+            // Display kills/deaths
+            if (plugin.getGoPVPLink() != null) {
+                // Display K/D ratio
+                double kd = ((double) plugin.getGoPVPLink().get().getFileManager().getKills(getInspected().getName())) / ((double) plugin.getGoPVPLink().get().getFileManager().getDeaths(getInspected().getName()));
+                if (!((Double) kd).isNaN() && !((Double) kd).isInfinite()) {
+                    bigDecimal = new BigDecimal(kd);
+                    bigDecimal = bigDecimal.setScale(3, RoundingMode.HALF_UP);
+                    kd = bigDecimal.doubleValue();
+                    objective.getScore(" " + kd).setScore(currentScore);
+                } else {
+                    objective.getScore(" -").setScore(currentScore);
+                }
+                currentScore++;
+                objective.getScore(ChatColor.GRAY + "Kills/Deaths:").setScore(currentScore);
+                currentScore++;
+                // Display deaths
+                objective.getScore(ChatColor.RESET + " " + plugin.getGoPVPLink().get().getFileManager().getDeaths(getInspected().getName())).setScore(currentScore);
+                currentScore++;
+                objective.getScore(ChatColor.GRAY + "Deaths:").setScore(currentScore);
+                currentScore++;
+                // Display kills
+                objective.getScore(ChatColor.WHITE + " " + plugin.getGoPVPLink().get().getFileManager().getKills(getInspected().getName())).setScore(currentScore);
+                currentScore++;
+                objective.getScore(ChatColor.GRAY + "Kills:").setScore(currentScore);
+                currentScore++;
+
+                // Display last seen
+                if (!getInspected().isOnline()) {
+                    GoCraft.debug("lastPlayed: " + getInspected().getLastPlayed());
+                    objective.getScore(" " + Utils.millisToHumanFormat(Calendar.getInstance().getTimeInMillis() - getInspected().getLastPlayed()) + " ago").setScore(currentScore);
+                    currentScore++;
+                    objective.getScore(ChatColor.GRAY + "Last seen:").setScore(currentScore);
+                    //currentScore++;
+                }
+            }
         } else {
             objective.setDisplayName(ChatColor.GREEN + "▬▬ " + ChatColor.BOLD + "General inspection" + ChatColor.RESET + ChatColor.GREEN + " ▬▬");
             objective.getScore("Inspecting").setScore(1);
@@ -338,8 +360,8 @@ public class Inspection {
      */
     public void endInspection() {
         // revert all actions
-        if (plugin.hasMapSwitcher()) {
-            inspector.teleport(plugin.getMapInfo().get().getCurrentSpawnLocation());
+        if (plugin.getMapSwitcherLink() != null) {
+            inspector.teleport(plugin.getMapSwitcherLink().get().getCurrentSpawnLocation());
         } else {
             World spawn = Bukkit.getWorld("world");
             if (spawn != null) {
