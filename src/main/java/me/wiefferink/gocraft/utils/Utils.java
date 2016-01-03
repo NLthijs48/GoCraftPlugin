@@ -355,4 +355,12 @@ public class Utils {
 		ApplicableRegionSet regions = manager.getApplicableRegions(player.getLocation());
 		return regions.testState(GoCraft.getInstance().getWorldGuard().wrapPlayer(player), DefaultFlag.PVP);
 	}
+
+	/**
+	 * @param item
+	 * @param name
+	 */
+	public static void setName(ItemStack item, String name) {
+
+	}
 }

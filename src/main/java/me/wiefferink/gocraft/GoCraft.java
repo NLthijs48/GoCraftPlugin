@@ -8,6 +8,7 @@ import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
 import me.wiefferink.gocraft.general.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
+import me.wiefferink.gocraft.integration.EssentialsLink;
 import me.wiefferink.gocraft.integration.GoPVPLink;
 import me.wiefferink.gocraft.integration.MapSwitcherLink;
 import me.wiefferink.gocraft.items.*;
@@ -44,25 +45,31 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 public final class GoCraft extends JavaPlugin {
+	// Constants
 	public static final String signLog = "signs";
 	public static final String generalFolderName = "GENERAL";
 	public static final String generalConfigName = "config.yml";
 	public static final String generalPluginDataFoldername = "plugins";
+	// Variables
 	private ArrayList<Listener> listeners;
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
 	private InspectionManager inspectionManager;
-	private WorldGuardPlugin worldGuard = null;
-	private BanManager banManager = null;
 	private boolean debug = false;
 	private String chatprefix = null;
 	private static GoCraft instance = null;
+	// Config files
 	private UTF8Config generalConfig = null;
 	private UTF8Config localStorage = null;
 	private File generalFolder = null;
+	// Optional dependencies
 	private MapSwitcherLink mapSwitcherLink = null;
 	private GoPVPLink goPVPLink = null;
+	private EssentialsLink essentialsLink = null;
+	// Mandatory dependencies
+	private WorldGuardPlugin worldGuard = null;
 	private Economy economy = null;
+	private BanManager banManager = null;
 
 	public void onEnable() {
 		reloadConfig();
@@ -93,6 +100,14 @@ public final class GoCraft extends JavaPlugin {
 			debug("  No MapSwitcher plugin found");
 		} else {
 			mapSwitcherLink = new MapSwitcherLink();
+		}
+
+		// Check if Essentials is present
+		Plugin es = getServer().getPluginManager().getPlugin("Essentials");
+		if (ms == null) {
+			debug("  No Essentails plugin found");
+		} else {
+			essentialsLink = new EssentialsLink();
 		}
 
 		// Check if Vault is present
@@ -222,6 +237,15 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public GoPVPLink getGoPVPLink() {
 		return goPVPLink;
+	}
+
+	/**
+	 * Get the link to the Essentials plugin
+	 *
+	 * @return EssentialsLink
+	 */
+	public EssentialsLink getEssentialsLink() {
+		return essentialsLink;
 	}
 
 	/**
