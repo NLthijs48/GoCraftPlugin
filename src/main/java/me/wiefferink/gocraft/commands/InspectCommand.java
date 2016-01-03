@@ -12,65 +12,82 @@ import org.bukkit.entity.Player;
 public class InspectCommand implements CommandExecutor {
 
 
-    public final String configLine = "enableInspecting";
-    private GoCraft plugin;
+	public final String configLine = "enableInspecting";
+	private GoCraft plugin;
 
-    public InspectCommand(GoCraft plugin) {
-        if (plugin.getConfig().getBoolean(configLine)) {
-            this.plugin = plugin;
-            plugin.getCommand("Inspect").setExecutor(this);
-        }
-    }
+	public InspectCommand(GoCraft plugin) {
+		if (plugin.getConfig().getBoolean(configLine)) {
+			this.plugin = plugin;
+			plugin.getCommand("Inspect").setExecutor(this);
+		}
+	}
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            plugin.message(sender, "inspect-playerOnly");
-            return true;
-        }
-        Player inspector = (Player) sender;
-        if (!sender.hasPermission("gocraft.staff")) {
-            plugin.message(inspector, "inspect-noPermission");
-            return true;
-        }
-        Inspection inspection = plugin.getInspectionManager().getInspectionByInspector(inspector);
-        if (inspection != null) {
-            // End current inspection
-            inspection.endInspection();
-            plugin.message(inspector, "inspect-ended", inspection.getInspected().getName());
-        } else {
-            if (args.length < 1) {
-                plugin.message(inspector, "inspect-help");
-                return true;
-            }
-        }
-        if (args.length >= 1) {
-            if (Utils.isInPvpArea(inspector) && inspector.getGameMode() == GameMode.SURVIVAL) {
-                plugin.message(inspector, "inspect-inNonPVP");
-                return true;
-            }
-            Player inspected = Utils.loadPlayer(args[0]);
-            if (inspected == null) { // Only possible if the player never played
-                plugin.message(inspector, "inspect-notAvailable", args[0]);
-                return true;
-            }
-            /* TODO enable
-            if (inspector.getUniqueId().equals(inspected.getUniqueId())) {
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (!(sender instanceof Player)) {
+			plugin.message(sender, "inspect-playerOnly");
+			return true;
+		}
+		Player inspector = (Player) sender;
+		if (!sender.hasPermission("gocraft.staff")) {
+			plugin.message(inspector, "inspect-noPermission");
+			return true;
+		}
+		Inspection inspection = plugin.getInspectionManager().getInspectionByInspector(inspector);
+		if (inspection != null && args.length == 0) {
+			// Stop existing inspection
+			inspection.endInspection();
+			if (inspection.hasInspected()) {
+				plugin.message(inspector, "inspect-ended", inspection.getInspected().getName());
+			} else {
+				plugin.message(inspector, "inspect-endedNoTarget");
+			}
+			return true;
+		}
+
+		Player newTarget = null;
+		if (args.length > 0) {
+			newTarget = Utils.loadPlayer(args[0]);
+			// Did not play before
+			if (newTarget == null) {
+				plugin.message(inspector, "inspect-notAvailable", args[0]);
+				return true;
+			} else if (plugin.getInspectionManager().getInspectionByInspector(newTarget) != null) {
+				// Trying to inspect an inspector
+				plugin.message(inspector, "inspect-inspection", newTarget.getName());
+				return true;
+			} else if (inspector.getUniqueId().equals(newTarget.getUniqueId())) {
 				plugin.message(inspector, "inspect-self");
 				return true;
 			}
-			*/
-            if (plugin.getInspectionManager().getInspectionByInspector(inspected) != null) {
-                plugin.message(inspector, "inspect-inspection", inspected.getName());
-                return true;
-            }
-            // Start inspection
-            inspection = plugin.getInspectionManager().setupInspection(inspector, inspected);
-            inspection.startInspection();
-            plugin.message(inspector, "inspect-started", inspected.getName());
-        }
-        return true;
-    }
+		}
+		if (inspection != null) {
+			// From existing to new target
+			inspection.switchToPlayer(newTarget);
+			if (newTarget != null) {
+				plugin.message(inspector, "inspect-started", newTarget.getName());
+			} else {
+				plugin.message(inspector, "inspect-startedNoTarget");
+			}
+			return true;
+		}
+
+		// New inspection
+		if (Utils.isInPvpArea(inspector) && inspector.getGameMode() == GameMode.SURVIVAL) {
+			plugin.message(inspector, "inspect-inNonPVP");
+			return true;
+		}
+
+		// Start inspection
+		inspection = plugin.getInspectionManager().setupInspection(inspector, newTarget);
+		inspection.startInspection();
+		if (newTarget != null) {
+			plugin.message(inspector, "inspect-started", newTarget.getName());
+		} else {
+			plugin.message(inspector, "inspect-startedNoTarget");
+		}
+		return true;
+	}
 
 }

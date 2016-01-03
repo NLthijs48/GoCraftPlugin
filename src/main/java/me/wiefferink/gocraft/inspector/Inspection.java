@@ -113,9 +113,7 @@ public class Inspection {
 		// Prepare and select actions
 		prepareInventoryActions();
 
-		updateInventory();
-		updateArmor();
-		updateScoreboard();
+		updateAll();
 		plugin.getInspectionManager().registerUpdater();
 	}
 
@@ -137,7 +135,7 @@ public class Inspection {
 	/**
 	 * Setup the inventory actions that will be active for this inspection
 	 */
-	private void prepareInventoryActions() {
+	public void prepareInventoryActions() {
 		List<InventoryAction> sourceActions = new ArrayList<>();
 		sourceActions.add(new CompassAction(this));
 		sourceActions.add(new ChestAction(this));

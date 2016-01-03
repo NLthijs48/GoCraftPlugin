@@ -44,21 +44,25 @@ public class InspectionManager {
                     for (Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
                         if (!plugin.getMapSwitcherLink().get().isInsideCurrentMap(inspection.getInspector())) {
                             plugin.message(inspection.getInspector(), "inspect-outsideMap");
-                            inspection.teleportToInspected();
+                            if (inspection.hasInspected()) {
+                                inspection.teleportToInspected();
+                            } else {
+                                inspection.getInspector().teleport(plugin.getMapSwitcherLink().get().getCurrentSpawnLocation());
+                            }
                         }
                     }
                 }
             }.runTaskTimer(plugin, 20, 20);
         }
-        // Update inventory fully every so often
+        // Update everything every so often
         new BukkitRunnable() {
             @Override
             public void run() {
                 for (Inspection inspection : GoCraft.getInstance().getInspectionManager().getCurrentInspections().values()) {
-                    inspection.updateInventory();
+                    inspection.updateAll();
                 }
             }
-        }.runTaskTimer(plugin, 100, 100);
+        }.runTaskTimer(plugin, 40, 40);
     }
 
     /**
@@ -78,6 +82,16 @@ public class InspectionManager {
      */
     public Inspection setupInspection(Player inspector, Player inspected) {
         return new Inspection(plugin, inspector, inspected);
+    }
+
+    /**
+     * Setup an inspection session without target
+     *
+     * @param inspector The player that is going to be inspecting
+     * @return The inspection session
+     */
+    public Inspection setupInspection(Player inspector) {
+        return new Inspection(plugin, inspector, null);
     }
 
     /**
@@ -142,13 +156,10 @@ public class InspectionManager {
         if (player == null) {
             return;
         }
-        Inspection inspection = getInspectionByInspector(player);
-        if (inspection != null) {
-            inspection.endInspection();
-        }
         for (Inspection inspect : getInspectionsByInspected(player)) {
             plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
-            inspect.endInspection();
+            inspect.prepareInventoryActions();
+            inspect.updateAll();
         }
     }
 

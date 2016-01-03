@@ -181,7 +181,7 @@ public class UpdateListener implements Listener {
         Player player = event.getPlayer();
         for (final Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
             // Check if the inspection has the same target as the event
-            if (inspection.getInspected().getUniqueId().equals(player.getUniqueId())) {
+            if (inspection.hasInspected() && inspection.getInspected().getUniqueId().equals(player.getUniqueId())) {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
