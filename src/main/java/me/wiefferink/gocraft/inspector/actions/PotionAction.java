@@ -47,4 +47,10 @@ public class PotionAction extends InventoryAction {
         }
         return result;
     }
+
+    @Override
+    public boolean doUpdates() {
+        return true;
+    }
+
 }

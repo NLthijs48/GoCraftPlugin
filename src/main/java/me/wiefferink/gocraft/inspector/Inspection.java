@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.inspector.actions.*;
 import me.wiefferink.gocraft.utils.Utils;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.*;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +32,9 @@ public class Inspection {
 	private GoCraft plugin;
 	private boolean scoreboardType;
 	private Map<Integer, InventoryAction> actions;
+	private Location location;
+	private boolean allowFlight;
+	private boolean isFlying;
 
 	public Inspection(GoCraft plugin, Player inspector, Player inspected) {
 		this.plugin = plugin;
@@ -399,28 +403,38 @@ public class Inspection {
 	 * Store the inspectors state to memory and disk
 	 */
 	public boolean saveInspectorState() {
+		String baseKey = inspector.getUniqueId().toString() + ".";
+		YamlConfiguration storage = plugin.getInspectionManager().getInspectorStorage();
+
 		// Save inventory to memory and disk
 		ItemStack[] inventory = inspector.getInventory().getContents();
 		inspectorInventory = new ItemStack[inventory.length];
 		for (int i = 0; i < inspectorInventory.length; i++) {
 			inspectorInventory[i] = inventory[i];
-			plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".inventory." + i, inspectorInventory[i]);
+			storage.set(baseKey + "inventory." + i, inspectorInventory[i]);
 		}
 		ItemStack[] armor = inspector.getInventory().getArmorContents();
 		inspectorArmor = new ItemStack[armor.length];
 		for (int i = 0; i < inspectorArmor.length; i++) {
 			inspectorArmor[i] = armor[i];
-			plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".armor." + i, inspectorArmor[i]);
+			storage.set(baseKey + "armor." + i, inspectorArmor[i]);
 		}
 		// Save active potion effects
 		potionEffects = inspector.getActivePotionEffects();
 		for (PotionEffect effect : potionEffects) {
-			plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".potioneffects." + effect.getType().getName(), effect.getDuration() + ":" + effect.getAmplifier() + ":" + effect.isAmbient() + ":" + effect.hasParticles());
+			storage.set(baseKey + "potioneffects." + effect.getType().getName(), effect.getDuration() + ":" + effect.getAmplifier() + ":" + effect.isAmbient() + ":" + effect.hasParticles());
 		}
 		// Save gamemode
 		gamemode = inspector.getGameMode();
-		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".gamemode", gamemode.toString());
-
+		storage.set(baseKey + "gamemode", gamemode.toString());
+		// Save current location
+		location = inspector.getLocation();
+		storage.set(baseKey + "location", Utils.locationToConfig(location, true));
+		// Save fly state
+		allowFlight = inspector.getAllowFlight();
+		isFlying = inspector.isFlying();
+		storage.set(baseKey + "allowFlight", allowFlight);
+		storage.set(baseKey + "isFlying", isFlying);
 
 		// Save config to disk
 		if (!plugin.getInspectionManager().saveInspectors()) {
@@ -444,7 +458,11 @@ public class Inspection {
 		inspector.addPotionEffects(potionEffects);
 		// Restore gamemode
 		inspector.setGameMode(gamemode);
-
+		// Restore fly state
+		inspector.setAllowFlight(allowFlight);
+		inspector.setFlying(isFlying);
+		// Restore location
+		inspector.teleport(location);
 
 		// Remove from disk storage because everything is restored from memory
 		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString(), null);

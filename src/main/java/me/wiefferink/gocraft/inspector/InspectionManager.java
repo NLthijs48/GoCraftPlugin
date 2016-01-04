@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.inspector;
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.storage.UTF8Config;
+import me.wiefferink.gocraft.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
@@ -172,8 +173,10 @@ public class InspectionManager {
         if (!getInspectorStorage().contains(player.getUniqueId().toString())) {
             return;
         }
+        String baseKey = player.getUniqueId().toString() + ".";
+
         // Restore gamemode
-        String gamemodeString = getInspectorStorage().getString(player.getUniqueId().toString() + ".gamemode");
+        String gamemodeString = getInspectorStorage().getString(baseKey + "gamemode");
         GameMode gamemode = GameMode.valueOf(gamemodeString);
         if (gamemode == null) {
             gamemode = GameMode.SURVIVAL;
@@ -182,14 +185,14 @@ public class InspectionManager {
         // Restore inventory
         ItemStack[] inventory = player.getInventory().getContents();
         for (int i = 0; i < inventory.length; i++) {
-            ItemStack item = getInspectorStorage().getItemStack(player.getUniqueId().toString() + ".inventory." + i);
+            ItemStack item = getInspectorStorage().getItemStack(baseKey + "inventory." + i);
             inventory[i] = item;
         }
         player.getInventory().setContents(inventory);
         // Restore armor
         ItemStack[] armor = player.getInventory().getArmorContents();
         for (int i = 0; i < armor.length; i++) {
-            ItemStack item = getInspectorStorage().getItemStack(player.getUniqueId().toString() + ".armor." + i);
+            ItemStack item = getInspectorStorage().getItemStack(baseKey + "armor." + i);
             armor[i] = item;
         }
         player.getInventory().setArmorContents(armor);
@@ -198,7 +201,7 @@ public class InspectionManager {
         for (PotionEffect effect : potionEffects) {
             player.removePotionEffect(effect.getType());
         }
-        ConfigurationSection section = getInspectorStorage().getConfigurationSection(player.getUniqueId().toString() + ".potioneffects");
+        ConfigurationSection section = getInspectorStorage().getConfigurationSection(baseKey + "potioneffects");
         if (section != null) {
             for (String effectString : section.getKeys(false)) {
                 PotionEffectType effect = PotionEffectType.getByName(effectString);
@@ -229,6 +232,13 @@ public class InspectionManager {
                 player.addPotionEffect(finalEffect, false);
             }
         }
+        // Restore fly state
+        player.setAllowFlight(getInspectorStorage().getBoolean(baseKey + "allowFlight"));
+        player.setFlying(getInspectorStorage().getBoolean(baseKey + "isFlying"));
+        // Restore location
+        player.teleport(Utils.configToLocation(getInspectorStorage().getConfigurationSection(baseKey + "location")));
+
+        // Clear storage
         getInspectorStorage().set(player.getUniqueId().toString(), null);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:vanish " + player.getName() + " off");
         saveInspectors();

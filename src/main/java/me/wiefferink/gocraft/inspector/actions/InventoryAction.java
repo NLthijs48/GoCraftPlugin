@@ -49,6 +49,6 @@ public abstract class InventoryAction {
      * @return true if the item should be updated, otherwise false
      */
     public boolean doUpdates() {
-        return true;
+        return false;
     }
 }
