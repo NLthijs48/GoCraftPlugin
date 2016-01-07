@@ -351,16 +351,11 @@ public class Utils {
 	 * @return true if the player is in a PVP area, otherwise false
 	 */
 	public static boolean isInPvpArea(Player player) {
-		RegionManager manager = GoCraft.getInstance().getWorldGuard().getRegionManager(Bukkit.getWorld("world"));
+		if (GoCraft.getInstance().getWorldGuardLink() == null) {
+			return false;
+		}
+		RegionManager manager = GoCraft.getInstance().getWorldGuardLink().get().getRegionManager(Bukkit.getWorld("world"));
 		ApplicableRegionSet regions = manager.getApplicableRegions(player.getLocation());
-		return regions.testState(GoCraft.getInstance().getWorldGuard().wrapPlayer(player), DefaultFlag.PVP);
-	}
-
-	/**
-	 * @param item
-	 * @param name
-	 */
-	public static void setName(ItemStack item, String name) {
-
+		return regions.testState(GoCraft.getInstance().getWorldGuardLink().get().wrapPlayer(player), DefaultFlag.PVP);
 	}
 }

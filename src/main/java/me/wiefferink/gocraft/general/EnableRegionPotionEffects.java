@@ -21,7 +21,7 @@ public class EnableRegionPotionEffects implements Listener {
 	private GoCraft plugin;
 	
 	public EnableRegionPotionEffects(GoCraft plugin) {
-		if(plugin.getConfig().getBoolean(configLine)) {
+		if (plugin.getConfig().getBoolean(configLine) && plugin.getWorldGuardLink() != null) {
 			this.plugin = plugin;
 			new BukkitRunnable() {
 				@Override
@@ -55,7 +55,7 @@ public class EnableRegionPotionEffects implements Listener {
 						}
 						Player player = players.get(current);
 						// Find applicable regions
-						RegionManager manager = plugin.getWorldGuard().getRegionManager(player.getWorld());
+						RegionManager manager = plugin.getWorldGuardLink().get().getRegionManager(player.getWorld());
 						if(manager == null) {
 							current++;	
 							continue;

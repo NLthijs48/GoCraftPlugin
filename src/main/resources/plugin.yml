@@ -1,8 +1,7 @@
 name: GoCraft
 main: me.wiefferink.gocraft.GoCraft
 version: 1.0
-depend: [WorldGuard]
-softdepend: [BanManager]
+softdepend: [BanManager, WorldGuard, Vault, MapSwitcher, Essentials]
 permissions:
   gocraft.*:
     description: Give access to all commands of GoCraft (only for Admins)

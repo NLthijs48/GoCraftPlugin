@@ -8,9 +8,7 @@ import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
 import me.wiefferink.gocraft.general.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
-import me.wiefferink.gocraft.integration.EssentialsLink;
-import me.wiefferink.gocraft.integration.GoPVPLink;
-import me.wiefferink.gocraft.integration.MapSwitcherLink;
+import me.wiefferink.gocraft.integration.*;
 import me.wiefferink.gocraft.items.*;
 import me.wiefferink.gocraft.logging.LogSigns;
 import me.wiefferink.gocraft.other.AboveNetherPrevention;
@@ -67,9 +65,9 @@ public final class GoCraft extends JavaPlugin {
 	private GoPVPLink goPVPLink = null;
 	private EssentialsLink essentialsLink = null;
 	// Mandatory dependencies
-	private WorldGuardPlugin worldGuard = null;
+	private WorldGuardLink worldGuardLink = null;
 	private Economy economy = null;
-	private BanManager banManager = null;
+	private BanManagerLink banManagerLink = null;
 
 	public void onEnable() {
 		reloadConfig();
@@ -83,7 +81,7 @@ public final class GoCraft extends JavaPlugin {
 		if (wg == null || !(wg instanceof WorldGuardPlugin)) {
 			getLogger().warning("Error: WorldGuard plugin is not present or has not loaded correctly");
 		} else {
-			this.worldGuard = ((WorldGuardPlugin) wg);
+			this.worldGuardLink = new WorldGuardLink();
 		}
 
 		// Check if BanManager is present
@@ -91,7 +89,7 @@ public final class GoCraft extends JavaPlugin {
 		if(bm == null || !(bm instanceof BanManager)) {
 			getLogger().warning("Error: BanManager plugin is not present or has not loaded correctly");
 		} else {
-			this.banManager = ((BanManager)bm);
+			banManagerLink = new BanManagerLink();
 		}
 
 		// Check if MapSwitcher is present
@@ -249,6 +247,25 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
+	 * Get the link to the BanManager plugin
+	 *
+	 * @return BanManagerLink
+	 */
+	public BanManagerLink getBanManagerLink() {
+		return banManagerLink;
+	}
+
+
+	/**
+	 * Get the link to the WorldGuard plugin
+	 *
+	 * @return WorldGuardLink
+	 */
+	public WorldGuardLink getWorldGuardLink() {
+		return this.worldGuardLink;
+	}
+
+	/**
 	 * Get the Economy running on the server
 	 *
 	 * @return The Economy provider
@@ -294,7 +311,9 @@ public final class GoCraft extends JavaPlugin {
 		this.listeners.add(new EnablePotionEffectsOnJoin(this));
 		this.listeners.add(new SpawnTeleport(this));
 		this.listeners.add(new EnableRegionPotionEffects(this));
-		this.listeners.add(new PunishmentNotifications(this));
+		if (getBanManagerLink() != null) {
+			this.listeners.add(new PunishmentNotifications(this));
+		}
 		// Items
 		this.listeners.add(new DisableItemDrops(this));
 		this.listeners.add(new DisableItemSpawning(this));
@@ -325,28 +344,12 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
-	 * Get the BanManager plugin
-	 * @return The BanManager plugin instance
-	 */
-	public WorldGuardPlugin getWorldGuard() {
-		return this.worldGuard;
-	}
-
-	/**
 	 * Get the InspectionManager
 	 *
 	 * @return The InspectionManager
 	 */
 	public InspectionManager getInspectionManager() {
 		return inspectionManager;
-	}
-
-	/**
-	 * Get the BanManager plugin
-	 * @return The BanManager plugin instance
-	 */
-	public BanManager getBanManager() {
-		return this.banManager;
 	}
 
 	public void showHelp(CommandSender target) {
