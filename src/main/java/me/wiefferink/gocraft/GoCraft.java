@@ -1,8 +1,6 @@
 package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import me.confuser.banmanager.BanManager;
 import me.wiefferink.gocraft.blocks.*;
 import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
@@ -78,7 +76,7 @@ public final class GoCraft extends JavaPlugin {
 
 		// Check if WorldGuard is present
 		Plugin wg = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (wg == null || !(wg instanceof WorldGuardPlugin)) {
+		if (wg == null) {
 			getLogger().warning("Error: WorldGuard plugin is not present or has not loaded correctly");
 		} else {
 			this.worldGuardLink = new WorldGuardLink();
@@ -86,7 +84,7 @@ public final class GoCraft extends JavaPlugin {
 
 		// Check if BanManager is present
 		Plugin bm = getServer().getPluginManager().getPlugin("BanManager");
-		if(bm == null || !(bm instanceof BanManager)) {
+		if (bm == null) {
 			getLogger().warning("Error: BanManager plugin is not present or has not loaded correctly");
 		} else {
 			banManagerLink = new BanManagerLink();
