@@ -47,30 +47,31 @@ public class InventoryListener implements Listener {
     // Check for leftclicking a player, then switch inspection to that one
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        //GoPVP.debug("PlayerInteractEvent: action=" + event.getAction() + ", eventName=" + event.getEventName());
         Player player = event.getPlayer();
         if (manager.isInspecting(player)) {
-            BlockIterator blockIterator = new BlockIterator(player, 10);
+            BlockIterator blockIterator = new BlockIterator(player, 20);
             List<Block> blocks = new ArrayList<>();
             while (blockIterator.hasNext()) {
-                blocks.add(blockIterator.next());
-            }
-            boolean stop = false;
-            for (Player checkPlayer : Bukkit.getOnlinePlayers()) {
-                if (stop) {
-                    break;
+                Block block = blockIterator.next();
+                if (!block.getType().isSolid()) {
+                    blocks.add(blockIterator.next());
                 }
+            }
+            Player closest = null;
+            for (Player checkPlayer : Bukkit.getOnlinePlayers()) {
                 if (checkPlayer.equals(player)) {
                     continue;
                 }
-                if (player.getWorld().getName().equals(checkPlayer.getWorld().getName()) && player.getLocation().distanceSquared(checkPlayer.getLocation()) < 64) {
+                if (player.getWorld().getName().equals(checkPlayer.getWorld().getName()) && player.getLocation().distanceSquared(checkPlayer.getLocation()) < 100) {
                     for (Block block : blocks) {
                         if (block.getLocation().distanceSquared(checkPlayer.getLocation()) < 0.7 || block.getLocation().distanceSquared(checkPlayer.getEyeLocation()) < 0.7) {
-                            manager.getInspectionByInspector(player).switchToPlayer(checkPlayer);
-                            stop = true;
+                            closest = checkPlayer;
                         }
                     }
                 }
+            }
+            if (closest != null) {
+                manager.getInspectionByInspector(player).switchToPlayer(closest);
             }
         }
     }
