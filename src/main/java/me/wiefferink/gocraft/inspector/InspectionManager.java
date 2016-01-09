@@ -32,6 +32,7 @@ public class InspectionManager {
 
     public InspectionManager(final GoCraft plugin) {
         this.plugin = plugin;
+        plugin.setInspectionManager(this);
         inspectorsFile = new File(plugin.getDataFolder(), "inspectors.yml");
         currentInspections = new HashMap<>();
         setupListeners();
@@ -64,13 +65,18 @@ public class InspectionManager {
                 }
             }
         }.runTaskTimer(plugin, 40, 40);
+
+        // Deal with players that are already in the server (for example with reloads)
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            handlePlayerJoined(player, true);
+        }
     }
 
     /**
      * Setup listeners
      */
     public void setupListeners() {
-        plugin.getServer().getPluginManager().registerEvents(new QuitJoinListener(this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new QuitJoinListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new InventoryListener(this), plugin);
     }
 
@@ -159,8 +165,50 @@ public class InspectionManager {
         }
         for (Inspection inspect : getInspectionsByInspected(player)) {
             plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
-            inspect.prepareInventoryActions();
-            inspect.updateAll();
+            // Swap to inspection without target
+            inspect.switchToPlayer(null);
+        }
+    }
+
+    /**
+     * Handle a player joining the server
+     *
+     * @param player The player that joined the server
+     */
+    public void handlePlayerJoined(final Player player, boolean noInspectJoin) {
+        // Restore stored inspection state
+        final Inspection inspection = restoreInspection(player);
+        if (inspection != null) {
+            inspection.startInspection(true);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (inspection.hasInspected()) {
+                        plugin.message(player, "inspect-restore", inspection.getInspected().getName());
+                    } else {
+                        plugin.message(player, "inspect-restoreNoTarget");
+                    }
+                }
+            }.runTaskLater(plugin, 10L);
+            return;
+        }
+        // Join in inspect
+        if (!noInspectJoin
+                && player.hasPermission("gocraft.staff")
+                && plugin.getConfig().getBoolean("staffJoinsInInspect")) {
+            final Inspection finalInspection = setupInspection(player);
+            final boolean inPVP = Utils.isInPvpArea(player);
+            finalInspection.startInspection();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    plugin.message(player, "inspect-joinEnable");
+                    if (inPVP) {
+                        plugin.message(player, "inspect-joinEnableInPVP");
+                    }
+                }
+            }.runTaskLater(plugin, 10L);
+
         }
     }
 
@@ -168,12 +216,27 @@ public class InspectionManager {
      * Restore saved old inventory if that exists (could happen when server crashed while spectating)
      *
      * @param player Player to (possibly) restore an old inventory for
+     * @return The Inspection object created from the stored copy if there is one, otherwise null
      */
-    public void restoreOldInventory(final Player player) {
+    public Inspection restoreInspection(Player player) {
         if (!getInspectorStorage().contains(player.getUniqueId().toString())) {
-            return;
+            return null;
         }
         String baseKey = player.getUniqueId().toString() + ".";
+
+        String target = getInspectorStorage().getString(baseKey + "target");
+        UUID targetUUID = null;
+        Player inspected = null;
+        if (target != null) {
+            try {
+                targetUUID = UUID.fromString(target);
+            } catch (IllegalArgumentException ignore) {
+            }
+        }
+        if (targetUUID != null) {
+            inspected = Utils.loadPlayer(targetUUID);
+        }
+        Inspection result = new Inspection(plugin, player, inspected);
 
         // Restore gamemode
         String gamemodeString = getInspectorStorage().getString(baseKey + "gamemode");
@@ -181,32 +244,28 @@ public class InspectionManager {
         if (gamemode == null) {
             gamemode = GameMode.SURVIVAL;
         }
-        player.setGameMode(gamemode);
+        result.gamemode = gamemode;
         // Restore inventory
         ItemStack[] inventory = player.getInventory().getContents();
         for (int i = 0; i < inventory.length; i++) {
             ItemStack item = getInspectorStorage().getItemStack(baseKey + "inventory." + i);
             inventory[i] = item;
         }
-        player.getInventory().setContents(inventory);
+        result.inspectorInventory = inventory;
         // Restore armor
         ItemStack[] armor = player.getInventory().getArmorContents();
         for (int i = 0; i < armor.length; i++) {
             ItemStack item = getInspectorStorage().getItemStack(baseKey + "armor." + i);
             armor[i] = item;
         }
-        player.getInventory().setArmorContents(armor);
+        result.inspectorArmor = armor;
         // Restore potion effects
-        Collection<PotionEffect> potionEffects = player.getActivePotionEffects();
-        for (PotionEffect effect : potionEffects) {
-            player.removePotionEffect(effect.getType());
-        }
         ConfigurationSection section = getInspectorStorage().getConfigurationSection(baseKey + "potioneffects");
+        Collection<PotionEffect> effects = new HashSet<>();
         if (section != null) {
             for (String effectString : section.getKeys(false)) {
                 PotionEffectType effect = PotionEffectType.getByName(effectString);
                 String optionsString = section.getString(effectString);
-                GoCraft.debug("potion restore: " + effectString + ", options: " + optionsString);
                 if (optionsString == null || effect == null) {
                     GoCraft.debug("  no effect found");
                     continue;
@@ -228,29 +287,17 @@ public class InspectionManager {
                 ambient = "true".equalsIgnoreCase(options[2]);
                 particles = "true".equalsIgnoreCase(options[3]);
                 GoCraft.debug("duration=" + duration + ", amplifier=" + amplifier + ", ambient=" + ambient + ", particles=" + particles);
-                final PotionEffect finalEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
-                player.addPotionEffect(finalEffect, false);
+                PotionEffect finalEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
+                effects.add(finalEffect);
             }
         }
+        result.potionEffects = effects;
         // Restore fly state
-        player.setAllowFlight(getInspectorStorage().getBoolean(baseKey + "allowFlight"));
-        player.setFlying(getInspectorStorage().getBoolean(baseKey + "isFlying"));
+        result.allowFlight = getInspectorStorage().getBoolean(baseKey + "allowFlight");
+        result.isFlying = getInspectorStorage().getBoolean(baseKey + "isFlying");
         // Restore location
-        player.teleport(Utils.configToLocation(getInspectorStorage().getConfigurationSection(baseKey + "location")));
-
-        // Clear storage
-        getInspectorStorage().set(player.getUniqueId().toString(), null);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:vanish " + player.getName() + " off");
-        saveInspectors();
-    }
-
-    /**
-     * Handle a server stop, nicely close current inspections
-     */
-    public void handleServerStop() {
-        for (Inspection inspection : currentInspections.values()) {
-            inspection.endInspection();
-        }
+        result.location = Utils.configToLocation(getInspectorStorage().getConfigurationSection(baseKey + "location"));
+        return result;
     }
 
     /**

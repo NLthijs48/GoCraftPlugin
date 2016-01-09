@@ -58,3 +58,6 @@ enableReloadCommand: true
 ########## OTHER
 enableExpiredPlotsRestoration: false
 enableAboveNetherPrevention: false
+
+########## INSPECT
+staffJoinsInInspect: false

@@ -34,7 +34,7 @@ public class ExitAction extends InventoryAction {
 
     @Override
     public void handleClick() {
-        inspection.getInspector().performCommand("gocraft:inspect");
+        inspection.endInspection();
         final Player finalInspector = inspection.getInspector();
         new BukkitRunnable() {
             @Override

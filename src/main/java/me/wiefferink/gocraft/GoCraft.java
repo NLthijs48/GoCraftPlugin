@@ -151,7 +151,6 @@ public final class GoCraft extends JavaPlugin {
 	}
 	
 	public void onDisable() {
-		inspectionManager.handleServerStop();
 		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName());
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
@@ -362,6 +361,15 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public InspectionManager getInspectionManager() {
 		return inspectionManager;
+	}
+
+	/**
+	 * Set the inspection manager, used to get startup behavior correct
+	 *
+	 * @param manager The manager to set
+	 */
+	public void setInspectionManager(InspectionManager manager) {
+		inspectionManager = manager;
 	}
 
 	public void showHelp(CommandSender target) {

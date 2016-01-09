@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.inspector;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,12 +55,12 @@ public class InventoryListener implements Listener {
             while (blockIterator.hasNext()) {
                 Block block = blockIterator.next();
                 if (!block.getType().isSolid()) {
-                    blocks.add(blockIterator.next());
+                    blocks.add(block);
                 }
             }
             Player closest = null;
             for (Player checkPlayer : Bukkit.getOnlinePlayers()) {
-                if (checkPlayer.equals(player)) {
+                if (checkPlayer.equals(player) || checkPlayer.getGameMode() == GameMode.SPECTATOR || manager.getInspectionByInspector(checkPlayer) != null) {
                     continue;
                 }
                 if (player.getWorld().getName().equals(checkPlayer.getWorld().getName()) && player.getLocation().distanceSquared(checkPlayer.getLocation()) < 100) {

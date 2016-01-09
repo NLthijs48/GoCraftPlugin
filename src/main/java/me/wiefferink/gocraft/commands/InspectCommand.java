@@ -64,7 +64,7 @@ public class InspectCommand implements CommandExecutor {
 		}
 		if (inspection != null) {
 			// From existing to new target
-			inspection.switchToPlayer(newTarget);
+			inspection.switchToPlayer(newTarget, true);
 			if (newTarget != null) {
 				plugin.message(inspector, "inspect-started", newTarget.getName());
 			} else {

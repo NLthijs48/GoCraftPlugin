@@ -25,16 +25,16 @@ public class Inspection {
 	private Player inspector;
 	private Player inspected;
 	// Things to restore later
-	private ItemStack[] inspectorInventory;
-	private ItemStack[] inspectorArmor;
-	private Collection<PotionEffect> potionEffects;
-	private GameMode gamemode;
-	private GoCraft plugin;
-	private boolean scoreboardType;
-	private Map<Integer, InventoryAction> actions;
-	private Location location;
-	private boolean allowFlight;
-	private boolean isFlying;
+	public ItemStack[] inspectorInventory;
+	public ItemStack[] inspectorArmor;
+	public Collection<PotionEffect> potionEffects;
+	public GameMode gamemode;
+	public GoCraft plugin;
+	public boolean scoreboardType;
+	public Map<Integer, InventoryAction> actions;
+	public Location location;
+	public boolean allowFlight;
+	public boolean isFlying;
 
 	public Inspection(GoCraft plugin, Player inspector, Player inspected) {
 		this.plugin = plugin;
@@ -96,10 +96,11 @@ public class Inspection {
 
 	/**
 	 * Start the inspection
+	 * @param restore true if this inspection is restored from disk, otherwise false
 	 */
-	public void startInspection() {
+	public void startInspection(boolean restore) {
 		plugin.getInspectionManager().addInspection(this);
-		if (!saveInspectorState()) {
+		if (!restore && !saveInspectorState()) {
 			// Ending inspection, because this is before most thing apply we dont have to restore much
 			plugin.getInspectionManager().removeInspection(this);
 			return;
@@ -127,18 +128,47 @@ public class Inspection {
 	}
 
 	/**
+	 * Start the inspection
+	 */
+	public void startInspection() {
+		startInspection(false);
+	}
+
+	/**
 	 * Switch to a new inspected player
 	 *
 	 * @param newInspected New player
+	 * @param noMessage true if there should not be a message to the player, othwerwise false
 	 */
-	public void switchToPlayer(Player newInspected) {
+	public void switchToPlayer(Player newInspected, boolean noMessage) {
 		String oldInspected = "nobody";
 		if (hasInspected()) {
 			oldInspected = inspected.getName();
 		}
 		inspected = newInspected;
 		updateAll();
-		plugin.message(inspector, "inspect-switched", oldInspected, inspected.getName());
+		if (!noMessage) {
+			plugin.message(inspector, "inspect-switched", oldInspected, inspected.getName());
+		}
+		// Save new target to disk
+		String target = inspected.getUniqueId().toString();
+		String targetName = inspected.getName();
+		if (inspected != null) {
+			target = inspected.getUniqueId().toString();
+			targetName = inspected.getName();
+		}
+		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".target", target);
+		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".targetName", targetName);
+		plugin.getInspectionManager().saveInspectors();
+	}
+
+	/**
+	 * Switch to a new inspected player
+	 *
+	 * @param newInspected New player
+	 */
+	public void switchToPlayer(Player newInspected) {
+		switchToPlayer(newInspected, false);
 	}
 
 	/**
@@ -339,7 +369,8 @@ public class Inspection {
 			}
 		} else {
 			objective.setDisplayName(ChatColor.GREEN + "▬▬ " + ChatColor.BOLD + "General inspection" + ChatColor.RESET + ChatColor.GREEN + " ▬▬");
-			objective.getScore("Inspecting").setScore(1);
+			objective.getScore("Nothing to").setScore(1);
+			objective.getScore("see here...").setScore(0);
 		}
 		getInspector().setScoreboard(scoreboard);
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -376,16 +407,6 @@ public class Inspection {
 	 */
 	public void endInspection() {
 		// revert all actions
-		if (plugin.getMapSwitcherLink() != null) {
-			inspector.teleport(plugin.getMapSwitcherLink().get().getCurrentSpawnLocation());
-		} else {
-			World spawn = Bukkit.getWorld("world");
-			if (spawn != null) {
-				inspector.teleport(spawn.getSpawnLocation());
-			} else {
-				inspector.teleport(inspector.getWorld().getSpawnLocation());
-			}
-		}
 		restoreInspectorState();
 		plugin.getInspectionManager().removeInspection(this);
 		if (plugin.getEssentialsLink() != null) {
@@ -415,6 +436,12 @@ public class Inspection {
 	public boolean saveInspectorState() {
 		String baseKey = inspector.getUniqueId().toString() + ".";
 		YamlConfiguration storage = plugin.getInspectionManager().getInspectorStorage();
+
+		// Save target
+		if (inspected != null) {
+			storage.set(baseKey + "target", inspected.getUniqueId());
+			storage.set(baseKey + "targetName", inspected.getName());
+		}
 
 		// Save inventory to memory and disk
 		ItemStack[] inventory = inspector.getInventory().getContents();
