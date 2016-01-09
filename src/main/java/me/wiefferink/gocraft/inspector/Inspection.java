@@ -104,8 +104,13 @@ public class Inspection {
 			plugin.getInspectionManager().removeInspection(this);
 			return;
 		}
-		// Turn on vanish
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:vanish " + getInspector().getName() + " on");
+		// Turn on vanish and hide on DynMap
+		if (plugin.getEssentialsLink() != null) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:vanish " + getInspector().getName() + " on");
+		}
+		if (plugin.dynMapInstalled()) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dynmap:dynmap hide " + getInspector().getName());
+		}
 		// Remove current potion effects (could be annoying, will be restoread after)
 		for (PotionEffect effect : inspector.getActivePotionEffects()) {
 			inspector.removePotionEffect(effect.getType());
@@ -383,7 +388,12 @@ public class Inspection {
 		}
 		restoreInspectorState();
 		plugin.getInspectionManager().removeInspection(this);
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:vanish " + getInspector().getName() + " off");
+		if (plugin.getEssentialsLink() != null) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:vanish " + getInspector().getName() + " off");
+		}
+		if (plugin.dynMapInstalled()) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dynmap:dynmap show " + getInspector().getName());
+		}
 		plugin.getInspectionManager().registerUpdater();
 	}
 

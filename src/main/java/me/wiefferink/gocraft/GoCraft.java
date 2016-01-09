@@ -58,14 +58,15 @@ public final class GoCraft extends JavaPlugin {
 	private UTF8Config generalConfig = null;
 	private UTF8Config localStorage = null;
 	private File generalFolder = null;
-	// Optional dependencies
+	// Dependencies
+	private Economy economy = null;
 	private MapSwitcherLink mapSwitcherLink = null;
 	private GoPVPLink goPVPLink = null;
 	private EssentialsLink essentialsLink = null;
-	// Mandatory dependencies
 	private WorldGuardLink worldGuardLink = null;
-	private Economy economy = null;
 	private BanManagerLink banManagerLink = null;
+
+	private boolean dynMapInstalled = false;
 
 	public void onEnable() {
 		reloadConfig();
@@ -77,7 +78,7 @@ public final class GoCraft extends JavaPlugin {
 		// Check if WorldGuard is present
 		Plugin wg = getServer().getPluginManager().getPlugin("WorldGuard");
 		if (wg == null) {
-			getLogger().warning("Error: WorldGuard plugin is not present or has not loaded correctly");
+			debug("  No WorldGuard plugin found");
 		} else {
 			this.worldGuardLink = new WorldGuardLink();
 		}
@@ -85,7 +86,7 @@ public final class GoCraft extends JavaPlugin {
 		// Check if BanManager is present
 		Plugin bm = getServer().getPluginManager().getPlugin("BanManager");
 		if (bm == null) {
-			getLogger().warning("Error: BanManager plugin is not present or has not loaded correctly");
+			debug("  No BanManager plugin found");
 		} else {
 			banManagerLink = new BanManagerLink();
 		}
@@ -113,6 +114,10 @@ public final class GoCraft extends JavaPlugin {
 		} else {
 			getLogger().info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
 		}
+
+		// Check if DynMap is present
+		Plugin dm = getServer().getPluginManager().getPlugin("dynmap");
+		dynMapInstalled = dm != null;
 
 		// Check if GoPVP is present
 		new BukkitRunnable() {
@@ -261,6 +266,15 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public WorldGuardLink getWorldGuardLink() {
 		return this.worldGuardLink;
+	}
+
+	/**
+	 * Check if DynMap is installed
+	 *
+	 * @return true if DynMap is installed, otherwise false
+	 */
+	public boolean dynMapInstalled() {
+		return dynMapInstalled;
 	}
 
 	/**
