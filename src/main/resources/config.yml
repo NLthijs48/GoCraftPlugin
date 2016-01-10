@@ -26,6 +26,7 @@ enableRegionPotionEffects: false
 regionPotionEffects:
 spawnTeleport: false
 enableInspecting: true
+disableStaffJoinLeaveMessages: true
 
 ########## ITEMS
 disableItemDrops: false
