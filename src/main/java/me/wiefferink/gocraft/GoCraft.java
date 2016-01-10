@@ -326,6 +326,7 @@ public final class GoCraft extends JavaPlugin {
 			this.listeners.add(new PunishmentNotifications(this));
 		}
 		this.listeners.add(new DisableStaffJoinLeaveMessages(this));
+		this.listeners.add(new OpenenderLimiter(this));
 		// Items
 		this.listeners.add(new DisableItemDrops(this));
 		this.listeners.add(new DisableItemSpawning(this));
