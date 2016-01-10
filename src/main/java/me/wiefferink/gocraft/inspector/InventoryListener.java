@@ -71,8 +71,9 @@ public class InventoryListener implements Listener {
                     }
                 }
             }
-            if (closest != null) {
-                manager.getInspectionByInspector(player).switchToPlayer(closest);
+            Inspection inspection = manager.getInspectionByInspector(player);
+            if (closest != null && !inspection.getInspected().equals(closest)) {
+                inspection.switchToPlayer(closest);
             }
         }
     }
