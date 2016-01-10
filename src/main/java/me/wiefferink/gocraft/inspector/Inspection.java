@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -146,7 +147,6 @@ public class Inspection {
 			oldInspected = inspected.getName();
 		}
 		inspected = newInspected;
-		updateAll();
 		if (!noMessage) {
 			plugin.message(inspector, "inspect-switched", oldInspected, inspected.getName());
 		}
@@ -156,10 +156,17 @@ public class Inspection {
 		if (inspected != null) {
 			target = inspected.getUniqueId().toString();
 			targetName = inspected.getName();
+			teleportToInspected();
 		}
 		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".target", target);
 		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".targetName", targetName);
 		plugin.getInspectionManager().saveInspectors();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				updateAll();
+			}
+		}.runTask(plugin);
 	}
 
 	/**
