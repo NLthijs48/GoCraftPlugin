@@ -195,7 +195,8 @@ public class InspectionManager {
         // Join in inspect
         if (!noInspectJoin
                 && player.hasPermission("gocraft.staff")
-                && plugin.getConfig().getBoolean("staffJoinsInInspect")) {
+                && plugin.getConfig().getBoolean("staffJoinsInInspect")
+                && player.hasPermission("gocraft.joinInInspect")) {
             final Inspection finalInspection = setupInspection(player);
             final boolean inPVP = Utils.isInPvpArea(player);
             finalInspection.startInspection();

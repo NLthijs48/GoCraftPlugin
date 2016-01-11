@@ -44,6 +44,9 @@ permissions:
   gocraft.reload:
     description: Reload the plugin data
     default: op
+  gocraft.joinInInspect:
+    description: Join in inspect mode
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'

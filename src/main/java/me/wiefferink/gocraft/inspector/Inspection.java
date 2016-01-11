@@ -126,6 +126,14 @@ public class Inspection {
 
 		updateAll();
 		plugin.getInspectionManager().registerUpdater();
+		// Fix for glitch in Factions, TODO think about proper solution
+		final Player finalPlayer = inspector;
+		new BukkitRunnable() {
+			public void run() {
+				finalPlayer.setAllowFlight(true);
+				finalPlayer.setFlying(true);
+			}
+		}.runTaskLater(plugin, 1L);
 	}
 
 	/**
@@ -147,6 +155,7 @@ public class Inspection {
 			oldInspected = inspected.getName();
 		}
 		inspected = newInspected;
+		prepareInventoryActions();
 		if (!noMessage) {
 			plugin.message(inspector, "inspect-switched", oldInspected, inspected.getName());
 		}
