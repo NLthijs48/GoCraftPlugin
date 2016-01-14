@@ -225,6 +225,7 @@ public class InspectionManager {
         }
         String baseKey = player.getUniqueId().toString() + ".";
 
+        // Restore target
         String target = getInspectorStorage().getString(baseKey + "target");
         UUID targetUUID = null;
         Player inspected = null;
@@ -238,6 +239,18 @@ public class InspectionManager {
             inspected = Utils.loadPlayer(targetUUID);
         }
         Inspection result = new Inspection(plugin, player, inspected);
+
+        // Restore health and food
+        double health = getInspectorStorage().getDouble(baseKey + "health");
+        if (health == 0) {
+            health = player.getMaxHealth();
+        }
+        result.health = health;
+        int food = getInspectorStorage().getInt(baseKey + "food");
+        if (food == 0) {
+            food = 20;
+        }
+        result.food = food;
 
         // Restore gamemode
         String gamemodeString = getInspectorStorage().getString(baseKey + "gamemode");

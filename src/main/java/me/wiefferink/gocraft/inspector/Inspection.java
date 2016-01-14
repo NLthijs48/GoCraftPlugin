@@ -36,6 +36,8 @@ public class Inspection {
 	public Location location;
 	public boolean allowFlight;
 	public boolean isFlying;
+	public double health;
+	public int food;
 
 	public Inspection(GoCraft plugin, Player inspector, Player inspected) {
 		this.plugin = plugin;
@@ -419,6 +421,13 @@ public class Inspection {
 	}
 
 	/**
+	 * Teleport the inspector to spawn
+	 */
+	public void teleportToSpawn() {
+		inspector.teleport(inspector.getWorld().getSpawnLocation());
+	}
+
+	/**
 	 * End this inspection
 	 */
 	public void endInspection() {
@@ -458,6 +467,11 @@ public class Inspection {
 			storage.set(baseKey + "target", inspected.getUniqueId());
 			storage.set(baseKey + "targetName", inspected.getName());
 		}
+		// Save health and food
+		health = inspector.getHealth();
+		storage.set(baseKey + "health", health);
+		food = inspector.getFoodLevel();
+		storage.set(baseKey + "food", food);
 
 		// Save inventory to memory and disk
 		ItemStack[] inventory = inspector.getInventory().getContents();
@@ -501,6 +515,9 @@ public class Inspection {
 	 * Restore saved inspector state from the items in memory
 	 */
 	public void restoreInspectorState() {
+		// Restore health and food
+		inspector.setHealth(health);
+		inspector.setFoodLevel(food);
 		// Restore inventory
 		inspector.getInventory().setContents(inspectorInventory);
 		inspector.getInventory().setArmorContents(inspectorArmor);

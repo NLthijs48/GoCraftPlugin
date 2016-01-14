@@ -33,6 +33,15 @@ public class UpdateListener implements Listener {
             for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
                 inspection.updateScoreboard();
             }
+            // Prevent damage to inspector
+            Inspection inspection = plugin.getInspectionManager().getInspectionByInspector(player);
+            if (inspection != null) {
+                event.setCancelled(true);
+                inspection.teleportToSpawn();
+                player.setHealth(player.getMaxHealth());
+                player.setFoodLevel(20);
+                plugin.message(player, "inspect-damage");
+            }
         }
     }
 
