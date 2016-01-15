@@ -20,6 +20,7 @@ import java.util.Set;
 
 public class UpdateListener implements Listener {
     private final GoCraft plugin;
+    public static final boolean running = false;
 
     public UpdateListener(GoCraft plugin) {
         this.plugin = plugin;

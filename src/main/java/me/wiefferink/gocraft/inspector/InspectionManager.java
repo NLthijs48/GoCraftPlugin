@@ -29,6 +29,7 @@ public class InspectionManager {
     private File inspectorsFile;
     private boolean updaterRegistered = false;
     private UpdateListener updateListener;
+    private BukkitRunnable updateTask;
 
     public InspectionManager(final GoCraft plugin) {
         this.plugin = plugin;
@@ -339,10 +340,21 @@ public class InspectionManager {
             HandlerList.unregisterAll(updateListener);
             updaterRegistered = false;
             updateListener = null;
+            updateTask.cancel();
+            updateTask = null;
         } else if (!currentInspections.isEmpty() && !updaterRegistered) {
             updateListener = new UpdateListener(plugin);
             plugin.getServer().getPluginManager().registerEvents(updateListener, plugin);
             updaterRegistered = true;
+            updateTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for (Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
+                        inspection.updateAll();
+                    }
+                }
+            };
+            updateTask.runTaskTimer(plugin, 40L, 40L);
         }
     }
 
