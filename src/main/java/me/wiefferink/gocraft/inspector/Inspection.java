@@ -104,7 +104,7 @@ public class Inspection {
 	public void startInspection(boolean restore) {
 		plugin.getInspectionManager().addInspection(this);
 		if (!restore && !saveInspectorState()) {
-			// Ending inspection, because this is before most thing apply we dont have to restore much
+			// Ending inspection, because this is before most thingS apply we dont have to restore much
 			plugin.getInspectionManager().removeInspection(this);
 			return;
 		}
@@ -374,7 +374,7 @@ public class Inspection {
 				// Display last seen
 				if (!getInspected().isOnline()) {
 					long lastPlayed;
-					if (plugin.getEssentialsLink() != null) {
+					if (plugin.getEssentialsLink() != null && plugin.getEssentialsLink().get().getUser(getInspected().getUniqueId()) != null) {
 						lastPlayed = plugin.getEssentialsLink().get().getUser(getInspected().getUniqueId()).getLastLogout();
 					} else {
 						lastPlayed = getInspected().getLastPlayed();
