@@ -159,11 +159,15 @@ public class Inspection {
 		inspected = newInspected;
 		prepareInventoryActions();
 		if (!noMessage) {
-			plugin.message(inspector, "inspect-switched", oldInspected, inspected.getName());
+			String name = "nobody";
+			if (inspected != null) {
+				name = inspected.getName();
+			}
+			plugin.message(inspector, "inspect-switched", oldInspected, name);
 		}
 		// Save new target to disk
-		String target = inspected.getUniqueId().toString();
-		String targetName = inspected.getName();
+		String target = null;
+		String targetName = null;
 		if (inspected != null) {
 			target = inspected.getUniqueId().toString();
 			targetName = inspected.getName();

@@ -159,15 +159,22 @@ public class InspectionManager {
      *
      * @param player The player that is gone now
      */
-    public void handlePlayerStopped(Player player) {
+    public void handlePlayerStopped(final Player player) {
         if (player == null) {
             return;
         }
-        for (Inspection inspect : getInspectionsByInspected(player)) {
-            plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
-            // Swap to inspection without target
-            inspect.switchToPlayer(null);
-        }
+        // Player leaves next tick
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Inspection inspect : getInspectionsByInspected(player)) {
+                    plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
+                    // Swap to offline inspection
+                    inspect.prepareInventoryActions();
+                    inspect.updateAll();
+                }
+            }
+        }.runTaskLater(plugin, 1L);
     }
 
     /**
