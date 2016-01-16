@@ -104,10 +104,14 @@ public class Inspection {
 	public void startInspection(boolean restore) {
 		plugin.getInspectionManager().addInspection(this);
 		if (!restore && !saveInspectorState()) {
-			// Ending inspection, because this is before most thingS apply we dont have to restore much
+			// Ending inspection, because this is before most things apply we dont have to restore much
 			plugin.getInspectionManager().removeInspection(this);
 			return;
 		}
+		// Set health to max to prevent the player dying
+		inspector.setHealth(inspector.getMaxHealth());
+		inspector.setFoodLevel(20);
+
 		// Turn on vanish and hide on DynMap
 		if (plugin.getEssentialsLink() != null) {
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "essentials:vanish " + getInspector().getName() + " on");

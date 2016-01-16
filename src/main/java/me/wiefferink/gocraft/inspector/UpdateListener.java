@@ -185,7 +185,7 @@ public class UpdateListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTargetTeleport(PlayerTeleportEvent event) {
         // Ignore cancelled events and teleport of less than 3 blocks
-        if (event.isCancelled() || event.getFrom().distanceSquared(event.getTo()) < 9) {
+        if (event.isCancelled() || (event.getFrom().getWorld().equals(event.getTo().getWorld()) && event.getFrom().distanceSquared(event.getTo()) < 9)) {
             return;
         }
         Player player = event.getPlayer();
