@@ -7,8 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -265,8 +264,22 @@ public class DistributionManager {
 					continue;
 				}
 				if(!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
-					try {
-						FileUtils.copyFile(file, fileTarget);
+					try (
+							BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+							BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTarget), "UTF8"))) {
+						// Only files for which we know a way to comment out lines we can add a header
+						if (file.getName().endsWith(".yml")) {
+							writer.write("\n\n\n# ========================================================================= #\n" +
+									"# ------------------------------ DISTRIBUTED ------------------------------ #\n" +
+									"# ----------------- edit this config in the GENERAL folder ---------------- #\n" +
+									"# ========================================================================= #\n\n\n\n\n\n");
+						}
+						String line = reader.readLine();
+						while (line != null) {
+							writer.write(line + "\n");
+							line = reader.readLine();
+						}
+
 						boolean permissionsResult = fileTarget.setExecutable(true, false);
 						permissionsResult = permissionsResult && fileTarget.setReadable(true, false);
 						permissionsResult = permissionsResult && fileTarget.setWritable(true, false);
