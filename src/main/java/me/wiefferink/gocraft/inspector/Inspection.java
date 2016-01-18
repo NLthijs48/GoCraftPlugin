@@ -470,9 +470,11 @@ public class Inspection {
 		String baseKey = inspector.getUniqueId().toString() + ".";
 		YamlConfiguration storage = plugin.getInspectionManager().getInspectorStorage();
 
+		// Save inspector name for identification
+		storage.set(baseKey + "inspectorName", inspector.getName());
 		// Save target
 		if (inspected != null) {
-			storage.set(baseKey + "target", inspected.getUniqueId());
+			storage.set(baseKey + "target", inspected.getUniqueId().toString());
 			storage.set(baseKey + "targetName", inspected.getName());
 		}
 		// Save health and food
