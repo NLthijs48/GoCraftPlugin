@@ -19,7 +19,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.UUID;
 
 public class Utils {
 
@@ -285,21 +288,6 @@ public class Utils {
 			result = loadPlayer(player.getUniqueId());
 		}
 		return result;
-	}
-
-	/**
-	 * Add action to the lores of an item
-	 *
-	 * @param lores  Current lores
-	 * @param action The action string to add
-	 * @return The list with the action added
-	 */
-	public static List<String> addItemAction(List<String> lores, String action) {
-		if (lores == null) {
-			lores = new ArrayList<>();
-		}
-		lores.add(lores.size(), ChatColor.BLUE + "" + ChatColor.BOLD + "<" + action + ">");
-		return lores;
 	}
 
 	/**

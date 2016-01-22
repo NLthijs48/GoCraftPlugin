@@ -1,15 +1,14 @@
 package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
+import me.wiefferink.gocraft.utils.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 public class PotionAction extends InventoryAction {
 
@@ -24,28 +23,17 @@ public class PotionAction extends InventoryAction {
 
     @Override
     public ItemStack getItem() {
-        // Add a lore for each potion effect the player has
-        List<String> lores = new ArrayList<>();
-        for (PotionEffect effect : inspection.getInspected().getActivePotionEffects()) {
-            lores.add(ChatColor.RESET + "" + ChatColor.BLUE + WordUtils.capitalizeFully(effect.getType().getName().replace("_", " ")) + " " + (effect.getAmplifier() + 1) + " for " + effect.getDuration() / 20 + " seconds");
-        }
-        ItemStack result;
-        if (lores.isEmpty()) {
-            result = new ItemStack(Material.GLASS_BOTTLE);
+        ItemBuilder result;
+        Collection<PotionEffect> potions = inspection.getInspected().getActivePotionEffects();
+        if (potions.size() == 0) {
+            result = new ItemBuilder(Material.GLASS_BOTTLE).setName(ChatColor.GREEN + "No potion effects");
         } else {
-            result = new ItemStack(Material.POTION);
+            result = new ItemBuilder(Material.POTION).setName(ChatColor.GREEN + "" + potions.size() + " active potion effects");
         }
-        ItemMeta meta = result.getItemMeta();
-        if (meta != null) {
-            if (lores.isEmpty()) {
-                meta.setDisplayName(ChatColor.GREEN + "No potion effects");
-            } else {
-                meta.setDisplayName(ChatColor.GREEN + "" + lores.size() + " active potion effects");
-            }
-            meta.setLore(lores);
-            result.setItemMeta(meta);
+        for (PotionEffect effect : inspection.getInspected().getActivePotionEffects()) {
+            result.addLore(ChatColor.BLUE + WordUtils.capitalizeFully(effect.getType().getName().replace("_", " ")) + " " + (effect.getAmplifier() + 1) + " for " + effect.getDuration() / 20 + " seconds");
         }
-        return result;
+        return result.getItemStack();
     }
 
     @Override

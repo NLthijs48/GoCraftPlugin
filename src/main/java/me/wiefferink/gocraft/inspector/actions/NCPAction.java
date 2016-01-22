@@ -1,15 +1,11 @@
 package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
+import me.wiefferink.gocraft.utils.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Wool;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NCPAction extends InventoryAction {
 
@@ -24,17 +20,11 @@ public class NCPAction extends InventoryAction {
 
     @Override
     public ItemStack getItem() {
-        Wool wool = new Wool(DyeColor.RED);
-        ItemStack result = wool.toItemStack(1);
-        ItemMeta meta = result.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(ChatColor.GREEN + "Check NCP violations");
-            List<String> lores = new ArrayList<>();
-            lores.add(ChatColor.RESET + "" + ChatColor.BLUE + "<Click>");
-            meta.setLore(lores);
-            result.setItemMeta(meta);
-        }
-        return result;
+        return new ItemBuilder(Material.EYE_OF_ENDER)
+                .setData(14)
+                .setName(ChatColor.GREEN + "Check NCP violations")
+                .addAction("Click")
+                .getItemStack();
     }
 
     @Override

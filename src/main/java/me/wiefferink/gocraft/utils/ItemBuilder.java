@@ -1,10 +1,14 @@
 package me.wiefferink.gocraft.utils;
 
 import me.wiefferink.gocraft.GoCraft;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemBuilder {
 	private ItemStack item;
@@ -49,7 +53,7 @@ public class ItemBuilder {
 	public ItemBuilder setName(String name) {
 		hasCustomName = true;
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(GoCraft.getInstance().fixColors(name));
+		meta.setDisplayName(GoCraft.getInstance().fixColors("&r" + name));
 		item.setItemMeta(meta);
 		return this;
 	}
@@ -65,6 +69,17 @@ public class ItemBuilder {
 	}
 
 	/**
+	 * Set the data value
+	 *
+	 * @param data The data value to set
+	 * @return this
+	 */
+	public ItemBuilder setData(int data) {
+		item.setDurability((short) data);
+		return this;
+	}
+
+	/**
 	 * Add an enchantment to the item
 	 * @param enchantment The enchantment to add
 	 * @param level       The level of the enchantment to add
@@ -73,6 +88,55 @@ public class ItemBuilder {
 	public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
 		item.addUnsafeEnchantment(enchantment, level);
 		return this;
+	}
+
+
+	/**
+	 * Add a lore
+	 *
+	 * @param lore The string to add as lore
+	 * @return this
+	 */
+	public ItemBuilder addLore(String lore) {
+		return addLore(lore, false);
+	}
+
+	/**
+	 * Add a lore
+	 *
+	 * @param lore    The string to add as lore
+	 * @param asFirst true if it should appear as first lore, otherwise false
+	 * @return this
+	 */
+	public ItemBuilder addLore(String lore, boolean asFirst) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta == null) {
+			GoCraft.debug("Could not add lore to item, no itemmeta: " + lore);
+			return this;
+		}
+		List<String> lores = meta.getLore();
+		if (lores == null) {
+			lores = new ArrayList<>();
+		}
+		lore = GoCraft.getInstance().fixColors("&r" + lore);
+		if (asFirst) {
+			lores.add(0, lore);
+		} else {
+			lores.add(lore);
+		}
+		meta.setLore(lores);
+		item.setItemMeta(meta);
+		return this;
+	}
+
+	/**
+	 * Add an action text to an item, used for menu items
+	 *
+	 * @param action The action string
+	 * @return this
+	 */
+	public ItemBuilder addAction(String action) {
+		return addLore(ChatColor.BLUE + "&l<" + action + ">");
 	}
 
 	/**
@@ -90,6 +154,15 @@ public class ItemBuilder {
 	 */
 	public boolean hasCustomName() {
 		return hasCustomName;
+	}
+
+	/**
+	 * Clone the ItemBuilder
+	 *
+	 * @return A clone of this ItemBuilder
+	 */
+	public ItemBuilder clone() {
+		return new ItemBuilder(item.clone());
 	}
 
 }

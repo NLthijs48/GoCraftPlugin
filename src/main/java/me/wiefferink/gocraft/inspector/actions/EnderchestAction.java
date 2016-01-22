@@ -1,13 +1,10 @@
 package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
+import me.wiefferink.gocraft.utils.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EnderchestAction extends InventoryAction {
 
@@ -22,16 +19,10 @@ public class EnderchestAction extends InventoryAction {
 
     @Override
     public ItemStack getItem() {
-        ItemStack result = new ItemStack(Material.ENDER_CHEST);
-        ItemMeta meta = result.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(ChatColor.GREEN + "Open enderchest");
-            List<String> lores = new ArrayList<>();
-            lores.add(ChatColor.RESET + "" + ChatColor.BLUE + "<Click>");
-            meta.setLore(lores);
-            result.setItemMeta(meta);
-        }
-        return result;
+        return new ItemBuilder(Material.ENDER_CHEST)
+                .setName(ChatColor.GREEN + "Open enderchest")
+                .addAction("Click")
+                .getItemStack();
     }
 
     @Override
