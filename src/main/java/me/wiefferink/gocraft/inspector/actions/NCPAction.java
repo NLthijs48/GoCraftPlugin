@@ -20,7 +20,7 @@ public class NCPAction extends InventoryAction {
 
     @Override
     public ItemStack getItem() {
-        return new ItemBuilder(Material.EYE_OF_ENDER)
+        return new ItemBuilder(Material.WOOL)
                 .setData(14)
                 .setName(ChatColor.GREEN + "Check NCP violations")
                 .addAction("Click")
