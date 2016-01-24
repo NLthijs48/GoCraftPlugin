@@ -472,11 +472,13 @@ public class Inspection {
 
 		// Save inspector name for identification
 		storage.set(baseKey + "inspectorName", inspector.getName());
+		/* Causes problems with offline-read when inspector logs in while player is not online
 		// Save target
 		if (inspected != null) {
 			storage.set(baseKey + "target", inspected.getUniqueId().toString());
 			storage.set(baseKey + "targetName", inspected.getName());
 		}
+		*/
 		// Save health and food
 		health = inspector.getHealth();
 		storage.set(baseKey + "health", health);
