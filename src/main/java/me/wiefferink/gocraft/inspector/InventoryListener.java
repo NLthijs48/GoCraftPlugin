@@ -1,18 +1,10 @@
 package me.wiefferink.gocraft.inspector;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.util.BlockIterator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class InventoryListener implements Listener {
@@ -45,6 +37,7 @@ public class InventoryListener implements Listener {
     }
 
 
+    /*
     // Check for leftclicking a player, then switch inspection to that one
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
@@ -72,11 +65,12 @@ public class InventoryListener implements Listener {
                 }
             }
             Inspection inspection = manager.getInspectionByInspector(player);
-            if (closest != null && !inspection.getInspected().equals(closest)) {
+            if (closest != null && (!inspection.hasInspected() || !inspection.getInspected().equals(closest))) {
                 inspection.switchToPlayer(closest);
             }
         }
     }
+    */
 }
 
 
