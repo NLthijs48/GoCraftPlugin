@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.distribution;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.utils.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
@@ -82,6 +83,16 @@ public class DistributionManager {
 	 * @param filter The filter specifying which servers should be pushed to
 	 */
 	public void updatePluginDataNow(CommandSender executor, String filter) {
+		// Prepare update logger
+		BufferedWriter updateLogger = null;
+		try {
+			updateLogger = new BufferedWriter(new FileWriter(plugin.getGeneralFolder().getAbsolutePath() + File.separator + "updates.log", true));
+		} catch (IOException e) {
+			plugin.getLogger().warning("Could not create writer to update.log:");
+			e.printStackTrace();
+		}
+		updateMessage(updateLogger, executor, "update-started");
+
 		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		List<String> generalWarnings = new ArrayList<>();
 		final List<String> include = resolveServers(filter, generalWarnings);
@@ -198,30 +209,51 @@ public class DistributionManager {
 				}
 			}
 			if(pushedJarTo.size() > 0 || pushedConfigTo.size() > 0) {
-				plugin.messageNoPrefix(executor, "update-pluginHeader", pushPlugin);
+				updateMessage(updateLogger, executor, "update-pluginHeader", pushPlugin);
 				if(pushedJarTo.size() > 0) {
-					plugin.messageNoPrefix(executor, "update-pushedPluginTo", StringUtils.join(pushedJarTo, ", "));
+					updateMessage(updateLogger, executor, "update-pushedPluginTo", StringUtils.join(pushedJarTo, ", "));
 				}
 				if(pushedConfigTo.size() > 0) {
-					plugin.messageNoPrefix(executor, "update-pushedConfigTo", StringUtils.join(pushedConfigTo, ", "));
+					updateMessage(updateLogger, executor, "update-pushedConfigTo", StringUtils.join(pushedConfigTo, ", "));
 				}
 				for(String warning : pluginWarnings) {
-					plugin.messageNoPrefix(executor, "update-warning", warning);
+					updateMessage(updateLogger, executor, "update-warning", warning);
 				}
 				pluginsUpdated++;
 			}
 		}
 		if(generalWarnings.size() > 0) {
-			plugin.messageNoPrefix(executor, "update-generalWarnings");
+			updateMessage(updateLogger, executor, "update-generalWarnings");
 			for(String warning : generalWarnings) {
-				plugin.messageNoPrefix(executor, "update-warning", warning);
+				updateMessage(updateLogger, executor, "update-warning", warning);
 			}
 		}
 		if(pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0) {
-			plugin.messageNoPrefix(executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated);
+			updateMessage(updateLogger, executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated);
 		} else {
-			plugin.messageNoPrefix(executor, "update-none");
+			updateMessage(updateLogger, executor, "update-none");
 		}
+		try {
+			if (updateLogger != null) {
+				updateLogger.close();
+			}
+		} catch (IOException e) {
+			plugin.getLogger().warning("Could not correctly close the updateLogger: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Log a message to a target and to the update log
+	 *
+	 * @param updateLogger The logger
+	 * @param target       The target
+	 * @param key          The message key
+	 * @param args         The fill in arguments
+	 */
+	public void updateMessage(BufferedWriter updateLogger, Object target, String key, Object... args) {
+		plugin.messageNoPrefix(target, key, args);
+		plugin.configurableMessage("[" + Utils.getCurrentDateTime() + "] [" + plugin.getServerName() + "] ", updateLogger, key, args);
 	}
 
 	/**
@@ -230,7 +262,6 @@ public class DistributionManager {
 	 * @param filter   The filter specifying which servers should be pushed to
 	 */
 	public void updatePluginData(final CommandSender executor, final String filter) {
-		plugin.message(executor, "update-started");
 		new BukkitRunnable() {
 			@Override
 			public void run() {

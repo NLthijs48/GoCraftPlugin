@@ -459,32 +459,43 @@ public final class GoCraft extends JavaPlugin {
 		return this.languageManager;
 	}
 
-	public void configurableMessage(boolean prefix, Object target, String key, Object... params) {
+	public void configurableMessage(String prefix, Object target, String key, Object... params) {
 		String langString = fixColors(this.languageManager.getLang(key, params));
 		if (langString == null) {
 			getLogger().info("Something is wrong with the language file, could not find key: " + key);
 		} else if ((target instanceof Player)) {
 			String message = langString;
-			if(prefix) {
-				message = this.chatprefix + message;
+			if (prefix != null) {
+				message = prefix + message;
 			}
 			message = fixColors(message);
-			((Player)target).sendMessage(message);
+			((Player) target).sendMessage(message);
 		} else if ((target instanceof CommandSender)) {
 			((CommandSender) target).sendMessage(langString);
 		} else if ((target instanceof Logger)) {
-			((Logger)target).info(ChatColor.stripColor(langString));
+			((Logger) target).info(ChatColor.stripColor(langString));
+		} else if (target instanceof BufferedWriter) {
+			try {
+				if (prefix != null) {
+					langString = prefix + langString;
+				}
+				((BufferedWriter) target).append(ChatColor.stripColor(langString));
+				((BufferedWriter) target).newLine();
+			} catch (IOException e) {
+				getLogger().warning("Error while printing message to BufferedWriter: " + e.getMessage());
+				e.printStackTrace();
+			}
 		} else {
 			getLogger().info("Could not send message, target is wrong: " + langString);
 		}
 	}
 
 	public void message(Object target, String key, Object... params) {
-		configurableMessage(true, target, key, params);
+		configurableMessage(this.chatprefix, target, key, params);
 	}
 
 	public void messageNoPrefix(Object target, String key, Object... params) {
-		configurableMessage(false, target, key, params);
+		configurableMessage(null, target, key, params);
 	}
 
 	public String fixColors(String input) {
