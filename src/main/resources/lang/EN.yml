@@ -36,7 +36,7 @@ displaystaffmessage-noPermission: "You don't have permission to display staff me
 displaystaffmessage-help: "/displaystaffmessage <message...>."
 
 update-noPermission: "You do not have permission to update the plugins."
-update-started: "Starting update process..."
+update-started: "&2&lStarting update process..."
 update-done: "&2&lUpdated %1% jar files and %2% configs of %0% plugins."
 update-none: "&2&lEverything is already up-to-date!"
 update-pluginHeader: "&7&l>>> %0%:"

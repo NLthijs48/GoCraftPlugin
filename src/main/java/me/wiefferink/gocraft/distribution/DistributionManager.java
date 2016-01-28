@@ -210,7 +210,7 @@ public class DistributionManager {
 					}
 				}
 			}
-			if(pushedJarTo.size() > 0 || pushedConfigTo.size() > 0) {
+			if (pushedJarTo.size() > 0 || pushedConfigTo.size() > 0 || pluginWarnings.size() > 0) {
 				updateMessage(updateLogger, executor, "update-pluginHeader", pushPlugin);
 				if(pushedJarTo.size() > 0) {
 					updateMessage(updateLogger, executor, "update-pushedPluginTo", StringUtils.join(pushedJarTo, ", "));
@@ -297,10 +297,7 @@ public class DistributionManager {
 					warnings.add("Target exists but is not a file: "+fileTarget.getAbsolutePath());
 					continue;
 				}
-				if (!fileTarget.getParentFile().mkdirs()) {
-					warnings.add("Could not create leading directories: " + fileTarget.getAbsolutePath());
-					continue;
-				}
+				fileTarget.getParentFile().mkdirs();
 				if(!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
 					try (
 							BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
