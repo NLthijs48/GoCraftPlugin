@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DistributionManager {
 
@@ -201,7 +203,7 @@ public class DistributionManager {
 				// Push config if required
 				if(newPluginConfig != null) {
 					File targetFolder = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin);
-					List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig);
+					List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig, server);
 					if(result.size() > 0) {
 						configsUpdated += result.size();
 						pushedConfigTo.add(plugin.getServerName(server));
@@ -276,9 +278,10 @@ public class DistributionManager {
 	 * @param target The target directory
 	 * @param warnings The warnings list
 	 * @param rootSource The root source to format messages with
+	 * @param server The id of the server it is pushed to
 	 * @return List with the file names that are pushed
 	 */
-	public List<String> pushStructure(File source, File target, List<String> warnings, File rootSource) {
+	public List<String> pushStructure(File source, File target, List<String> warnings, File rootSource, String server) {
 		List<String> result = new ArrayList<>();
 		File[] files = source.listFiles();
 		if(files == null) {
@@ -288,7 +291,7 @@ public class DistributionManager {
 		for(File file : files) {
 			File fileTarget = new File(target.getAbsolutePath()+File.separator+file.getName());
 			if(file.isDirectory()) {
-				pushStructure(file, fileTarget, warnings, rootSource);
+				pushStructure(file, fileTarget, warnings, rootSource, server);
 			} else if(file.isFile()) {
 				if(fileTarget.exists() && !fileTarget.isFile()) {
 					warnings.add("Target exists but is not a file: "+fileTarget.getAbsolutePath());
@@ -307,7 +310,7 @@ public class DistributionManager {
 						}
 						String line = reader.readLine();
 						while (line != null) {
-							writer.write(line + "\n");
+							writer.write(applyVariables(line, server, warnings) + "\n");
 							line = reader.readLine();
 						}
 
@@ -328,6 +331,45 @@ public class DistributionManager {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Apply variable replacement to a config line
+	 *
+	 * @param line     The line to check for variables
+	 * @param server   The server to replace it for
+	 * @param warnings The list of warnings
+	 * @return The result string where all variables are replaced with values from the config
+	 */
+	public String applyVariables(String line, String server, List<String> warnings) {
+		Pattern variables = Pattern.compile("<<<(?<variable>[a-zA-Z0-9-_:]+)>>>");
+		Matcher matcher = variables.matcher(line);
+		while (matcher.find()) {
+			String rawVariable = matcher.group("variable");
+			String actualServer = server;
+			String variable;
+			String[] parts = rawVariable.split(":");
+
+			if (parts.length > 1) {
+				actualServer = parts[0];
+				variable = parts[1];
+			} else {
+				variable = parts[0];
+			}
+			String value;
+			if ("id".equals(variable)) {
+				value = actualServer;
+			} else {
+				value = plugin.getGeneralConfig().getString("servers." + actualServer + "." + variable);
+			}
+			if (value == null) {
+				warnings.add("Variable value for '" + variable + "' could not be found");
+				value = "";
+			}
+			line = matcher.replaceFirst(value);
+			matcher = variables.matcher(line);
+		}
+		return line;
 	}
 
 	/**

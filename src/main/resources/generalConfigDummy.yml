@@ -5,12 +5,11 @@
 ##############################################
 
 servers:
-  <directory name>:
-    id: <id> # To be used in other sections
+  <id>:
+    directory: <directory name>
     name: <display name>
 serverGroups:
   <name>: "serverIds, comma-separated"
 plugins:
   <name>:
     pushTo: "<server/group, comma-separated>"
-    extraFiles: "AsyncWorldEditInjector etc" # TODO
