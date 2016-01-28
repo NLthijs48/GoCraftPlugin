@@ -297,6 +297,10 @@ public class DistributionManager {
 					warnings.add("Target exists but is not a file: "+fileTarget.getAbsolutePath());
 					continue;
 				}
+				if (!fileTarget.getParentFile().mkdirs()) {
+					warnings.add("Could not create leading directories: " + fileTarget.getAbsolutePath());
+					continue;
+				}
 				if(!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
 					try (
 							BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
