@@ -409,6 +409,12 @@ public class Inspection {
 		updateArmor();
 		updateInventory();
 		updateScoreboard();
+		// Workaround for factions where inspectors sometimes are unable to fly (isFlying() is suddenly false)
+		if (inspector.getGameMode() == GameMode.SPECTATOR
+				&& (!inspector.getAllowFlight() || !inspector.isFlying())) {
+			inspector.setAllowFlight(true);
+			inspector.setFlying(true);
+		}
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.inspector;
 
 import me.wiefferink.gocraft.GoCraft;
+import org.bukkit.GameMode;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -200,6 +201,32 @@ public class UpdateListener implements Listener {
                     }
                 }.runTaskLater(plugin, 1L);
             }
+        }
+    }
+
+    // Ensure flying is always on by cancelling toggling it off
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onToggleFlight(PlayerToggleFlightEvent event) {
+        GoCraft.debug("event");
+        if (!event.isFlying() && event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+            event.setCancelled(true);
+        }
+    }
+
+    // Ensure flying is on by reenabling it immediately
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onToggleFlightMonitor(PlayerToggleFlightEvent event) {
+        GoCraft.debug("monitor event");
+        final Player finalPlayer = event.getPlayer();
+        if (!event.isFlying() && !event.isCancelled() && event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (finalPlayer.isOnline()) {
+                        finalPlayer.setFlying(true);
+                    }
+                }
+            }.runTaskLater(plugin, 1L);
         }
     }
 }
