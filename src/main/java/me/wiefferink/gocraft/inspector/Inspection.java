@@ -208,6 +208,7 @@ public class Inspection {
 		sourceActions.add(new KillAuraCheckAction(this));
 		sourceActions.add(new PotionAction(this));
 		sourceActions.add(new NCPAction(this));
+		sourceActions.add(new BanInfoAction(this));
 		sourceActions.add(new ExitAction(this));
 		// Determine layout
 		actions = new HashMap<>();
