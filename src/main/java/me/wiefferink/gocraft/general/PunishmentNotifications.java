@@ -20,7 +20,11 @@ public class PunishmentNotifications implements Listener {
 
 	@EventHandler
 	public void onBan(PlayerBannedEvent event) {
-		Utils.sendStaffMessage("Ban", event.getBan().getPlayer().getName() + " until " + timeToString(event.getBan().getExpires() * 1000) + " by " + event.getBan().getActor().getName() + ": " + event.getBan().getReason());
+		String untilPart = "";
+		if (event.getBan().getExpires() != 0) {
+			untilPart = " until " + timeToString(event.getBan().getExpires() * 1000);
+		}
+		Utils.sendStaffMessage("Ban", event.getBan().getPlayer().getName() + untilPart + " by " + event.getBan().getActor().getName() + ": " + event.getBan().getReason());
 	}
 
 	@EventHandler
@@ -30,7 +34,11 @@ public class PunishmentNotifications implements Listener {
 
 	@EventHandler
 	public void onMute(PlayerMutedEvent event) {
-		Utils.sendStaffMessage("Mute", event.getMute().getPlayer().getName() + " until " + timeToString(event.getMute().getExpires() * 1000) + " by " + event.getMute().getActor().getName() + ": " + event.getMute().getReason());
+		String untilPart = "";
+		if (event.getMute().getExpires() != 0) {
+			untilPart = " until " + timeToString(event.getMute().getExpires() * 1000);
+		}
+		Utils.sendStaffMessage("Mute", event.getMute().getPlayer().getName() + untilPart + " by " + event.getMute().getActor().getName() + ": " + event.getMute().getReason());
 	}
 
 	@EventHandler
