@@ -183,7 +183,7 @@ public class Inspection {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				updateAll();
+				updateAll(true);
 			}
 		}.runTask(plugin);
 	}
@@ -254,17 +254,25 @@ public class Inspection {
 
 	/**
 	 * Set the inventory to the current status
+	 * @param forceUpdate Force to update everything
 	 */
-	public void updateInventory() {
+	public void updateInventory(boolean forceUpdate) {
 		PlayerInventory inventory = inspector.getInventory();
 		// Setup inventory actions
 		int currentSlot = 0;
 		for (Integer slot : actions.keySet()) {
 			InventoryAction action = actions.get(slot);
-			if (action.doUpdates() || inventory.getItem(slot) == null) {
+			if (action.doUpdates() || inventory.getItem(slot) == null || forceUpdate) {
 				inventory.setItem(slot, action.getItem());
 			}
 		}
+	}
+
+	/**
+	 * Update the inventory to the current status
+	 */
+	public void updateInventory() {
+		updateInventory(false);
 	}
 
 	/**
@@ -404,10 +412,11 @@ public class Inspection {
 
 	/**
 	 * Update the inspector about the inspected
+	 * @param forceUpdate Force refresh everything, bypass lazy updating
 	 */
-	public void updateAll() {
+	public void updateAll(boolean forceUpdate) {
 		updateArmor();
-		updateInventory();
+		updateInventory(forceUpdate);
 		updateScoreboard();
 		// Workaround for factions where inspectors sometimes are unable to fly (isFlying() is suddenly false)
 		if (inspector.getGameMode() == GameMode.SPECTATOR
@@ -415,6 +424,13 @@ public class Inspection {
 			inspector.setAllowFlight(true);
 			inspector.setFlying(true);
 		}
+	}
+
+	/**
+	 * Update all information displays
+	 */
+	public void updateAll() {
+		updateAll(false);
 	}
 
 	/**
