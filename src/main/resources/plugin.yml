@@ -26,6 +26,9 @@ permissions:
   gocraft.ping:
     description: Check the ping of players.
     default: true
+  gocraft.rules:
+    description: Check the rules on the server
+    default: true
   gocraft.setspawn:
     description: Set the spawn location of the spawnteleport
     default: op
@@ -70,4 +73,7 @@ commands:
   Inspect:
     description: Inspect players while being in Spectator mode
     aliases: [in]
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  Rules:
+    description: Check the rules of the server
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

@@ -197,6 +197,34 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
+	 * Get the id of this server for use with the general config
+	 *
+	 * @return The id of this server
+	 */
+	public String getServerId() {
+		String result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
+		if (result != null) {
+			result = result.substring(1);
+		}
+		if (result != null) {
+			ConfigurationSection servers = getGeneralConfig().getConfigurationSection("servers");
+			if (servers != null) {
+				for (String id : servers.getKeys(false)) {
+					if (result.equalsIgnoreCase(id)
+							|| result.equalsIgnoreCase(servers.getString(id + ".name"))
+							|| result.equalsIgnoreCase(servers.getString(id + ".directory"))) {
+						result = id;
+					}
+				}
+			}
+		}
+		if (result == null || result.length() == 0) {
+			result = "UNKNOWN";
+		}
+		return result;
+	}
+
+	/**
 	 * Get the folder where the general files are located
 	 * @return The folder where the general files are located
 	 */
@@ -351,6 +379,7 @@ public final class GoCraft extends JavaPlugin {
 		new UpdateCommand(this);
 		new ReloadCommand(this);
 		new InspectCommand(this);
+		new RulesCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
 		this.listeners.add(new AboveNetherPrevention(this));

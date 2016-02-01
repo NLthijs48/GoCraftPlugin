@@ -56,6 +56,7 @@ enablePingCommand: true
 enableStaffMessageCommands: true
 enableUpdateCommand: true
 enableReloadCommand: true
+enableRulesCommand: true
 
 ########## OTHER
 enableExpiredPlotsRestoration: false

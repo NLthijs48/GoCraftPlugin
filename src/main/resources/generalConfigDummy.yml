@@ -4,12 +4,18 @@
 # This plugin has been created by NLThijs48  #
 ##############################################
 
+# Server settings
 servers:
   <id>:
     directory: <directory name>
     name: <display name>
+# Server groups
 serverGroups:
   <name>: "serverIds, comma-separated"
+# Rules
+rules:
+  <servers>:
+    - rules
 plugins:
   <name>:
     pushTo: "<server/group, comma-separated>"
