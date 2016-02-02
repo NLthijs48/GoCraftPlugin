@@ -16,6 +16,10 @@ serverGroups:
 rules:
   <servers>:
     - rules
+# Help
+help:
+  <servers>:
+    - help
 plugins:
   <name>:
     pushTo: "<server/group, comma-separated>"

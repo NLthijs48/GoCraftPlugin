@@ -29,6 +29,9 @@ permissions:
   gocraft.rules:
     description: Check the rules on the server
     default: true
+  gocraft.help:
+    description: Check the help page
+    default: true
   gocraft.setspawn:
     description: Set the spawn location of the spawnteleport
     default: op
@@ -76,4 +79,7 @@ commands:
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
   Rules:
     description: Check the rules of the server
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  Help:
+    description: Check the help page
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

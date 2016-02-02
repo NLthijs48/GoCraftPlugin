@@ -9,19 +9,19 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RulesCommand implements CommandExecutor {
+public class HelpCommand implements CommandExecutor {
 
 
-	public final String configLine = "enableRulesCommand";
+	public final String configLine = "enableHelpCommand";
 	private GoCraft plugin;
 
-	List<String> rules;
+	List<String> help;
 
-	public RulesCommand(GoCraft plugin) {
+	public HelpCommand(GoCraft plugin) {
 		if (plugin.getConfig().getBoolean(configLine)) {
 			this.plugin = plugin;
-			buildRules();
-			plugin.getCommand("Rules").setExecutor(this);
+			buildHelp();
+			plugin.getCommand("Help").setExecutor(this);
 		}
 	}
 
@@ -31,9 +31,9 @@ public class RulesCommand implements CommandExecutor {
 			plugin.message(sender, "help-noPermission");
 			return true;
 		}
-		// Show the help
+		// Show the help page
 		plugin.message(sender, "help-header");
-		for (String rule : rules) {
+		for (String rule : help) {
 			plugin.messageNoPrefix(sender, "help-rule", rule);
 		}
 		return true;
@@ -42,20 +42,20 @@ public class RulesCommand implements CommandExecutor {
 	/**
 	 * Build the help list based on the config
 	 */
-	public void buildRules() {
-		this.rules = new ArrayList<>();
-		ConfigurationSection rulesSection = plugin.getGeneralConfig().getConfigurationSection("help");
-		if (rulesSection == null) {
+	public void buildHelp() {
+		this.help = new ArrayList<>();
+		ConfigurationSection helpSection = plugin.getGeneralConfig().getConfigurationSection("help");
+		if (helpSection == null) {
 			plugin.getLogger().warning("Empty help section!");
 			return;
 		}
-		for (String ruleKey : rulesSection.getKeys(false)) {
+		for (String ruleKey : helpSection.getKeys(false)) {
 			List<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
 			if (servers.contains(plugin.getServerId())) {
-				if (rulesSection.isList(ruleKey)) {
-					rules.addAll(rulesSection.getStringList(ruleKey));
+				if (helpSection.isList(ruleKey)) {
+					help.addAll(helpSection.getStringList(ruleKey));
 				} else {
-					rules.add(rulesSection.getString(ruleKey));
+					help.add(helpSection.getString(ruleKey));
 				}
 			}
 		}

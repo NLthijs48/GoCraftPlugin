@@ -151,7 +151,7 @@ public final class GoCraft extends JavaPlugin {
 	}
 	
 	public void onDisable() {
-		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName());
+		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName(), "pluginJar, pluginConfig, permissions");
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
 	}
@@ -380,6 +380,7 @@ public final class GoCraft extends JavaPlugin {
 		new ReloadCommand(this);
 		new InspectCommand(this);
 		new RulesCommand(this);
+		new HelpCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
 		this.listeners.add(new AboveNetherPrevention(this));
