@@ -265,7 +265,7 @@ public class Utils {
 	 */
 	public static Player loadPlayer(UUID uuid) {
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-		if (player == null || !player.hasPlayedBefore()) {
+		if (player == null) {
 			return null;
 		}
 		// Check if the player is online
@@ -292,8 +292,8 @@ public class Utils {
 	 * @return The Player object of the target player
 	 */
 	public static Player loadPlayer(String name) {
-		OfflinePlayer player = Bukkit.getOfflinePlayer(name);
 		Player result = null;
+		OfflinePlayer player = Bukkit.getOfflinePlayer(name);
 		if (player != null) {
 			result = loadPlayer(player.getUniqueId());
 		}
