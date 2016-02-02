@@ -28,6 +28,7 @@ public class CompassAction extends InventoryAction {
     @Override
     public void handleClick() {
         inspection.teleportToInspected();
+        inspection.getInspector().closeInventory();
     }
 
 }
