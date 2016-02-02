@@ -19,3 +19,13 @@ rules:
 plugins:
   <name>:
     pushTo: "<server/group, comma-separated>"
+    permissions:
+      <name>:
+        servers: <servers>
+        groups: <ranks>
+        nodes: "single"
+      <name>:
+        servers: <servers>
+        groups: <ranks>
+        nodes:
+        - "multiple"
