@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
@@ -237,6 +238,9 @@ public class DistributionManager {
 			operations.remove("permissions");
 			List<String> serversUpdated = updatePermissionsNow(include, generalWarnings);
 			permissionsUpdated = serversUpdated.size();
+			if (permissionsUpdated > 0 && executor instanceof Player) {
+				((Player) executor).performCommand("pex reload");
+			}
 		}
 
 		// Check for leftover operations
@@ -381,7 +385,11 @@ public class DistributionManager {
 			}
 			for (String sectionKey : permissionsSection.getKeys(false)) {
 				ConfigurationSection currentSection = permissionsSection.getConfigurationSection(sectionKey);
-				Set<String> toServers = resolveServers(currentSection.getString("servers"), generalWarnings, true);
+				String servers = currentSection.getString("servers");
+				if (servers == null) { // default to all servers the plugin is on
+					servers = pluginKey;
+				}
+				Set<String> toServers = resolveServers(servers, generalWarnings, true);
 				String rawGroups = currentSection.getString("groups");
 				if (rawGroups == null || rawGroups.isEmpty()) {
 					generalWarnings.add("No groups specified in permissions for " + pluginKey);
