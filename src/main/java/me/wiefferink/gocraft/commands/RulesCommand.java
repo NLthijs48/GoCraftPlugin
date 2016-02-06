@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class RulesCommand implements CommandExecutor {
 
@@ -50,7 +51,7 @@ public class RulesCommand implements CommandExecutor {
 			return;
 		}
 		for (String ruleKey : rulesSection.getKeys(false)) {
-			List<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>(), true);
+			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>(), true);
 			if (servers.contains(plugin.getServerId())) {
 				if (rulesSection.isList(ruleKey)) {
 					rules.addAll(rulesSection.getStringList(ruleKey));

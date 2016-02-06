@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class DistributionManager {
 
 	private GoCraft plugin;
-	private Map<String, List<String>> serverGroups;
+	private Map<String, Set<String>> serverGroups;
 	private Map<String, File> serverPluginFolders;
 	private File pluginDataFolder;
 
@@ -66,7 +66,7 @@ public class DistributionManager {
 			for(String serverGroup : serverGroupsSection.getKeys(false)) {
 				String serverGroupString = serverGroupsSection.getString(serverGroup);
 				List<String> warnings = new ArrayList<>();
-				List<String> serverGroupContent = resolveServers(serverGroupString, warnings, true);
+				Set<String> serverGroupContent = resolveServers(serverGroupString, warnings, true);
 				serverGroups.put(serverGroup, serverGroupContent);
 				for(String warning : warnings) {
 					plugin.getLogger().warning("Warnings for serverGroup "+serverGroup+":");
@@ -106,7 +106,7 @@ public class DistributionManager {
 
 		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		List<String> generalWarnings = new ArrayList<>();
-		final List<String> include = resolveServers(serverFilter, generalWarnings, true);
+		final Set<String> include = resolveServers(serverFilter, generalWarnings, true);
 
 		int pluginsUpdated = 0;
 		int jarsUpdated = 0;
@@ -135,8 +135,7 @@ public class DistributionManager {
 			} else if (pushPlugins.isString(pushPlugin)) {
 				pushTo = pushPlugins.getString(pushPlugin);
 			}
-			List<String> servers = resolveServers(pushTo, pluginWarnings, true);
-			GoCraft.debug(pushPlugin + ": " + servers.toString());
+			Set<String> servers = resolveServers(pushTo, pluginWarnings, true);
 
 			// Search jarfile to push
 			File newPluginJar = null;
@@ -156,7 +155,6 @@ public class DistributionManager {
 					}
 				}
 			}
-			GoCraft.debug("  Found jar: " + (newPluginJar != null));
 
 			List<String> pushedJarTo = new ArrayList<>();
 			List<String> pushedConfigTo = new ArrayList<>();
@@ -168,6 +166,7 @@ public class DistributionManager {
 				}
 
 				if(operations.contains("pluginJar") && newPluginJar != null) {
+					operations.remove("pluginJar");
 					// Find existing jar file
 					File oldPluginJar = null;
 					File[] existingFiles = serverPluginFolders.get(server).listFiles();
@@ -210,6 +209,7 @@ public class DistributionManager {
 
 				// Push config if required
 				if(operations.contains("pluginConfig") && newPluginConfig != null) {
+					operations.remove("pluginConfig");
 					File targetFolder = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin);
 					List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig, server);
 					if(result.size() > 0) {
@@ -234,10 +234,17 @@ public class DistributionManager {
 		}
 		// Update permissions
 		if(operations.contains("permissions")) {
+			operations.remove("permissions");
 			List<String> serversUpdated = updatePermissionsNow(include, generalWarnings);
 			permissionsUpdated = serversUpdated.size();
 		}
 
+		// Check for leftover operations
+		if (operations.size() > 0) {
+			generalWarnings.add("Leftover operations: " + StringUtils.join(", ", operations));
+		}
+
+		// Display result (executor + log)
 		if(generalWarnings.size() > 0) {
 			updateMessage(updateLogger, executor, "update-generalWarnings");
 			for(String warning : generalWarnings) {
@@ -356,7 +363,7 @@ public class DistributionManager {
 	 * @param generalWarnings The list to collect warnings in
 	 * @return List with servers that are updated
      */
-	public List<String> updatePermissionsNow(List<String> includeServers, List<String> generalWarnings) {
+	public List<String> updatePermissionsNow(Set<String> includeServers, List<String> generalWarnings) {
 		List<String> result = new ArrayList<>();
 
 		// Build permissions structure
@@ -374,7 +381,7 @@ public class DistributionManager {
 			}
 			for (String sectionKey : permissionsSection.getKeys(false)) {
 				ConfigurationSection currentSection = permissionsSection.getConfigurationSection(sectionKey);
-				List<String> toServers = resolveServers(currentSection.getString("servers"), generalWarnings, true);
+				Set<String> toServers = resolveServers(currentSection.getString("servers"), generalWarnings, true);
 				String rawGroups = currentSection.getString("groups");
 				if (rawGroups == null || rawGroups.isEmpty()) {
 					generalWarnings.add("No groups specified in permissions for " + pluginKey);
@@ -410,11 +417,16 @@ public class DistributionManager {
 				generalWarnings.add("No plugin path found for server: " + server);
 				continue;
 			}
-			File target = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + "PermissionsEx" + File.separator + "newPermissions.yml");
-			File current = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + "PermissionsEx" + File.separator + "permissions.yml");
+			File newFile = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + "PermissionsEx" + File.separator + "permissions.new.yml");
+			File currentFile = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + "PermissionsEx" + File.separator + "permissions.yml");
+			File oldFile = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + "PermissionsEx" + File.separator + "permissions.old.yml");
+			if (!currentFile.isFile() || !currentFile.exists()) {
+				generalWarnings.add("No current permisisons file: " + server);
+				continue;
+			}
 			try(
-					BufferedReader reader = new BufferedReader(new FileReader(current));
-					BufferedWriter writer = new BufferedWriter(new FileWriter(target))
+					BufferedReader reader = new BufferedReader(new FileReader(currentFile));
+					BufferedWriter writer = new BufferedWriter(new FileWriter(newFile))
 					) {
 				Map<String, List<String>> serverPermissions = permissions.get(server);
 				if (serverPermissions == null) {
@@ -464,13 +476,40 @@ public class DistributionManager {
 					}
 					line = reader.readLine();
 				}
-				result.add(server);
+
+				// Delete old file
+				if (oldFile.exists() && !oldFile.delete()) {
+					generalWarnings.add("Could not delete old permissions file: " + server);
+					continue;
+				}
 			} catch (IOException e) {
 				generalWarnings.add("Exception while writing permissions of "+server+": "+e.getMessage());
 				e.printStackTrace();
 			}
-			// Replace current permissions file with the new one
-			// TODO
+			// Move current file to old file
+			if (!currentFile.renameTo(oldFile)) {
+				generalWarnings.add("Could not move current permisisons file to old: " + server);
+				continue;
+			}
+
+			// Move new file to current file
+			if (!newFile.renameTo(currentFile)) {
+				generalWarnings.add("Could not move new permisisons file to active: " + server);
+				if (!oldFile.renameTo(currentFile)) {
+					generalWarnings.add("  and could not restore previous one!");
+				}
+				continue;
+			}
+
+			// Set permissions of current file
+			boolean permissionsResult = currentFile.setExecutable(true, false);
+			permissionsResult = permissionsResult && currentFile.setReadable(true, false);
+			permissionsResult = permissionsResult && currentFile.setWritable(true, false);
+			if (!permissionsResult) {
+				generalWarnings.add("Could not set permissions of permissions file: " + server);
+			}
+
+			result.add(server);
 		}
 		return result;
 	}
@@ -534,8 +573,8 @@ public class DistributionManager {
 	 * @param serverSpecifier The server specification (comma-separated list)
 	 * @return The list of servers indicated by the serverSpecifier
 	 */
-	public List<String> resolveServers(String serverSpecifier, List<String> warnings, boolean doRecursive) {
-		List<String> result = new ArrayList<>();
+	public Set<String> resolveServers(String serverSpecifier, List<String> warnings, boolean doRecursive) {
+		Set<String> result = new TreeSet<>();
 		if(serverSpecifier == null) {
 			ConfigurationSection serverSection = plugin.getGeneralConfig().getConfigurationSection("servers");
 			if(serverSection != null) {
@@ -544,7 +583,7 @@ public class DistributionManager {
 			return result;
 		}
 		for(String id : serverSpecifier.split(",( )?")) {
-			List<String> groupContent = serverGroups.get(id);
+			Set<String> groupContent = serverGroups.get(id);
 			if(groupContent != null) {
 				// Find as server group
 				if(groupContent.size() == 0) {

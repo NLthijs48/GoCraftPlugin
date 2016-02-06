@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class HelpCommand implements CommandExecutor {
 
@@ -50,7 +51,7 @@ public class HelpCommand implements CommandExecutor {
 			return;
 		}
 		for (String ruleKey : helpSection.getKeys(false)) {
-			List<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>(), true);
+			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>(), true);
 			if (servers.contains(plugin.getServerId())) {
 				if (helpSection.isList(ruleKey)) {
 					help.addAll(helpSection.getStringList(ruleKey));
