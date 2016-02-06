@@ -24,15 +24,15 @@ public class UpdateCommand implements CommandExecutor {
 			return true;
 		}
 
-		String filter = null;
-		if(args.length > 0) {
-			filter = args[0];
-			for(int i = 1; i < args.length; i++) {
-				filter += ", " + args[i];
-			}
-			filter = args[0];
+		String serverFilter = null;
+		String operationFilter = null;
+		if (args.length >= 1) {
+			serverFilter = args[0];
 		}
-		plugin.getDistributionManager().updatePluginData(sender, filter);
+		if (args.length >= 2) {
+			operationFilter = args[1];
+		}
+		plugin.getDistributionManager().updatePluginData(sender, serverFilter, operationFilter);
 		return true;
 	}
 

@@ -66,7 +66,7 @@ public class DistributionManager {
 			for(String serverGroup : serverGroupsSection.getKeys(false)) {
 				String serverGroupString = serverGroupsSection.getString(serverGroup);
 				List<String> warnings = new ArrayList<>();
-				List<String> serverGroupContent = resolveServers(serverGroupString, warnings);
+				List<String> serverGroupContent = resolveServers(serverGroupString, warnings, true);
 				serverGroups.put(serverGroup, serverGroupContent);
 				for(String warning : warnings) {
 					plugin.getLogger().warning("Warnings for serverGroup "+serverGroup+":");
@@ -87,7 +87,12 @@ public class DistributionManager {
 	 */
 	public void updatePluginDataNow(CommandSender executor, String serverFilter, String operationFilter) {
 		// Prepare operations
-		List<String> operations = new ArrayList<>(Arrays.asList(operationFilter.split(",( )?")));
+		List<String> operations;
+		if (operationFilter == null) { // Add all
+			operations = Arrays.asList("pluginJar", "pluginConfig", "permissions");
+		} else {
+			operations = Arrays.asList(operationFilter.split(",( )?"));
+		}
 
 		// Prepare update logger
 		BufferedWriter updateLogger = null;
@@ -101,11 +106,12 @@ public class DistributionManager {
 
 		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		List<String> generalWarnings = new ArrayList<>();
-		final List<String> include = resolveServers(serverFilter, generalWarnings);
+		final List<String> include = resolveServers(serverFilter, generalWarnings, true);
 
 		int pluginsUpdated = 0;
 		int jarsUpdated = 0;
 		int configsUpdated = 0;
+		int permissionsUpdated = 0;
 		ConfigurationSection pushPlugins = plugin.getGeneralConfig().getConfigurationSection("plugins");
 		if(pushPlugins == null) {
 			generalWarnings.add("No pushPlugins section");
@@ -123,17 +129,14 @@ public class DistributionManager {
 		for(String pushPlugin : pushPlugins.getKeys(false)) {
 			List<String> pluginWarnings = new ArrayList<>();
 			ConfigurationSection pushPluginSection = pushPlugins.getConfigurationSection(pushPlugin);
-			String pushTo;
+			String pushTo = null;
 			if(pushPluginSection != null) {
 				pushTo = pushPluginSection.getString("pushTo");
-			} else {
+			} else if (pushPlugins.isString(pushPlugin)) {
 				pushTo = pushPlugins.getString(pushPlugin);
 			}
-			if(pushTo == null) {
-				pluginWarnings.add("Did not find a pushTo specification");
-				continue;
-			}
-			List<String> servers = resolveServers(pushTo, pluginWarnings);
+			List<String> servers = resolveServers(pushTo, pluginWarnings, true);
+			GoCraft.debug(pushPlugin + ": " + servers.toString());
 
 			// Search jarfile to push
 			File newPluginJar = null;
@@ -153,6 +156,7 @@ public class DistributionManager {
 					}
 				}
 			}
+			GoCraft.debug("  Found jar: " + (newPluginJar != null));
 
 			List<String> pushedJarTo = new ArrayList<>();
 			List<String> pushedConfigTo = new ArrayList<>();
@@ -230,7 +234,8 @@ public class DistributionManager {
 		}
 		// Update permissions
 		if(operations.contains("permissions")) {
-			updatePermissionsNow(include, generalWarnings);
+			List<String> serversUpdated = updatePermissionsNow(include, generalWarnings);
+			permissionsUpdated = serversUpdated.size();
 		}
 
 		if(generalWarnings.size() > 0) {
@@ -239,8 +244,9 @@ public class DistributionManager {
 				updateMessage(updateLogger, executor, "update-warning", warning);
 			}
 		}
-		if(pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0) {
-			updateMessage(updateLogger, executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated);
+		if (pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0 || permissionsUpdated > 0) {
+			updateMessage(updateLogger, executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated, permissionsUpdated);
+			updateMessage(updateLogger, executor, "update-donePermissions", permissionsUpdated);
 		} else {
 			updateMessage(updateLogger, executor, "update-none");
 		}
@@ -366,36 +372,44 @@ public class DistributionManager {
 			if(permissionsSection == null) {
 				continue;
 			}
-			List<String> toServers = resolveServers(permissionsSection.getString("servers"), generalWarnings);
-			String rawGroups = permissionsSection.getString("groups");
-			if(rawGroups == null || rawGroups.isEmpty()) {
-				generalWarnings.add("No groups specified in permissions for "+pluginKey);
-				continue;
-			}
-			List<String> toGroups = Arrays.asList(rawGroups.split(",( )?"));
-			// Add permissions to the correct groups and servers
-			for(String server : toServers) {
-				Map<String, List<String>> groupsPermissions = permissions.get(server);
-				if(groupsPermissions == null) {
-					groupsPermissions = new HashMap<>();
+			for (String sectionKey : permissionsSection.getKeys(false)) {
+				ConfigurationSection currentSection = permissionsSection.getConfigurationSection(sectionKey);
+				List<String> toServers = resolveServers(currentSection.getString("servers"), generalWarnings, true);
+				String rawGroups = currentSection.getString("groups");
+				if (rawGroups == null || rawGroups.isEmpty()) {
+					generalWarnings.add("No groups specified in permissions for " + pluginKey);
+					continue;
 				}
-				for(String group : toGroups) {
-					List<String> groupPermissions = groupsPermissions.get(group);
-					if(groupPermissions == null) {
-						groupPermissions = new ArrayList<>();
+				List<String> toGroups = Arrays.asList(rawGroups.split(",( )?"));
+				// Add permissions to the correct groups and servers
+				for (String server : toServers) {
+					Map<String, List<String>> groupsPermissions = permissions.get(server);
+					if (groupsPermissions == null) {
+						groupsPermissions = new HashMap<>();
+						permissions.put(server, groupsPermissions);
 					}
-					if (permissionsSection.isList("permissions")) {
-						groupPermissions.addAll(permissionsSection.getStringList("permissions"));
-					} else {
-						groupPermissions.add(permissionsSection.getString("permissions"));
+					for (String group : toGroups) {
+						List<String> groupPermissions = groupsPermissions.get(group);
+						if (groupPermissions == null) {
+							groupPermissions = new ArrayList<>();
+							groupsPermissions.put(group, groupPermissions);
+						}
+						if (currentSection.isList("permissions")) {
+							groupPermissions.addAll(currentSection.getStringList("permissions"));
+						} else {
+							groupPermissions.add(currentSection.getString("permissions"));
+						}
 					}
 				}
 			}
 		}
-		GoCraft.debug("Result of exploration: " + permissions.toString());
 
 		// Write permissions to the files
 		for(String server : includeServers) {
+			if (serverPluginFolders.get(server) == null) {
+				generalWarnings.add("No plugin path found for server: " + server);
+				continue;
+			}
 			File target = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + "PermissionsEx" + File.separator + "newPermissions.yml");
 			File current = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + "PermissionsEx" + File.separator + "permissions.yml");
 			try(
@@ -403,8 +417,12 @@ public class DistributionManager {
 					BufferedWriter writer = new BufferedWriter(new FileWriter(target))
 					) {
 				Map<String, List<String>> serverPermissions = permissions.get(server);
+				if (serverPermissions == null) {
+					continue;
+				}
 				String line = reader.readLine();
 				boolean inGroupsSection = false;
+				boolean inOldDistSection = false;
 				List<String> currentGroupPermissions = null;
 				while(line != null) {
 					if(line.startsWith("groups:")) {
@@ -412,17 +430,17 @@ public class DistributionManager {
 					} else if(line.matches("[^ ].*")) {
 						inGroupsSection = false;
 						currentGroupPermissions = null;
+						inOldDistSection = false;
 					}
 					if(inGroupsSection) {
 						if(line.matches("  [^ ].*")) {
-							currentGroupPermissions = serverPermissions.get(line.substring(2, line.length()-1));
-							if(currentGroupPermissions == null) {
-								generalWarnings.add("Found group without permissions: " + line + " at server "+server);
-							}
+							String groupName = line.substring(2, line.length() - 1);
+							currentGroupPermissions = serverPermissions.get(groupName);
 							writer.write(line + "\n");
 						} else {
 							if(line.startsWith("    permissions:")) {
 								// insert permissions
+								writer.write(line + "\n");
 								if(currentGroupPermissions != null) {
 									writer.write("    ##### START DISTRIBUTED PERMISSIONS\n");
 									for(String permission : currentGroupPermissions) {
@@ -430,7 +448,14 @@ public class DistributionManager {
 									}
 									writer.write("    ##### END DISTRIBUTED PERMISSIONS\n\n");
 								}
-							} else if(currentGroupPermissions == null || !currentGroupPermissions.contains(line.substring(6))) { // Only copy permission line if it is not already in the distributed section
+							} else if (line.startsWith("    ##### START DISTRIBUTED PERMISSIONS")) {
+								inOldDistSection = true;
+							} else if (line.startsWith("    ##### END DISTRIBUTED PERMISSIONS")) {
+								inOldDistSection = false;
+							} else if (!inOldDistSection &&
+									(currentGroupPermissions == null
+											|| (line.length() > 6
+											&& !currentGroupPermissions.contains(line.substring(6))))) { // Only copy permission line if it is not already in the distributed section
 								writer.write(line + "\n");
 							}
 						}
@@ -439,6 +464,7 @@ public class DistributionManager {
 					}
 					line = reader.readLine();
 				}
+				result.add(server);
 			} catch (IOException e) {
 				generalWarnings.add("Exception while writing permissions of "+server+": "+e.getMessage());
 				e.printStackTrace();
@@ -508,7 +534,7 @@ public class DistributionManager {
 	 * @param serverSpecifier The server specification (comma-separated list)
 	 * @return The list of servers indicated by the serverSpecifier
 	 */
-	public List<String> resolveServers(String serverSpecifier, List<String> warnings) {
+	public List<String> resolveServers(String serverSpecifier, List<String> warnings, boolean doRecursive) {
 		List<String> result = new ArrayList<>();
 		if(serverSpecifier == null) {
 			ConfigurationSection serverSection = plugin.getGeneralConfig().getConfigurationSection("servers");
@@ -520,11 +546,13 @@ public class DistributionManager {
 		for(String id : serverSpecifier.split(",( )?")) {
 			List<String> groupContent = serverGroups.get(id);
 			if(groupContent != null) {
+				// Find as server group
 				if(groupContent.size() == 0) {
 					warnings.add("Empty group: "+id);
 				}
 				result.addAll(groupContent);
 			} else {
+				// Find as server
 				ConfigurationSection serverSection = plugin.getGeneralConfig().getConfigurationSection("servers");
 				boolean found = false;
 				if(serverSection != null) {
@@ -538,6 +566,21 @@ public class DistributionManager {
 						}
 					}
 				}
+				// Find as plugin, use those instead
+				if (!found && doRecursive) {
+					ConfigurationSection pluginSection = plugin.getGeneralConfig().getConfigurationSection("plugins." + id);
+					String pushTo = null;
+					if (pluginSection != null) {
+						pushTo = pluginSection.getString("pushTo");
+					} else if (plugin.getGeneralConfig().isString("plugins." + id)) {
+						pushTo = plugin.getGeneralConfig().getString("plugins." + id);
+					}
+					if (plugin.getGeneralConfig().isSet("plugins." + id)) {
+						result.addAll(resolveServers(pushTo, warnings, false));
+						found = true;
+					}
+				}
+
 				if(!found) {
 					warnings.add("server-/group-id '" + id + "' cannot be resolved");
 				}
