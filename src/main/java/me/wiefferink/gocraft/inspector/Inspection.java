@@ -128,9 +128,7 @@ public class Inspection {
 		inspector.setGameMode(GameMode.SPECTATOR);
 		inspector.getInventory().clear();
 		// Prepare and select actions
-		prepareInventoryActions();
-
-		updateAll();
+		updateAll(true);
 		plugin.getInspectionManager().registerUpdater();
 		// Fix for glitch in Factions, TODO think about proper solution
 		final Player finalPlayer = inspector;
@@ -161,7 +159,6 @@ public class Inspection {
 			oldInspected = inspected.getName();
 		}
 		inspected = newInspected;
-		prepareInventoryActions();
 		if (!noMessage) {
 			String name = "nobody";
 			if (inspected != null) {
@@ -259,6 +256,12 @@ public class Inspection {
 	 */
 	public void updateInventory(boolean forceUpdate) {
 		PlayerInventory inventory = inspector.getInventory();
+		// Clear old items
+		if (forceUpdate) {
+			for (int i = 0; i <= 35; i++) {
+				inventory.clear(i);
+			}
+		}
 		// Setup inventory actions
 		int currentSlot = 0;
 		for (Integer slot : actions.keySet()) {
@@ -416,6 +419,9 @@ public class Inspection {
 	 * @param forceUpdate Force refresh everything, bypass lazy updating
 	 */
 	public void updateAll(boolean forceUpdate) {
+		if (forceUpdate) {
+			prepareInventoryActions();
+		}
 		updateArmor();
 		updateInventory(forceUpdate);
 		updateScoreboard();

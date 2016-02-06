@@ -171,8 +171,7 @@ public class InspectionManager {
                 for (Inspection inspect : getInspectionsByInspected(player)) {
                     plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
                     // Swap to offline inspection
-                    inspect.prepareInventoryActions();
-                    inspect.updateAll();
+                    inspect.updateAll(true);
                 }
             }
         }.runTaskLater(plugin, 1L);
@@ -217,7 +216,10 @@ public class InspectionManager {
                     }
                 }
             }.runTaskLater(plugin, 10L);
-
+        }
+        // Player is target
+        for (Inspection insp : getInspectionsByInspected(player)) {
+            insp.updateAll(true);
         }
     }
 
