@@ -87,11 +87,11 @@ public class DistributionManager {
 	 */
 	public void updatePluginDataNow(CommandSender executor, String serverFilter, String operationFilter) {
 		// Prepare operations
-		List<String> operations;
+		Set<String> operations = new HashSet<>();
 		if (operationFilter == null) { // Add all
-			operations = Arrays.asList("pluginJar", "pluginConfig", "permissions");
+			operations.addAll(Arrays.asList("pluginJar", "pluginConfig", "permissions"));
 		} else {
-			operations = Arrays.asList(operationFilter.split(",( )?"));
+			operations.addAll(Arrays.asList(operationFilter.split(",( )?")));
 		}
 
 		// Prepare update logger
@@ -403,8 +403,10 @@ public class DistributionManager {
 						}
 						if (currentSection.isList("permissions")) {
 							groupPermissions.addAll(currentSection.getStringList("permissions"));
-						} else {
+						} else if (currentSection.isSet("permissions")) {
 							groupPermissions.add(currentSection.getString("permissions"));
+						} else {
+							generalWarnings.add("No permissions specified for group '" + group + "' on " + server);
 						}
 					}
 				}
