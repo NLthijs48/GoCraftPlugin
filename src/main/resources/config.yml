@@ -28,6 +28,7 @@ spawnTeleport: false
 enableInspecting: true
 disableStaffJoinLeaveMessages: true
 disableOpenEnderSelf: true
+disableSignUseWhileMuted: true
 
 ########## ITEMS
 disableItemDrops: false
