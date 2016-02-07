@@ -77,7 +77,7 @@ public final class GoCraft extends JavaPlugin {
 
 		// Check if WorldGuard is present
 		Plugin wg = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (wg == null) {
+		if (wg == null || !wg.isEnabled()) {
 			debug("  No WorldGuard plugin found");
 		} else {
 			this.worldGuardLink = new WorldGuardLink();
@@ -85,7 +85,7 @@ public final class GoCraft extends JavaPlugin {
 
 		// Check if BanManager is present
 		Plugin bm = getServer().getPluginManager().getPlugin("BanManager");
-		if (bm == null) {
+		if (bm == null || !bm.isEnabled()) {
 			debug("  No BanManager plugin found");
 		} else {
 			banManagerLink = new BanManagerLink();
@@ -93,7 +93,7 @@ public final class GoCraft extends JavaPlugin {
 
 		// Check if MapSwitcher is present
 		Plugin ms = getServer().getPluginManager().getPlugin("MapSwitcher");
-		if (ms == null) {
+		if (ms == null || !ms.isEnabled()) {
 			debug("  No MapSwitcher plugin found");
 		} else {
 			mapSwitcherLink = new MapSwitcherLink();
@@ -101,7 +101,7 @@ public final class GoCraft extends JavaPlugin {
 
 		// Check if Essentials is present
 		Plugin es = getServer().getPluginManager().getPlugin("Essentials");
-		if (ms == null) {
+		if (es == null || !es.isEnabled()) {
 			debug("  No Essentails plugin found");
 		} else {
 			essentialsLink = new EssentialsLink();
@@ -117,13 +117,13 @@ public final class GoCraft extends JavaPlugin {
 
 		// Check if DynMap is present
 		Plugin dm = getServer().getPluginManager().getPlugin("dynmap");
-		dynMapInstalled = dm != null;
+		dynMapInstalled = dm != null && dm.isEnabled();
 
 		// Check if GoPVP is present
 		new BukkitRunnable() {
 			public void run() {
 				Plugin gp = getServer().getPluginManager().getPlugin("GoPVP");
-				if (gp == null) {
+				if (gp == null || !gp.isEnabled()) {
 					debug("  No GoPVP plugin found");
 				} else {
 					goPVPLink = new GoPVPLink();
