@@ -51,7 +51,7 @@ public class HelpCommand implements CommandExecutor {
 			return;
 		}
 		for (String ruleKey : helpSection.getKeys(false)) {
-			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>(), true);
+			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
 			if (servers.contains(plugin.getServerId())) {
 				if (helpSection.isList(ruleKey)) {
 					help.addAll(helpSection.getStringList(ruleKey));

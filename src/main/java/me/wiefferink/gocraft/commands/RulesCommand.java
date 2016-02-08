@@ -51,7 +51,7 @@ public class RulesCommand implements CommandExecutor {
 			return;
 		}
 		for (String ruleKey : rulesSection.getKeys(false)) {
-			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>(), true);
+			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
 			if (servers.contains(plugin.getServerId())) {
 				if (rulesSection.isList(ruleKey)) {
 					rules.addAll(rulesSection.getStringList(ruleKey));
