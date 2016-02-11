@@ -58,7 +58,7 @@ rules-rule: "&2&l►&r %0%"
 
 help-noPermission: "You do no have permission to check the help page."
 help-header: "&2Available commands:"
-help-rule: "&2&l►&r %0%"
+help-rule: "%0%"
 
 ########## SIGN LIMITING
 tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn! Check /as to see all shop commands."

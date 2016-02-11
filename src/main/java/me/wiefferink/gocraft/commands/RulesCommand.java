@@ -28,14 +28,14 @@ public class RulesCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (!sender.hasPermission("gocraft.help")) {
-			plugin.message(sender, "help-noPermission");
+		if (!sender.hasPermission("gocraft.rules")) {
+			plugin.message(sender, "rules-noPermission");
 			return true;
 		}
 		// Show the help
-		plugin.message(sender, "help-header");
+		plugin.message(sender, "rules-header");
 		for (String rule : rules) {
-			plugin.messageNoPrefix(sender, "help-rule", rule);
+			plugin.messageNoPrefix(sender, "rules-rule", rule);
 		}
 		return true;
 	}
@@ -45,9 +45,9 @@ public class RulesCommand implements CommandExecutor {
 	 */
 	public void buildRules() {
 		this.rules = new ArrayList<>();
-		ConfigurationSection rulesSection = plugin.getGeneralConfig().getConfigurationSection("help");
+		ConfigurationSection rulesSection = plugin.getGeneralConfig().getConfigurationSection("rules");
 		if (rulesSection == null) {
-			plugin.getLogger().warning("Empty help section!");
+			plugin.getLogger().warning("Empty rules section!");
 			return;
 		}
 		for (String ruleKey : rulesSection.getKeys(false)) {

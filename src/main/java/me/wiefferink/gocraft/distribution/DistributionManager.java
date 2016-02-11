@@ -327,6 +327,7 @@ public class DistributionManager {
 				}
 				fileTarget.getParentFile().mkdirs();
 				if(!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
+					// TODO handle binary files with copy instead of line by line
 					try (
 							BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
 							BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTarget), "UTF8"))) {
