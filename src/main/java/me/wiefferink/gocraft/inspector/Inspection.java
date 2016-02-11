@@ -170,12 +170,13 @@ public class Inspection {
 		String target = null;
 		String targetName = null;
 		if (inspected != null) {
-			target = inspected.getUniqueId().toString();
-			targetName = inspected.getName();
+			//target = inspected.getUniqueId().toString();
+			//targetName = inspected.getName();
 			teleportToInspected();
 		}
-		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".target", target);
-		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".targetName", targetName);
+		// Currenty has problems
+		//plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".target", target);
+		//plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".targetName", targetName);
 		plugin.getInspectionManager().saveInspectors();
 		new BukkitRunnable() {
 			@Override
