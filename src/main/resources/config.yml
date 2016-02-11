@@ -58,6 +58,7 @@ enableStaffMessageCommands: true
 enableUpdateCommand: true
 enableReloadCommand: true
 enableRulesCommand: true
+enableHelpCommand: true
 
 ########## OTHER
 enableExpiredPlotsRestoration: false
