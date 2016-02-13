@@ -87,6 +87,8 @@ public class DistributionManager {
 	 *                        - permissions
 	 */
 	public void updatePluginDataNow(CommandSender executor, String serverFilter, String operationFilter) {
+		List<String> generalWarnings = new ArrayList<>();
+
 		// Prepare operations
 		Set<String> operations = new HashSet<>();
 		Set<String> operationsDone = new HashSet<>();
@@ -99,7 +101,13 @@ public class DistributionManager {
 		// Prepare update logger
 		BufferedWriter updateLogger = null;
 		try {
-			updateLogger = new BufferedWriter(new FileWriter(plugin.getGeneralFolder().getAbsolutePath() + File.separator + "updates.log", true));
+			File updates = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + "updates.log");
+			if (!updates.exists()) {
+				if (!updates.createNewFile()) {
+					generalWarnings.add("Could not create updates.log file");
+				}
+			}
+			updateLogger = new BufferedWriter(new FileWriter(updates, true));
 		} catch (IOException e) {
 			plugin.getLogger().warning("Could not create writer to update.log:");
 			e.printStackTrace();
@@ -107,7 +115,6 @@ public class DistributionManager {
 		updateMessage(updateLogger, executor, "update-started");
 
 		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
-		List<String> generalWarnings = new ArrayList<>();
 		final Set<String> include = resolveServers(serverFilter, generalWarnings);
 
 		int pluginsUpdated = 0;
