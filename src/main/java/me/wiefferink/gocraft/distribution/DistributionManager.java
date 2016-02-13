@@ -388,6 +388,10 @@ public class DistributionManager {
 			}
 			for (String sectionKey : permissionsSection.getKeys(false)) {
 				ConfigurationSection currentSection = permissionsSection.getConfigurationSection(sectionKey);
+				if (currentSection == null) {
+					generalWarnings.add("Incorrect permissions section: " + sectionKey + " in plugin " + pluginKey);
+					continue;
+				}
 				String servers = currentSection.getString("servers");
 				if (servers == null) { // default to all servers the plugin is on
 					servers = pluginKey;
