@@ -20,6 +20,7 @@ public class DistributionManager {
 	private Map<String, Set<String>> serverGroups;
 	private Map<String, File> serverPluginFolders;
 	private File pluginDataFolder;
+	private Set<String> binaryFiles = new HashSet<>(Arrays.asList("png", "jpg", "jpeg", "bmp", "jar"));
 
 	public DistributionManager(GoCraft plugin) {
 		this.plugin = plugin;
@@ -334,34 +335,46 @@ public class DistributionManager {
 				}
 				fileTarget.getParentFile().mkdirs();
 				if(!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
-					// TODO handle binary files with copy instead of line by line
-					try (
-							BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
-							BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTarget), "UTF8"))) {
-						// Only files for which we know a way to comment out lines we can add a header
-						if (file.getName().endsWith(".yml")) {
-							writer.write("\n\n\n# ========================================================================= #\n" +
-									"# ------------------------------ DISTRIBUTED ------------------------------ #\n" +
-									"# ----------------- edit this config in the GENERAL folder ---------------- #\n" +
-									"# ========================================================================= #\n\n\n\n\n\n");
-						}
-						String line = reader.readLine();
-						while (line != null) {
-							writer.write(applyVariables(line, server, warnings) + "\n");
-							line = reader.readLine();
-						}
-
-						boolean permissionsResult = fileTarget.setExecutable(true, false);
-						permissionsResult = permissionsResult && fileTarget.setReadable(true, false);
-						permissionsResult = permissionsResult && fileTarget.setWritable(true, false);
-						if(!permissionsResult) {
-							warnings.add("Setting permissions failed: "+fileTarget.getAbsolutePath());
-						}
-						result.add(file.getAbsolutePath().replace(rootSource.getAbsolutePath(), "")); // Directory structure + filename starting from plugin folder to the file
-					} catch(IOException e) {
-						warnings.add("Copy failed: "+fileTarget.getAbsolutePath()+", exception: "+e.getMessage());
-						e.printStackTrace();
+					String extension = file.getName().toLowerCase();
+					if (extension.contains(".")) {
+						extension = extension.substring(extension.lastIndexOf(".") + 1);
 					}
+					if (binaryFiles.contains(extension)) {
+						try {
+							FileUtils.copyFile(file, fileTarget);
+						} catch (IOException e) {
+							warnings.add("Binary copy failed: " + fileTarget.getAbsolutePath() + ", exception: " + e.getMessage());
+							e.printStackTrace();
+						}
+					} else {
+						try (
+								BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
+								BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTarget), "UTF8"))) {
+							// Only files for which we know a way to comment out lines we can add a header
+							if (file.getName().endsWith(".yml")) {
+								writer.write("\n\n\n# ========================================================================= #\n" +
+										"# ------------------------------ DISTRIBUTED ------------------------------ #\n" +
+										"# ----------------- edit this config in the GENERAL folder ---------------- #\n" +
+										"# ========================================================================= #\n\n\n\n\n\n");
+							}
+							String line = reader.readLine();
+							while (line != null) {
+								writer.write(applyVariables(line, server, warnings) + "\n");
+								line = reader.readLine();
+							}
+
+						} catch (IOException e) {
+							warnings.add("Line-by-line copy failed: " + fileTarget.getAbsolutePath() + ", exception: " + e.getMessage());
+							e.printStackTrace();
+						}
+					}
+					boolean permissionsResult = fileTarget.setExecutable(true, false);
+					permissionsResult = permissionsResult && fileTarget.setReadable(true, false);
+					permissionsResult = permissionsResult && fileTarget.setWritable(true, false);
+					if (!permissionsResult) {
+						warnings.add("Setting permissions failed: " + fileTarget.getAbsolutePath());
+					}
+					result.add(file.getAbsolutePath().replace(rootSource.getAbsolutePath(), "")); // Directory structure + filename starting from plugin folder to the file
 				}
 			} else {
 				warnings.add("Incorrect file: "+file.getAbsolutePath());
