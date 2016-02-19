@@ -5,7 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 public class DisableMobSpawning implements Listener {
 	
@@ -22,12 +21,8 @@ public class DisableMobSpawning implements Listener {
 	// Prevent spawning of mobs
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if(plugin.onThisWorld(configLine, event.getLocation())
-				&& event.getSpawnReason() != SpawnReason.SPAWNER
-				&& event.getSpawnReason() != SpawnReason.DEFAULT 
-				&& event.getSpawnReason() != SpawnReason.CUSTOM) {
+		if (plugin.onThisWorld(configLine, event.getLocation())) {
 			event.setCancelled(true);
 		}
-		//plugin.debug("Spawn event, type=" + event.getEntityType() + ", reason=" + event.getSpawnReason() + ", cancelled=" + event.isCancelled());
 	}
 }
