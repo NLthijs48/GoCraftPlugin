@@ -21,7 +21,8 @@ public class DisableMobSpawning implements Listener {
 	// Prevent spawning of mobs
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if (plugin.onThisWorld(configLine, event.getLocation())) {
+		if (plugin.onThisWorld(configLine, event.getLocation())
+				&& event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM) {
 			event.setCancelled(true);
 		}
 	}
