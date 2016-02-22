@@ -87,7 +87,7 @@ public class DistributionManager {
 	 *                        - pluginConfig
 	 *                        - permissions
 	 */
-	public void updatePluginDataNow(CommandSender executor, String serverFilter, String operationFilter) {
+	public void updatePluginDataNow(final CommandSender executor, String serverFilter, String operationFilter) {
 		List<String> generalWarnings = new ArrayList<>();
 
 		// Prepare operations
@@ -248,7 +248,12 @@ public class DistributionManager {
 			List<String> serversUpdated = updatePermissionsNow(include, generalWarnings);
 			permissionsUpdated = serversUpdated.size();
 			if (permissionsUpdated > 0 && executor instanceof Player) {
-				((Player) executor).performCommand("pex reload");
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						((Player) executor).performCommand("pex reload");
+					}
+				}.runTaskLater(plugin, 5L);
 			}
 		}
 
