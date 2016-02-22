@@ -19,12 +19,13 @@ public class DistributionManager {
 	private GoCraft plugin;
 	private Map<String, Set<String>> serverGroups;
 	private Map<String, File> serverPluginFolders;
-	private File pluginDataFolder;
+	private File pluginDataFolder, rootDataFolder;
 	private Set<String> binaryFiles = new HashSet<>(Arrays.asList("png", "jpg", "jpeg", "bmp", "jar"));
 
 	public DistributionManager(GoCraft plugin) {
 		this.plugin = plugin;
 		pluginDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalPluginDataFoldername);
+		rootDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalRootDataFoldername);
 
 		initializeServerGroups();
 		initializeServerPluginFolders();
@@ -87,14 +88,14 @@ public class DistributionManager {
 	 *                        - pluginConfig
 	 *                        - permissions
 	 */
-	public void updatePluginDataNow(final CommandSender executor, String serverFilter, String operationFilter) {
+	public void updateNow(final CommandSender executor, String serverFilter, String operationFilter) {
 		List<String> generalWarnings = new ArrayList<>();
 
 		// Prepare operations
 		Set<String> operations = new HashSet<>();
 		Set<String> operationsDone = new HashSet<>();
 		if (operationFilter == null) { // Add all
-			operations.addAll(Arrays.asList("pluginJar", "pluginConfig", "permissions"));
+			operations.addAll(Arrays.asList("pluginJar", "pluginConfig", "permissions", "rootfiles"));
 		} else {
 			operations.addAll(Arrays.asList(operationFilter.split(",( )?")));
 		}
@@ -118,10 +119,7 @@ public class DistributionManager {
 		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
 		final Set<String> include = resolveServers(serverFilter, generalWarnings);
 
-		int pluginsUpdated = 0;
-		int jarsUpdated = 0;
-		int configsUpdated = 0;
-		int permissionsUpdated = 0;
+		int pluginsUpdated = 0, jarsUpdated = 0, configsUpdated = 0, permissionsUpdated = 0, rootFilesUpdated = 0;
 		ConfigurationSection pushPlugins = plugin.getGeneralConfig().getConfigurationSection("plugins");
 		if(pushPlugins == null) {
 			generalWarnings.add("No pushPlugins section");
@@ -151,13 +149,13 @@ public class DistributionManager {
 			File newPluginJar = null;
 			File newPluginConfig = null;
 			for(File file : files) {
-				if(file.isFile() && matchPluginFileName(pushPlugin, file)) {
+				if (file.isFile() && matchesFileName(pushPlugin, file)) {
 					if(newPluginJar == null) {
 						newPluginJar = file;
 					} else {
 						pluginWarnings.add("Found second .jar file match: "+file.getAbsolutePath()+", first="+newPluginJar.getAbsolutePath());
 					}
-				} else if(file.isDirectory() && matchPluginFileName(pushPlugin, file)) {
+				} else if (file.isDirectory() && matchesFileName(pushPlugin, file)) {
 					if(newPluginConfig == null) {
 						newPluginConfig = file;
 					} else {
@@ -182,7 +180,7 @@ public class DistributionManager {
 					File[] existingFiles = serverPluginFolders.get(server).listFiles();
 					if(existingFiles != null) {
 						for(File file : existingFiles) {
-							if(file.isFile() && matchPluginFileName(pushPlugin, file)) {
+							if (file.isFile() && matchesFileName(pushPlugin, file)) {
 								if(oldPluginJar == null) {
 									oldPluginJar = file;
 								} else {
@@ -198,22 +196,10 @@ public class DistributionManager {
 						if(oldPluginJar != null && !oldPluginJar.delete()) {
 							pluginWarnings.add("Deleting failed: "+oldPluginJar.getAbsolutePath());
 						}
-
 						File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin+" DISTRIBUTED.jar");
-						try {
-							FileUtils.copyFile(newPluginJar, newFileName);
-							boolean permissionsResult = newFileName.setExecutable(true, false);
-							permissionsResult = permissionsResult && newFileName.setReadable(true, false);
-							permissionsResult = permissionsResult && newFileName.setWritable(true, false);
-							if(!permissionsResult) {
-								pluginWarnings.add("Setting permissions failed: "+newFileName.getAbsolutePath());
-							}
-							jarsUpdated++;
-							pushedJarTo.add(plugin.getServerName(server));
-						} catch(IOException e) {
-							pluginWarnings.add("Copy failed: "+newFileName.getAbsolutePath()+", exception:");
-							e.printStackTrace();
-						}
+						pluginWarnings.addAll(copyFile(newPluginJar, newFileName, server));
+						jarsUpdated++;
+						pushedJarTo.add(plugin.getServerName(server));
 					}
 				}
 
@@ -257,6 +243,12 @@ public class DistributionManager {
 			}
 		}
 
+		// Update root files
+		if (operations.contains("rootfiles")) {
+			operationsDone.add("rootfiles");
+			rootFilesUpdated = updateRootFiles(updateLogger, executor, include, generalWarnings);
+		}
+
 		// Check for leftover operations
 		operations.removeAll(operationsDone);
 		if (operations.size() > 0) {
@@ -270,9 +262,8 @@ public class DistributionManager {
 				updateMessage(updateLogger, executor, "update-warning", warning);
 			}
 		}
-		if (pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0 || permissionsUpdated > 0) {
-			updateMessage(updateLogger, executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated, permissionsUpdated);
-			updateMessage(updateLogger, executor, "update-donePermissions", permissionsUpdated);
+		if (pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0 || permissionsUpdated > 0 || rootFilesUpdated > 0) {
+			updateMessage(updateLogger, executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated, permissionsUpdated, rootFilesUpdated);
 		} else {
 			updateMessage(updateLogger, executor, "update-none");
 		}
@@ -304,13 +295,115 @@ public class DistributionManager {
 	 * @param executor The CommandSender that executed the update
 	 * @param filter   The filter specifying which servers should be pushed to
 	 */
-	public void updatePluginData(final CommandSender executor, final String filter, final String operationFilter) {
+	public void update(final CommandSender executor, final String filter, final String operationFilter) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				updatePluginDataNow(executor, filter, operationFilter);
+				updateNow(executor, filter, operationFilter);
 			}
 		}.runTaskAsynchronously(plugin);
+	}
+
+	/**
+	 * Update root files
+	 * @param include Servers to update
+	 * @param generalWarnings List with warnings
+	 * @return Count of updated files
+	 */
+	public int updateRootFiles(BufferedWriter updateLogger, CommandSender executor, Set<String> include, List<String> generalWarnings) {
+		int result = 0;
+		ConfigurationSection rootFiles = plugin.getGeneralConfig().getConfigurationSection("rootfiles");
+		if (rootFiles == null) {
+			generalWarnings.add("No rootfiles section");
+			return result;
+		}
+
+		// All files in the root data folder
+		File[] files = rootDataFolder.listFiles();
+		if (files == null) {
+			generalWarnings.add("No files found in the root data folder: " + rootDataFolder.getAbsolutePath());
+			return result;
+		}
+
+		// Execute all root file pushing
+		List<String> pushedFileTo = new ArrayList<>();
+		for (String pushFile : rootFiles.getKeys(false)) {
+			List<String> fileWarnings = new ArrayList<>();
+			ConfigurationSection pushToSection = rootFiles.getConfigurationSection(pushFile);
+			String pushTo = null;
+			if (pushToSection != null) {
+				pushTo = pushToSection.getString("pushTo");
+			} else if (rootFiles.isString(pushFile)) {
+				pushTo = rootFiles.getString(pushFile);
+			}
+			Set<String> servers = resolveServers(pushTo, fileWarnings);
+
+			// Determine source file name
+			String sourceName = pushFile;
+			if (pushToSection != null && pushToSection.contains("source")) {
+				sourceName = pushToSection.getString("source");
+			}
+			// Determine target file name
+			String targetName = sourceName;
+			if (pushToSection != null && pushToSection.contains("target")) {
+				targetName = pushToSection.getString("target");
+			}
+
+			// Search jarfile to push
+			File newFile = null;
+			for (File file : files) {
+				if (file.isFile() && matchesFileName(sourceName, file)) {
+					if (newFile == null) {
+						newFile = file;
+					} else {
+						fileWarnings.add("Found second root file match: " + file.getAbsolutePath() + ", first: " + newFile.getAbsolutePath());
+					}
+				}
+			}
+
+			// Push to the specified servers
+			for (String server : servers) {
+				// Skip filtered servers
+				if (include != null && !include.contains(server)) {
+					continue;
+				}
+
+				if (newFile != null) {
+					// Find existing file
+					File oldFile = null;
+					File[] existingFiles = serverPluginFolders.get(server).getParentFile().listFiles();
+					if (existingFiles != null) {
+						for (File file : existingFiles) {
+							if (file.isFile() && matchesFileName(targetName, file)) {
+								if (oldFile == null) {
+									oldFile = file;
+								} else {
+									fileWarnings.add("Found second old root file: " + file.getAbsolutePath());
+								}
+							}
+						}
+					}
+
+					// Determine to push or not
+					if (oldFile == null || FileUtils.isFileNewer(newFile, oldFile)) {
+						File newFileName = new File(serverPluginFolders.get(server).getParentFile().getAbsolutePath() + File.separator + targetName);
+						fileWarnings.addAll(copyFile(newFile, newFileName, server));
+						pushedFileTo.add(plugin.getServerName(server));
+						result++;
+					}
+				}
+			}
+			if (pushedFileTo.size() > 0 || fileWarnings.size() > 0) {
+				updateMessage(updateLogger, executor, "update-pluginHeader", pushFile);
+				if (pushedFileTo.size() > 0) {
+					updateMessage(updateLogger, executor, "update-pushedTo", StringUtils.join(pushedFileTo, ", "));
+				}
+				for (String warning : fileWarnings) {
+					updateMessage(updateLogger, executor, "update-warning", warning);
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -340,45 +433,7 @@ public class DistributionManager {
 				}
 				fileTarget.getParentFile().mkdirs();
 				if(!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
-					String extension = file.getName().toLowerCase();
-					if (extension.contains(".")) {
-						extension = extension.substring(extension.lastIndexOf(".") + 1);
-					}
-					if (binaryFiles.contains(extension)) {
-						try {
-							FileUtils.copyFile(file, fileTarget);
-						} catch (IOException e) {
-							warnings.add("Binary copy failed: " + fileTarget.getAbsolutePath() + ", exception: " + e.getMessage());
-							e.printStackTrace();
-						}
-					} else {
-						try (
-								BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
-								BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileTarget), "UTF8"))) {
-							// Only files for which we know a way to comment out lines we can add a header
-							if (file.getName().endsWith(".yml")) {
-								writer.write("\n\n\n# ========================================================================= #\n" +
-										"# ------------------------------ DISTRIBUTED ------------------------------ #\n" +
-										"# ----------------- edit this config in the GENERAL folder ---------------- #\n" +
-										"# ========================================================================= #\n\n\n\n\n\n");
-							}
-							String line = reader.readLine();
-							while (line != null) {
-								writer.write(applyVariables(line, server, warnings) + "\n");
-								line = reader.readLine();
-							}
-
-						} catch (IOException e) {
-							warnings.add("Line-by-line copy failed: " + fileTarget.getAbsolutePath() + ", exception: " + e.getMessage());
-							e.printStackTrace();
-						}
-					}
-					boolean permissionsResult = fileTarget.setExecutable(true, false);
-					permissionsResult = permissionsResult && fileTarget.setReadable(true, false);
-					permissionsResult = permissionsResult && fileTarget.setWritable(true, false);
-					if (!permissionsResult) {
-						warnings.add("Setting permissions failed: " + fileTarget.getAbsolutePath());
-					}
+					warnings.addAll(copyFile(file, fileTarget, server));
 					result.add(file.getAbsolutePath().replace(rootSource.getAbsolutePath(), "")); // Directory structure + filename starting from plugin folder to the file
 				}
 			} else {
@@ -386,6 +441,58 @@ public class DistributionManager {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Copy a file from source to target, replace variable if in text format, set permissions
+	 *
+	 * @param source The source file
+	 * @param target The target file
+	 * @param server The server to apply variables for, or null for none
+	 * @return A list with warnings, all is well when empty
+	 */
+	public List<String> copyFile(File source, File target, String server) {
+		List<String> warnings = new ArrayList<>();
+		String extension = source.getName().toLowerCase();
+		if (extension.contains(".")) {
+			extension = extension.substring(extension.lastIndexOf(".") + 1);
+		}
+		if (binaryFiles.contains(extension)) {
+			try {
+				FileUtils.copyFile(source, target);
+			} catch (IOException e) {
+				warnings.add("Binary copy failed: " + target.getAbsolutePath() + ", exception: " + e.getMessage());
+				e.printStackTrace();
+			}
+		} else {
+			try (
+					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(source), "UTF8"));
+					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(target), "UTF8"))) {
+				// Only files for which we know a way to comment out lines we can add a header
+				if (source.getName().endsWith(".yml")) {
+					writer.write("\n\n\n# ========================================================================= #\n" +
+							"# ------------------------------ DISTRIBUTED ------------------------------ #\n" +
+							"# ----------------- edit this config in the GENERAL folder ---------------- #\n" +
+							"# ========================================================================= #\n\n\n\n\n\n");
+				}
+				String line = reader.readLine();
+				while (line != null) {
+					writer.write(applyVariables(line, server, warnings) + "\n");
+					line = reader.readLine();
+				}
+
+			} catch (IOException e) {
+				warnings.add("Line-by-line copy failed: " + target.getAbsolutePath() + ", exception: " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		boolean permissionsResult = target.setExecutable(true, false);
+		permissionsResult = permissionsResult && target.setReadable(true, false);
+		permissionsResult = permissionsResult && target.setWritable(true, false);
+		if (!permissionsResult) {
+			warnings.add("Setting permissions failed: " + target.getAbsolutePath());
+		}
+		return warnings;
 	}
 
 
@@ -565,6 +672,9 @@ public class DistributionManager {
 	 * @return The result string where all variables are replaced with values from the config
 	 */
 	public String applyVariables(String line, String server, List<String> warnings) {
+		if (server == null) {
+			return line;
+		}
 		Pattern variables = Pattern.compile("<<<(?<variable>[a-zA-Z0-9-_:]+)>>>");
 		Matcher matcher = variables.matcher(line);
 		while (matcher.find()) {
@@ -601,11 +711,14 @@ public class DistributionManager {
 	 * @param match The match to test
 	 * @return true if the match is of the test plugin, otherwise false
 	 */
-	public boolean matchPluginFileName(String test, File match) {
+	public boolean matchesFileName(String test, File match) {
 		test = test.toLowerCase();
 		String name = match.getName().toLowerCase();
 		if(name.endsWith(".jar")) {  // Strip .jar
 			name = name.substring(0, match.getName().lastIndexOf(".")).toLowerCase();
+		}
+		if (test.endsWith(".jar")) {  // Strip .jar
+			test = test.substring(0, test.lastIndexOf(".")).toLowerCase();
 		}
 		return name.startsWith(test + " ") || name.equalsIgnoreCase(test);
 	}

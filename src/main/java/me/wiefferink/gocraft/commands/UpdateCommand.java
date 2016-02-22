@@ -32,7 +32,7 @@ public class UpdateCommand implements CommandExecutor {
 		if (args.length >= 2) {
 			operationFilter = args[1];
 		}
-		plugin.getDistributionManager().updatePluginData(sender, serverFilter, operationFilter);
+		plugin.getDistributionManager().update(sender, serverFilter, operationFilter);
 		return true;
 	}
 

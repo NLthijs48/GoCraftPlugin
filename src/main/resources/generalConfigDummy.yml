@@ -20,6 +20,15 @@ rules:
 help:
   <servers>:
     - help
+# Root files
+rootfiles:
+  <name>:
+    pushTo: ""
+    source: "<filename>"
+    target: "<filename>"
+  <name>: "<servers>"
+
+# Plugin files
 plugins:
   <name>:
     pushTo: "<server/group, comma-separated>"

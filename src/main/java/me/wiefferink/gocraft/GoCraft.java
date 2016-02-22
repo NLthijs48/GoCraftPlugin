@@ -46,6 +46,7 @@ public final class GoCraft extends JavaPlugin {
 	public static final String generalFolderName = "GENERAL";
 	public static final String generalConfigName = "config.yml";
 	public static final String generalPluginDataFoldername = "plugins";
+	public static final String generalRootDataFoldername = "root";
 	// Variables
 	private ArrayList<Listener> listeners;
 	private LanguageManager languageManager;
@@ -151,7 +152,7 @@ public final class GoCraft extends JavaPlugin {
 	}
 	
 	public void onDisable() {
-		getDistributionManager().updatePluginDataNow(Bukkit.getConsoleSender(), getServerName(), "pluginJar, pluginConfig, permissions");
+		getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
 	}
