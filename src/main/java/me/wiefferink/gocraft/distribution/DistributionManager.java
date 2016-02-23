@@ -471,7 +471,7 @@ public class DistributionManager {
 					BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(source), "UTF8"));
 					BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(target), "UTF8"))) {
 				// Only files for which we know a way to comment out lines we can add a header
-				if (source.getName().endsWith(".yml")) {
+				if (source.getName().endsWith(".yml") || source.getName().endsWith(".properties")) {
 					writer.write("\n\n\n# ========================================================================= #\n" +
 							"# ------------------------------ DISTRIBUTED ------------------------------ #\n" +
 							"# ----------------- edit this config in the GENERAL folder ---------------- #\n" +
