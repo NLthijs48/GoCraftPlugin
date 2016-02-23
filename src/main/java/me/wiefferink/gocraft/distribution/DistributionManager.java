@@ -17,12 +17,14 @@ import java.util.regex.Pattern;
 public class DistributionManager {
 
 	private GoCraft plugin;
+	private File self;
 	private Map<String, Set<String>> serverGroups;
 	private Map<String, File> serverPluginFolders;
 	private File pluginDataFolder, rootDataFolder;
 	private Set<String> binaryFiles = new HashSet<>(Arrays.asList("png", "jpg", "jpeg", "bmp", "jar"));
 
 	public DistributionManager(GoCraft plugin) {
+		self = new File(DistributionManager.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		this.plugin = plugin;
 		pluginDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalPluginDataFoldername);
 		rootDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalRootDataFoldername);
@@ -486,11 +488,13 @@ public class DistributionManager {
 				e.printStackTrace();
 			}
 		}
-		boolean permissionsResult = target.setExecutable(true, false);
-		permissionsResult = permissionsResult && target.setReadable(true, false);
-		permissionsResult = permissionsResult && target.setWritable(true, false);
-		if (!permissionsResult) {
-			warnings.add("Setting permissions failed: " + target.getAbsolutePath());
+		if (!target.equals(self)) { // Setting own permissions obviously does not work
+			boolean permissionsResult = target.setExecutable(true, false);
+			permissionsResult = permissionsResult && target.setReadable(true, false);
+			permissionsResult = permissionsResult && target.setWritable(true, false);
+			if (!permissionsResult) {
+				warnings.add("Setting permissions failed: " + target.getAbsolutePath());
+			}
 		}
 		return warnings;
 	}
@@ -689,11 +693,13 @@ public class DistributionManager {
 			} else {
 				variable = parts[0];
 			}
-			String value;
+			String value = null;
 			if ("id".equals(variable)) {
 				value = actualServer;
-			} else {
+			} else if (plugin.getGeneralConfig().isSet("servers." + actualServer + "." + variable)) {
 				value = plugin.getGeneralConfig().getString("servers." + actualServer + "." + variable);
+			} else if (plugin.getGeneralConfig().isSet("servers.DEFAULT." + variable)) {
+				value = plugin.getGeneralConfig().getString("servers.DEFAULT." + variable);
 			}
 			if (value == null) {
 				warnings.add("Variable value for '" + variable + "' could not be found");
