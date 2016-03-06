@@ -3,10 +3,8 @@ package me.wiefferink.gocraft.inspector;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.actions.*;
 import me.wiefferink.gocraft.utils.Utils;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -331,7 +329,7 @@ public class Inspection {
 
 			// Display ping
 			if (getInspected().isOnline()) {
-				int ping = getPing(getInspected());
+				int ping = Utils.getPing(getInspected());
 				if (ping >= 1000) {
 					ping = 999;
 				}
@@ -557,9 +555,6 @@ public class Inspection {
 	 * Restore saved inspector state from the items in memory
 	 */
 	public void restoreInspectorState() {
-		// Restore health and food
-		inspector.setHealth(health);
-		inspector.setFoodLevel(food);
 		// Restore inventory
 		inspector.getInventory().setContents(inspectorInventory);
 		inspector.getInventory().setArmorContents(inspectorArmor);
@@ -568,13 +563,16 @@ public class Inspection {
 			inspector.removePotionEffect(effect.getType());
 		}
 		inspector.addPotionEffects(potionEffects);
+		// Restore location
+		inspector.teleport(location);
 		// Restore gamemode
 		inspector.setGameMode(gamemode);
+		// Restore health and food
+		inspector.setHealth(health);
+		inspector.setFoodLevel(food);
 		// Restore fly state
 		inspector.setAllowFlight(allowFlight);
 		inspector.setFlying(isFlying);
-		// Restore location
-		inspector.teleport(location);
 
 		// Remove from disk storage because everything is restored from memory
 		plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString(), null);
@@ -582,18 +580,4 @@ public class Inspection {
 		inspector.updateInventory();
 	}
 
-	/**
-	 * Get the ping of a player
-	 *
-	 * @param player The player to check
-	 * @return The ping in ms
-	 */
-	public int getPing(Player player) {
-		if (player == null) {
-			return -1;
-		}
-		CraftPlayer cp = (CraftPlayer) player;
-		EntityPlayer ep = cp.getHandle();
-		return ep.ping;
-	}
 }
