@@ -52,6 +52,9 @@ public class DistributionManager {
 	private void initializeServerPluginFolders() {
 		serverPluginFolders = new HashMap<>();
 		for(String serverId : getServerIds()) {
+			if (serverId.equals("DEFAULT")) { // Server only used as backup variables, not to actually write to
+				continue;
+			}
 			File serverFile = new File(plugin.getGeneralFolder().getParent()+File.separator+plugin.getGeneralConfig().getString("servers."+serverId+".directory")+File.separator+"plugins");
 			if(serverFile.isDirectory()) {
 				serverPluginFolders.put(serverId, serverFile);
