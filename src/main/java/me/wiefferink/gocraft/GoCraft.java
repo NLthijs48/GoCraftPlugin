@@ -47,6 +47,7 @@ public final class GoCraft extends JavaPlugin {
 	public static final String generalConfigName = "config.yml";
 	public static final String generalPluginDataFoldername = "plugins";
 	public static final String generalRootDataFoldername = "root";
+	public static final String currencyEuro = "%euro%";
 	// Variables
 	private ArrayList<Listener> listeners;
 	private LanguageManager languageManager;

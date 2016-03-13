@@ -17,9 +17,9 @@ public class ExitAction extends InventoryAction {
 
     @Override
     public ItemStack getItem() {
-        return new ItemBuilder(Material.BIRCH_DOOR_ITEM)
+        return new ItemBuilder(Material.BARRIER)
                 .setName(ChatColor.GREEN + "Stop inspection")
-                .addAction("Click")
+                .addAction("Stop")
                 .getItemStack();
     }
 
