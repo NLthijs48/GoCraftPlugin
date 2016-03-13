@@ -7,6 +7,14 @@
 chatPrefix: "&2[Go-Craft]&r "
 debug: true
 
+########## CURRENCY
+moneyCharacter: '%euro%'
+moneyCharacterAfter: ''
+fractionalNumbers: 2
+hideEmptyFractionalPart: true
+metricSuffixesAbove: 1000000.0
+decimalMark: '.'
+
 ########## BLOCKS
 disableBlockBreaking: false
 disableBedrockBreak: false

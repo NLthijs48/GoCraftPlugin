@@ -19,6 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -355,5 +357,71 @@ public class Utils {
 		RegionManager manager = GoCraft.getInstance().getWorldGuardLink().get().getRegionManager(Bukkit.getWorld("world"));
 		ApplicableRegionSet regions = manager.getApplicableRegions(player.getLocation());
 		return regions.testState(GoCraft.getInstance().getWorldGuardLink().get().wrapPlayer(player), DefaultFlag.PVP);
+	}
+
+	/**
+	 * Format the currency amount with the characters before and after
+	 *
+	 * @param amount Amount of money to format
+	 * @return Currency character format string
+	 */
+	public static String formatCurrency(double amount) {
+		String before = GoCraft.getInstance().getConfig().getString("moneyCharacter");
+		before = before.replace(GoCraft.currencyEuro, "\u20ac");
+		String after = GoCraft.getInstance().getConfig().getString("moneyCharacterAfter");
+		after = after.replace(GoCraft.currencyEuro, "\u20ac");
+		String result;
+		// Check for infinite and NaN
+		if (Double.isInfinite(amount)) {
+			result = "\u221E"; // Infinite symbol
+		} else if (Double.isNaN(amount)) {
+			result = "NaN";
+		} else {
+			// Add metric
+			double metricAbove = GoCraft.getInstance().getConfig().getDouble("metricSuffixesAbove");
+			if (metricAbove != -1 && amount >= metricAbove) {
+				if (amount >= 1000000000000000000000000.0) {
+					amount = amount / 1000000000000000000000000.0;
+					after = "Y" + after;
+				} else if (amount >= 1000000000000000000000.0) {
+					amount = amount / 1000000000000000000000.0;
+					after = "Z" + after;
+				} else if (amount >= 1000000000000000000.0) {
+					amount = amount / 1000000000000000000.0;
+					after = "E" + after;
+				} else if (amount >= 1000000000000000.0) {
+					amount = amount / 1000000000000000.0;
+					after = "P" + after;
+				} else if (amount >= 1000000000000.0) {
+					amount = amount / 1000000000000.0;
+					after = "T" + after;
+				} else if (amount >= 1000000000.0) {
+					amount = amount / 1000000000.0;
+					after = "G" + after;
+				} else if (amount >= 1000000.0) {
+					amount = amount / 1000000.0;
+					after = "M" + after;
+				} else if (amount >= 1000.0) {
+					amount = amount / 1000.0;
+					after = "k" + after;
+				}
+				BigDecimal bigDecimal = new BigDecimal(amount);
+				if (bigDecimal.toString().contains(".")) {
+					int frontLength = bigDecimal.toString().substring(0, bigDecimal.toString().indexOf('.')).length();
+					bigDecimal = bigDecimal.setScale(GoCraft.getInstance().getConfig().getInt("fractionalNumbers") + (3 - frontLength), RoundingMode.HALF_UP);
+				}
+				result = bigDecimal.toString();
+			} else {
+				BigDecimal bigDecimal = new BigDecimal(amount);
+				bigDecimal = bigDecimal.setScale(GoCraft.getInstance().getConfig().getInt("fractionalNumbers"), RoundingMode.HALF_UP);
+				amount = bigDecimal.doubleValue();
+				result = bigDecimal.toString();
+				if (GoCraft.getInstance().getConfig().getBoolean("hideEmptyFractionalPart") && (amount % 1.0) == 0.0 && result.contains(".")) {
+					result = result.substring(0, result.indexOf('.'));
+				}
+			}
+		}
+		result = result.replace(".", GoCraft.getInstance().getConfig().getString("decimalMark"));
+		return before + result + after;
 	}
 }
