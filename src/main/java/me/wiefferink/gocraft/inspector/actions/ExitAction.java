@@ -3,10 +3,8 @@ package me.wiefferink.gocraft.inspector.actions;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.utils.ItemBuilder;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ExitAction extends InventoryAction {
@@ -16,11 +14,10 @@ public class ExitAction extends InventoryAction {
     }
 
     @Override
-    public ItemStack getItem() {
+    public ItemBuilder getItem() {
         return new ItemBuilder(Material.BARRIER)
-                .setName(ChatColor.GREEN + "Stop inspection")
-                .addAction("Stop")
-                .getItemStack();
+                .setName("&2Stop inspection")
+                .addAction("Stop");
     }
 
     @Override

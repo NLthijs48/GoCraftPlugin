@@ -3,9 +3,7 @@ package me.wiefferink.gocraft.inspector.actions;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.utils.ItemBuilder;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class BanInfoAction extends InventoryAction {
 
@@ -19,11 +17,10 @@ public class BanInfoAction extends InventoryAction {
 	}
 
 	@Override
-	public ItemStack getItem() {
+	public ItemBuilder getItem() {
 		return new ItemBuilder(Material.IRON_FENCE)
-				.setName(ChatColor.GREEN + "Check ban/mute info")
-				.addAction("Click")
-				.getItemStack();
+				.setName("&2Check ban/mute info")
+				.addAction("Click");
 	}
 
 	@Override

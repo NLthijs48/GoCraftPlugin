@@ -2,9 +2,7 @@ package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.utils.ItemBuilder;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class ChestAction extends InventoryAction {
 
@@ -18,11 +16,10 @@ public class ChestAction extends InventoryAction {
     }
 
     @Override
-    public ItemStack getItem() {
+    public ItemBuilder getItem() {
         return new ItemBuilder(Material.CHEST)
-                .setName(ChatColor.GREEN + "Open inventory")
-                .addAction("Click")
-                .getItemStack();
+                .setName("&2Open inventory")
+                .addAction("Click");
     }
 
     @Override

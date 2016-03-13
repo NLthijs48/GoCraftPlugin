@@ -207,7 +207,6 @@ public class UpdateListener implements Listener {
     // Ensure flying is always on by cancelling toggling it off
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onToggleFlight(PlayerToggleFlightEvent event) {
-        GoCraft.debug("event");
         if (!event.isFlying() && event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
             event.setCancelled(true);
         }
@@ -216,7 +215,6 @@ public class UpdateListener implements Listener {
     // Ensure flying is on by reenabling it immediately
     @EventHandler(priority = EventPriority.MONITOR)
     public void onToggleFlightMonitor(PlayerToggleFlightEvent event) {
-        GoCraft.debug("monitor event");
         final Player finalPlayer = event.getPlayer();
         if (!event.isFlying() && !event.isCancelled() && event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
             new BukkitRunnable() {

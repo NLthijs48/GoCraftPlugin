@@ -266,7 +266,7 @@ public class Inspection {
 		for (Integer slot : actions.keySet()) {
 			InventoryAction action = actions.get(slot);
 			if (action.doUpdates() || inventory.getItem(slot) == null || forceUpdate) {
-				inventory.setItem(slot, action.getItem());
+				inventory.setItem(slot, action.getItem().hideAllAttributes().getItemStack());
 			}
 		}
 	}

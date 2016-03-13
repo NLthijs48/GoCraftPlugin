@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
-import org.bukkit.inventory.ItemStack;
+import me.wiefferink.gocraft.utils.ItemBuilder;
 
 public abstract class InventoryAction {
 
@@ -16,7 +16,7 @@ public abstract class InventoryAction {
      *
      * @return The ItemStack that should be shown
      */
-    public abstract ItemStack getItem();
+    public abstract ItemBuilder getItem();
 
     /**
      * Handle a click event on this item
