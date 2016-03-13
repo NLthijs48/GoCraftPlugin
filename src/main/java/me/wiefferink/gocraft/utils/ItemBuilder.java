@@ -193,6 +193,9 @@ public class ItemBuilder {
 	 * @return this
 	 */
 	public ItemBuilder addLore(String lore, boolean asFirst) {
+		if (lore == null) {
+			return this;
+		}
 		ItemMeta meta = item.getItemMeta();
 		if (meta != null) {
 			List<String> lores = meta.getLore();

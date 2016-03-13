@@ -35,6 +35,27 @@ public class Utils {
 	private Utils() {
 	}
 
+	// Setup all time identifiers
+	private static List<String> identifiers;
+	private static List<String> seconds = Arrays.asList("s", "sec", "secs", "second", "seconds");
+	private static List<String> minutes = Arrays.asList("m", "min", "mins", "minute", "minutes");
+	private static List<String> hours = Arrays.asList("h", "hour", "hours");
+	private static List<String> days = Arrays.asList("d", "day", "days");
+	private static List<String> weeks = Arrays.asList("w", "week", "weeks");
+	private static List<String> months = Arrays.asList("M", "month", "months");
+	private static List<String> years = Arrays.asList("y", "year", "years");
+
+	static {
+		identifiers = new ArrayList<>();
+		identifiers.addAll(seconds);
+		identifiers.addAll(minutes);
+		identifiers.addAll(hours);
+		identifiers.addAll(days);
+		identifiers.addAll(weeks);
+		identifiers.addAll(months);
+		identifiers.addAll(years);
+	}
+
 	/**
 	 * Get the ping of a player
 	 * @param player The player to check
@@ -342,6 +363,72 @@ public class Utils {
 		// To years
 		timeLeft = timeLeft / 12;
 		return GoCraft.getInstance().getLanguageManager().getLang("timeleft-years", timeLeft);
+	}
+
+	/**
+	 * Checks if the string is a correct time period
+	 *
+	 * @param time String that has to be checked
+	 * @return true if format is correct, false if not
+	 */
+	public static boolean checkDuration(String time) {
+		// Check if the string is not empty and check the length
+		if (time == null || time.length() <= 1 || time.indexOf(' ') == -1 || time.indexOf(' ') >= (time.length() - 1)) {
+			return false;
+		}
+
+		// Check if the suffix is one of these values
+		String suffix = time.substring(time.indexOf(' ') + 1, time.length());
+		if (!identifiers.contains(suffix)) {
+			return false;
+		}
+
+		// check if the part before the space is a number
+		String prefix = time.substring(0, (time.indexOf(' ')));
+		return prefix.matches("\\d+");
+	}
+
+	/**
+	 * Methode to tranlate a duration string to a millisecond value
+	 *
+	 * @param duration The duration string
+	 * @return The duration in milliseconds translated from the durationstring, or if it is invalid then 0
+	 */
+	public static long durationStringToLong(String duration) {
+		if (duration == null) {
+			return 0;
+		} else if (duration.equalsIgnoreCase("disabled") || duration.equalsIgnoreCase("unlimited")) {
+			return -1;
+		} else if (duration.indexOf(' ') == -1) {
+			return 0;
+		}
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(0);
+
+		String durationString = duration.substring(duration.indexOf(' ') + 1, duration.length());
+		int durationInt = 0;
+		try {
+			durationInt = Integer.parseInt(duration.substring(0, duration.indexOf(' ')));
+		} catch (NumberFormatException exception) {
+			// No Number found, add zero
+		}
+
+		if (seconds.contains(durationString)) {
+			calendar.add(Calendar.SECOND, durationInt);
+		} else if (minutes.contains(durationString)) {
+			calendar.add(Calendar.MINUTE, durationInt);
+		} else if (hours.contains(durationString)) {
+			calendar.add(Calendar.HOUR, durationInt);
+		} else if (days.contains(durationString)) {
+			calendar.add(Calendar.DAY_OF_MONTH, durationInt);
+		} else if (weeks.contains(durationString)) {
+			calendar.add(Calendar.DAY_OF_MONTH, durationInt * 7);
+		} else if (months.contains(durationString)) {
+			calendar.add(Calendar.MONTH, durationInt);
+		} else if (years.contains(durationString)) {
+			calendar.add(Calendar.YEAR, durationInt);
+		}
+		return calendar.getTimeInMillis();
 	}
 
 	/**

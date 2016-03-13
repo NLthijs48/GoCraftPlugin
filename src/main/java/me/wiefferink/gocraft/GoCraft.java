@@ -13,6 +13,7 @@ import me.wiefferink.gocraft.other.AboveNetherPrevention;
 import me.wiefferink.gocraft.other.ResetExpiredPlots;
 import me.wiefferink.gocraft.pvp.DisableFallDamage;
 import me.wiefferink.gocraft.pvp.DisablePlayerDamage;
+import me.wiefferink.gocraft.storage.Cleaner;
 import me.wiefferink.gocraft.storage.Database;
 import me.wiefferink.gocraft.storage.MySQLDatabase;
 import me.wiefferink.gocraft.storage.UTF8Config;
@@ -35,9 +36,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public final class GoCraft extends JavaPlugin {
@@ -56,6 +55,8 @@ public final class GoCraft extends JavaPlugin {
 	private boolean debug = false;
 	private String chatprefix = null;
 	private static GoCraft instance = null;
+	private Map<String, Cleaner> localStorageCleaners;
+	private boolean localStorageDirty;
 	// Config files
 	private UTF8Config generalConfig = null;
 	private UTF8Config localStorage = null;
@@ -69,6 +70,7 @@ public final class GoCraft extends JavaPlugin {
 	private BanManagerLink banManagerLink = null;
 
 	private boolean dynMapInstalled = false;
+	public static boolean loadedCorrectly = false;
 
 	public void onEnable() {
 		reloadConfig();
@@ -76,6 +78,7 @@ public final class GoCraft extends JavaPlugin {
 		saveDefaultConfig();
 		this.chatprefix = getConfig().getString("chatPrefix");
 		this.debug = getConfig().getBoolean("debug");
+		localStorageCleaners = new HashMap<>();
 
 		// Check if WorldGuard is present
 		Plugin wg = getServer().getPluginManager().getPlugin("WorldGuard");
@@ -141,6 +144,15 @@ public final class GoCraft extends JavaPlugin {
 
 		inspectionManager = new InspectionManager(this);
 		addListeners();
+
+		// Save local storage timer
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				saveLocalStorageNow();
+			}
+		}.runTaskTimer(this, 18000L, 18000L);
+		loadedCorrectly = true;
 	}
 
 	/**
@@ -151,8 +163,12 @@ public final class GoCraft extends JavaPlugin {
 	public static GoCraft getInstance() {
 		return instance;
 	}
-	
+
+	/**
+	 * Plugin disable actions
+	 */
 	public void onDisable() {
+		saveLocalStorageNow();
 		getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
@@ -241,14 +257,6 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public UTF8Config getGeneralConfig() {
 		return generalConfig;
-	}
-
-	/**
-	 * Get the localStorage config file
-	 * @return The UTF8Config localStorage file
-	 */
-	public UTF8Config getLocalStorage() {
-		return localStorage;
 	}
 
 	/**
@@ -544,17 +552,41 @@ public final class GoCraft extends JavaPlugin {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Save the localStorage file
+	 * Get the localStorage config file
+	 *
+	 * @return The UTF8Config localStorage file
+	 */
+	public UTF8Config getLocalStorage() {
+		return localStorage;
+	}
+
+	/**
+	 * Indicate that the local storage should be saved (will be done in 15 minutes or at shutdown)
 	 */
 	public void saveLocalStorage() {
-		File file = new File(this.getDataFolder(), "localStorage.yml");
-		try {
-			localStorage.save(file);
-		} catch(IOException e) {
-			this.getLogger().info("Failed to save localStorage.yml");
-			e.printStackTrace();
+		localStorageDirty = true;
+	}
+
+	/**
+	 * Save the local storage file, only do this if saving later is not fine!
+	 */
+	public void saveLocalStorageNow() {
+		if (localStorageDirty) {
+			GoCraft.debug("Saving local storage...");
+			runLocalStorageCleaners();
+			// Save file
+			File file = new File(this.getDataFolder(), "localStorage.yml");
+			try {
+				localStorage.save(file);
+			} catch (IOException e) {
+				this.getLogger().info("Failed to save localStorage.yml");
+				e.printStackTrace();
+			}
+			localStorageDirty = false;
+		} else {
+			GoCraft.debug("not dirty");
 		}
 	}
 
@@ -576,7 +608,34 @@ public final class GoCraft extends JavaPlugin {
 		if(localStorage == null) {
 			localStorage = new UTF8Config();
 		}
+		runLocalStorageCleaners();
 		return true;
+	}
+
+	/**
+	 * Add a localstorage cleaner, used before saving the localstorage and at register time
+	 *
+	 * @param identifier Identifier for the cleaner, replaces existing cleaner with the same identifier
+	 * @param cleaner    The cleaner to register
+	 */
+	public void registerLocalStorageCleaner(String identifier, Cleaner cleaner) {
+		localStorageCleaners.put(identifier, cleaner);
+		if (cleaner.clean(localStorage)) {
+			saveLocalStorage();
+		}
+	}
+
+	/**
+	 * Run the localstorage cleaners
+	 */
+	public void runLocalStorageCleaners() {
+		boolean save = false;
+		for (Cleaner cleaner : localStorageCleaners.values()) {
+			save |= cleaner.clean(localStorage);
+		}
+		if (save) {
+			saveLocalStorage();
+		}
 	}
 
 	/**
