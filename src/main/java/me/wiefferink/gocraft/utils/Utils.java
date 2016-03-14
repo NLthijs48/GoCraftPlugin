@@ -16,7 +16,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
@@ -257,28 +256,6 @@ public class Utils {
 		}
 		return true;
 	}
-
-	public static boolean giveItems(Player player, Collection<ItemStack> items) {
-		boolean result = true;
-		Inventory inventory = player.getInventory();
-		for (ItemStack item : items) {
-			// TODO: Make 1.9 compatible?
-			for (int i = 9; i < 44; i++) {
-				ItemStack current = inventory.getItem(i);
-				if (current == null) {
-					inventory.setItem(i, item);
-					break;
-				} else if (current.getType() == item.getType() && current.getAmount() < current.getMaxStackSize()) {
-					int left = current.getMaxStackSize() - current.getAmount();
-					if (item.getAmount() <= left) {
-
-					}
-				}
-			}
-		}
-		return result;
-	}
-
 
 	/**
 	 * Load player data of a (possibly) offline player by UUID

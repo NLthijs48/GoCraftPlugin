@@ -174,6 +174,16 @@ public final class GoCraft extends JavaPlugin {
 		HandlerList.unregisterAll(this);
 	}
 
+	/**
+	 * Increase a statistic for tracking
+	 *
+	 * @param key The key to track it with
+	 */
+	public void increaseStatistic(String key) {
+		getLocalStorage().set("statistics." + key,
+				getLocalStorage().getLong("statistics." + key) + 1);
+		saveLocalStorage();
+	}
 
 	/**
 	 * Get the name of this server
