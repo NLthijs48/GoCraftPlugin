@@ -330,10 +330,11 @@ public class Inspection {
 			// Display ping
 			if (getInspected().isOnline()) {
 				int ping = Utils.getPing(getInspected());
+				String pingString = ping + "";
 				if (ping >= 1000) {
-					ping = 999;
+					pingString = "999+";
 				}
-				objective.getScore(ChatColor.GRAY + "Ping: " + ChatColor.WHITE + ping + " ms").setScore(currentScore);
+				objective.getScore(ChatColor.GRAY + "Ping: " + ChatColor.WHITE + pingString + " ms").setScore(currentScore);
 				currentScore++;
 			}
 
