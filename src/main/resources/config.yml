@@ -74,3 +74,6 @@ enableAboveNetherPrevention: false
 
 ########## INSPECT
 staffJoinsInInspect: false
+
+########## SHOP
+enableShop: false

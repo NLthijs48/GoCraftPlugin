@@ -29,7 +29,7 @@ public class InventoryListener implements Listener {
             } else {
                 // Overlay click closes inventory
                 if (event.getRawSlot() == -999 && event.getAction() == org.bukkit.event.inventory.InventoryAction.NOTHING) {
-                    //GoPVP.debug("closing inventory...");
+                    //debug("closing inventory...");
                     event.getWhoClicked().closeInventory();
                 }
             }

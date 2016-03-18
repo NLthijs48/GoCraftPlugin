@@ -13,6 +13,7 @@ import me.wiefferink.gocraft.other.AboveNetherPrevention;
 import me.wiefferink.gocraft.other.ResetExpiredPlots;
 import me.wiefferink.gocraft.pvp.DisableFallDamage;
 import me.wiefferink.gocraft.pvp.DisablePlayerDamage;
+import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.storage.Cleaner;
 import me.wiefferink.gocraft.storage.Database;
 import me.wiefferink.gocraft.storage.MySQLDatabase;
@@ -57,6 +58,7 @@ public final class GoCraft extends JavaPlugin {
 	private static GoCraft instance = null;
 	private Map<String, Cleaner> localStorageCleaners;
 	private boolean localStorageDirty;
+	private Shop shop;
 	// Config files
 	private UTF8Config generalConfig = null;
 	private UTF8Config localStorage = null;
@@ -145,6 +147,11 @@ public final class GoCraft extends JavaPlugin {
 		inspectionManager = new InspectionManager(this);
 		addListeners();
 
+		if (getConfig().getConfigurationSection("shop") != null && getConfig().getConfigurationSection("shop").getKeys(false).size() > 0) {
+			shop = new Shop(this);
+			this.getServer().getPluginManager().registerEvents(shop, this);
+		}
+
 		// Save local storage timer
 		new BukkitRunnable() {
 			@Override
@@ -168,6 +175,9 @@ public final class GoCraft extends JavaPlugin {
 	 * Plugin disable actions
 	 */
 	public void onDisable() {
+		if (shop != null) {
+			shop.handleServerStop();
+		}
 		saveLocalStorageNow();
 		getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
 		Bukkit.getScheduler().cancelTasks(this);
@@ -331,6 +341,15 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public Economy getEconomy() {
 		return economy;
+	}
+
+	/**
+	 * Get the shop
+	 *
+	 * @return The shop
+	 */
+	public Shop getShop() {
+		return shop;
 	}
 	
 	public void testStorage() {

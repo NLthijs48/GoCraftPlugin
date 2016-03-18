@@ -53,6 +53,9 @@ permissions:
   gocraft.joinInInspect:
     description: Join in inspect mode
     default: op
+  gocraft.shop:
+    description: Allows you to open and use the shop
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'
@@ -82,4 +85,7 @@ commands:
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
   Help:
     description: Check the help page
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  Shop:
+    description: Open the kit/item shop
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
