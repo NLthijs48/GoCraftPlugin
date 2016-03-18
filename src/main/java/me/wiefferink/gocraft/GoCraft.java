@@ -584,7 +584,6 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public void saveLocalStorageNow() {
 		if (localStorageDirty) {
-			GoCraft.debug("Saving local storage...");
 			runLocalStorageCleaners();
 			// Save file
 			File file = new File(this.getDataFolder(), "localStorage.yml");
@@ -595,8 +594,6 @@ public final class GoCraft extends JavaPlugin {
 				e.printStackTrace();
 			}
 			localStorageDirty = false;
-		} else {
-			GoCraft.debug("not dirty");
 		}
 	}
 

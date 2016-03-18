@@ -187,16 +187,20 @@ public class InspectionManager {
         final Inspection inspection = restoreInspection(player);
         if (inspection != null) {
             inspection.startInspection(true);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (inspection.hasInspected()) {
-                        plugin.message(player, "inspect-restore", inspection.getInspected().getName());
-                    } else {
-                        plugin.message(player, "inspect-restoreNoTarget");
+            if (!player.hasPermission("gocraft.staff")) {
+                inspection.endInspection();
+            } else {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (inspection.hasInspected()) {
+                            plugin.message(player, "inspect-restore", inspection.getInspected().getName());
+                        } else {
+                            plugin.message(player, "inspect-restoreNoTarget");
+                        }
                     }
-                }
-            }.runTaskLater(plugin, 10L);
+                }.runTaskLater(plugin, 10L);
+            }
             return;
         }
         // Join in inspect
