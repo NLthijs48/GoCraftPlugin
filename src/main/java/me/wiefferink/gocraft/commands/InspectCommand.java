@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.Inspection;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

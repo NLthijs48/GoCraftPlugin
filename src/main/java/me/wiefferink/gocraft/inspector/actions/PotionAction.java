@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
-import me.wiefferink.gocraft.utils.ItemBuilder;
+import me.wiefferink.gocraft.tools.ItemBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;

@@ -2,8 +2,8 @@ package me.wiefferink.gocraft.inspector;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.storage.UTF8Config;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;

@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.inspector;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.actions.*;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;

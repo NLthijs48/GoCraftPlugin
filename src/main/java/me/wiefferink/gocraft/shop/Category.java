@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.buttons.Button;
-import me.wiefferink.gocraft.utils.ItemBuilder;
+import me.wiefferink.gocraft.tools.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;

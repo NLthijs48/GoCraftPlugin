@@ -5,7 +5,7 @@ import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.shop.buttons.BuyButton;
 import me.wiefferink.gocraft.shop.buttons.ItemButton;
 import me.wiefferink.gocraft.shop.features.*;
-import me.wiefferink.gocraft.utils.ItemBuilder;
+import me.wiefferink.gocraft.tools.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;

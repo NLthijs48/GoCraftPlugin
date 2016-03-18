@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.Inspection;
-import me.wiefferink.gocraft.utils.ItemBuilder;
+import me.wiefferink.gocraft.tools.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

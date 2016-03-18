@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.distribution;
 
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;

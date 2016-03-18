@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.entity.Player;
 
 public class ShopSession {

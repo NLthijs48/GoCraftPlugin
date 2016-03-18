@@ -1,23 +1,21 @@
 package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
-import me.wiefferink.gocraft.blocks.*;
 import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
-import me.wiefferink.gocraft.general.*;
+import me.wiefferink.gocraft.features.ResetExpiredPlots;
+import me.wiefferink.gocraft.features.blocks.*;
+import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
+import me.wiefferink.gocraft.features.environment.DisableRain;
+import me.wiefferink.gocraft.features.items.*;
+import me.wiefferink.gocraft.features.players.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.*;
-import me.wiefferink.gocraft.items.*;
-import me.wiefferink.gocraft.logging.LogSigns;
-import me.wiefferink.gocraft.other.AboveNetherPrevention;
-import me.wiefferink.gocraft.other.ResetExpiredPlots;
-import me.wiefferink.gocraft.pvp.DisableFallDamage;
-import me.wiefferink.gocraft.pvp.DisablePlayerDamage;
 import me.wiefferink.gocraft.shop.Shop;
-import me.wiefferink.gocraft.storage.Cleaner;
-import me.wiefferink.gocraft.storage.Database;
-import me.wiefferink.gocraft.storage.MySQLDatabase;
-import me.wiefferink.gocraft.storage.UTF8Config;
+import me.wiefferink.gocraft.tools.storage.Cleaner;
+import me.wiefferink.gocraft.tools.storage.Database;
+import me.wiefferink.gocraft.tools.storage.MySQLDatabase;
+import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -394,7 +392,7 @@ public final class GoCraft extends JavaPlugin {
 		}
 		this.listeners.add(new DisableStaffJoinLeaveMessages(this));
 		this.listeners.add(new OpenenderLimiter(this));
-		this.listeners.add(new PreventSignUseWhileMuted(this));
+		this.listeners.add(new DisableSignUseWhileMuted(this));
 		// Items
 		this.listeners.add(new DisableItemDrops(this));
 		this.listeners.add(new DisableItemSpawning(this));
@@ -423,7 +421,7 @@ public final class GoCraft extends JavaPlugin {
 		new HelpCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
-		this.listeners.add(new AboveNetherPrevention(this));
+		this.listeners.add(new DisableAboveNetherGlitching(this));
 	}
 
 	/**

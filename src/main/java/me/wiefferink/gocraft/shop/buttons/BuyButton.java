@@ -3,7 +3,7 @@ package me.wiefferink.gocraft.shop.buttons;
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
 import me.wiefferink.gocraft.shop.features.Feature;
-import me.wiefferink.gocraft.utils.ItemBuilder;
+import me.wiefferink.gocraft.tools.ItemBuilder;
 import org.bukkit.Material;
 
 import java.util.ArrayList;

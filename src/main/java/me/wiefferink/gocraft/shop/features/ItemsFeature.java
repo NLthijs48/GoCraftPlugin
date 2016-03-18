@@ -3,8 +3,8 @@ package me.wiefferink.gocraft.shop.features;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
-import me.wiefferink.gocraft.utils.ItemBuilder;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.ItemBuilder;
+import me.wiefferink.gocraft.tools.Utils;
 
 // TODO consider adding status line
 public class ItemsFeature extends Feature {

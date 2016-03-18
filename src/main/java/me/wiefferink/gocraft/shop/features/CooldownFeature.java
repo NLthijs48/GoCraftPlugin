@@ -3,7 +3,7 @@ package me.wiefferink.gocraft.shop.features;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.Utils;
 
 import java.util.Calendar;
 

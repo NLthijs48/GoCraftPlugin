@@ -70,7 +70,7 @@ enableHelpCommand: true
 
 ########## OTHER
 enableExpiredPlotsRestoration: false
-enableAboveNetherPrevention: false
+disableAboveNetherGlitching: false
 
 ########## INSPECT
 staffJoinsInInspect: false

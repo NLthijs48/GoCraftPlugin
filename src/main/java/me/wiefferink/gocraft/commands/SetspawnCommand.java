@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.utils.Utils;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
