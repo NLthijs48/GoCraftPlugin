@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.signs.KitSign;
+import me.wiefferink.gocraft.shop.signs.ShopSign;
 import me.wiefferink.gocraft.shop.signs.Sign;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
@@ -49,10 +50,9 @@ public class SignManager implements Listener {
 				ConfigurationSection details = signsSection.getConfigurationSection(signKey);
 				String type = details.getString("type");
 				if ("kit".equals(type)) {
-					if (plugin.getShop() == null) {
-						GoCraft.debug("shop null");
-					}
 					sign = new KitSign(details, signKey, plugin.getShop().getKits().get(details.getString("kit")));
+				} else if ("shop".equals(type)) {
+					sign = new ShopSign(details, signKey);
 				} else {
 					plugin.getLogger().warning("Incorrect sign type for key " + signKey + ": " + type);
 					continue;
@@ -123,49 +123,70 @@ public class SignManager implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignPlace(SignChangeEvent event) {
-		if (event.getLines().length == 0 || event.getLine(0) == null || !event.getLine(0).equalsIgnoreCase("[gckit]")) {
+		if (event.getLines().length == 0 || event.getLine(0) == null) {
 			return;
 		}
 
-		if (!event.getPlayer().hasPermission("gocraft.placeKitSign")) {
-			plugin.message(event.getPlayer(), "shop-kitSignNoPermission");
-			return;
-		}
-
-		if (event.getLines().length < 2 || event.getLine(1) == null || plugin.getShop().getKits().get(event.getLine(1)) == null) {
-			plugin.message(event.getPlayer(), "shop-kitSignNoKit");
-			return;
-		}
-		Kit kit = plugin.getShop().getKits().get(event.getLine(1));
-
-		Double price = null;
-		if (event.getLines().length >= 3 && event.getLine(2) != null && event.getLine(2).length() > 0) {
-			try {
-				price = Double.parseDouble(event.getLine(2));
-			} catch (NumberFormatException e) {
-				plugin.message(event.getPlayer(), "shop-kitSignWrongPrice", event.getLine(2));
+		if (event.getLine(0).equalsIgnoreCase("[gckit]")) {
+			if (!event.getPlayer().hasPermission("gocraft.placeKitSign")) {
+				plugin.message(event.getPlayer(), "shop-kitSignNoPermission");
 				return;
 			}
-		}
 
-		int number = 0;
-		while (plugin.getLocalStorage().isConfigurationSection("shop.signs." + number)) {
-			number++;
-		}
+			if (event.getLines().length < 2 || event.getLine(1) == null || plugin.getShop().getKits().get(event.getLine(1)) == null) {
+				plugin.message(event.getPlayer(), "shop-kitSignNoKit");
+				return;
+			}
+			Kit kit = plugin.getShop().getKits().get(event.getLine(1));
 
-		String path = "shop.signs." + number;
-		plugin.getLocalStorage().set(path + ".kit", kit.getIdentifier());
-		plugin.getLocalStorage().set(path + ".type", "kit");
-		plugin.getLocalStorage().set(path + ".location", Utils.locationToConfig(event.getBlock().getLocation()));
-		if (price != null) {
-			plugin.getLocalStorage().set(path + ".price", price);
-			plugin.message(event.getPlayer(), "shop-kitSignSuccessPrice", kit.getName(), price);
-		} else {
-			plugin.message(event.getPlayer(), "shop-kitSignSuccess", kit.getName());
+			Double price = null;
+			if (event.getLines().length >= 3 && event.getLine(2) != null && event.getLine(2).length() > 0) {
+				try {
+					price = Double.parseDouble(event.getLine(2));
+				} catch (NumberFormatException e) {
+					plugin.message(event.getPlayer(), "shop-kitSignWrongPrice", event.getLine(2));
+					return;
+				}
+			}
+
+			int number = 0;
+			while (plugin.getLocalStorage().isConfigurationSection("shop.signs." + number)) {
+				number++;
+			}
+
+			String path = "shop.signs." + number;
+			plugin.getLocalStorage().set(path + ".kit", kit.getIdentifier());
+			plugin.getLocalStorage().set(path + ".type", "kit");
+			plugin.getLocalStorage().set(path + ".location", Utils.locationToConfig(event.getBlock().getLocation()));
+			if (price != null) {
+				plugin.getLocalStorage().set(path + ".price", price);
+				plugin.message(event.getPlayer(), "shop-kitSignSuccessPrice", kit.getName(), price);
+			} else {
+				plugin.message(event.getPlayer(), "shop-kitSignSuccess", kit.getName());
+			}
+			KitSign sign = new KitSign(plugin.getLocalStorage().getConfigurationSection(path), number + "", kit);
+			addSign(sign);
+			plugin.saveLocalStorage();
+			event.setCancelled(true);
+		} else if (event.getLine(0).equalsIgnoreCase("[gcshop]")) {
+			if (!event.getPlayer().hasPermission("gocraft.placeShopSign")) {
+				plugin.message(event.getPlayer(), "shop-shopSignNoPermission");
+				return;
+			}
+
+			int number = 0;
+			while (plugin.getLocalStorage().isConfigurationSection("shop.signs." + number)) {
+				number++;
+			}
+
+			String path = "shop.signs." + number;
+			plugin.getLocalStorage().set(path + ".type", "shop");
+			plugin.getLocalStorage().set(path + ".location", Utils.locationToConfig(event.getBlock().getLocation()));
+			plugin.message(event.getPlayer(), "shop-shopSignSuccess");
+			ShopSign sign = new ShopSign(plugin.getLocalStorage().getConfigurationSection(path), number + "");
+			addSign(sign);
+			plugin.saveLocalStorage();
+			event.setCancelled(true);
 		}
-		final KitSign sign = new KitSign(plugin.getLocalStorage().getConfigurationSection(path), number + "", kit);
-		addSign(sign);
-		plugin.saveLocalStorage();
-		event.setCancelled(true);
 	}
 }

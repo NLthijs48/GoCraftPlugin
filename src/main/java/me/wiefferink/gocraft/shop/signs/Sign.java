@@ -43,7 +43,7 @@ public abstract class Sign {
 	 *
 	 * @param lines The lines to set on the sign
 	 */
-	public void changeLines(String... lines) {
+	public void setLines(String... lines) {
 		Block block = location.getBlock();
 		if (block.getType() != Material.WALL_SIGN && block.getType() != Material.SIGN_POST) {
 			GoCraft.getInstance().getShop().getSignManager().removeSign(this);

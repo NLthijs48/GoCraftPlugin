@@ -46,7 +46,7 @@ public class KitSign extends Sign {
 
 	@Override
 	public void update() {
-		changeLines(
+		setLines(
 				getPrice() == 0 ? "&2&l[Get]" : "&2&l[Buy]",
 				"&l" + kit.getName(),
 				"&l" + getFormattedPrice(),
