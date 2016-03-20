@@ -40,6 +40,7 @@ public class Kit implements Button, View {
 		features.put("price", new PriceFeature(this));
 		features.put("items", new ItemsFeature(this));
 		features.put("cooldown", new CooldownFeature(this));
+		features.put("permission", new PermissionFeature(this));
 		if (GoCraft.getInstance().getMapSwitcherLink() != null) {
 			features.put("maps", new MapKitsFeature(this));
 		}
@@ -249,6 +250,10 @@ public class Kit implements Button, View {
 
 	public CooldownFeature getCooldownFeature() {
 		return (CooldownFeature) features.get("cooldown");
+	}
+
+	public PermissionFeature getPermissionFeature() {
+		return (PermissionFeature) features.get("permission");
 	}
 
 }
