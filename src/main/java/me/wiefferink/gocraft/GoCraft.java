@@ -422,6 +422,7 @@ public final class GoCraft extends JavaPlugin {
 		new InspectCommand(this);
 		new RulesCommand(this);
 		new HelpCommand(this);
+		new ShopCommand(this);
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
 		this.listeners.add(new DisableAboveNetherGlitching(this));
