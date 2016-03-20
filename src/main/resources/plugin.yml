@@ -56,6 +56,9 @@ permissions:
   gocraft.shop:
     description: Allows you to open and use the shop
     default: op
+  gocraft.placeKitSign:
+    description: Allows you to place kit shop signs
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'

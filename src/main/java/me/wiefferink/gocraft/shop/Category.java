@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.shop;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.tools.ItemBuilder;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
@@ -93,7 +94,7 @@ public class Category implements View, Button {
 	@Override
 	public void show(ShopSession session) {
 		session.setView(this);
-		Inventory inventory = Bukkit.createInventory(null, shop.getInventorySize(), GoCraft.getInstance().fixColors("&0&l" + getName()));
+		Inventory inventory = Bukkit.createInventory(null, shop.getInventorySize(), Utils.fixColors("&0&l" + getName()));
 		// Create the inventory
 		for (int key : kits.keySet()) {
 			ItemBuilder itemBuilder = kits.get(key).getButton(session);

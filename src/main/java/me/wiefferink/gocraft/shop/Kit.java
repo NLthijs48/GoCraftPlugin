@@ -6,6 +6,7 @@ import me.wiefferink.gocraft.shop.buttons.BuyButton;
 import me.wiefferink.gocraft.shop.buttons.ItemButton;
 import me.wiefferink.gocraft.shop.features.*;
 import me.wiefferink.gocraft.tools.ItemBuilder;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -144,7 +145,7 @@ public class Kit implements Button, View {
 	@Override
 	public void show(ShopSession session) {
 		session.setView(this);
-		Inventory inventory = Bukkit.createInventory(null, shop.getInventorySize(), plugin.fixColors("&0&l" + name));
+		Inventory inventory = Bukkit.createInventory(null, shop.getInventorySize(), Utils.fixColors("&0&l" + name));
 		// Create the inventory
 		for (int key : buttons.keySet()) {
 			inventory.setItem(key, buttons.get(key).getButton(session).getItemStack());

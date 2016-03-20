@@ -150,6 +150,15 @@ public class Utils {
 	}
 
 	/**
+	 * Get an identifier string for a location (for example as map key)
+	 * @param location The location to get the string for
+	 * @return An identifier string for a location
+	 */
+	public static String locationToString(Location location) {
+		return location.getWorld().getName() + ":" + location.getBlockX() + ":" + location.getBlockY() + ":" + location.getBlockZ();
+	}
+
+	/**
 	 * Display a message to all staff in all servers
 	 * @param type    The type of message to indicate what the message is about
 	 * @param message The message, already prefixed by the type so no need to repeat that
@@ -157,7 +166,7 @@ public class Utils {
 	public static void sendStaffMessage(String type, String message) {
 		String result = GoCraft.getInstance().getLanguageManager().getLang("staffbroadcast-template", GoCraft.getInstance().getServerName(), type, message);
 		// Display in console
-		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(GoCraft.getInstance().fixColors(result)));
+		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(fixColors(result)));
 		// Send to other servers
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage "+result);
 	}
@@ -177,7 +186,7 @@ public class Utils {
 	 * @param message The raw message
 	 */
 	public static void displayStaffMessage(String message) {
-		message = GoCraft.getInstance().fixColors(message);
+		message = fixColors(message);
 		// Display to all staff members
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			if(player.hasPermission("gocraft.staff")) {
@@ -487,5 +496,25 @@ public class Utils {
 		}
 		result = result.replace(".", GoCraft.getInstance().getConfig().getString("decimalMark"));
 		return before + result + after;
+	}
+
+	/**
+	 * Translate color codes to the internal color values
+	 *
+	 * @param input The input string
+	 * @return The string with Minecraft color codes
+	 */
+	public static String fixColors(String input) {
+		String result = null;
+		if (input != null) {
+			result = input.replaceAll("(&([a-f0-9]))", "§$2");
+			result = result.replace("&k", ChatColor.MAGIC.toString());
+			result = result.replace("&l", ChatColor.BOLD.toString());
+			result = result.replace("&m", ChatColor.STRIKETHROUGH.toString());
+			result = result.replace("&n", ChatColor.UNDERLINE.toString());
+			result = result.replace("&o", ChatColor.ITALIC.toString());
+			result = result.replace("&r", ChatColor.RESET.toString());
+		}
+		return result;
 	}
 }

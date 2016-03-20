@@ -1,6 +1,5 @@
 package me.wiefferink.gocraft.tools;
 
-import me.wiefferink.gocraft.GoCraft;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.NBTTagList;
 import org.bukkit.ChatColor;
@@ -60,7 +59,7 @@ public class ItemBuilder {
 		hasCustomName = true;
 		ItemMeta meta = item.getItemMeta();
 		if (meta != null) {
-			meta.setDisplayName(GoCraft.getInstance().fixColors("&r" + name));
+			meta.setDisplayName(Utils.fixColors("&r" + name));
 			item.setItemMeta(meta);
 		}
 		return this;
@@ -202,7 +201,7 @@ public class ItemBuilder {
 			if (lores == null) {
 				lores = new ArrayList<>();
 			}
-			lore = GoCraft.getInstance().fixColors("&r" + lore);
+			lore = Utils.fixColors("&r" + lore);
 			if (asFirst) {
 				lores.add(0, lore);
 			} else {

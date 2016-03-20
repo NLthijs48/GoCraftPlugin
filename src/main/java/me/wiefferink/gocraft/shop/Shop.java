@@ -17,18 +17,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
 public class Shop implements Listener {
 
 	private GoCraft plugin;
-	private List<Kit> kits;
-	private List<Kit> itemKits;
+	private Map<String, Kit> kits;
 	private Map<UUID, ShopSession> shopSessions;
 	private ConfigurationSection shopSection;
 	private Map<Integer, Button> buttons;
 	private Map<String, Category> categories;
+	private SignManager signManager;
 	private int inventorySize;
 
 	// Inventory action lists
@@ -76,7 +77,7 @@ public class Shop implements Listener {
 		this.plugin = plugin;
 		shopSessions = new HashMap<>();
 		buttons = new HashMap<>();
-		kits = new ArrayList<>();
+		kits = new HashMap<>();
 		categories = new HashMap<>();
 		shopSection = plugin.getConfig().getConfigurationSection("shop");
 		if (shopSection == null) { // Shop not in use
@@ -95,7 +96,7 @@ public class Shop implements Listener {
 		for (String kitString : kitsSection.getKeys(false)) {
 			ConfigurationSection kitSection = kitsSection.getConfigurationSection(kitString);
 			Kit kit = new Kit(kitSection, kitString, this);
-			kits.add(kit);
+			kits.put(kit.getIdentifier(), kit);
 			String categoryString = kitSection.getString("categories");
 			if (categoryString == null || categoryString.isEmpty()) {
 				plugin.getLogger().warning("Kit " + kitString + " has not categories specified!");
@@ -132,7 +133,7 @@ public class Shop implements Listener {
 		}
 
 		// Call setup (inventory size is known at this point)
-		for (Kit kit : kits) {
+		for (Kit kit : kits.values()) {
 			kit.setup();
 		}
 
@@ -172,6 +173,23 @@ public class Shop implements Listener {
 				return save;
 			}
 		});
+
+		// Needs to be after contructor completion
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				signManager = new SignManager();
+
+			}
+		}.runTask(plugin);
+	}
+
+	/**
+	 * Get the sign manager
+	 * @return The sign manager
+	 */
+	public SignManager getSignManager() {
+		return signManager;
 	}
 
 	/**
@@ -201,7 +219,7 @@ public class Shop implements Listener {
 			plugin.message(player, "shop-notInPVP");
 			return;
 		}
-		ShopSession session = new ShopSession(this, player);
+		ShopSession session = new ShopSession(player);
 		Category home = categories.get("home");
 		if (home != null) {
 			home.show(session);
@@ -362,17 +380,8 @@ public class Shop implements Listener {
 	 *
 	 * @return The kits defined for this shop
 	 */
-	public List<Kit> getKits() {
+	public Map<String, Kit> getKits() {
 		return kits;
-	}
-
-	/**
-	 * Get the item kits defined in the shop
-	 *
-	 * @return The item kits defined for this shop
-	 */
-	public List<Kit> getItemKits() {
-		return itemKits;
 	}
 
 	/**

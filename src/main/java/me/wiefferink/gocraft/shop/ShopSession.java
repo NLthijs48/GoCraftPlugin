@@ -18,8 +18,8 @@ public class ShopSession {
 
 	public static int inventorySize; // Initialized by Shop
 
-	public ShopSession(Shop shop, Player player) {
-		this.shop = shop;
+	public ShopSession(Player player) {
+		this.shop = GoCraft.getInstance().getShop();
 		this.player = player;
 		updateBalance();
 	}

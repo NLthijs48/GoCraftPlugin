@@ -12,6 +12,7 @@ import me.wiefferink.gocraft.features.players.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.*;
 import me.wiefferink.gocraft.shop.Shop;
+import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.MySQLDatabase;
@@ -37,6 +38,8 @@ import java.io.*;
 import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.logging.Logger;
+
+import static me.wiefferink.gocraft.tools.Utils.fixColors;
 
 public final class GoCraft extends JavaPlugin {
 	// Constants
@@ -528,7 +531,7 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	public void configurableMessage(String prefix, Object target, String key, Object... params) {
-		String langString = fixColors(this.languageManager.getLang(key, params));
+		String langString = Utils.fixColors(this.languageManager.getLang(key, params));
 		if (langString == null) {
 			getLogger().info("Something is wrong with the language file, could not find key: " + key);
 		} else if ((target instanceof Player)) {
@@ -536,7 +539,7 @@ public final class GoCraft extends JavaPlugin {
 			if (prefix != null) {
 				message = prefix + message;
 			}
-			message = fixColors(message);
+			message = Utils.fixColors(message);
 			((Player) target).sendMessage(message);
 		} else if ((target instanceof CommandSender)) {
 			((CommandSender) target).sendMessage(langString);
@@ -564,20 +567,6 @@ public final class GoCraft extends JavaPlugin {
 
 	public void messageNoPrefix(Object target, String key, Object... params) {
 		configurableMessage(null, target, key, params);
-	}
-
-	public String fixColors(String input) {
-		String result = null;
-		if (input != null) {
-			result = input.replaceAll("(&([a-f0-9]))", "§$2");
-			result = result.replace("&k", ChatColor.MAGIC.toString());
-			result = result.replace("&l", ChatColor.BOLD.toString());
-			result = result.replace("&m", ChatColor.STRIKETHROUGH.toString());
-			result = result.replace("&n", ChatColor.UNDERLINE.toString());
-			result = result.replace("&o", ChatColor.ITALIC.toString());
-			result = result.replace("&r", ChatColor.RESET.toString());
-		}
-		return result;
 	}
 
 	/**
