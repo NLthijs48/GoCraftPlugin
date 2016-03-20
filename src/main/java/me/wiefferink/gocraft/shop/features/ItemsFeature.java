@@ -6,7 +6,6 @@ import me.wiefferink.gocraft.shop.ShopSession;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 
-// TODO consider adding status line
 public class ItemsFeature extends Feature {
 
 	public ItemsFeature(Kit kit) {
@@ -31,5 +30,13 @@ public class ItemsFeature extends Feature {
 			result &= session.getPlayer().getInventory().addItem(builder.getItemStack().clone()).size() == 0;
 		}
 		return result;
+	}
+
+	@Override
+	public String getStatusLine(ShopSession session) {
+		if (!allows(session)) {
+			return "&4Requires " + kit.getItems().size() + " free inventory slots";
+		}
+		return null;
 	}
 }

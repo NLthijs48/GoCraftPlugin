@@ -38,8 +38,8 @@ public class Kit implements Button, View {
 		buttons = new HashMap<>();
 		features = new LinkedHashMap<>();
 		features.put("price", new PriceFeature(this));
-		features.put("items", new ItemsFeature(this));
 		features.put("cooldown", new CooldownFeature(this));
+		features.put("items", new ItemsFeature(this));
 		features.put("permission", new PermissionFeature(this));
 		if (GoCraft.getInstance().getMapSwitcherLink() != null) {
 			features.put("maps", new MapKitsFeature(this));

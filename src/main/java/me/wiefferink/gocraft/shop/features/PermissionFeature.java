@@ -37,4 +37,16 @@ public class PermissionFeature extends Feature {
 			GoCraft.getInstance().message(session.getPlayer(), "shop-needPermission", permission);
 		}
 	}
+
+	@Override
+	public String getStatusLine(ShopSession session) {
+		if (!allows(session)) {
+			if (permission.startsWith("gocraft.donator.")) {
+				return "&4Required rank: " + StringUtils.capitalize(permission.substring(16));
+			} else {
+				return "&4Required permission: " + permission;
+			}
+		}
+		return null;
+	}
 }
