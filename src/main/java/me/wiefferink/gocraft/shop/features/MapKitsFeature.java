@@ -20,7 +20,7 @@ public class MapKitsFeature extends Feature {
 
 	@Override
 	public void indicateRestricted(ShopSession session) {
-
+		GoCraft.getInstance().message(session.getPlayer(), "shop-notInMap", getMapName());
 	}
 
 	@Override
@@ -59,6 +59,6 @@ public class MapKitsFeature extends Feature {
 	 * @return The map that is currently active
 	 */
 	public String getCurrentMap() {
-		return GoCraft.getInstance().getMapSwitcherLink().get().getCurrentMap();
+		return GoCraft.getInstance().getMapSwitcherLink().get().getCurrentMapIdentifier();
 	}
 }
