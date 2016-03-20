@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.shop.buttons;
 import me.wiefferink.gocraft.shop.ShopSession;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 
 public class CloseButton implements Button {
 
@@ -28,6 +29,7 @@ public class CloseButton implements Button {
 	@Override
 	public void onClick(ShopSession session, ShopSession.ClickAction action) {
 		session.close();
+		session.getPlayer().playSound(session.getPlayer().getLocation(), Sound.CLICK, 0.5F, 0.7F);
 	}
 
 }

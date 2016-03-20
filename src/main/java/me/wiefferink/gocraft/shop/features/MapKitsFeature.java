@@ -20,7 +20,7 @@ public class MapKitsFeature extends Feature {
 
 	@Override
 	public void indicateRestricted(ShopSession session) {
-		GoCraft.getInstance().message(session.getPlayer(), "shop-notInMap", getMapName());
+		GoCraft.getInstance().message(session.getPlayer(), "shop-notInMap", getMapName(), kit.getName());
 	}
 
 	@Override

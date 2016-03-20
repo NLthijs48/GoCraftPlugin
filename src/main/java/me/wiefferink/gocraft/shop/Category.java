@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Inventory;
 
@@ -129,7 +130,8 @@ public class Category implements View, Button {
 	}
 
 	@Override
-	public void onClick(ShopSession shopSession, ShopSession.ClickAction action) {
-		show(shopSession);
+	public void onClick(ShopSession session, ShopSession.ClickAction action) {
+		show(session);
+		session.getPlayer().playSound(session.getPlayer().getLocation(), Sound.CLICK, 0.5F, 1F);
 	}
 }
