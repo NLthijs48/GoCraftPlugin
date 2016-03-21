@@ -228,7 +228,15 @@ public class Kit implements Button, View {
 		}
 
 		session.getPlayer().playSound(session.getPlayer().getLocation(), Sound.LEVEL_UP, 0.7F, 1.5F);
-		plugin.message(session.getPlayer(), "shop-boughtKit", getName(), getPriceFeature().getFormattedPrice());
+		String cooldown = "";
+		if (getCooldownFeature().getCooldown() > 60000) { // More than a minute
+			cooldown = plugin.getLanguageManager().getLang("shop-cooldownInfo", getCooldownFeature().getRawCooldown());
+		}
+		if (getPriceFeature().getPrice() > 0) {
+			plugin.message(session.getPlayer(), "shop-boughtKit", getName(), getPriceFeature().getFormattedPrice(), cooldown);
+		} else {
+			plugin.message(session.getPlayer(), "shop-receivedKit", getName(), cooldown);
+		}
 		shop.increaseStatistic("bought." + getIdentifier());
 	}
 
