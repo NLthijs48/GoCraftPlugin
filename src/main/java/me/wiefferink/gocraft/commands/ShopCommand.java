@@ -8,15 +8,11 @@ import org.bukkit.entity.Player;
 
 public class ShopCommand implements CommandExecutor {
 
-
-	public final String configLine = "enableShop";
 	private GoCraft plugin;
 
 	public ShopCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getCommand("Shop").setExecutor(this);
-		}
+		this.plugin = plugin;
+		plugin.getCommand("Shop").setExecutor(this);
 	}
 
 	@Override
