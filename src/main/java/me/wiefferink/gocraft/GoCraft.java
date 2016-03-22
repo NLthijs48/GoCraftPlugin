@@ -71,6 +71,7 @@ public final class GoCraft extends JavaPlugin {
 	private EssentialsLink essentialsLink = null;
 	private WorldGuardLink worldGuardLink = null;
 	private BanManagerLink banManagerLink = null;
+	private boolean noUpdate = false;
 
 	private boolean dynMapInstalled = false;
 	public static boolean loadedCorrectly = false;
@@ -180,7 +181,11 @@ public final class GoCraft extends JavaPlugin {
 			shop.handleServerStop();
 		}
 		saveLocalStorageNow();
-		getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
+		if (noUpdate) {
+			noUpdate = false;
+		} else {
+			getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
+		}
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
 	}
@@ -472,6 +477,7 @@ public final class GoCraft extends JavaPlugin {
 	 * Reload the plugin data
 	 */
 	public void reload() {
+		noUpdate = true;
 		onDisable();
 		onEnable();
 	}
