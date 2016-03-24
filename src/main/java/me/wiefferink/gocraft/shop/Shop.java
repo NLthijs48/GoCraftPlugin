@@ -207,6 +207,7 @@ public class Shop implements Listener {
 	 * @param player The player to open the shop for
 	 */
 	public void open(Player player) {
+		GoCraft.debug("Open for " + player.getName());
 		if (!player.hasPermission("gocraft.shop")) {
 			plugin.message(player, "shop-noPermission");
 			return;
