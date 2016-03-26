@@ -50,7 +50,12 @@ public class SignManager implements Listener {
 				ConfigurationSection details = signsSection.getConfigurationSection(signKey);
 				String type = details.getString("type");
 				if ("kit".equals(type)) {
-					sign = new KitSign(details, signKey, plugin.getShop().getKits().get(details.getString("kit")));
+					Kit kit = plugin.getShop().getKits().get(details.getString("kit"));
+					if (kit == null) {
+						plugin.getLogger().warning("Kit of sign at " + details.getString("location.x") + ", " + details.getString("location.y") + ", " + details.getString("location.z") + " does not exist: " + details.getString("kit"));
+						continue;
+					}
+					sign = new KitSign(details, signKey, kit);
 				} else if ("shop".equals(type)) {
 					sign = new ShopSign(details, signKey);
 				} else {
