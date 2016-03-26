@@ -99,7 +99,6 @@ public class Shop implements Listener {
 			kits.put(kit.getIdentifier(), kit);
 			String categoryString = kitSection.getString("categories");
 			if (categoryString == null || categoryString.isEmpty()) {
-				plugin.getLogger().warning("Kit " + kitString + " has not categories specified!");
 				continue;
 			}
 			String[] categoryParts = categoryString.split("(,)? "); // Comma or space separated
