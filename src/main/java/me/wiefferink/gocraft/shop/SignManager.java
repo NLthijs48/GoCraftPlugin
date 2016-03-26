@@ -165,7 +165,7 @@ public class SignManager implements Listener {
 			plugin.getLocalStorage().set(path + ".location", Utils.locationToConfig(event.getBlock().getLocation()));
 			if (price != null) {
 				plugin.getLocalStorage().set(path + ".price", price);
-				plugin.message(event.getPlayer(), "shop-kitSignSuccessPrice", kit.getName(), price);
+				plugin.message(event.getPlayer(), "shop-kitSignSuccessPrice", kit.getName(), Utils.formatCurrency(price));
 			} else {
 				plugin.message(event.getPlayer(), "shop-kitSignSuccess", kit.getName());
 			}
