@@ -352,8 +352,8 @@ public class Shop implements Listener {
 	public void handleServerStop() {
 		for (ShopSession session : shopSessions.values()) {
 			session.getPlayer().closeInventory();
-			shopSessions.remove(session.getPlayer().getUniqueId());
 		}
+		shopSessions.clear();
 	}
 
 	/**
