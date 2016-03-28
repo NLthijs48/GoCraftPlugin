@@ -71,6 +71,7 @@ enableHelpCommand: true
 ########## OTHER
 enableExpiredPlotsRestoration: false
 disableAboveNetherGlitching: false
+enableAddDefaultRank: false
 
 ########## INSPECT
 staffJoinsInInspect: false

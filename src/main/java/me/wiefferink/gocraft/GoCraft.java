@@ -3,6 +3,7 @@ package me.wiefferink.gocraft;
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
+import me.wiefferink.gocraft.features.AddDefaultRank;
 import me.wiefferink.gocraft.features.ResetExpiredPlots;
 import me.wiefferink.gocraft.features.blocks.*;
 import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
@@ -18,6 +19,7 @@ import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.MySQLDatabase;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -66,6 +68,7 @@ public final class GoCraft extends JavaPlugin {
 	private File generalFolder = null;
 	// Dependencies
 	private Economy economy = null;
+	private Permission permissionProvider = null;
 	private MapSwitcherLink mapSwitcherLink = null;
 	private GoPVPLink goPVPLink = null;
 	private EssentialsLink essentialsLink = null;
@@ -122,6 +125,12 @@ public final class GoCraft extends JavaPlugin {
 			economy = economyProvider.getProvider();
 		} else {
 			getLogger().info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
+		}
+		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+		if (permissionProvider != null) {
+			this.permissionProvider = permissionProvider.getProvider();
+		} else {
+			getLogger().info("Error: Vault or the Permissions plugin is not present or has not loaded correctly");
 		}
 
 		// Check if DynMap is present
@@ -350,6 +359,14 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
+	 * Get the permissions provider of Vault
+	 * @return The permissions provider
+	 */
+	public Permission getPermissionProvider() {
+		return permissionProvider;
+	}
+
+	/**
 	 * Get the shop
 	 *
 	 * @return The shop
@@ -431,6 +448,7 @@ public final class GoCraft extends JavaPlugin {
 		// Other
 		this.listeners.add(new ResetExpiredPlots(this));
 		this.listeners.add(new DisableAboveNetherGlitching(this));
+		this.listeners.add(new AddDefaultRank(this));
 	}
 
 	/**
