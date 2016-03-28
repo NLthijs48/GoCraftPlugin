@@ -457,6 +457,18 @@ public class Shop implements Listener {
 							plugin.getLogger().warning("  Color part is not a number for " + debugId + ": " + parts[i]);
 						}
 					}
+				} else if ("lore".equalsIgnoreCase(identifier)) {
+					if (split.length < 2) {
+						plugin.getLogger().warning("  No arguments for lore for " + debugId);
+					} else {
+						result.addLore(split[1]);
+					}
+				} else if ("action".equalsIgnoreCase(identifier)) {
+					if (split.length < 2) {
+						plugin.getLogger().warning("  No arguments for action for " + debugId);
+					} else {
+						result.addAction(split[1]);
+					}
 				} else if (enchantmentMap.containsKey(identifier.toLowerCase())) {
 					int number = 1;
 					if (value != null && value.length() > 0) {
