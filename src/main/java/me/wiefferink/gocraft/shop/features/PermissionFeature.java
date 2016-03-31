@@ -18,8 +18,8 @@ public class PermissionFeature extends Feature {
 			Permission perm = new Permission(permission);
 			try {
 				Bukkit.getPluginManager().addPermission(perm);
-			} catch (IllegalArgumentException e) {
-				GoCraft.getInstance().getLogger().warning("Could not add the following permission to be used as kit permission for +" + kit.getName() + ": " + perm.getName());
+			} catch (IllegalArgumentException ignored) {
+				// Already added
 			}
 		}
 	}
@@ -40,13 +40,21 @@ public class PermissionFeature extends Feature {
 
 	@Override
 	public String getStatusLine(ShopSession session) {
+		if (permission == null) {
+			return null;
+		}
 		if (!allows(session)) {
 			if (permission.startsWith("gocraft.donator.")) {
-				return "&4Required rank: " + StringUtils.capitalize(permission.substring(16));
+				return "&4Required rank: " + StringUtils.capitalize(permission.substring(16)) + "\n   &eBuy this rank at\n   &e&nwww.go-craft.com";
 			} else {
 				return "&4Required permission: " + permission;
 			}
+		} else {
+			if (permission.startsWith("gocraft.donator.")) {
+				return "&2You have rank " + StringUtils.capitalize(permission.substring(16) + " or higher");
+			} else {
+				return "&2You have permission " + permission;
+			}
 		}
-		return null;
 	}
 }

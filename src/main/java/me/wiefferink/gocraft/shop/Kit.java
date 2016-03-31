@@ -91,7 +91,6 @@ public class Kit implements Button, View {
 		}
 		if (button != null) {
 			button.addAction("Left click for details");
-			button.addAction("Right click to buy");
 			button.hideAllAttributes();
 		}
 	}
@@ -112,9 +111,14 @@ public class Kit implements Button, View {
 		ItemBuilder result = button;
 		if (session != null) {
 			result = result.copy();
+			boolean allowBuy = true;
 			List<Feature> list = new ArrayList<>(features.values());
 			for (int i = list.size() - 1; i >= 0; i--) {
 				result.addLore(list.get(i).getStatusLine(session), true);
+				allowBuy &= list.get(i).allows(session);
+			}
+			if (allowBuy) {
+				button.addAction("Right click to buy");
 			}
 		}
 		return result;

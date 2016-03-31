@@ -201,11 +201,16 @@ public class ItemBuilder {
 			if (lores == null) {
 				lores = new ArrayList<>();
 			}
-			lore = Utils.fixColors("&r" + lore);
-			if (asFirst) {
-				lores.add(0, lore);
-			} else {
-				lores.add(lore);
+			String[] loreParts = lore.split("\n");
+			int index = 0;
+			for (String lorePart : loreParts) {
+				lorePart = Utils.fixColors("&r" + lorePart);
+				if (asFirst) {
+					lores.add(index, lorePart);
+					index++;
+				} else {
+					lores.add(lorePart);
+				}
 			}
 			meta.setLore(lores);
 			item.setItemMeta(meta);

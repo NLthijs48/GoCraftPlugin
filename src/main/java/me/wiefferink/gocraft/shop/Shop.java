@@ -461,13 +461,13 @@ public class Shop implements Listener {
 					if (split.length < 2) {
 						plugin.getLogger().warning("  No arguments for lore for " + debugId);
 					} else {
-						result.addLore(split[1]);
+						result.addLore(combineFrom(split, 1, ":"));
 					}
 				} else if ("action".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
 						plugin.getLogger().warning("  No arguments for action for " + debugId);
 					} else {
-						result.addAction(split[1]);
+						result.addAction(combineFrom(split, 1, ":"));
 					}
 				} else if (enchantmentMap.containsKey(identifier.toLowerCase())) {
 					int number = 1;
@@ -500,5 +500,25 @@ public class Shop implements Listener {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Combine strings from the array from a certain point
+	 * @param parts The string parts
+	 * @param index The index from which it should be combined
+	 * @return Combined string
+	 */
+	private String combineFrom(String[] parts, int index, String glue) {
+		String result = null;
+		while (index < parts.length) {
+			if (result != null) {
+				result += glue;
+			} else {
+				result = "";
+			}
+			result += parts[index];
+			index++;
+		}
+		return result;
 	}
 }
