@@ -560,7 +560,7 @@ public class DistributionManager {
 						} else if (currentSection.isSet("permissions")) {
 							groupPermissions.add(currentSection.getString("permissions"));
 						} else {
-							generalWarnings.add("No permissions specified for group '" + group + "' on " + server);
+							// No permissions specified (maybe only help entry)
 						}
 					}
 				}
