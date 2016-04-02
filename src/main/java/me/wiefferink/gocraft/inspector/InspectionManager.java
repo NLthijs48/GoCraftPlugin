@@ -57,15 +57,6 @@ public class InspectionManager {
                 }
             }.runTaskTimer(plugin, 20, 20);
         }
-        // Update everything every so often
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Inspection inspection : GoCraft.getInstance().getInspectionManager().getCurrentInspections().values()) {
-                    inspection.updateAll();
-                }
-            }
-        }.runTaskTimer(plugin, 40, 40);
 
         // Deal with players that are already in the server (for example with reloads)
         for (Player player : Bukkit.getOnlinePlayers()) {

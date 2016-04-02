@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -31,10 +30,16 @@ public class UpdateListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
-                inspection.updateScoreboard();
-            }
+            final Player player = (Player) event.getEntity();
+            // After damage is applied
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
+                        inspection.updateScoreboard();
+                    }
+                }
+            }.runTaskLater(plugin, 1L);
             // Prevent damage to inspector
             Inspection inspection = plugin.getInspectionManager().getInspectionByInspector(player);
             if (inspection != null) {
@@ -123,6 +128,7 @@ public class UpdateListener implements Listener {
     }
 
     // Update on inventory changing
+    /* Too spammy, timer task will get this
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
@@ -139,8 +145,10 @@ public class UpdateListener implements Listener {
             }
         }
     }
+    */
 
     // Update when the XP level changes
+    /* Too spammy, timer task will get this
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onXPLevelChange(PlayerLevelChangeEvent event) {
         if (!plugin.getInspectionManager().getInspectionsByInspected(event.getPlayer()).isEmpty()) {
@@ -155,6 +163,7 @@ public class UpdateListener implements Listener {
             }.runTaskLater(plugin, 1L);
         }
     }
+    */
 
     // Update on item breakage
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
