@@ -118,7 +118,7 @@ public class Kit implements Button, View {
 				allowBuy &= list.get(i).allows(session);
 			}
 			if (allowBuy) {
-				button.addAction("Right click to buy");
+				result.addAction("Right click to buy");
 			}
 		}
 		return result;
