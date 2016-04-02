@@ -517,4 +517,53 @@ public class Utils {
 		}
 		return result;
 	}
+
+	// Helper function
+	private static String getTargetGroup(String groups, boolean highest) {
+		if (groups == null) {
+			return null;
+		}
+		String result = null;
+		String[] splits = groups.split(",( )?");
+		ConfigurationSection ranksSection = GoCraft.getInstance().getGeneralConfig().getConfigurationSection("ranks");
+		if (ranksSection == null) {
+			return null;
+		}
+		int currentOrder = highest ? Integer.MAX_VALUE : -1;
+		for (String split : splits) {
+			int order = Integer.MAX_VALUE;
+			int current = 0;
+			for (String rank : ranksSection.getKeys(false)) {
+				String rankName = ranksSection.getString(rank + ".name");
+				if (rank.equalsIgnoreCase(split) || (rankName != null && rankName.equalsIgnoreCase(split))) {
+					if ((!highest && current > currentOrder)
+							|| (highest && current < currentOrder)) {
+						currentOrder = current;
+						result = rank;
+					}
+					break;
+				}
+				current++;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get the lowest ranked group from a comma-separated list of groups
+	 * @param groups The groups to check
+	 * @return The identifier of the lowest group
+	 */
+	public static String getLowestGroup(String groups) {
+		return getTargetGroup(groups, false);
+	}
+
+	/**
+	 * Get the highest ranked group from a comma-separated list of groups
+	 * @param groups The groups to check
+	 * @return The identifier of the highest group
+	 */
+	public static String getHighestGroup(String groups) {
+		return getTargetGroup(groups, true);
+	}
 }

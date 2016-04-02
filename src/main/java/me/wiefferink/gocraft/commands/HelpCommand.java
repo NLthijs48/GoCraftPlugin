@@ -1,12 +1,14 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -45,22 +47,71 @@ public class HelpCommand implements CommandExecutor {
 	 */
 	public void buildHelp() {
 		this.help = new ArrayList<>();
+		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
+
+		// Add entries from the general help section
 		ConfigurationSection helpSection = plugin.getGeneralConfig().getConfigurationSection("help");
-		if (helpSection == null) {
-			plugin.getLogger().warning("Empty help section!");
+		if (helpSection != null) {
+			for (String ruleKey : helpSection.getKeys(false)) {
+				Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
+				if (servers.contains(plugin.getServerId())) {
+					if (helpSection.isList(ruleKey)) {
+						help.addAll(helpSection.getStringList(ruleKey));
+					} else {
+						help.add(helpSection.getString(ruleKey));
+					}
+				}
+			}
+		}
+
+		// Add entries from the permissions sections
+		ConfigurationSection pluginsSection = plugin.getGeneralConfig().getConfigurationSection("plugins");
+		if (pluginsSection == null) {
 			return;
 		}
-		for (String ruleKey : helpSection.getKeys(false)) {
-			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
-			if (servers.contains(plugin.getServerId())) {
-				if (helpSection.isList(ruleKey)) {
-					help.addAll(helpSection.getStringList(ruleKey));
-				} else {
-					help.add(helpSection.getString(ruleKey));
+		for (String pluginKey : pluginsSection.getKeys(false)) {
+			String pushTo = pluginsSection.getString(pluginKey + ".pushTo");
+			Set<String> pushToServers = plugin.getDistributionManager().resolveServers(pushTo, new ArrayList<String>());
+			ConfigurationSection permissionsSection = pluginsSection.getConfigurationSection(pluginKey + ".permissions");
+			if (pushTo == null || permissionsSection == null) {
+				continue;
+			}
+			for (String permissionsKey : permissionsSection.getKeys(false)) {
+				// Get the help entries
+				List<String> helpEntries = null;
+				if (permissionsSection.isList(permissionsKey + ".help")) {
+					helpEntries = permissionsSection.getStringList(permissionsKey + ".help");
+				} else if (permissionsSection.isSet(permissionsKey + ".help")) {
+					helpEntries = Collections.singletonList(permissionsSection.getString(permissionsKey + ".help"));
+				}
+				if (helpEntries == null || helpEntries.isEmpty()) {
+					continue;
+				}
+				// Get the applying groups
+				String groups = permissionsSection.getString(permissionsKey + ".groups");
+				if (groups == null) {
+					continue;
+				}
+				String lowestGroup = Utils.getLowestGroup(groups);
+				String serversString = permissionsSection.getString(permissionsKey + ".servers");
+				Set<String> servers = plugin.getDistributionManager().resolveServers(serversString, new ArrayList<String>());
+				if ((servers != null && servers.contains(plugin.getServerId()))
+						|| (servers == null && pushToServers != null && pushToServers.contains(plugin.getServerId()))) {
+					for (String helpEntry : helpEntries) {
+						// Add the rank prefix if this help entry has a rank requirement
+						if (lowestGroup != null && !lowestGroup.equalsIgnoreCase("default") && ranksSection != null) {
+							String rankPrefix = ranksSection.getString(lowestGroup + ".prefix");
+							if (rankPrefix != null) {
+								helpEntry = rankPrefix + "&r " + helpEntry;
+							}
+						}
+						help.add(helpEntry);
+					}
 				}
 			}
 		}
 	}
+
 }
 
 
