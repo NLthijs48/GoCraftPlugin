@@ -15,7 +15,6 @@ public class HelpCommand implements CommandExecutor {
 	public final String configLine = "enableHelpCommand";
 	private GoCraft plugin;
 
-	private List<String> help;
 	private Map<String, List<String>> helpMap;
 
 	public HelpCommand(GoCraft plugin) {
@@ -34,8 +33,28 @@ public class HelpCommand implements CommandExecutor {
 		}
 		// Show the help page
 		plugin.message(sender, "help-header");
-		for (String rule : help) {
-			plugin.messageNoPrefix(sender, "help-rule", rule);
+		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
+		if (ranksSection == null) {
+			plugin.getLogger().warning("[/help] ranksSection does not exist!");
+			return true;
+		}
+		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
+		for (int i = ranks.size() - 1; i >= 0; i--) {
+			List<String> entries = helpMap.get(ranks.get(i));
+			String rankPrefix = ranksSection.getString(ranks.get(i) + ".prefix");
+			if (entries != null) {
+				for (String entry : entries) {
+					String[] parts = entry.split(" \\| ");
+					if (parts.length < 2) {
+						continue;
+					}
+					if (rankPrefix == null || rankPrefix.isEmpty()) {
+						plugin.messageNoPrefix(sender, "help-rule", parts[0], parts[1]);
+					} else {
+						plugin.messageNoPrefix(sender, "help-ruleRank", rankPrefix, parts[0], parts[1]);
+					}
+				}
+			}
 		}
 		return true;
 	}
@@ -100,29 +119,12 @@ public class HelpCommand implements CommandExecutor {
 				if ((servers != null && servers.contains(plugin.getServerId()))
 						|| (servers == null && pushToServers != null && pushToServers.contains(plugin.getServerId()))) {
 					for (String helpEntry : helpEntries) {
-						// Add the rank prefix if this help entry has a rank requirement
-						if (lowestGroup != null && !lowestGroup.equalsIgnoreCase("default")) {
-							String rankPrefix = ranksSection.getString(lowestGroup + ".prefix");
-							if (rankPrefix != null) {
-								helpEntry = rankPrefix + "&r " + helpEntry;
-							}
-						}
 						if (lowestGroup == null) {
 							lowestGroup = "default";
 						}
 						addHelpEntry(lowestGroup, helpEntry);
 					}
 				}
-			}
-		}
-
-		// Add the entries to the help list in the correct order
-		help = new ArrayList<>();
-		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
-		for (int i = ranks.size() - 1; i >= 0; i--) {
-			List<String> entries = helpMap.get(ranks.get(i));
-			if (entries != null) {
-				help.addAll(entries);
 			}
 		}
 	}
