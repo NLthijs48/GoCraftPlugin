@@ -115,7 +115,10 @@ public class HelpCommand implements CommandExecutor {
 				}
 				String lowestGroup = Utils.getLowestGroup(groups);
 				String serversString = permissionsSection.getString(permissionsKey + ".servers");
-				Set<String> servers = plugin.getDistributionManager().resolveServers(serversString, new ArrayList<String>());
+				Set<String> servers = null;
+				if (serversString != null) {
+					servers = plugin.getDistributionManager().resolveServers(serversString, new ArrayList<String>());
+				}
 				if ((servers != null && servers.contains(plugin.getServerId()))
 						|| (servers == null && pushToServers != null && pushToServers.contains(plugin.getServerId()))) {
 					for (String helpEntry : helpEntries) {
