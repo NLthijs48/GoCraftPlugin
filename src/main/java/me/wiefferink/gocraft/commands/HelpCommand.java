@@ -7,10 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class HelpCommand implements CommandExecutor {
 
@@ -18,7 +15,8 @@ public class HelpCommand implements CommandExecutor {
 	public final String configLine = "enableHelpCommand";
 	private GoCraft plugin;
 
-	List<String> help;
+	private List<String> help;
+	private Map<String, List<String>> helpMap;
 
 	public HelpCommand(GoCraft plugin) {
 		if (plugin.getConfig().getBoolean(configLine)) {
@@ -46,8 +44,12 @@ public class HelpCommand implements CommandExecutor {
 	 * Build the help list based on the config
 	 */
 	public void buildHelp() {
-		this.help = new ArrayList<>();
+		helpMap = new HashMap<>();
 		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
+		if (ranksSection == null) {
+			plugin.getLogger().warning("[buildHelp] ranksSection does not exist!");
+			return;
+		}
 
 		// Add entries from the general help section
 		ConfigurationSection helpSection = plugin.getGeneralConfig().getConfigurationSection("help");
@@ -56,9 +58,9 @@ public class HelpCommand implements CommandExecutor {
 				Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
 				if (servers.contains(plugin.getServerId())) {
 					if (helpSection.isList(ruleKey)) {
-						help.addAll(helpSection.getStringList(ruleKey));
+						addHelpEntry("default", helpSection.getStringList(ruleKey));
 					} else {
-						help.add(helpSection.getString(ruleKey));
+						addHelpEntry("default", helpSection.getString(ruleKey));
 					}
 				}
 			}
@@ -99,17 +101,48 @@ public class HelpCommand implements CommandExecutor {
 						|| (servers == null && pushToServers != null && pushToServers.contains(plugin.getServerId()))) {
 					for (String helpEntry : helpEntries) {
 						// Add the rank prefix if this help entry has a rank requirement
-						if (lowestGroup != null && !lowestGroup.equalsIgnoreCase("default") && ranksSection != null) {
+						if (lowestGroup != null && !lowestGroup.equalsIgnoreCase("default")) {
 							String rankPrefix = ranksSection.getString(lowestGroup + ".prefix");
 							if (rankPrefix != null) {
 								helpEntry = rankPrefix + "&r " + helpEntry;
 							}
 						}
-						help.add(helpEntry);
+						if (lowestGroup == null) {
+							lowestGroup = "default";
+						}
+						addHelpEntry(lowestGroup, helpEntry);
 					}
 				}
 			}
 		}
+
+		// Add the entries to the help list in the correct order
+		help = new ArrayList<>();
+		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
+		for (int i = ranks.size() - 1; i >= 0; i--) {
+			List<String> entries = helpMap.get(ranks.get(i));
+			if (entries != null) {
+				help.addAll(entries);
+			}
+		}
+	}
+
+	/**
+	 * Add a help entry to the map
+	 * @param rank The rank required for this help entry
+	 * @param entry The help entry
+	 */
+	private void addHelpEntry(String rank, Collection<String> entry) {
+		List<String> rankList = helpMap.get(rank);
+		if (rankList == null) {
+			rankList = new ArrayList<>();
+			helpMap.put(rank, rankList);
+		}
+		rankList.addAll(entry);
+	}
+
+	private void addHelpEntry(String rank, String entry) {
+		addHelpEntry(rank, Collections.singleton(entry));
 	}
 
 }
