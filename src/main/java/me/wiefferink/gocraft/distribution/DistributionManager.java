@@ -110,8 +110,10 @@ public class DistributionManager {
 		try {
 			File updates = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + "updates.log");
 			if (!updates.exists()) {
-				if (!updates.createNewFile()) {
-					generalWarnings.add("Could not create updates.log file");
+				if (!updates.mkdirs()) {
+					generalWarnings.add("Could not create directories to updates.log file: " + updates.getAbsolutePath());
+				} else if (!updates.createNewFile()) {
+					generalWarnings.add("Could not create updates.log file: " + updates.getAbsolutePath());
 				}
 			}
 			updateLogger = new BufferedWriter(new FileWriter(updates, true));
