@@ -111,7 +111,7 @@ public class HelpCommand implements CommandExecutor {
 				// Get the applying groups
 				String groups = permissionsSection.getString(permissionsKey + ".groups");
 				if (groups == null) {
-					continue;
+					groups = "default";
 				}
 				String lowestGroup = Utils.getLowestGroup(groups);
 				String serversString = permissionsSection.getString(permissionsKey + ".servers");
