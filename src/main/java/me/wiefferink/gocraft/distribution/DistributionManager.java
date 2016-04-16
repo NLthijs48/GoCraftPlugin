@@ -539,8 +539,7 @@ public class DistributionManager {
 				}
 				Set<String> toServers = resolveServers(servers, generalWarnings);
 				String rawGroups = currentSection.getString("groups");
-				if (rawGroups == null || rawGroups.isEmpty()) {
-					generalWarnings.add("No groups specified in permissions for " + pluginKey);
+				if (rawGroups == null || rawGroups.isEmpty()) { // Could only be for a help entry
 					continue;
 				}
 				List<String> toGroups = Arrays.asList(rawGroups.split(",( )?"));
