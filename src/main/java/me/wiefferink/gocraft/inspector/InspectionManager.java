@@ -198,7 +198,8 @@ public class InspectionManager {
         if (!noInspectJoin
                 && player.hasPermission("gocraft.staff")
                 && plugin.getConfig().getBoolean("staffJoinsInInspect")
-                && player.hasPermission("gocraft.joinInInspect")) {
+                && player.hasPermission("gocraft.joinInInspect")
+                && !player.isDead()) { // Prevent switching to inspect when killed by combat logging
             final Inspection finalInspection = setupInspection(player);
             final boolean inPVP = Utils.isInPvpArea(player);
             finalInspection.startInspection();
