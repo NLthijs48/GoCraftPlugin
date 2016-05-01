@@ -152,24 +152,6 @@ public class DistributionManager {
 			}
 			Set<String> servers = resolveServers(pushTo, pluginWarnings);
 
-			// Search jarfile to push
-			File newPluginJar = null;
-			File newPluginConfig = null;
-			for(File file : files) {
-				if (file.isFile() && matchesFileName(pushPlugin, file)) {
-					if(newPluginJar == null) {
-						newPluginJar = file;
-					} else {
-						pluginWarnings.add("Found second .jar file match: "+file.getAbsolutePath()+", first="+newPluginJar.getAbsolutePath());
-					}
-				} else if (file.isDirectory() && matchesFileName(pushPlugin, file)) {
-					if(newPluginConfig == null) {
-						newPluginConfig = file;
-					} else {
-						pluginWarnings.add("Found second config folder match: "+file.getAbsolutePath()+", first="+newPluginConfig.getAbsolutePath());
-					}
-				}
-			}
 
 			List<String> pushedJarTo = new ArrayList<>();
 			List<String> pushedConfigTo = new ArrayList<>();
@@ -180,6 +162,38 @@ public class DistributionManager {
 					continue;
 				}
 
+				String serverVersion = applyVariables("<<<version>>>", server, pluginWarnings);
+
+				// Search jarfile to push
+				File newPluginJar = null;
+				File newPluginConfig = null;
+				for (File file : files) {
+					if (file.isFile() && matchesFileName(pushPlugin, file)) {
+						// Check if version matches
+						String jarVersion = null;
+						if (file.getName().contains(".")) {
+							String firstPart = file.getName().substring(0, file.getName().lastIndexOf("."));
+							if (firstPart.contains("@")) {
+								jarVersion = firstPart.substring(firstPart.lastIndexOf("@") + 1, firstPart.length());
+							}
+						}
+						if (versionMatches(serverVersion, jarVersion)) {
+							if (newPluginJar == null) {
+								newPluginJar = file;
+							} else {
+								pluginWarnings.add("Found second .jar file match: " + file.getAbsolutePath() + ", first=" + newPluginJar.getAbsolutePath());
+							}
+						}
+					} else if (file.isDirectory() && matchesFileName(pushPlugin, file)) {
+						if (newPluginConfig == null) {
+							newPluginConfig = file;
+						} else {
+							pluginWarnings.add("Found second config folder match: " + file.getAbsolutePath() + ", first=" + newPluginConfig.getAbsolutePath());
+						}
+					}
+				}
+
+				// Push plugin jar
 				if(operations.contains("pluginJar") && newPluginJar != null) {
 					operationsDone.add("pluginJar");
 					// Find existing jar file
@@ -210,7 +224,7 @@ public class DistributionManager {
 					}
 				}
 
-				// Push config if required
+				// Push config
 				if(operations.contains("pluginConfig") && newPluginConfig != null) {
 					operationsDone.add("pluginConfig");
 					File targetFolder = new File(serverPluginFolders.get(server).getAbsolutePath()+File.separator+pushPlugin);
@@ -282,6 +296,16 @@ public class DistributionManager {
 			plugin.getLogger().warning("Could not correctly close the updateLogger: " + e.getMessage());
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Check if a version matches the server version
+	 * @param serverVersion The version of the server
+	 * @param toMatch The version to match
+	 * @return true if the to match version is compatible, otherwise false
+	 */
+	private boolean versionMatches(String serverVersion, String toMatch) {
+		return serverVersion != null && !serverVersion.isEmpty() && (toMatch == null || toMatch.isEmpty() || serverVersion.equalsIgnoreCase(toMatch));
 	}
 
 	/**
