@@ -1,0 +1,126 @@
+###################################################
+# English language file for the GoCraft plugin    #
+###################################################
+# Copy this file and change the strings to your   #
+# favor. Then change the 'language' setting in    #
+# the config to the filename (excluding .yml)     #
+###################################################
+
+staff-noPermission: "You are not a staff member."
+
+general-mutedSignUse: "You cannot place signs while you are muted."
+
+########## LOGGING
+signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
+signNotifyLine: "%0% placed sign: %1%&0|&r%2%&0|&r%3%&0|&r%4% &7(%5%,%6%,%7%,%8%)"
+
+########## COMMANDS
+tempban-redirected: "Banned %0% for %1% by name and ip: &7%2%."
+tempban-failed: "Failed to ban correctly, check the errors above."
+tempban-help: "/tempban <playername> <timeDiff> <reason>."
+
+ping-noPermission: "You do not have permission to check the ping of players."
+ping-playerNotFound: "Player %0% is not online on the server."
+ping-noTarget: "Please specify a target: /ping <player>."
+ping-successSelf: "Your ping is %0% milliseconds."
+ping-successOther: "The ping of %0% is %1% milliseconds."
+
+setspawn-noPermission: "You don't have permission to set the spawnpoint."
+setspawn-onlyByPlayers: "You can only set the spawn as a player."
+setspawn-success: "The spawn location has been set to your current location and direction."
+
+staffbroadcast-noPermission: "You don't have permission to send a message to all staff."
+staffbroadcast-help: "/staffbroadcast <type> <message...>."
+staffbroadcast-template: "&9&l>>> %0% [%1%] &r&9%2%"
+staffbroadcast-success: "Message broadcasted: [%0%] %1%"
+
+displaystaffmessage-noPermission: "You don't have permission to display staff messages."
+displaystaffmessage-help: "/displaystaffmessage <message...>."
+
+update-noPermission: "You do not have permission to update the plugins."
+update-started: "&2&lStarting update process..."
+update-done: "&2&lUpdated %1% jar files and %2% configs of %0% plugins, %3% permission files and %4% root files."
+update-none: "&2&lEverything is already up-to-date!"
+update-pluginHeader: "&7&l>>> %0%:"
+update-pushedPluginTo:  "  &7Jar to: %0%."
+update-pushedConfigTo:  "  &7Config to: %0%."
+update-pushedTo: "  &7To: %0%"
+update-warning: "  &c%0%."
+update-generalWarnings: "&c&l>>> General warnings:"
+update-permissions: "Permissions updated for: %0%"
+
+reload-noPermission: "You do not have permission to reload the plugin."
+reload-success: "Plugin data and config files have been reloaded."
+
+rules-noPermission: "You do not have permission to check the rules."
+rules-header: "&2The following rules are active on the server:"
+rules-rule: "&2&l►&r %0%"
+
+help-noPermission: "You do no have permission to check the help page."
+help-header: "&2Available commands:"
+help-rule: "&6%0%&7:\n&r    %1%"
+help-ruleRank: "%0%&r+ &6%1%&7:\n&r    %2%"
+
+########## SIGN LIMITING
+tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn! Check /as to see all shop commands."
+
+########## OTHER
+netherGlitching: "You may not go above the nether ceiling!"
+
+timeleft-years: "%0% years"
+timeleft-months: "%0% months"
+timeleft-days: "%0% days"
+timeleft-hours: "%0% hours"
+timeleft-minutes: "%0% minutes"
+timeleft-second: "%0% second"
+timeleft-seconds: "%0% seconds"
+timeleft-ended: "Expired"
+
+########## INSPECT
+help-inspector: "&6/inspect <player> &7-&r Inspect a player"
+inspect-help: "/inspect <player>"
+inspect-playerOnly: "This command can only be used by a player."
+inspect-noPermission: "You don't have permission to inspect players."
+inspect-notAvailable: "Player %0% never played on the server and therefore cannot be inspected."
+inspect-started: "Started inspection of %0%."
+inspect-startedNoTarget: "Started inspection without target."
+inspect-ended: "Stopped inspecting %0%."
+inspect-endedNoTarget: "Stopped inspecting."
+inspect-inNonPVP: "You can only start inspecting when you are in a non-PVP area."
+inspect-cancel: "Inspection cancelled because your inventory could not be saved to disk properly, inform an Admin about this issue."
+inspect-inspectedLeft: "%0% left the game, changed to an offline inspection."
+inspect-outsideMap: "Stay inside the map while inspecting please."
+inspect-self: "You cannot inspect yourself."
+inspect-inspection: "You cannot inspect someone that is inspecting himself."
+inspect-switched: "Switched inspection from %0% to %1% &7(left-clicking a player switches inspection)."
+inspect-teleportedToInspected: "Teleported to %0%."
+inspect-restore: "Your inspection of %0% has resumed."
+inspect-restoreNoTarget: "Your inspection has resumed."
+inspect-joinEnable: "You have entered the server in inspect mode."
+inspect-joinEnableInPVP: "&4Warning: You have joined inspect while in a PVP zone, when leaving inspect you will be in PVP again."
+inspect-damage: "You somehow got damaged, teleported to spawn."
+
+######### SHOP
+shop-notEnabled: "The kit/item shop is not enabled."
+shop-noPermission: "You do not have permission to use the shop."
+shop-notSurvival: "You need to be in survival gamemode to use the shop."
+shop-notInPVP: "You have to be in a non-pvp area to use the shop."
+shop-lowMoney: "You need %0% to buy %1%, but you have %2%."
+shop-lowSpace: "You need %0% free slots in your inventory, but have only %1%."
+shop-chargeFailed: "Paying for the kit failed, if this happens again notify the staff."
+shop-playerOnly: "This command can only be used by a player."
+shop-cooldown: "You still need to wait %0% before buying this kit again."
+shop-kitSignNoPermission: "You do no have permission to add a kit shop sign."
+shop-kitSignNoKit: "Specify a correct kit on the second line."
+shop-kitSignWrongPrice: "%0% is not a correct price."
+shop-kitSignInfo: "Right click to buy %0% for %1%."
+shop-kitSignSuccess: "Successfully placed a kit sign for %0%."
+shop-kitSignSuccessPrice: "Successfully placed a kit sign for %0% with price %1%."
+shop-shopSignNoPermission: "You do no have permission to add a shop sign."
+shop-shopSignSuccess: "Successfully placed a shop sign."
+shop-needRank: "You need to have the %0% rank to buy this kit, check www.go-craft.com/shop."
+shop-needPermission: "You need to have permission %0% to buy this kit."
+shop-notInMap: "Map %0% needs to be active to buy %1%."
+shop-boughtKit: "Bought %0%&r for %1%%2%."
+shop-receivedKit: "Received %0%&r%1%."
+shop-cooldownInfo: ", can be used again after %0%"
