@@ -1,11 +1,9 @@
 package me.wiefferink.gocraft.tools;
 
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.NBTTagList;
+import me.wiefferink.gocraft.GoCraft;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -110,19 +108,7 @@ public class ItemBuilder {
 	 * @return this
 	 */
 	public ItemBuilder addGlow() {
-		net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
-		NBTTagCompound tag = null;
-		if (!nmsStack.hasTag()) {
-			tag = new NBTTagCompound();
-			nmsStack.setTag(tag);
-		}
-		if (tag == null) {
-			tag = nmsStack.getTag();
-		}
-		NBTTagList ench = new NBTTagList();
-		tag.set("ench", ench);
-		nmsStack.setTag(tag);
-		item = CraftItemStack.asCraftMirror(nmsStack);
+		item = GoCraft.getInstance().getSpecificUtils().addGlow(item);
 		return this;
 	}
 

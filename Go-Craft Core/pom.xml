@@ -149,6 +149,8 @@
                     <tasks>
                         <copy file="./target/${project.build.finalName}.jar"
                               tofile="C:\Games\Minecraft\Spigot\plugins\${project.build.finalName}.jar"/>
+                        <copy file="./target/${project.build.finalName}.jar"
+                              tofile="C:\Games\Minecraft\Spigot1.9\plugins\${project.build.finalName}.jar"/>
                     </tasks>
                 </configuration>
                 <executions>

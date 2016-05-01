@@ -12,6 +12,7 @@ import me.wiefferink.gocraft.features.items.*;
 import me.wiefferink.gocraft.features.players.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.*;
+import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
@@ -74,6 +75,9 @@ public final class GoCraft extends JavaPlugin {
 	private EssentialsLink essentialsLink = null;
 	private WorldGuardLink worldGuardLink = null;
 	private BanManagerLink banManagerLink = null;
+	// Version specific classes
+	private SpecificUtilsBase specificUtils = null;
+
 	private boolean noUpdate = false;
 
 	private boolean dynMapInstalled = false;
@@ -148,6 +152,29 @@ public final class GoCraft extends JavaPlugin {
 				}
 			}
 		}.runTask(this);
+
+		// Setup version specific classes
+		String version = null;
+		if (Bukkit.getBukkitVersion().startsWith("1.8")) {
+			version = "v1_8";
+		} else if (Bukkit.getBukkitVersion().startsWith("1.9")) {
+			version = "v1_9";
+		}
+		if (version != null) {
+			try {
+				final Class<?> clazz = Class.forName("me.wiefferink.gocraft.versions." + version + ".SpecificUtils");
+				if (SpecificUtilsBase.class.isAssignableFrom(clazz)) {
+					this.specificUtils = (SpecificUtilsBase) clazz.getConstructor().newInstance();
+				}
+			} catch (final Exception e) {
+				this.getLogger().severe("Could not load SpecificUtils class (tried to load " + version + ").");
+				e.printStackTrace();
+			}
+		}
+		// Assign a default if failed
+		if (specificUtils == null) {
+			specificUtils = new SpecificUtilsBase();
+		}
 
 		this.languageManager = new LanguageManager(this);
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + generalFolderName);
@@ -353,6 +380,14 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public Permission getPermissionProvider() {
 		return permissionProvider;
+	}
+
+	/**
+	 * Get the specificUtils instance
+	 * @return The specificUtils instance
+	 */
+	public SpecificUtilsBase getSpecificUtils() {
+		return specificUtils;
 	}
 
 	/**

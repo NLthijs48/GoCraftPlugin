@@ -1,20 +1,14 @@
 package me.wiefferink.gocraft.tools;
 
-import com.mojang.authlib.GameProfile;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.wiefferink.gocraft.GoCraft;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
-import net.minecraft.server.v1_8_R3.PlayerInteractManager;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -61,9 +55,7 @@ public class Utils {
 	 * @return The ping in ms
 	 */
 	public static int getPing(Player player) {
-		CraftPlayer cp = (CraftPlayer) player;
-		EntityPlayer ep = cp.getHandle();
-		return ep.ping;
+		return GoCraft.getInstance().getSpecificUtils().getPing(player);
 	}
 
 	/**
@@ -269,25 +261,7 @@ public class Utils {
 	 * @return The Player object of the target player
 	 */
 	public static Player loadPlayer(UUID uuid) {
-		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-		if (player == null) {
-			return null;
-		}
-		// Check if the player is online
-		if (player.getPlayer() != null) {
-			return player.getPlayer();
-		}
-		// Load offline player data
-		GameProfile profile = new GameProfile(uuid, player.getName());
-		MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-		EntityPlayer entity = new EntityPlayer(server, server.getWorldServer(0), profile, new PlayerInteractManager(server.getWorldServer(0)));
-
-		// Get the bukkit entity
-		Player target = entity.getBukkitEntity();
-		if (target != null) {
-			target.loadData();
-		}
-		return target;
+		return GoCraft.getInstance().getSpecificUtils().loadPlayer(uuid);
 	}
 
 	/**
