@@ -362,7 +362,7 @@ public class DistributionManager {
 			ConfigurationSection pushToSection = rootFiles.getConfigurationSection(pushFile);
 			String pushTo = null;
 			if (pushToSection != null) {
-				pushTo = pushToSection.getString("pushTo");
+				pushTo = pushToSection.getString("servers");
 			} else if (rootFiles.isString(pushFile)) {
 				pushTo = rootFiles.getString(pushFile);
 			}
