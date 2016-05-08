@@ -208,7 +208,7 @@ public class Shop implements Listener {
 			plugin.message(player, "shop-noPermission");
 			return;
 		}
-		if (player.getGameMode() != GameMode.SURVIVAL) {
+		if (player.getGameMode() == GameMode.CREATIVE) {
 			plugin.message(player, "shop-notSurvival");
 			return;
 		}

@@ -103,7 +103,7 @@ inspect-damage: "You somehow got damaged, teleported to spawn."
 ######### SHOP
 shop-notEnabled: "The kit/item shop is not enabled."
 shop-noPermission: "You do not have permission to use the shop."
-shop-notSurvival: "You need to be in survival gamemode to use the shop."
+shop-notSurvival: "You cannot be in creative gamemode to use the shop."
 shop-notInPVP: "You have to be in a non-pvp area to use the shop."
 shop-lowMoney: "You need %0% to buy %1%, but you have %2%."
 shop-lowSpace: "You need %0% free slots in your inventory, but have only %1%."
