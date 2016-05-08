@@ -168,7 +168,7 @@ public class DistributionManager {
 				File newPluginJar = null;
 				File newPluginConfig = null;
 				for (File file : files) {
-					if (file.isFile() && matchesFileName(pushPlugin, file)) {
+					if (file.isFile() && matchesFileName(pushPlugin, file) && file.getName().toLowerCase().endsWith(".jar")) {
 						// Check if version matches
 						String jarVersion = null;
 						if (file.getName().contains(".")) {
