@@ -317,7 +317,11 @@ public class DistributionManager {
 	 */
 	public void updateMessage(BufferedWriter updateLogger, Object target, String key, Object... args) {
 		plugin.messageNoPrefix(target, key, args);
-		plugin.configurableMessage("[" + Utils.getCurrentDateTime() + "] [" + plugin.getServerName() + "] ", updateLogger, key, args);
+		StringBuilder prefix = new StringBuilder("[" + Utils.getCurrentDateTime() + "] [" + plugin.getServerName() + "] ");
+		for (int i = plugin.getServerName().length(); i < 20; i++) {
+			prefix.append(" ");
+		}
+		plugin.configurableMessage(prefix.toString(), updateLogger, key, args);
 	}
 
 	/**
