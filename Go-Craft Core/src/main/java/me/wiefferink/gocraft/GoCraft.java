@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
 import me.wiefferink.gocraft.features.AddDefaultRank;
+import me.wiefferink.gocraft.features.NauseaPotions;
 import me.wiefferink.gocraft.features.ResetExpiredPlots;
 import me.wiefferink.gocraft.features.blocks.*;
 import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
@@ -419,46 +420,46 @@ public final class GoCraft extends JavaPlugin {
 	 * Register all listener and command classes
 	 */
 	public void addListeners() {
-		this.listeners = new ArrayList<>();
+		listeners = new ArrayList<>();
 		// Blocks
-		this.listeners.add(new DisableBedrockBreak(this));
-		this.listeners.add(new DisableBedrockPlace(this));
-		this.listeners.add(new DisableDispensers(this));
-		this.listeners.add(new DisableTradeSignPlacing(this));
-		this.listeners.add(new DisableBlockBreaking(this));
-		this.listeners.add(new DisableAnvilBreak(this));
-		this.listeners.add(new DisableWitherDamage(this));
+		listeners.add(new DisableBedrockBreak(this));
+		listeners.add(new DisableBedrockPlace(this));
+		listeners.add(new DisableDispensers(this));
+		listeners.add(new DisableTradeSignPlacing(this));
+		listeners.add(new DisableBlockBreaking(this));
+		listeners.add(new DisableAnvilBreak(this));
+		listeners.add(new DisableWitherDamage(this));
 		// General
-		this.listeners.add(new DisableRain(this));
-		this.listeners.add(new DisableMobSpawning(this));
-		this.listeners.add(new DisableHungerLoss(this));
-		this.listeners.add(new EnablePotionEffectsOnJoin(this));
-		this.listeners.add(new SpawnTeleport(this));
-		this.listeners.add(new EnableRegionPotionEffects(this));
+		listeners.add(new DisableRain(this));
+		listeners.add(new DisableMobSpawning(this));
+		listeners.add(new DisableHungerLoss(this));
+		listeners.add(new EnablePotionEffectsOnJoin(this));
+		listeners.add(new SpawnTeleport(this));
+		listeners.add(new EnableRegionPotionEffects(this));
 		if (getBanManagerLink() != null) {
-			this.listeners.add(new PunishmentNotifications(this));
+			listeners.add(new PunishmentNotifications(this));
 		}
-		this.listeners.add(new DisableStaffJoinLeaveMessages(this));
-		this.listeners.add(new OpenenderLimiter(this));
-		this.listeners.add(new DisableSignUseWhileMuted(this));
+		listeners.add(new DisableStaffJoinLeaveMessages(this));
+		listeners.add(new OpenenderLimiter(this));
+		listeners.add(new DisableSignUseWhileMuted(this));
 		// Items
-		this.listeners.add(new DisableItemDrops(this));
-		this.listeners.add(new DisableItemSpawning(this));
-		this.listeners.add(new DisablePotionSplash(this));
-		this.listeners.add(new DisablePotionThrow(this));
-		this.listeners.add(new DisablePotionInvisibleDrink(this));
-		this.listeners.add(new DisableXpBottleThrow(this));
-		this.listeners.add(new DisableFirework(this));
-		this.listeners.add(new DisableEnderpearl(this));
-		this.listeners.add(new DisableEyeOfEnder(this));
-		this.listeners.add(new DisableBooks(this));
+		listeners.add(new DisableItemDrops(this));
+		listeners.add(new DisableItemSpawning(this));
+		listeners.add(new DisablePotionSplash(this));
+		listeners.add(new DisablePotionThrow(this));
+		listeners.add(new DisablePotionInvisibleDrink(this));
+		listeners.add(new DisableXpBottleThrow(this));
+		listeners.add(new DisableFirework(this));
+		listeners.add(new DisableEnderpearl(this));
+		listeners.add(new DisableEyeOfEnder(this));
+		listeners.add(new DisableBooks(this));
 		// Logging
-		this.listeners.add(new LogSigns(this));
+		listeners.add(new LogSigns(this));
 		// PVP
-		this.listeners.add(new DisablePlayerDamage(this));
-		this.listeners.add(new DisableFallDamage(this));
+		listeners.add(new DisablePlayerDamage(this));
+		listeners.add(new DisableFallDamage(this));
 		// Commands
-		this.listeners.add(new TempbanCommand(this));
+		listeners.add(new TempbanCommand(this));
 		new PingCommand(this);
 		new SetspawnCommand(this);
 		new StaffMessagesCommands(this);
@@ -469,9 +470,10 @@ public final class GoCraft extends JavaPlugin {
 		new HelpCommand(this);
 		new ShopCommand(this);
 		// Other
-		this.listeners.add(new ResetExpiredPlots(this));
-		this.listeners.add(new DisableAboveNetherGlitching(this));
-		this.listeners.add(new AddDefaultRank(this));
+		listeners.add(new ResetExpiredPlots(this));
+		listeners.add(new DisableAboveNetherGlitching(this));
+		listeners.add(new AddDefaultRank(this));
+		listeners.add(new NauseaPotions(this));
 	}
 
 	/**

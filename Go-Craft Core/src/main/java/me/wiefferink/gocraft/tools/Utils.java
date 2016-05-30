@@ -1,8 +1,6 @@
 package me.wiefferink.gocraft.tools;
 
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.wiefferink.gocraft.GoCraft;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -389,12 +387,10 @@ public class Utils {
 	 * @return true if the player is in a PVP area, otherwise false
 	 */
 	public static boolean isInPvpArea(Player player) {
-		if (GoCraft.getInstance().getWorldGuardLink() == null) {
-			return false;
-		}
-		RegionManager manager = GoCraft.getInstance().getWorldGuardLink().get().getRegionManager(Bukkit.getWorld("world"));
-		ApplicableRegionSet regions = manager.getApplicableRegions(player.getLocation());
-		return regions.testState(GoCraft.getInstance().getWorldGuardLink().get().wrapPlayer(player), DefaultFlag.PVP);
+		return GoCraft.getInstance().getWorldGuardLink() != null && GoCraft.getInstance().getWorldGuardLink().get()
+				.getRegionManager(Bukkit.getWorld("world"))
+				.getApplicableRegions(player.getLocation())
+				.testState(GoCraft.getInstance().getWorldGuardLink().get().wrapPlayer(player), DefaultFlag.PVP);
 	}
 
 	/**

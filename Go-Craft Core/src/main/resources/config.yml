@@ -76,5 +76,8 @@ enableAddDefaultRank: false
 ########## INSPECT
 staffJoinsInInspect: false
 
+########## SPECIAL ITEMS
+enableNauseaPotions: true
+
 ########## SHOP
 enableShop: false
