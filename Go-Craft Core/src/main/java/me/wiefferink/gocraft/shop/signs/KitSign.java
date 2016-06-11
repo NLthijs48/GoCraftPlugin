@@ -57,7 +57,7 @@ public class KitSign extends Sign {
 		if (clickAction == ClickAction.LEFT) {
 			GoCraft.getInstance().message(player, "shop-kitSignInfo", kit.getName(), getFormattedPrice());
 		} else {
-			kit.buy(new ShopSession(player));
+			kit.buy(new ShopSession(player), this);
 		}
 	}
 }

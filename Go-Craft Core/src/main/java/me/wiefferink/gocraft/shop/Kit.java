@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.shop.buttons.BuyButton;
 import me.wiefferink.gocraft.shop.buttons.ItemButton;
 import me.wiefferink.gocraft.shop.features.*;
+import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
@@ -206,6 +207,10 @@ public class Kit implements Button, View {
 	 * @param session The sesstion to do it for
 	 */
 	public void buy(ShopSession session) {
+		buy(session, null);
+	}
+
+	public void buy(ShopSession session, KitSign sign) {
 		Player player = session.getPlayer();
 
 		// Check features
@@ -219,7 +224,7 @@ public class Kit implements Button, View {
 
 		// Perform actions
 		for (Feature feature : features.values()) {
-			if (!feature.execute(session)) {
+			if (!feature.execute(session, sign)) {
 				return; // Failed to execute
 			}
 		}
@@ -229,8 +234,14 @@ public class Kit implements Button, View {
 		if (getCooldownFeature().getCooldown() > 60000) { // More than a minute
 			cooldown = plugin.getLanguageManager().getLang("shop-cooldownInfo", getCooldownFeature().getRawCooldown());
 		}
-		if (getPriceFeature().getPrice() > 0) {
-			plugin.message(session.getPlayer(), "shop-boughtKit", getName(), getPriceFeature().getFormattedPrice(), cooldown);
+		double price = getPriceFeature().getPrice();
+		String formatPrice = getPriceFeature().getFormattedPrice();
+		if (sign != null) {
+			formatPrice = sign.getFormattedPrice();
+			price = sign.getPrice();
+		}
+		if (price > 0) {
+			plugin.message(session.getPlayer(), "shop-boughtKit", getName(), formatPrice, cooldown);
 		} else {
 			plugin.message(session.getPlayer(), "shop-receivedKit", getName(), cooldown);
 		}

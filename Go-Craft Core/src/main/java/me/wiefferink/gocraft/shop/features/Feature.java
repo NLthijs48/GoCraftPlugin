@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.shop.features;
 
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
+import me.wiefferink.gocraft.shop.signs.KitSign;
 
 public abstract class Feature {
 
@@ -31,9 +32,10 @@ public abstract class Feature {
 	/**
 	 * Perform the actions required when the kit is actually bought
 	 * @param session The session to perform it for
+	 * @param sign
 	 * @return true if the execution succeeded, otherwise false
 	 */
-	public boolean execute(ShopSession session) {
+	public boolean execute(ShopSession session, KitSign sign) {
 		return true;
 	}
 

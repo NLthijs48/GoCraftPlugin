@@ -25,6 +25,7 @@ public class NauseaPotions implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPotionSplash(PotionSplashEvent event) {
+
 		ThrownPotion potion = event.getPotion();
 		if (potion != null
 				&& potion.getItem() != null

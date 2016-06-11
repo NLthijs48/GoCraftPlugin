@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.shop.features;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
+import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.tools.Utils;
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -29,8 +30,12 @@ public class PriceFeature extends Feature {
 	}
 
 	@Override
-	public boolean execute(ShopSession session) {
-		EconomyResponse response = GoCraft.getInstance().getEconomy().withdrawPlayer(session.getPlayer(), getPrice());
+	public boolean execute(ShopSession session, KitSign sign) {
+		double price = getPrice();
+		if (sign != null) {
+			price = sign.getPrice();
+		}
+		EconomyResponse response = GoCraft.getInstance().getEconomy().withdrawPlayer(session.getPlayer(), price);
 		if (!response.transactionSuccess()) {
 			GoCraft.getInstance().message(session.getPlayer(), "shop-chargeFailed");
 			return false;

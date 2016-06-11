@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.shop.features;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
+import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 
@@ -24,7 +25,7 @@ public class ItemsFeature extends Feature {
 	}
 
 	@Override
-	public boolean execute(ShopSession session) {
+	public boolean execute(ShopSession session, KitSign sign) {
 		boolean result = true;
 		for (ItemBuilder builder : kit.getItems()) {
 			result &= session.getPlayer().getInventory().addItem(builder.getItemStack().clone()).size() == 0;
