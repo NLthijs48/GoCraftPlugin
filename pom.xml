@@ -7,13 +7,15 @@
 	<version>parent</version>
 	<name>Go-Craft</name>
 	<url>http://go-craft.com/</url>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<modules>
-		<module>1.8</module>
-		<module>1.9</module>
+		<module>v1_8_R3</module>
+		<module>v1_9_R1</module>
+		<module>v1_9_R2</module>
 		<module>Interfaces</module>
 		<module>Go-Craft core</module>
 	</modules>

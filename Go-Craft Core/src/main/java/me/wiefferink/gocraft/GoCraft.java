@@ -155,22 +155,15 @@ public final class GoCraft extends JavaPlugin {
 		}.runTask(this);
 
 		// Setup version specific classes
-		String version = null;
-		if (Bukkit.getBukkitVersion().startsWith("1.8")) {
-			version = "v1_8";
-		} else if (Bukkit.getBukkitVersion().startsWith("1.9")) {
-			version = "v1_9";
-		}
-		if (version != null) {
-			try {
-				final Class<?> clazz = Class.forName("me.wiefferink.gocraft.versions." + version + ".SpecificUtils");
-				if (SpecificUtilsBase.class.isAssignableFrom(clazz)) {
-					this.specificUtils = (SpecificUtilsBase) clazz.getConstructor().newInstance();
-				}
-			} catch (final Exception e) {
-				this.getLogger().severe("Could not load SpecificUtils class (tried to load " + version + ").");
-				e.printStackTrace();
+		String packageName = getServer().getClass().getPackage().getName();
+		String version = packageName.substring(packageName.lastIndexOf('.') + 1);
+		try {
+			final Class<?> clazz = Class.forName("me.wiefferink.gocraft.versions." + version + ".SpecificUtils");
+			if (SpecificUtilsBase.class.isAssignableFrom(clazz)) {
+				this.specificUtils = (SpecificUtilsBase) clazz.getConstructor().newInstance();
 			}
+		} catch (final Exception e) {
+			this.getLogger().severe("Could not load version specific classes (tried to load " + version + ").");
 		}
 		// Assign a default if failed
 		if (specificUtils == null) {

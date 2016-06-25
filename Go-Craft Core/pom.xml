@@ -7,7 +7,6 @@
     <version>1.0</version>
     <name>Go-Craft Core</name>
 
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -28,6 +27,7 @@
     </repositories>
 
     <dependencies>
+        <!-- Interfaces for version specific classes -->
         <dependency>
             <groupId>me.wiefferink</groupId>
             <artifactId>gocraft-interfaces</artifactId>
@@ -36,23 +36,34 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- Implementations of version specific classes -->
         <dependency>
             <groupId>me.wiefferink</groupId>
-            <artifactId>gocraft-1.8</artifactId>
-            <version>Go-Craft MC1.8</version>
+            <artifactId>gocraft-v1_8_R3</artifactId>
+            <version>1.0</version>
             <type>jar</type>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>me.wiefferink</groupId>
-            <artifactId>gocraft-1.9</artifactId>
-            <version>Go-Craft MC1.9</version>
+            <artifactId>gocraft-v1_9_R1</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>me.wiefferink</groupId>
+            <artifactId>gocraft-v1_9_R2</artifactId>
+            <version>1.0</version>
             <type>jar</type>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 
+        <!-- Other dependencies -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
@@ -106,6 +117,100 @@
         </dependency>
     </dependencies>
 
+
+    <profiles>
+        <!-- Copy the jar file to a test server, activate by using -DcopyResult="/path/to/test/server" -->
+        <profile>
+            <id>test-locally</id>
+            <activation>
+                <property>
+                    <name>copyResult</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <configuration>
+                            <tasks>
+                                <copy file="./target/${project.build.finalName}.jar"
+                                      tofile="${copyResult}\${project.build.finalName}.jar"/>
+                            </tasks>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Package the source files in a jar, activate by using -Dsources -->
+        <profile>
+            <id>package-sources</id>
+            <activation>
+                <property>
+                    <name>sources</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Produce javadoc files, activate by using -Djavadoc -->
+        <profile>
+            <id>generate-javadoc</id>
+            <activation>
+                <property>
+                    <name>javadoc</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <destDir>${javadoc}</destDir>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <directory>target</directory>
         <finalName>GoCraft</finalName>
@@ -142,25 +247,6 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <configuration>
-                    <tasks>
-                        <copy file="./target/${project.build.finalName}.jar"
-                              tofile="C:\Games\Minecraft\Spigot\plugins\${project.build.finalName}.jar"/>
-                        <copy file="./target/${project.build.finalName}.jar"
-                              tofile="C:\Games\Minecraft\Spigot1.9\plugins\${project.build.finalName}.jar"/>
-                    </tasks>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

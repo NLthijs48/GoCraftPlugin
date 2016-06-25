@@ -1,13 +1,13 @@
-package me.wiefferink.gocraft.versions.v1_9;
+package me.wiefferink.gocraft.versions.v1_8_R3;
 
 import com.mojang.authlib.GameProfile;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
-import net.minecraft.server.v1_9_R1.*;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,7 +47,7 @@ public class SpecificUtils extends SpecificUtilsBase {
 
 	@Override
 	public ItemStack addGlow(ItemStack item) {
-		net.minecraft.server.v1_9_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
+		net.minecraft.server.v1_8_R3.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
 		NBTTagCompound tag = null;
 		if (!nmsStack.hasTag()) {
 			tag = new NBTTagCompound();

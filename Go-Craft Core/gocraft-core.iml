@@ -11,9 +11,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="gocraft-interface" />
     <orderEntry type="module" module-name="gocraft-1.8" />
     <orderEntry type="module" module-name="gocraft-1.9" />
+    <orderEntry type="module" module-name="gocraft-interface" />
+    <orderEntry type="module" module-name="gocraft-v1_8_R3" />
+    <orderEntry type="module" module-name="gocraft-v1_9_R1" />
+    <orderEntry type="module" module-name="gocraft-v1_9_R2" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:6.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
