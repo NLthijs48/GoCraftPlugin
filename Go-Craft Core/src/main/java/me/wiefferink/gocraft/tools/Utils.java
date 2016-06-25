@@ -525,4 +525,21 @@ public class Utils {
 	public static String getHighestGroup(String groups) {
 		return getTargetGroup(groups, true);
 	}
+
+	/**
+	 * Play a sound to a player
+	 * Old to new sound: https://minecraft.gamepedia.com/Sounds.json
+	 * @param player Player to play it to
+	 * @param oldSound Name of the old sound
+	 * @param newSound Name of the new sound
+	 * @param volume Volume of the sound
+	 * @param pitch Pitch of the sound
+	 */
+	public static void playSound(Player player, String oldSound, String newSound, float volume, float pitch) {
+		if (Bukkit.getBukkitVersion().startsWith("1.8")) {
+			player.playSound(player.getLocation(), Sound.valueOf(oldSound.replace(".", "_").toUpperCase()), volume, pitch);
+		} else {
+			player.playSound(player.getLocation(), Sound.valueOf(newSound.replace(".", "_").toUpperCase()), volume, pitch);
+		}
+	}
 }

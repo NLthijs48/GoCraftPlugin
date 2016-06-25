@@ -10,7 +10,6 @@ import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -129,7 +128,7 @@ public class Kit implements Button, View {
 	public void onClick(ShopSession session, ShopSession.ClickAction action) {
 		if (action == ShopSession.ClickAction.LEFT) {
 			show(session);
-			session.getPlayer().playSound(session.getPlayer().getLocation(), Sound.CLICK, 0.5F, 1F);
+			Utils.playSound(session.getPlayer(), "click", "ui.button.click", 0.5F, 1F);
 		} else {
 			buy(session);
 			session.refreshView();
@@ -217,7 +216,7 @@ public class Kit implements Button, View {
 		for (Feature feature : features.values()) {
 			if (!feature.allows(session)) {
 				feature.indicateRestricted(session);
-				session.getPlayer().playSound(session.getPlayer().getLocation(), Sound.ANVIL_LAND, 0.4F, 0.8F);
+				Utils.playSound(session.getPlayer(), "anvil.land", "block.anvil.land", 0.4F, 0.8F);
 				return;
 			}
 		}
@@ -229,7 +228,7 @@ public class Kit implements Button, View {
 			}
 		}
 
-		session.getPlayer().playSound(session.getPlayer().getLocation(), Sound.LEVEL_UP, 0.7F, 1.5F);
+		Utils.playSound(session.getPlayer(), "level.up", "entity.player.levelup", 0.7F, 1.5F);
 		String cooldown = "";
 		if (getCooldownFeature().getCooldown() > 60000) { // More than a minute
 			cooldown = plugin.getLanguageManager().getLang("shop-cooldownInfo", getCooldownFeature().getRawCooldown());

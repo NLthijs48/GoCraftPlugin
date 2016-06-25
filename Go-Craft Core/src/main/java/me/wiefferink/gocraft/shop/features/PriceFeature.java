@@ -26,7 +26,7 @@ public class PriceFeature extends Feature {
 
 	@Override
 	public void indicateRestricted(ShopSession session) {
-		GoCraft.getInstance().message(session.getPlayer(), "shop-lowMoney", getPrice(), kit.getName(), GoCraft.getInstance().getEconomy().getBalance(session.getPlayer()));
+		GoCraft.getInstance().message(session.getPlayer(), "shop-lowMoney", getFormattedPrice(), kit.getName(), session.getFormattedBalance());
 	}
 
 	@Override
