@@ -89,10 +89,6 @@ public class Shop implements Listener {
 			return;
 		}
 		ConfigurationSection categoriesSection = shopSection.getConfigurationSection("categories");
-		if (categoriesSection == null) {
-			plugin.getLogger().warning("Categories section of the shop is empty!");
-			return;
-		}
 		for (String kitString : kitsSection.getKeys(false)) {
 			ConfigurationSection kitSection = kitsSection.getConfigurationSection(kitString);
 			Kit kit = new Kit(kitSection, kitString, this);
@@ -105,7 +101,10 @@ public class Shop implements Listener {
 			for (String categoryPart : categoryParts) {
 				Category category = categories.get(categoryPart);
 				if (category == null) {
-					ConfigurationSection categorySection = categoriesSection.getConfigurationSection(categoryPart);
+					ConfigurationSection categorySection = null;
+					if (categoriesSection != null) {
+						categorySection = categoriesSection.getConfigurationSection(categoryPart);
+					}
 					if (categorySection == null) {
 						plugin.getLogger().warning("Category " + categoryPart + " specified in kit " + kitString + " not found in the categories list!");
 						continue;
@@ -126,9 +125,11 @@ public class Shop implements Listener {
 		// Close button
 		buttons.put(inventorySize - 1, new CloseButton());
 		int current = inventorySize - 9;
-		for (String key : categoriesSection.getKeys(false)) {
-			buttons.put(current, categories.get(key));
-			current++;
+		if (categoriesSection != null) {
+			for (String key : categoriesSection.getKeys(false)) {
+				buttons.put(current, categories.get(key));
+				current++;
+			}
 		}
 
 		// Call setup (inventory size is known at this point)
