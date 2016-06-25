@@ -22,6 +22,7 @@ import me.wiefferink.gocraft.tools.storage.MySQLDatabase;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -92,48 +93,48 @@ public final class GoCraft extends JavaPlugin {
 		this.debug = getConfig().getBoolean("debug");
 		localStorageCleaners = new HashMap<>();
 
+		final Set<String> connnected = new HashSet<>();
+
 		// Check if WorldGuard is present
 		Plugin wg = getServer().getPluginManager().getPlugin("WorldGuard");
-		if (wg == null || !wg.isEnabled()) {
-			debug("  No WorldGuard plugin found");
-		} else {
+		if (wg != null && wg.isEnabled()) {
 			this.worldGuardLink = new WorldGuardLink();
+			connnected.add("WorldGuard");
 		}
 
 		// Check if BanManager is present
 		Plugin bm = getServer().getPluginManager().getPlugin("BanManager");
-		if (bm == null || !bm.isEnabled()) {
-			debug("  No BanManager plugin found");
-		} else {
+		if (bm != null && bm.isEnabled()) {
 			banManagerLink = new BanManagerLink();
+			connnected.add("BanManager");
 		}
 
 		// Check if MapSwitcher is present
 		Plugin ms = getServer().getPluginManager().getPlugin("MapSwitcher");
-		if (ms == null || !ms.isEnabled()) {
-			debug("  No MapSwitcher plugin found");
-		} else {
+		if (ms != null && ms.isEnabled()) {
 			mapSwitcherLink = new MapSwitcherLink();
+			connnected.add("MapSwitcher");
 		}
 
 		// Check if Essentials is present
 		Plugin es = getServer().getPluginManager().getPlugin("Essentials");
-		if (es == null || !es.isEnabled()) {
-			debug("  No Essentails plugin found");
-		} else {
+		if (es != null && es.isEnabled()) {
 			essentialsLink = new EssentialsLink();
+			connnected.add("Essentials");
 		}
 
 		// Check if Vault is present
 		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 		if (economyProvider != null) {
 			economy = economyProvider.getProvider();
+			connnected.add("Vault (economy)");
 		} else {
 			getLogger().info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
 		}
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
 		if (permissionProvider != null) {
 			this.permissionProvider = permissionProvider.getProvider();
+			connnected.add("Vault (permissions)");
 		} else {
 			getLogger().info("Error: Vault or the Permissions plugin is not present or has not loaded correctly");
 		}
@@ -141,16 +142,20 @@ public final class GoCraft extends JavaPlugin {
 		// Check if DynMap is present
 		Plugin dm = getServer().getPluginManager().getPlugin("dynmap");
 		dynMapInstalled = dm != null && dm.isEnabled();
+		if (dynMapInstalled) {
+			connnected.add("DynMap");
+		}
 
 		// Check if GoPVP is present
 		new BukkitRunnable() {
 			public void run() {
 				Plugin gp = getServer().getPluginManager().getPlugin("GoPVP");
-				if (gp == null || !gp.isEnabled()) {
-					debug("  No GoPVP plugin found");
-				} else {
+				if (gp != null && gp.isEnabled()) {
 					goPVPLink = new GoPVPLink();
+					connnected.add("GoPVP");
 				}
+
+				getLogger().info("Connected plugins: " + StringUtils.join(connnected, ", "));
 			}
 		}.runTask(this);
 
@@ -168,6 +173,8 @@ public final class GoCraft extends JavaPlugin {
 		// Assign a default if failed
 		if (specificUtils == null) {
 			specificUtils = new SpecificUtilsBase();
+		} else {
+			getLogger().info("Using " + version + " for version specific classes");
 		}
 
 		this.languageManager = new LanguageManager(this);
