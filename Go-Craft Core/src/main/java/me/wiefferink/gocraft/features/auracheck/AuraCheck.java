@@ -128,7 +128,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 			return false;
 		}
 		if (!sender.hasPermission("gocraft.auracheck")) {
-			sender.sendMessage(ChatColor.BLUE + "[AuraCheck] You do not have permission to check players for killaura.");
+			plugin.message(sender, "ac-noPermission");
 			return true;
 		}
 
@@ -136,12 +136,13 @@ public class AuraCheck extends Feature implements CommandExecutor {
 		List<Player> playerList = Bukkit.matchPlayer(args[0]);
 		Player player;
 		if (playerList.size() == 0) {
-			sender.sendMessage(ChatColor.RED + "Player is not online.");
+			plugin.message(sender, "general-notOnline", args[0]);
 			return true;
 		}
 		if (playerList.size() == 1) {
 			player = playerList.get(0);
 		} else {
+			// TODO replace by messaging system
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder
 					.append("[\"\",{\"text\":\"What player do you mean? (click one)\\n\",\"color\":\"green\"},");
@@ -166,10 +167,6 @@ public class AuraCheck extends Feature implements CommandExecutor {
 				GoCraft.getInstance().getLogger().warning("Something went wrong with the chat packet to choose a target:");
 				e.printStackTrace();
 			}
-			return true;
-		}
-		if (player == null) {
-			sender.sendMessage(ChatColor.RED + "Player is not online.");
 			return true;
 		}
 		final Player finalPlayer = player;

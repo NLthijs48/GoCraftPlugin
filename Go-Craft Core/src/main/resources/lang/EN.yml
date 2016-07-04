@@ -9,6 +9,7 @@
 staff-noPermission: "You are not a staff member."
 
 general-mutedSignUse: "You cannot place signs while you are muted."
+general-noPlayer: "Player %0% is not online."
 
 ########## LOGGING
 signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
@@ -124,3 +125,6 @@ shop-notInMap: "Map %0% needs to be active to buy %1%."
 shop-boughtKit: "Bought %0%&r for %1%%2%."
 shop-receivedKit: "Received %0%&r%1%."
 shop-cooldownInfo: ", can be used again after %0%"
+
+########## AURACHECK
+ac-noPermission: "You do not have permission to check for killaura."
