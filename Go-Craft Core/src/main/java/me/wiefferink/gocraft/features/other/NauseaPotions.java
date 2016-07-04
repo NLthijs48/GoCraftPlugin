@@ -1,4 +1,4 @@
-package me.wiefferink.gocraft.features;
+package me.wiefferink.gocraft.features.other;
 
 import me.wiefferink.gocraft.GoCraft;
 import net.md_5.bungee.api.ChatColor;

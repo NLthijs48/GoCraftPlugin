@@ -3,13 +3,15 @@ package me.wiefferink.gocraft;
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.distribution.DistributionManager;
-import me.wiefferink.gocraft.features.AddDefaultRank;
-import me.wiefferink.gocraft.features.NauseaPotions;
-import me.wiefferink.gocraft.features.ResetExpiredPlots;
+import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.features.auracheck.AuraCheck;
 import me.wiefferink.gocraft.features.blocks.*;
 import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
 import me.wiefferink.gocraft.features.environment.DisableRain;
 import me.wiefferink.gocraft.features.items.*;
+import me.wiefferink.gocraft.features.other.AddDefaultRank;
+import me.wiefferink.gocraft.features.other.NauseaPotions;
+import me.wiefferink.gocraft.features.other.ResetExpiredPlots;
 import me.wiefferink.gocraft.features.players.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.*;
@@ -213,6 +215,12 @@ public final class GoCraft extends JavaPlugin {
 	 * Plugin disable actions
 	 */
 	public void onDisable() {
+		// Call stop methods of the registered features
+		for (Listener listener : listeners) {
+			if (listener instanceof Feature) {
+				((Feature) listener).stopFeature();
+			}
+		}
 		if (shop != null) {
 			shop.handleServerStop();
 		}
@@ -222,6 +230,7 @@ public final class GoCraft extends JavaPlugin {
 		} else {
 			getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
 		}
+
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
 	}
@@ -231,8 +240,7 @@ public final class GoCraft extends JavaPlugin {
 	 * @param key The key to track it with
 	 */
 	public void increaseStatistic(String key) {
-		getLocalStorage().set("statistics." + key,
-				getLocalStorage().getLong("statistics." + key) + 1);
+		getLocalStorage().set("statistics." + key, getLocalStorage().getLong("statistics." + key) + 1);
 		saveLocalStorage();
 	}
 
@@ -257,7 +265,6 @@ public final class GoCraft extends JavaPlugin {
 			}
 		}
 		if (result != null) {
-			//GoCraft.debug("generalconfig null="+(getGeneralConfig()==null));
 			ConfigurationSection servers = getGeneralConfig().getConfigurationSection("servers");
 			if (servers != null) {
 				for (String id : servers.getKeys(false)) {
@@ -474,6 +481,13 @@ public final class GoCraft extends JavaPlugin {
 		listeners.add(new DisableAboveNetherGlitching(this));
 		listeners.add(new AddDefaultRank(this));
 		listeners.add(new NauseaPotions(this));
+		listeners.add(new AuraCheck());
+
+		for (Listener listener : listeners) {
+			if (listener instanceof Feature) {
+				((Feature) listener).startFeature();
+			}
+		}
 	}
 
 	/**

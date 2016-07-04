@@ -22,6 +22,7 @@ public class Utils {
 	private static ArrayList<Material> cannotSpawnBeside = new ArrayList<>(Arrays.asList(Material.LAVA, Material.STATIONARY_LAVA, Material.CACTUS));
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss SSS");
+	public static Random random = new Random();
 
 	private Utils() {
 	}
@@ -542,4 +543,41 @@ public class Utils {
 			player.playSound(player.getLocation(), Sound.valueOf(newSound.replace(".", "_").toUpperCase()), volume, pitch);
 		}
 	}
+
+	/**
+	 * Get a random number between two values
+	 * @param one The first value (highest or lowest)
+	 * @param two The second value (highest or lowest)
+	 * @return A random value between the two provided values (boundaries included)
+	 */
+	public static int getRandomBetween(int one, int two) {
+		int min = Math.min(one, two);
+		int max = Math.max(one, two);
+		return random.nextInt(max - min + 1) + min;
+	}
+
+
+	private static final List<Alphabet> letters = Collections.unmodifiableList(Arrays.asList(Alphabet.values()));
+
+	private enum Alphabet {
+		a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
+	}
+
+	private static String getRandomLetter() {
+		return (letters.get(Utils.random.nextInt(letters.size()))).name();
+	}
+
+	/**
+	 * Get a random player name
+	 * @return A random playername between 3 and 14 characters
+	 */
+	public static String randomName() {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i = 3 + Utils.random.nextInt(9); i > 0; i--) {
+			stringBuilder.append(getRandomLetter());
+		}
+		stringBuilder.append(Utils.random.nextInt(99));
+		return stringBuilder.toString();
+	}
+
 }

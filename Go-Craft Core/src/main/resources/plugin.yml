@@ -1,7 +1,7 @@
 name: GoCraft
 main: me.wiefferink.gocraft.GoCraft
 version: 1.0
-softdepend: [BanManager, WorldGuard, Vault, MapSwitcher, Essentials, dynmap]
+softdepend: [BanManager, WorldGuard, Vault, MapSwitcher, Essentials, dynmap, ProtocolLib]
 permissions:
   gocraft.*:
     description: Give access to all commands of GoCraft (only for Admins)
@@ -62,6 +62,9 @@ permissions:
   gocraft.placeShopSign:
      description: Allows you to place shop signs
      default: op
+  gocraft.auracheck:
+    description: Check if a player has kill aura hacks
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'
@@ -95,3 +98,7 @@ commands:
   Shop:
     description: Open the kit/item shop
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  Auracheck:
+    description: Check if player has kill aura hacks
+    usage: /<command> <username> - checks for aura hack
+    aliases: [ac]

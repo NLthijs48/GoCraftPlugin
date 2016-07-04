@@ -6,10 +6,6 @@
     <name>Go-Craft Interfaces</name>
     <version>Go-Craft Interfaces</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <parent>
         <groupId>me.wiefferink</groupId>
         <artifactId>gocraft</artifactId>

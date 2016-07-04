@@ -73,6 +73,32 @@ enableExpiredPlotsRestoration: false
 disableAboveNetherGlitching: false
 enableAddDefaultRank: false
 
+########## AURACHECK
+## Automatic aura checking (fake player spawning and hit detection)
+auracheck:
+  ## Automatically check
+  enablePeriodicCheck: true
+  ## Seconds between checking all players on the server for killaura (range)
+  periodicIntervalMin: 60
+  periodicIntervalMax: 120
+  ## Ticks before going on with the next player
+  playerIntervalTime: 5
+  ## Hacks detected threshold
+  hacksConfirmed: 3
+  ## Send warning to staffchat
+  staffChatWarning: 2
+  ## Log a message to console with this much kills
+  consoleLogging: 1
+  ## Ticks to kill players
+  ticksToKill: 10
+  ## Number of fake players
+  numberOfFakePlayers: 4
+  ## Players are visible or not
+  visiblePlayers: false
+
+## Command to be executed when hacks are confirmed
+hacksConfirmedCommand: "gopvp:hackban %player% %reason%"
+
 ########## INSPECT
 staffJoinsInInspect: false
 

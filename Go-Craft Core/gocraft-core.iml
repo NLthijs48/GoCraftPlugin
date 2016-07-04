@@ -11,13 +11,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="gocraft-1.8" />
-    <orderEntry type="module" module-name="gocraft-1.9" />
     <orderEntry type="module" module-name="gocraft-interface" />
     <orderEntry type="module" module-name="gocraft-v1_8_R3" />
     <orderEntry type="module" module-name="gocraft-v1_9_R1" />
     <orderEntry type="module" module-name="gocraft-v1_9_R2" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.9.4-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sk89q:worldedit:6.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: rhino:js:1.7R2" level="project" />
@@ -39,15 +37,10 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.confuser:BanManager:5.7.2-CUSTOM" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: nl.evolutioncoding:mapswitcher:1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.wiefferink:GoPVP:1.0" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: net.milkbowl:vault:1.4.1">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../dependencies/Vault.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:VaultAPI:1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.ess3:Essentials:2.14-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.comphenix.protocol:ProtocolLib-API:4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: cglib:cglib-nodep:2.2.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT" level="project" />
   </component>
 </module>

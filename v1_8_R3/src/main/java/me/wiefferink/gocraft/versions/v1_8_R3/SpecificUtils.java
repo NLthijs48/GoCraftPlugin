@@ -1,9 +1,13 @@
 package me.wiefferink.gocraft.versions.v1_8_R3;
 
+import com.comphenix.protocol.wrappers.*;
 import com.mojang.authlib.GameProfile;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
+import me.wiefferink.gocraft.versions.v1_8_R3.packetwrapper.WrapperPlayServerNamedEntitySpawn;
+import me.wiefferink.gocraft.versions.v1_8_R3.packetwrapper.WrapperPlayServerPlayerInfo;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -11,6 +15,8 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class SpecificUtils extends SpecificUtilsBase {
@@ -60,5 +66,38 @@ public class SpecificUtils extends SpecificUtilsBase {
 		tag.set("ench", ench);
 		nmsStack.setTag(tag);
 		return CraftItemStack.asCraftMirror(nmsStack);
+	}
+
+
+	@Override
+	public int sendFakePlayer(Location location, Player player, boolean visible, String name) {
+		WrapperPlayServerNamedEntitySpawn entityWrapper = new WrapperPlayServerNamedEntitySpawn();
+		entityWrapper.setEntityId(SpecificUtilsBase.random.nextInt(20000));
+		entityWrapper.setPosition(location.toVector());
+		entityWrapper.setPlayerUuid(UUID.randomUUID());
+		entityWrapper.setYaw(SpecificUtils.random.nextFloat() * 360);
+		entityWrapper.setPitch(SpecificUtils.random.nextFloat() * 90 - 45.0F);
+		WrappedDataWatcher watcher = new WrappedDataWatcher();
+		// Visibility
+		watcher.setObject(0, visible ? 0 : (byte) 32);
+		// Health
+		watcher.setObject(6, 0.5F);
+		// Set metadata and send
+		entityWrapper.setMetadata(watcher);
+		getInfoWrapper(entityWrapper.getPlayerUuid(), EnumWrappers.PlayerInfoAction.ADD_PLAYER, name).sendPacket(player);
+		entityWrapper.sendPacket(player);
+		getInfoWrapper(entityWrapper.getPlayerUuid(), EnumWrappers.PlayerInfoAction.REMOVE_PLAYER, name).sendPacket(player);
+		return entityWrapper.getEntityId();
+	}
+
+	private WrapperPlayServerPlayerInfo getInfoWrapper(UUID playeruuid, EnumWrappers.PlayerInfoAction action, String name) {
+		WrapperPlayServerPlayerInfo wrapper = new WrapperPlayServerPlayerInfo();
+		wrapper.setAction(action);
+		WrappedGameProfile profile = new WrappedGameProfile(playeruuid, name);
+		PlayerInfoData data = new PlayerInfoData(profile, 1, EnumWrappers.NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(name));
+		List<PlayerInfoData> listdata = new ArrayList<>();
+		listdata.add(data);
+		wrapper.setData(listdata);
+		return wrapper;
 	}
 }
