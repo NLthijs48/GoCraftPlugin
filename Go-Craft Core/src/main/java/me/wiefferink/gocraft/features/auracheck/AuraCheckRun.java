@@ -130,7 +130,7 @@ public class AuraCheckRun {
 				public void run() {
 					wrapup();
 				}
-			}.runTaskLater(GoCraft.getInstance(), 40L);
+			}.runTaskLater(GoCraft.getInstance(), Math.max(3, Utils.getPing(checked) * 20 * 3 / 1000)); // 3 ticks or 3 times ticks of ping
 		}
 	}
 
