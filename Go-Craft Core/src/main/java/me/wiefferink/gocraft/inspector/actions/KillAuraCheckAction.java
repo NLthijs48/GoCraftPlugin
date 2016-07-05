@@ -25,7 +25,7 @@ public class KillAuraCheckAction extends InventoryAction {
 
 	@Override
 	public void handleClick() {
-		inspection.getInspector().performCommand("auracheck:auracheck " + inspection.getInspected().getName());
+		inspection.getInspector().performCommand("auracheck " + inspection.getInspected().getName());
 		inspection.getInspector().closeInventory();
 	}
 
