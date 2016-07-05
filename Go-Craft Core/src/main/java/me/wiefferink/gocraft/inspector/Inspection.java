@@ -222,7 +222,10 @@ public class Inspection {
 		if (hasInspected()) {
 			armor = new ItemStack[inspected.getInventory().getArmorContents().length];
 			for (int i = 0; i < armor.length; i++) {
-				armor[i] = inspected.getInventory().getArmorContents()[i].clone();
+				ItemStack armorItem = inspected.getInventory().getArmorContents()[i];
+				if (armorItem != null) {
+					armor[i] = armorItem.clone();
+				}
 			}
 			for (ItemStack armorItem : armor) {
 				if (armorItem != null) {

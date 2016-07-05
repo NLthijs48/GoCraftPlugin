@@ -128,3 +128,4 @@ shop-cooldownInfo: ", can be used again after %0%"
 
 ########## AURACHECK
 ac-noPermission: "You do not have permission to check for killaura."
+ac-stillRunning: "There is already an AuraCheck running for %0%."

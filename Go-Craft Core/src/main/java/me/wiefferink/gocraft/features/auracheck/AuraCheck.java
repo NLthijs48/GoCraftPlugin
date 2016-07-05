@@ -136,7 +136,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 		List<Player> playerList = Bukkit.matchPlayer(args[0]);
 		Player player;
 		if (playerList.size() == 0) {
-			plugin.message(sender, "general-notOnline", args[0]);
+			plugin.message(sender, "general-noPlayer", args[0]);
 			return true;
 		}
 		if (playerList.size() == 1) {
@@ -167,6 +167,10 @@ public class AuraCheck extends Feature implements CommandExecutor {
 				GoCraft.getInstance().getLogger().warning("Something went wrong with the chat packet to choose a target:");
 				e.printStackTrace();
 			}
+			return true;
+		}
+		if (running.containsKey(player.getUniqueId())) {
+			plugin.message(sender, "ac-stillRunning", player.getName());
 			return true;
 		}
 		final Player finalPlayer = player;
