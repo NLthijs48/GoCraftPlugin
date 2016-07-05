@@ -2,7 +2,6 @@ package me.wiefferink.gocraft.inspector.actions;
 
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.tools.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 public class KillAuraCheckAction extends InventoryAction {
@@ -13,7 +12,7 @@ public class KillAuraCheckAction extends InventoryAction {
 
 	@Override
 	public boolean isActive() {
-		return Bukkit.getServer().getPluginManager().getPlugin("AuraCheck") != null && inspection.hasInspected() && inspection.getInspected().isOnline();
+		return inspection.hasInspected() && inspection.getInspected().isOnline();
 	}
 
 	@Override
