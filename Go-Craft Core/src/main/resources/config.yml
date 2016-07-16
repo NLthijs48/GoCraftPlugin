@@ -17,8 +17,8 @@ decimalMark: '.'
 
 ########## BLOCKS
 disableBlockBreaking: false
-disableBedrockBreak: false
-disableBedrockPlace: false
+disableBedrockBreak: true
+disableBedrockPlace: true
 disableDispensers: false
 disableTradeSignPlacing: false
 disableAnvilBreak: false
@@ -51,7 +51,7 @@ disableEyeOfEnder: false
 disableBooks: false
 
 ########## LOGGING
-signLoggingEnabled: false
+signLoggingEnabled: true
 signLogTimeFormat: 'dd-MM-yyyy HH:mm:ss'
 
 ########## PVP

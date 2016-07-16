@@ -29,6 +29,7 @@ public class Shop implements Listener {
 	private ConfigurationSection shopSection;
 	private Map<Integer, Button> buttons;
 	private Map<String, Category> categories;
+	private Category homeCategory;
 	private SignManager signManager;
 	private int inventorySize;
 
@@ -111,6 +112,9 @@ public class Shop implements Listener {
 					}
 					category = new Category(categorySection, this);
 					categories.put(categoryPart, category);
+					if (homeCategory == null) {
+						homeCategory = category;
+					}
 				}
 				category.addKit(kit);
 			}
@@ -218,9 +222,10 @@ public class Shop implements Listener {
 			return;
 		}
 		ShopSession session = new ShopSession(player);
-		Category home = categories.get("home");
-		if (home != null) {
-			home.show(session);
+		if (homeCategory != null) {
+			homeCategory.show(session);
+		} else {
+			plugin.message(player, "shop-noHomeCategory");
 		}
 	}
 
