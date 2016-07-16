@@ -63,7 +63,7 @@ public abstract class Sign {
 
 	/**
 	 * Handle a click event by a player
-	 * @param clickAction The action to execute
+	 * @param clickAction The action to executeBuy
 	 * @param player The player that clicked
 	 */
 	public abstract void handleClicked(ClickAction clickAction, Player player);

@@ -14,18 +14,17 @@ public class ItemsFeature extends Feature {
 	}
 
 	@Override
-	public boolean allows(ShopSession session) {
-		// TODO consider stacking items onto existing ones?
+	public boolean allowsBuy(ShopSession session) {
 		return Utils.inventoryRoom(session.getPlayer()) >= kit.getItems().size();
 	}
 
 	@Override
-	public void indicateRestricted(ShopSession session) {
+	public void indicateRestrictedBuy(ShopSession session) {
 		GoCraft.getInstance().message(session.getPlayer(), "shop-lowSpace", kit.getItems().size(), Utils.inventoryRoom(session.getPlayer()));
 	}
 
 	@Override
-	public boolean execute(ShopSession session, KitSign sign) {
+	public boolean executeBuy(ShopSession session, KitSign sign) {
 		boolean result = true;
 		for (ItemBuilder builder : kit.getItems()) {
 			result &= session.getPlayer().getInventory().addItem(builder.getItemStack().clone()).size() == 0;
@@ -34,9 +33,41 @@ public class ItemsFeature extends Feature {
 	}
 
 	@Override
-	public String getStatusLine(ShopSession session) {
-		if (!allows(session)) {
+	public String getBuyStatusLine(ShopSession session) {
+		if (!allowsBuy(session)) {
 			return "&4Requires " + kit.getItems().size() + " free inventory slots";
+		}
+		return null;
+	}
+
+
+	@Override
+	public boolean allowsSell(ShopSession session) {
+		boolean result = true;
+		for (ItemBuilder builder : kit.getItems()) {
+			result &= Utils.hasItems(session.getPlayer().getInventory(), builder.getItemStack()) >= builder.getItemStack().getAmount();
+		}
+		return result;
+	}
+
+	@Override
+	public void indicateRestrictedSell(ShopSession session) {
+		GoCraft.getInstance().message(session.getPlayer(), "shop-noItems");
+	}
+
+	@Override
+	public boolean executeSell(ShopSession session, KitSign sign) {
+		boolean result = true;
+		for (ItemBuilder builder : kit.getItems()) {
+			result &= Utils.removeItems(session.getPlayer().getInventory(), builder.getItemStack());
+		}
+		return result;
+	}
+
+	@Override
+	public String getSellStatusLine(ShopSession session) {
+		if (!allowsSell(session)) {
+			return "&4Requires the items displayed above";
 		}
 		return null;
 	}

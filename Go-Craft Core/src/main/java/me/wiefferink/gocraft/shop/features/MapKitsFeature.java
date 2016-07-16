@@ -14,17 +14,17 @@ public class MapKitsFeature extends Feature {
 	}
 
 	@Override
-	public boolean allows(ShopSession session) {
+	public boolean allowsBuy(ShopSession session) {
 		return map == null || map.equals(getCurrentMap());
 	}
 
 	@Override
-	public void indicateRestricted(ShopSession session) {
+	public void indicateRestrictedBuy(ShopSession session) {
 		GoCraft.getInstance().message(session.getPlayer(), "shop-notInMap", getMapName(), kit.getName());
 	}
 
 	@Override
-	public String getStatusLine(ShopSession session) {
+	public String getBuyStatusLine(ShopSession session) {
 		if (map != null) {
 			if (map.equals(getCurrentMap())) {
 				return "&2Map: " + getMapName();

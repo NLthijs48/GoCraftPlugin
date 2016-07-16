@@ -11,12 +11,16 @@ public class KitSign extends Sign {
 
 	private Kit kit;
 	private Double price;
+	private Double sellPrice;
 
 	public KitSign(ConfigurationSection details, String key, Kit kit) {
 		super(details, key);
 		this.kit = kit;
 		if (details.isDouble("price")) {
 			price = details.getDouble("price");
+		}
+		if (details.isDouble("sellPrice")) {
+			sellPrice = details.getDouble("sellPrice");
 		}
 	}
 
@@ -29,6 +33,17 @@ public class KitSign extends Sign {
 			return price;
 		}
 		return kit.getPriceFeature().getPrice();
+	}
+
+	/**
+	 * Get the sell price of the kit, optionally changed by the sign
+	 * @return The sell price of the kit sold by this sign
+	 */
+	public double getSellPrice() {
+		if (sellPrice != null) {
+			return sellPrice;
+		}
+		return kit.getPriceFeature().getSellPrice();
 	}
 
 	/**

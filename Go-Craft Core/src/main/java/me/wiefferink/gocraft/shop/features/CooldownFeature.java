@@ -23,17 +23,17 @@ public class CooldownFeature extends Feature {
 	}
 
 	@Override
-	public boolean allows(ShopSession session) {
+	public boolean allowsBuy(ShopSession session) {
 		return getCooldownLeft(session) == 0;
 	}
 
 	@Override
-	public void indicateRestricted(ShopSession session) {
+	public void indicateRestrictedBuy(ShopSession session) {
 		GoCraft.getInstance().message(session.getPlayer(), "shop-cooldown", Utils.millisToHumanFormat(getCooldownLeft(session)));
 	}
 
 	@Override
-	public boolean execute(ShopSession session, KitSign sign) {
+	public boolean executeBuy(ShopSession session, KitSign sign) {
 		if (hasCooldown()) {
 			GoCraft.getInstance().getLocalStorage().set(
 					"players." + session.getPlayer().getUniqueId().toString() + ".shop.cooldowns." + kit.getIdentifier(),
@@ -45,7 +45,7 @@ public class CooldownFeature extends Feature {
 	}
 
 	@Override
-	public String getStatusLine(ShopSession session) {
+	public String getBuyStatusLine(ShopSession session) {
 		if (session == null || !hasCooldown()) {
 			return null;
 		}

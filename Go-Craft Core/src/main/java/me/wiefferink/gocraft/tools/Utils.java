@@ -8,6 +8,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
@@ -67,6 +68,55 @@ public class Utils {
 		for (ItemStack stack : player.getInventory().getContents()) {
 			if (stack == null) {
 				result++;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Remove a certain number of items from an inventory
+	 * @param inventory The inventory to remove them from
+	 * @param item The item to remove (material and data are checked)
+	 * @return true if enough items could be removed, otherwise false
+	 */
+	public static boolean removeItems(Inventory inventory, ItemStack item) {
+		int toRemove = item.getAmount();
+		ItemStack[] contents = inventory.getContents();
+		for (int i = 0; i < contents.length; i++) {
+			ItemStack iItem = contents[i];
+			if (iItem != null
+					&& iItem.getType() == item.getType()
+					&& iItem.getDurability() == item.getDurability()) {
+				if (iItem.getAmount() <= toRemove) {
+					contents[i] = null;
+					toRemove -= iItem.getAmount();
+				} else {
+					iItem.setAmount(iItem.getAmount() - toRemove);
+					toRemove = 0;
+				}
+			}
+			if (toRemove <= 0) {
+				break;
+			}
+		}
+		inventory.setContents(contents);
+		return toRemove == 0;
+	}
+
+
+	/**
+	 * Check how many items of a certain type are in the inventory
+	 * @param inventory The inventory to check
+	 * @param item The item to count
+	 * @return The number of times the item is in the inventory
+	 */
+	public static int hasItems(Inventory inventory, ItemStack item) {
+		int result = 0;
+		for (ItemStack itemStack : inventory.getContents()) {
+			if (itemStack != null
+					&& itemStack.getType() == item.getType()
+					&& itemStack.getDurability() == item.getDurability()) {
+				result += itemStack.getAmount();
 			}
 		}
 		return result;
@@ -185,7 +235,7 @@ public class Utils {
 
 	/**
 	 * Perform a command in the console
-	 * @param command The command to execute
+	 * @param command The command to executeBuy
 	 */
 	public static void consoleCommand(String command) {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);

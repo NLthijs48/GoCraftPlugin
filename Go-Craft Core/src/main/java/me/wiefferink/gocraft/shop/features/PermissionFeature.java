@@ -43,7 +43,7 @@ public class PermissionFeature extends Feature {
 		if (permission == null) {
 			return null;
 		}
-		if (!allows(session)) {
+		if (!allowsBuy(session)) {
 			if (permission.startsWith("gocraft.donator.")) {
 				return "&4Required rank: " + StringUtils.capitalize(permission.substring(16)) + "\n   &eBuy this rank at\n   &e&nwww.go-craft.com";
 			} else {

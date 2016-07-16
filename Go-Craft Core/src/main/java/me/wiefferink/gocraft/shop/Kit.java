@@ -4,6 +4,7 @@ import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.shop.buttons.BuyButton;
 import me.wiefferink.gocraft.shop.buttons.ItemButton;
+import me.wiefferink.gocraft.shop.buttons.SellButton;
 import me.wiefferink.gocraft.shop.features.*;
 import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.tools.ItemBuilder;
@@ -77,8 +78,15 @@ public class Kit implements Button, View {
 				buttons.put(i, new ItemButton(item));
 			}
 		}
-		// Buy button
-		buttons.put(shop.getInventorySize() - 2, new BuyButton(this));
+
+		// Sell/buy buttons
+		if (details.isSet("price")) {
+			buttons.put(shop.getInventorySize() - 1, new BuyButton(this));
+		}
+		if (details.isSet("sellPrice")) {
+			buttons.put(shop.getInventorySize() - 2, new SellButton(this));
+		}
+
 		// Display item
 		String buttonString = details.getString("button");
 		if (buttonString != null && buttonString.length() > 0) {
@@ -114,8 +122,8 @@ public class Kit implements Button, View {
 			boolean allowBuy = true;
 			List<Feature> list = new ArrayList<>(features.values());
 			for (int i = list.size() - 1; i >= 0; i--) {
-				result.addLore(list.get(i).getStatusLine(session), true);
-				allowBuy &= list.get(i).allows(session);
+				result.addLore(list.get(i).getBuyStatusLine(session), true);
+				allowBuy &= list.get(i).allowsBuy(session);
 			}
 			if (allowBuy) {
 				result.addAction("Right click to buy");
@@ -214,18 +222,24 @@ public class Kit implements Button, View {
 
 		// Check features
 		for (Feature feature : features.values()) {
-			if (!feature.allows(session)) {
-				feature.indicateRestricted(session);
+			if (!feature.allowsBuy(session)) {
+				feature.indicateRestrictedBuy(session);
 				Utils.playSound(session.getPlayer(), "anvil.land", "block.anvil.land", 0.4F, 0.8F);
 				return;
 			}
 		}
 
 		// Perform actions
+		boolean fail = false;
 		for (Feature feature : features.values()) {
-			if (!feature.execute(session, sign)) {
-				return; // Failed to execute
+			if (!feature.executeBuy(session, sign)) {
+				fail = true;
+				break;
 			}
+		}
+		if (fail) {
+			plugin.message(session.getPlayer(), "shop-buyFailed", getName());
+			return;
 		}
 
 		Utils.playSound(session.getPlayer(), "level.up", "entity.player.levelup", 0.7F, 1.5F);
@@ -240,11 +254,58 @@ public class Kit implements Button, View {
 			price = sign.getPrice();
 		}
 		if (price > 0) {
-			plugin.message(session.getPlayer(), "shop-boughtKit", getName(), formatPrice, cooldown);
+			plugin.message(session.getPlayer(), "shop-boughtKit", getName(), formatPrice, session.getBalance(), cooldown);
 		} else {
 			plugin.message(session.getPlayer(), "shop-receivedKit", getName(), cooldown);
 		}
 		shop.increaseStatistic("bought." + getIdentifier());
+	}
+
+
+	/**
+	 * Sell the kit
+	 * @param session The sesstion to do it for
+	 */
+	public void sell(ShopSession session) {
+		sell(session, null);
+	}
+
+	public void sell(ShopSession session, KitSign sign) {
+		Player player = session.getPlayer();
+
+		// Check features
+		for (Feature feature : features.values()) {
+			if (!feature.allowsSell(session)) {
+				feature.indicateRestrictedSell(session);
+				Utils.playSound(session.getPlayer(), "anvil.land", "block.anvil.land", 0.4F, 0.8F);
+				return;
+			}
+		}
+
+		// Perform actions
+		boolean fail = false;
+		for (Feature feature : features.values()) {
+			if (!feature.executeSell(session, sign)) {
+				fail = true;
+				break;
+			}
+		}
+		if (fail) {
+			plugin.message(session.getPlayer(), "shop-sellFailed", getName());
+			return;
+		}
+
+		Utils.playSound(session.getPlayer(), "level.up", "entity.player.levelup", 0.7F, 1.5F);
+		double price = getPriceFeature().getSellPrice();
+		String formatPrice = getPriceFeature().getFormattedSellPrice();
+		/* Future sell sign support
+		if (sign != null) {
+			formatPrice = sign.getFormattedPrice();
+			price = sign.getPrice();
+		}
+		*/
+		plugin.message(session.getPlayer(), "shop-soldKit", getName(), formatPrice, session.getFormattedBalance());
+		shop.increaseStatistic("sold." + getIdentifier());
 	}
 
 	/**

@@ -2,7 +2,6 @@ package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.buttons.Button;
-import me.wiefferink.gocraft.shop.buttons.CloseButton;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
@@ -134,7 +133,6 @@ public class Shop implements Listener {
 		}
 		inventorySize = (int) (Math.ceil(((double) maxItems) / 9.0) + 2) * 9; // Rows required by biggest category + 2 (one spacer, one menu bar)
 		// Close button
-		buttons.put(inventorySize - 1, new CloseButton());
 		int current = inventorySize - 9;
 		if (categoriesSection != null) {
 			for (String category : categoriesSection.getKeys(false)) {

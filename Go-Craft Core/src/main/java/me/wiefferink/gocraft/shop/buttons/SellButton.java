@@ -9,19 +9,15 @@ import org.bukkit.Material;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuyButton implements Button {
+public class SellButton implements Button {
 
 	private ItemBuilder displayItem;
 	private Kit kit;
 
-	public BuyButton(Kit kit) {
+	public SellButton(Kit kit) {
 		this.kit = kit;
-		displayItem = new ItemBuilder(Material.GOLD_INGOT);
-		if (kit.getPriceFeature().getPrice() == 0) {
-			displayItem.setName("&6&lGet " + kit.getName());
-		} else {
-			displayItem.setName("&6&lBuy " + kit.getName());
-		}
+		displayItem = new ItemBuilder(Material.IRON_INGOT);
+		displayItem.setName("&6&lSell " + kit.getName());
 	}
 
 	@Override
@@ -35,11 +31,11 @@ public class BuyButton implements Button {
 		boolean allowed = true;
 		List<Feature> list = new ArrayList<>(kit.getFeatures().values());
 		for (int i = list.size() - 1; i >= 0; i--) {
-			result.addLore(list.get(i).getBuyStatusLine(session), true);
-			allowed &= list.get(i).allowsBuy(session);
+			result.addLore(list.get(i).getSellStatusLine(session), true);
+			allowed &= list.get(i).allowsSell(session);
 		}
 		if (allowed) {
-			result.addAction("Buy");
+			result.addAction("Sell");
 		} else {
 			result.setAmount(0);
 		}
@@ -48,7 +44,7 @@ public class BuyButton implements Button {
 
 	@Override
 	public void onClick(ShopSession session, ShopSession.ClickAction action) {
-		kit.buy(session);
+		kit.sell(session);
 		if (action == ShopSession.ClickAction.RIGHT) {
 			session.close();
 		} else {
