@@ -98,7 +98,7 @@ public class Shop implements Listener {
 			if (categoryString == null || categoryString.isEmpty()) {
 				continue;
 			}
-			String[] categoryParts = categoryString.split("(,)? "); // Comma or space separated
+			String[] categoryParts = categoryString.split(",( )?"); // Comma or comma-space separated
 			for (String categoryPart : categoryParts) {
 				Category category = categories.get(categoryPart);
 				if (category == null) {
@@ -112,11 +112,18 @@ public class Shop implements Listener {
 					}
 					category = new Category(categorySection, this);
 					categories.put(categoryPart, category);
-					if (homeCategory == null) {
-						homeCategory = category;
-					}
 				}
 				category.addKit(kit);
+			}
+		}
+
+		// Set the home category to the first one in the config
+		if (categoriesSection != null) {
+			for (String key : categoriesSection.getKeys(false)) {
+				if (categories.get(key) != null) {
+					homeCategory = categories.get(key);
+					break;
+				}
 			}
 		}
 
@@ -233,19 +240,27 @@ public class Shop implements Listener {
 	 */
 	public void addMenu(Inventory inventory, ShopSession session) {
 		for (Integer key : buttons.keySet()) {
-			ItemBuilder itemBuilder = buttons.get(key).getButton(session).copy();
-			if (itemBuilder != null) {
-				if (buttons.get(key) instanceof Category) {
-					if (buttons.get(key).equals(session.getLastCategory())) {
-						itemBuilder.setAmount(11);
-						itemBuilder.addLore("&9&l>Current category<");
-					} else {
-						itemBuilder.addAction("View this category");
-					}
-				}
-				itemBuilder.hideAllAttributes();
-				inventory.setItem(key, itemBuilder.getItemStack());
+			Button button = buttons.get(key);
+			if (button == null) {
+				plugin.getLogger().warning("Button with key " + key + " is null");
+				continue;
 			}
+			ItemBuilder itemBuilder = button.getButton(session);
+			if (itemBuilder == null) {
+				plugin.getLogger().warning("ItemBuilder provided by button with key " + key + " is null");
+				continue;
+			}
+			itemBuilder = itemBuilder.copy();
+			if (buttons.get(key) instanceof Category) {
+				if (buttons.get(key).equals(session.getLastCategory())) {
+					itemBuilder.setAmount(11);
+					itemBuilder.addLore("&9&l>Current category<");
+				} else {
+					itemBuilder.addAction("View this category");
+				}
+			}
+			itemBuilder.hideAllAttributes();
+			inventory.setItem(key, itemBuilder.getItemStack());
 		}
 	}
 
