@@ -254,7 +254,7 @@ public class Kit implements Button, View {
 			price = sign.getPrice();
 		}
 		if (price > 0) {
-			plugin.message(session.getPlayer(), "shop-boughtKit", getName(), formatPrice, session.getBalance(), cooldown);
+			plugin.message(session.getPlayer(), "shop-boughtKit", getName(), formatPrice, session.getFormattedBalance(), cooldown);
 		} else {
 			plugin.message(session.getPlayer(), "shop-receivedKit", getName(), cooldown);
 		}
