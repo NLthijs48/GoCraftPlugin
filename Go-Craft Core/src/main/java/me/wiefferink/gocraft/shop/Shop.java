@@ -136,9 +136,15 @@ public class Shop implements Listener {
 		// Close button
 		buttons.put(inventorySize - 1, new CloseButton());
 		int current = inventorySize - 9;
-		for (String category : categories.keySet()) {
-			buttons.put(current, categories.get(category));
-			current++;
+		if (categoriesSection != null) {
+			for (String category : categoriesSection.getKeys(false)) {
+				Category actualCategory = categories.get(category);
+				if (actualCategory == null) {
+					continue;
+				}
+				buttons.put(current, actualCategory);
+				current++;
+			}
 		}
 
 		// Call setup (inventory size is known at this point)
