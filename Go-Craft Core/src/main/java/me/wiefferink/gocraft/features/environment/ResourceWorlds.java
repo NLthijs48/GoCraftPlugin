@@ -142,12 +142,15 @@ public class ResourceWorlds extends Feature {
 		plugin.getLogger().info("World "+world.getName()+" has been reset");
 		plugin.increaseStatistic("resourceWorldReset."+world.getName());
 		final String worldName = world.getName();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "mv load "+worldName);
-			}
-		}.runTaskLater(plugin, 1L);
+		try {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "mv load "+worldName);
+				}
+			}.runTaskLater(plugin, 1L);
+		} catch(Exception ignored) {
+		}
 	}
 
 }
