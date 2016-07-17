@@ -414,12 +414,12 @@ public final class GoCraft extends JavaPlugin {
 		String username = "root";
 		String password = "";
 		Database db = new MySQLDatabase(host, port, database, username, password, this);
-		debug("is connected: " + db.isConnected());
+		//debug("is connected: " + db.isConnected());
 		PreparedStatement statement = db.prepareStatement("CREATE TABLE IF NOT EXISTS combat (kills int, deaths int)");
 		db.execute(statement);
 		// ORDER not kept! running as async tasks
 		for (int i = 0; i < 10; i++) {
-			debug("Doing: i=" + i);
+			//debug("Doing: i=" + i);
 			db.execute("INSERT INTO combat VALUES (?, ?)", i, 10 - i);
 		}
 	}
@@ -582,7 +582,7 @@ public final class GoCraft extends JavaPlugin {
 			} else if ((world instanceof Entity)) {
 				worldString = ((Entity) world).getWorld().getName();
 			} else {
-				debug("Cannot get world from object: " + world.toString());
+				GoCraft.getInstance().getLogger().warning("GoCraft.onThisWorld: Cannot get world from object: "+world.toString());
 			}
 			if (!worlds.contains(worldString)) {
 				result = false;

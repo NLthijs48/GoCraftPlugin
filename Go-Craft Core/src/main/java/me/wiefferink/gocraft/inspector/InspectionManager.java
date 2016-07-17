@@ -277,12 +277,12 @@ public class InspectionManager {
 				PotionEffectType effect = PotionEffectType.getByName(effectString);
 				String optionsString = section.getString(effectString);
 				if (optionsString == null || effect == null) {
-					GoCraft.debug("  no effect found");
+					GoCraft.getInstance().getLogger().warning("InspectionManager.restoreInspection: potions of "+player.getName()+" no effect found for "+effectString);
 					continue;
 				}
 				String[] options = optionsString.split(":");
 				if (options.length < 4) {
-					GoCraft.debug("  not enough options");
+					GoCraft.getInstance().getLogger().warning("InspectionManager.restoreInspection: potions of "+player.getName()+" not enough options for "+effectString+", "+optionsString);
 					continue;
 				}
 				int duration, amplifier;
@@ -291,12 +291,12 @@ public class InspectionManager {
 					duration = Integer.parseInt(options[0]);
 					amplifier = Integer.parseInt(options[1]);
 				} catch (NumberFormatException e) {
-					GoCraft.debug("  not numbers");
+					GoCraft.getInstance().getLogger().warning("InspectionManager.restoreInspection: potions of "+player.getName()+" options are not numbers "+effectString+", "+optionsString);
 					continue;
 				}
 				ambient = "true".equalsIgnoreCase(options[2]);
 				particles = "true".equalsIgnoreCase(options[3]);
-				GoCraft.debug("duration=" + duration + ", amplifier=" + amplifier + ", ambient=" + ambient + ", particles=" + particles);
+				//GoCraft.debug("duration=" + duration + ", amplifier=" + amplifier + ", ambient=" + ambient + ", particles=" + particles);
 				PotionEffect finalEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
 				effects.add(finalEffect);
 			}

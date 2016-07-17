@@ -96,7 +96,7 @@ public class Category implements View, Button {
 			if (itemBuilder != null) {
 				inventory.setItem(key, itemBuilder.getItemStack());
 			} else {
-				GoCraft.debug("No button item for item " + key + " in main shop GUI");
+				GoCraft.getInstance().getLogger().warning("No button item for item "+key+" in main shop GUI");
 			}
 		}
 		shop.addMenu(inventory, session);

@@ -1,7 +1,6 @@
 package me.wiefferink.gocraft.tools.storage;
 
 import com.sun.rowset.CachedRowSetImpl;
-import me.wiefferink.gocraft.GoCraft;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -127,7 +126,7 @@ public abstract class Database {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 				@Override
 				public void run() {
-					GoCraft.debug("Running statement: " + preparedStatement.toString());
+					//GoCraft.debug("Running statement: " + preparedStatement.toString());
 					try {
 						preparedStatement.execute();
 						preparedStatement.close();
@@ -188,7 +187,7 @@ public abstract class Database {
 			long before = Calendar.getInstance().getTimeInMillis();
 			result = connection != null && connection.isValid(100);
 			long after = Calendar.getInstance().getTimeInMillis();
-			GoCraft.debug("isConnected() took " + (after - before) + "ms");
+			//GoCraft.debug("isConnected() took " + (after - before) + "ms");
 		} catch (SQLException e) {
 		}
 		return result;

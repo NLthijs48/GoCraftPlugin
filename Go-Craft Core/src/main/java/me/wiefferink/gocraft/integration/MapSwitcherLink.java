@@ -11,7 +11,7 @@ public class MapSwitcherLink {
 	public MapSwitcherLink() {
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("MapSwitcher");
 		if (!(plugin instanceof MapSwitcher)) {
-			GoCraft.debug("Plugin with name MapSwitcher found, but it is not the correct one");
+			GoCraft.getInstance().getLogger().warning("Plugin with name MapSwitcher found, but it is not the correct one");
 		} else {
 			this.mapSwitcher = (MapSwitcher) plugin;
 		}

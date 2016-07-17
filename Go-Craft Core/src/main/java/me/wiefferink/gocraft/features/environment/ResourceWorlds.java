@@ -1,6 +1,5 @@
 package me.wiefferink.gocraft.features.environment;
 
-import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
@@ -67,7 +66,7 @@ public class ResourceWorlds extends Feature {
 	public void checkWorldSpawn(Player player) {
 		long lastPlayed = player.getLastPlayed();
 		long lastReset = getLastReset(player.getWorld());
-		GoCraft.debug("lastReset: "+lastReset+", distance: "+player.getWorld().getSpawnLocation().distance(player.getLocation())+", safe: "+Utils.isSafe(player.getLocation()));
+		//GoCraft.debug("lastReset: "+lastReset+", distance: "+player.getWorld().getSpawnLocation().distance(player.getLocation())+", safe: "+Utils.isSafe(player.getLocation()));
 		if(lastReset > 0
 				&& (player.getWorld().getSpawnLocation().distance(player.getLocation()) < 10
 				|| !Utils.isSafe(player.getLocation()))) {
@@ -122,7 +121,7 @@ public class ResourceWorlds extends Feature {
 	 */
 	public void resetWorld(World world) {
 		File regionFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+"region");
-		GoCraft.debug("region folder of "+world.getName()+" at "+regionFolder.getAbsolutePath());
+		//GoCraft.debug("region folder of "+world.getName()+" at "+regionFolder.getAbsolutePath());
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			if(player.getWorld().getName().equals(world.getName())) {
 				plugin.message(player, "resetworld-tp", world.getName());

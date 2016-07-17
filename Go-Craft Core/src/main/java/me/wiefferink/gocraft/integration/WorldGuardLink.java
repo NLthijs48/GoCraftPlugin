@@ -11,7 +11,7 @@ public class WorldGuardLink {
 	public WorldGuardLink() {
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("WorldGuard");
 		if (!(plugin instanceof WorldGuardPlugin)) {
-			GoCraft.debug("Plugin with name WorldGuard found, but it is not the correct one");
+			GoCraft.getInstance().getLogger().warning("Plugin with name WorldGuard found, but it is not the correct one");
 		} else {
 			this.worldGuard = (WorldGuardPlugin) plugin;
 		}
