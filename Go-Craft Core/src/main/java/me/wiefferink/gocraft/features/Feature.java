@@ -35,9 +35,5 @@ public class Feature implements Listener {
 				}
 			}
 		}
-		start();
-	}
-
-	public void start() {
 	}
 }

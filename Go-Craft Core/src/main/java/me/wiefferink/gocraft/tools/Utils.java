@@ -204,7 +204,7 @@ public class Utils {
 	public static void sendStaffMessage(String type, String message) {
 		String result = GoCraft.getInstance().getLanguageManager().getLang("staffbroadcast-template", GoCraft.getInstance().getServerName(), type, message);
 		// Display in console
-		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(fixColors(result)));
+		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(applyColors(result)));
 		// Send to other servers
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage " + result);
 	}
@@ -224,7 +224,7 @@ public class Utils {
 	 * @param message The raw message
 	 */
 	public static void displayStaffMessage(String message) {
-		message = fixColors(message);
+		message = applyColors(message);
 		// Display to all staff members
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (player.hasPermission("gocraft.staff")) {
@@ -510,20 +510,14 @@ public class Utils {
 	}
 
 	/**
-	 * Translate color codes to the internal color values
-	 * @param input The input string
-	 * @return The string with Minecraft color codes
+	 * Convert color and formatting codes to bukkit values
+	 * @param input Start string with color and formatting codes in it
+	 * @return String with the color and formatting codes in the bukkit format
 	 */
-	public static String fixColors(String input) {
+	public static String applyColors(String input) {
 		String result = null;
-		if (input != null) {
-			result = input.replaceAll("(&([a-f0-9]))", "§$2");
-			result = result.replace("&k", ChatColor.MAGIC.toString());
-			result = result.replace("&l", ChatColor.BOLD.toString());
-			result = result.replace("&m", ChatColor.STRIKETHROUGH.toString());
-			result = result.replace("&n", ChatColor.UNDERLINE.toString());
-			result = result.replace("&o", ChatColor.ITALIC.toString());
-			result = result.replace("&r", ChatColor.RESET.toString());
+		if(input != null) {
+			result = ChatColor.translateAlternateColorCodes('&', input);
 		}
 		return result;
 	}

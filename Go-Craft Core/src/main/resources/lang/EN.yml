@@ -30,6 +30,8 @@ setspawn-noPermission: "You don't have permission to set the spawnpoint."
 setspawn-onlyByPlayers: "You can only set the spawn as a player."
 setspawn-success: "The spawn location has been set to your current location and direction."
 
+resetworld-tp: "You have been teleported to spawn because world %0% is resetting."
+
 staffbroadcast-noPermission: "You don't have permission to send a message to all staff."
 staffbroadcast-help: "/staffbroadcast <type> <message...>."
 staffbroadcast-template: "&9&l>>> %0% [%1%] &r&9%2%"

@@ -8,6 +8,7 @@ import me.wiefferink.gocraft.features.auracheck.AuraCheck;
 import me.wiefferink.gocraft.features.blocks.*;
 import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
 import me.wiefferink.gocraft.features.environment.DisableRain;
+import me.wiefferink.gocraft.features.environment.ResourceWorlds;
 import me.wiefferink.gocraft.features.items.*;
 import me.wiefferink.gocraft.features.other.AddDefaultRank;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
@@ -46,7 +47,7 @@ import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static me.wiefferink.gocraft.tools.Utils.fixColors;
+import static me.wiefferink.gocraft.tools.Utils.applyColors;
 
 public final class GoCraft extends JavaPlugin {
 	// Constants
@@ -482,6 +483,7 @@ public final class GoCraft extends JavaPlugin {
 		listeners.add(new AddDefaultRank(this));
 		listeners.add(new NauseaPotions(this));
 		listeners.add(new AuraCheck());
+		listeners.add(new ResourceWorlds());
 
 		for (Listener listener : listeners) {
 			if (listener instanceof Feature) {
@@ -518,7 +520,7 @@ public final class GoCraft extends JavaPlugin {
 		}
 		messages.add(getLanguageManager().getLang("help-stats"));
 		for (String message : messages) {
-			target.sendMessage(fixColors(message));
+			target.sendMessage(applyColors(message));
 		}
 	}
 
@@ -593,7 +595,7 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	public void configurableMessage(String prefix, Object target, String key, Object... params) {
-		String langString = Utils.fixColors(this.languageManager.getLang(key, params));
+		String langString = Utils.applyColors(this.languageManager.getLang(key, params));
 		if (langString == null) {
 			getLogger().info("Something is wrong with the language file, could not find key: " + key);
 		} else if ((target instanceof Player)) {
@@ -601,7 +603,7 @@ public final class GoCraft extends JavaPlugin {
 			if (prefix != null) {
 				message = prefix + message;
 			}
-			message = Utils.fixColors(message);
+			message = Utils.applyColors(message);
 			((Player) target).sendMessage(message);
 		} else if ((target instanceof CommandSender)) {
 			((CommandSender) target).sendMessage(langString);
@@ -738,27 +740,5 @@ public final class GoCraft extends JavaPlugin {
 
 	public static void debug(String message) {
 		instance._debug(message);
-	}
-
-	public static String toName(String uuid) {
-		if (uuid == null) {
-			return null;
-		}
-		return toName(UUID.fromString(uuid));
-	}
-
-	public static String toName(UUID uuid) {
-		if (uuid == null) {
-			return null;
-		}
-		return Bukkit.getOfflinePlayer(uuid).getName();
-	}
-
-	@SuppressWarnings("deprecation")
-	public static String toUUID(String name) {
-		if (name == null) {
-			return null;
-		}
-		return Bukkit.getOfflinePlayer(name).getUniqueId().toString();
 	}
 }

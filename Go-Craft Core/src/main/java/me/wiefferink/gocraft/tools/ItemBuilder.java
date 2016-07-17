@@ -57,7 +57,7 @@ public class ItemBuilder {
 		hasCustomName = true;
 		ItemMeta meta = item.getItemMeta();
 		if (meta != null) {
-			meta.setDisplayName(Utils.fixColors("&r" + name));
+			meta.setDisplayName(Utils.applyColors("&r"+name));
 			item.setItemMeta(meta);
 		}
 		return this;
@@ -182,7 +182,7 @@ public class ItemBuilder {
 			String[] loreParts = lore.split("\n");
 			int index = 0;
 			for (String lorePart : loreParts) {
-				lorePart = Utils.fixColors("&r" + lorePart);
+				lorePart = Utils.applyColors("&r"+lorePart);
 				if (asFirst) {
 					lores.add(index, lorePart);
 					index++;

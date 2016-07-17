@@ -159,7 +159,7 @@ public class Kit implements Button, View {
 	@Override
 	public void show(ShopSession session) {
 		session.setView(this);
-		Inventory inventory = Bukkit.createInventory(null, shop.getInventorySize(), Utils.fixColors("&0&l" + name));
+		Inventory inventory = Bukkit.createInventory(null, shop.getInventorySize(), Utils.applyColors("&0&l"+name));
 		// Create the inventory
 		for (int key : buttons.keySet()) {
 			inventory.setItem(key, buttons.get(key).getButton(session).getItemStack());

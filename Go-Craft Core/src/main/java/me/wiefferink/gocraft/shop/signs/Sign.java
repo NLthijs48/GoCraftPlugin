@@ -51,7 +51,7 @@ public abstract class Sign {
 			if (lines[i] == null || lines[i].contains("null")) { // Bit of a hack...
 				continue;
 			}
-			signState.setLine(i, Utils.fixColors(lines[i]));
+			signState.setLine(i, Utils.applyColors(lines[i]));
 		}
 		signState.update();
 	}
