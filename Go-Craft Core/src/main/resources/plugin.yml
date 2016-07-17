@@ -65,6 +65,9 @@ permissions:
   gocraft.auracheck:
     description: Check if a player has kill aura hacks
     default: op
+  gocraft.randomtp:
+    description: Randomly teleport in the world
+    default: op
 commands:
   Ping:
     description: 'Check the ping for a player.'
@@ -102,3 +105,7 @@ commands:
     description: Check if player has kill aura hacks
     usage: /<command> <username> - checks for aura hack
     aliases: [ac]
+  RandomTp:
+    description: Randomly teleport to a spot in this world
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+    aliases: [rtp]

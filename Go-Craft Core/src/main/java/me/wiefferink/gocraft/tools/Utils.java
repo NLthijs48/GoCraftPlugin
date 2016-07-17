@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -302,6 +303,66 @@ public class Utils {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Try to teleport the player to a random location in the world
+	 * @param player The player to teleport
+	 * @param world  The world to teleport to
+	 */
+	public static void teleportRandomly(Player player, World world, int radius, Callback<Boolean> callback) {
+		final Location spawn = world.getSpawnLocation();
+		new BukkitRunnable() {
+			private int current = 100;
+
+			@Override
+			public void run() {
+				current--;
+
+				Location attemptBase = spawn.clone();
+				double x = Utils.random.nextInt(radius*2)-radius+0.5;
+				double z = Utils.random.nextInt(radius*2)-radius+0.5;
+				attemptBase.setX(attemptBase.getBlockX()+x);
+				attemptBase.setZ(attemptBase.getBlockZ()+z);
+				int end = 0;
+				int start = 255;
+				int count = -1;
+				if(world.getEnvironment() == World.Environment.NETHER) {
+					start = 1;
+					end = 128;
+					count = 1;
+				}
+				for(int i = start; i != end && i <= 255 && i > 0; i += count) {
+					Location attempt = attemptBase.clone();
+					attempt.setY(i);
+					if(Utils.isSafe(attempt)) {
+						player.teleport(attempt);
+						callback.execute(true);
+						this.cancel();
+						break;
+					}
+				}
+
+				if(current <= 0) {
+					callback.execute(false);
+					this.cancel();
+				}
+			}
+		}.runTaskTimer(GoCraft.getInstance(), 1, 1);
+	}
+
+	/**
+	 * Get the radius of the world
+	 * @param world The world to get it for
+	 * @return The maximum radius from spawn to teleport from
+	 */
+	public static int getWorldRadius(World world) {
+		int result = -1;
+		ConfigurationSection section = GoCraft.getInstance().getConfig().getConfigurationSection("worlds");
+		if(section != null) {
+			result = section.getInt(world.getName()+".radius");
+		}
+		return result;
 	}
 
 	/**

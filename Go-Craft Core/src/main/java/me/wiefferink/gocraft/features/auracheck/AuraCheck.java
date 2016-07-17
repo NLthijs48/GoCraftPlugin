@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.VoidCommandSender;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayClientUseEntity;
@@ -35,7 +36,6 @@ public class AuraCheck extends Feature implements CommandExecutor {
 	private static AuraCheck self;
 
 	public AuraCheck() {
-		GoCraft.getInstance().getServer().getPluginManager().registerEvents(this, GoCraft.getInstance());
 		random = new Random();
 		running = new HashMap<>();
 		self = this;
@@ -48,6 +48,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 			}.runTaskLater(GoCraft.getInstance(), getNextPeriodicDelay());
 		}
 		commands.add("AuraCheck");
+		listen();
 	}
 
 	@Override
@@ -123,6 +124,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 		register();
 	}
 
+	@Override
 	public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
 		if (args.length < 1) {
 			return false;
@@ -175,8 +177,8 @@ public class AuraCheck extends Feature implements CommandExecutor {
 		}
 		final Player finalPlayer = player;
 		AuraCheckRun check = new AuraCheckRun(this, player);
-		check.start(sender, new AuraCheckRun.Callback() {
-			public void done(AuraCheckRun.AuraCheckRunResult result) {
+		check.start(sender, new Callback<AuraCheckRun.AuraCheckRunResult>() {
+			public void execute(AuraCheckRun.AuraCheckRunResult result) {
 				String status = null;
 				ChatColor color = null;
 				if (result.killed == 0) {
@@ -226,9 +228,9 @@ public class AuraCheck extends Feature implements CommandExecutor {
 					}
 					Player toCheck = players.remove(0);
 					if (toCheck != null && toCheck.isOnline() && toCheck.getGameMode() == GameMode.SURVIVAL) {
-						new AuraCheckRun(self, toCheck).start(new VoidCommandSender(), new AuraCheckRun.Callback() {
+						new AuraCheckRun(self, toCheck).start(new VoidCommandSender(), new Callback<AuraCheckRun.AuraCheckRunResult>() {
 							@Override
-							public void done(AuraCheckRun.AuraCheckRunResult result) {
+							public void execute(AuraCheckRun.AuraCheckRunResult result) {
 								if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.hacksConfirmed")) {
 									String baseCommand = GoCraft.getInstance().getConfig().getString("hacksConfirmedCommand");
 									Utils.consoleCommand(baseCommand.replace("%player%", result.checked.getName()).replace("%reason%", "Hacking is forbidden! [ac " + result.killed + "/" + result.spawned + "]"));

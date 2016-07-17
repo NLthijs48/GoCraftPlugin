@@ -36,4 +36,11 @@ public class Feature implements Listener {
 			}
 		}
 	}
+
+	/**
+	 * Register as listener
+	 */
+	protected void listen() {
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+	}
 }

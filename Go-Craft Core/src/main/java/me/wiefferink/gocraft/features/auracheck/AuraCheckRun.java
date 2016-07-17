@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.features.auracheck;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.Inspection;
+import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayServerEntityDestroy;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ public class AuraCheckRun {
 	private HashMap<UUID, Set<Integer>> inspectEntities;
 	private CommandSender invoker;
 	private Player checked;
-	private Callback callback;
+	private Callback<AuraCheckRunResult> callback;
 	private long started;
 	private long finished = 9223372036854775807L;
 	private boolean allKilled = false;
@@ -53,7 +54,7 @@ public class AuraCheckRun {
 	 * @param player The player that wants to receive the result
 	 * @param callback The callback to call with the result
 	 */
-	public void start(CommandSender player, Callback callback) {
+	public void start(CommandSender player, Callback<AuraCheckRunResult> callback) {
 		manager.addCheck(checked.getUniqueId(), this);
 		invoker = player;
 		started = System.currentTimeMillis();
@@ -153,7 +154,7 @@ public class AuraCheckRun {
 		int amount = entitiesSpawned.size();
 		entitiesSpawned.clear();
 		manager.removeCheck(checked.getUniqueId());
-		callback.done(new AuraCheckRunResult(started, finished, killed, amount, invoker, checked));
+		callback.execute(new AuraCheckRunResult(started, finished, killed, amount, invoker, checked));
 		ended = true;
 	}
 
@@ -171,17 +172,6 @@ public class AuraCheckRun {
 			}
 			inspectEntities.remove(uuid);
 		}
-	}
-
-	/**
-	 * Callback interface to perform a callback after the check is done
-	 */
-	public interface Callback {
-		/**
-		 * Called when the auracheck is done
-		 * @param result The result of the auracheck
-		 */
-		void done(AuraCheckRunResult result);
 	}
 
 	public class AuraCheckRunResult {

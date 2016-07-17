@@ -72,7 +72,10 @@ enableHelpCommand: true
 enableExpiredPlotsRestoration: false
 disableAboveNetherGlitching: false
 enableAddDefaultRank: false
-resourceWorlds:
+worlds:
+# <worldname>:
+#   radius: <number>
+#   resetTime: <duration>
 
 ########## AURACHECK
 ## Automatic aura checking (fake player spawning and hit detection)

@@ -484,6 +484,7 @@ public final class GoCraft extends JavaPlugin {
 		listeners.add(new NauseaPotions(this));
 		listeners.add(new AuraCheck());
 		listeners.add(new ResourceWorlds());
+		listeners.add(new RandomtpCommand());
 
 		for (Listener listener : listeners) {
 			if (listener instanceof Feature) {

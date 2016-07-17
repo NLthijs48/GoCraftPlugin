@@ -10,6 +10,7 @@ staff-noPermission: "You are not a staff member."
 
 general-mutedSignUse: "You cannot place signs while you are muted."
 general-noPlayer: "Player %0% is not online."
+general-playerOnly: "This command can only be used by a player."
 
 ########## LOGGING
 signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
@@ -31,6 +32,12 @@ setspawn-onlyByPlayers: "You can only set the spawn as a player."
 setspawn-success: "The spawn location has been set to your current location and direction."
 
 resetworld-tp: "You have been teleported to spawn because world %0% is resetting."
+resetworld-randomtp: "You have been placed in a random location in the world."
+resetworld-randomtpFailed: "Failed to find a safe random teleport location, try again or report to the staff."
+
+randomtp-noPermission: "You do not have permission to randomly teleport in this world."
+randomtp-success: "Successfully teleported you to a random location."
+randomtp-failed: "Failed to find a random location in this world, try again or report to the staff."
 
 staffbroadcast-noPermission: "You don't have permission to send a message to all staff."
 staffbroadcast-help: "/staffbroadcast <type> <message...>."
@@ -82,7 +89,6 @@ timeleft-ended: "Expired"
 ########## INSPECT
 help-inspector: "&6/inspect <player> &7-&r Inspect a player"
 inspect-help: "/inspect <player>"
-inspect-playerOnly: "This command can only be used by a player."
 inspect-noPermission: "You don't have permission to inspect players."
 inspect-notAvailable: "Player %0% never played on the server and therefore cannot be inspected."
 inspect-started: "Started inspection of %0%."
@@ -113,7 +119,6 @@ shop-lowMoney: "You need %0% to buy %1%, but you have %2%."
 shop-lowSpace: "You need %0% free slots in your inventory, but have only %1%."
 shop-chargeFailed: "Paying for the kit failed, notify the staff."
 shop-depositFailed: "Giving you money for the kit failed, notify the staff."
-shop-playerOnly: "This command can only be used by a player."
 shop-cooldown: "You still need to wait %0% before buying this kit again."
 shop-kitSignNoPermission: "You do no have permission to add a kit shop sign."
 shop-kitSignNoKit: "Specify a correct kit on the second line."

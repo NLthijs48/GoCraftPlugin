@@ -2,12 +2,16 @@ package me.wiefferink.gocraft.features.environment;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -17,18 +21,24 @@ import java.util.Calendar;
 public class ResourceWorlds extends Feature {
 
 	public ResourceWorlds() {
-		ConfigurationSection resourceWorldsSection = plugin.getConfig().getConfigurationSection("resourceWorlds");
+		ConfigurationSection resourceWorldsSection = plugin.getConfig().getConfigurationSection("worlds");
 		if(resourceWorldsSection != null && resourceWorldsSection.getKeys(false).size() > 0) {
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-
-
+			int count = 0;
+			for(String world : resourceWorldsSection.getKeys(false)) {
+				if(resourceWorldsSection.isSet(world+".resetTime")) {
+					count++;
+				}
+			}
+			if(count > 0) {
+				listen();
+			}
 		}
 	}
 
 	@Override
 	public void stop() {
 		// Reset the resource worlds that need it
-		ConfigurationSection rWorldsSection = plugin.getConfig().getConfigurationSection("resourceWorlds");
+		ConfigurationSection rWorldsSection = plugin.getConfig().getConfigurationSection("worlds");
 		if(rWorldsSection != null) {
 			for(String worldName : rWorldsSection.getKeys(false)) {
 				World world = Bukkit.getWorld(worldName);
@@ -37,10 +47,40 @@ public class ResourceWorlds extends Feature {
 					continue;
 				}
 				long resetTime = getResetTime(world);
-				if(resetTime > 0 && Calendar.getInstance().getTimeInMillis() > (getLastReset(world)+resetTime)) {
+				if(resetTime > 0 && Calendar.getInstance().getTimeInMillis() > (getLastReset(world)+(resetTime*0.9))) {
 					resetWorld(world);
 				}
 			}
+		}
+	}
+
+	@EventHandler
+	public void playerJoin(PlayerJoinEvent event) {
+		checkWorldSpawn(event.getPlayer());
+	}
+
+	@EventHandler
+	public void switchWorld(PlayerChangedWorldEvent event) {
+		checkWorldSpawn(event.getPlayer());
+	}
+
+	public void checkWorldSpawn(Player player) {
+		long lastPlayed = player.getLastPlayed();
+		long lastReset = getLastReset(player.getWorld());
+		GoCraft.debug("lastReset: "+lastReset+", distance: "+player.getWorld().getSpawnLocation().distance(player.getLocation())+", safe: "+Utils.isSafe(player.getLocation()));
+		if(lastReset > 0
+				&& (player.getWorld().getSpawnLocation().distance(player.getLocation()) < 10
+				|| !Utils.isSafe(player.getLocation()))) {
+			Utils.teleportRandomly(player, player.getWorld(), Utils.getWorldRadius(player.getWorld()), new Callback<Boolean>() {
+				@Override
+				public void execute(Boolean teleported) {
+					if(teleported) {
+						plugin.message(player, "resetworld-randomtp");
+					} else {
+						plugin.message(player, "resetworld-randomtpFailed");
+					}
+				}
+			});
 		}
 	}
 
@@ -51,9 +91,9 @@ public class ResourceWorlds extends Feature {
 	 */
 	public long getResetTime(World world) {
 		long result = -1;
-		ConfigurationSection section = plugin.getConfig().getConfigurationSection("resourceWorlds");
+		ConfigurationSection section = plugin.getConfig().getConfigurationSection("worlds");
 		if(section != null) {
-			result = Utils.durationStringToLong(section.getString(world.getName()));
+			result = Utils.durationStringToLong(section.getString(world.getName()+".resetTime"));
 		}
 		return result;
 	}

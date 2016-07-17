@@ -26,7 +26,7 @@ public class InspectCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!(sender instanceof Player)) {
-			plugin.message(sender, "inspect-playerOnly");
+			plugin.message(sender, "general-playerOnly");
 			return true;
 		}
 		Player inspector = (Player) sender;

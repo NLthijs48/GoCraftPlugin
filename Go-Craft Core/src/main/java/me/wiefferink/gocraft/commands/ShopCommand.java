@@ -23,7 +23,7 @@ public class ShopCommand implements CommandExecutor {
 		}
 
 		if (!(sender instanceof Player)) {
-			plugin.message(sender, "shop-playerOnly");
+			plugin.message(sender, "general-playerOnly");
 			return true;
 		}
 		Player player = (Player) sender;
