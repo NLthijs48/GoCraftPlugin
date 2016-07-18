@@ -314,6 +314,7 @@ public class Utils {
 		final Location spawn = world.getSpawnLocation();
 		new BukkitRunnable() {
 			private int current = 100;
+			private boolean found = false;
 
 			@Override
 			public void run() {
@@ -332,13 +333,14 @@ public class Utils {
 					end = 128;
 					count = 1;
 				}
-				for(int i = start; i != end && i <= 255 && i > 0; i += count) {
+				for(int i = start; i != end && i <= 255 && i > 0 && !found; i += count) {
 					Location attempt = attemptBase.clone();
 					attempt.setY(i);
 					if(Utils.isSafe(attempt)) {
 						player.teleport(attempt);
 						callback.execute(true);
 						this.cancel();
+						found = true;
 						break;
 					}
 				}
