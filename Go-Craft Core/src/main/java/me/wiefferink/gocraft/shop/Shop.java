@@ -366,7 +366,8 @@ public class Shop implements Listener {
 	 * Call when server is stopping
 	 */
 	public void handleServerStop() {
-		for (ShopSession session : shopSessions.values()) {
+		Set<ShopSession> sessions = new HashSet<>(shopSessions.values());
+		for(ShopSession session : sessions) {
 			session.getPlayer().closeInventory();
 		}
 		shopSessions.clear();
