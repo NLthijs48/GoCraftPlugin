@@ -9,9 +9,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.material.SpawnEgg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ItemBuilder {
 	private ItemStack item;
@@ -19,31 +21,56 @@ public class ItemBuilder {
 
 	// CONSTRUCTORS
 	public ItemBuilder(Material material) {
-		item = new ItemStack(material);
+		this(material, 1);
 	}
 
 	public ItemBuilder(Material material, int amount) {
-		item = new ItemStack(material, amount);
+		this(material, amount, 0);
 	}
 
 	public ItemBuilder(Material material, int amount, int data) {
-		item = new ItemStack(material, amount, (short) data);
+		this(new ItemStack(material, amount, (short)data), false);
 	}
 
 	public ItemBuilder(int material) {
-		item = new ItemStack(material);
+		this(material, 1);
 	}
 
 	public ItemBuilder(int material, int amount) {
-		item = new ItemStack(material, amount);
+		this(material, amount, 0);
 	}
 
 	public ItemBuilder(int material, int amount, int data) {
-		item = new ItemStack(material, amount, (short) data);
+		this(new ItemStack(material, amount, (short)data), false);
 	}
 
 	public ItemBuilder(ItemStack item) {
-		this.item = item.clone();
+		this(item, true);
+	}
+
+	private ItemBuilder(ItemStack item, boolean clone) {
+		if(clone) {
+			item = item.clone();
+		}
+		if(item.getType() == Material.MONSTER_EGG) {
+			SpawnEgg egg = new SpawnEgg((byte)item.getDurability());
+			ItemMeta itemMeta = item.getItemMeta();
+			ItemMeta eggMeta = egg.toItemStack().getItemMeta();
+			if(itemMeta != null && eggMeta != null) {
+				if(itemMeta.hasDisplayName()) {
+					eggMeta.setDisplayName(itemMeta.getDisplayName());
+				}
+				for(ItemFlag itemFlag : itemMeta.getItemFlags()) {
+					eggMeta.addItemFlags(itemFlag);
+				}
+				for(Map.Entry<Enchantment, Integer> entry : itemMeta.getEnchants().entrySet()) {
+					eggMeta.addEnchant(entry.getKey(), entry.getValue(), true);
+				}
+				eggMeta.setLore(itemMeta.getLore());
+			}
+			item.setItemMeta(eggMeta);
+		}
+		this.item = item;
 	}
 
 	// METHODS

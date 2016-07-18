@@ -11,6 +11,7 @@ import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -60,7 +61,7 @@ public class Kit implements Button, View {
 				return;
 			}
 			ItemBuilder item = shop.stringToItem(itemString, "kit " + getName());
-			if (!item.hasCustomName()) {
+			if(!item.hasCustomName() && item.getItemStack().getType() != Material.MONSTER_EGG) {
 				item.setName(ChatColor.DARK_GREEN + getName());
 			}
 			items.add(item);
