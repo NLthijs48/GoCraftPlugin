@@ -170,8 +170,8 @@ public class AuraCheckRun {
 					kill(entityId, player);
 				}
 			}
-			inspectEntities.remove(uuid);
 		}
+		inspectEntities.clear();
 	}
 
 	public class AuraCheckRunResult {
