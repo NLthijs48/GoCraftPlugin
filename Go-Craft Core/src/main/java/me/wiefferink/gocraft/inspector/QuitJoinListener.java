@@ -5,7 +5,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class QuitJoinListener implements Listener {
@@ -17,11 +16,6 @@ public class QuitJoinListener implements Listener {
 
 	@EventHandler
 	public void onPlayerLeave(PlayerQuitEvent event) {
-		plugin.getInspectionManager().handlePlayerStopped(event.getPlayer());
-	}
-
-	@EventHandler
-	public void onPlayerKick(PlayerKickEvent event) {
 		plugin.getInspectionManager().handlePlayerStopped(event.getPlayer());
 	}
 
