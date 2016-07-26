@@ -120,7 +120,11 @@ public class ResourceWorlds extends Feature {
 	 * @param world The world to reset
 	 */
 	public void resetWorld(World world) {
-		File regionFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+"region");
+		String regionPath = "region";
+		if(world.getEnvironment() == World.Environment.NETHER || world.getEnvironment() == World.Environment.THE_END) {
+			regionPath = "DIM-1"+File.separator+"region";
+		}
+		File regionFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+regionPath);
 		//GoCraft.debug("region folder of "+world.getName()+" at "+regionFolder.getAbsolutePath());
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			if(player.getWorld().getName().equals(world.getName())) {
@@ -132,12 +136,25 @@ public class ResourceWorlds extends Feature {
 			plugin.getLogger().warning("Could not unload resourceworld "+world.getName()+" for reset");
 			return;
 		}
+		// Delete individual files
+		File[] files = regionFolder.listFiles();
+		if(files != null) {
+			for(File file : files) {
+				try {
+					FileDeleteStrategy.FORCE.delete(file);
+				} catch(IOException e) {
+					plugin.getLogger().warning("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
+				}
+			}
+		}
+		// Delete folder
 		try {
 			FileDeleteStrategy.FORCE.delete(regionFolder);
 		} catch(IOException e) {
-			plugin.getLogger().warning("Could not reset resourceworld "+world.getName()+":");
+			plugin.getLogger().warning("Could not reset resourceworld "+world.getName()+": "+regionFolder.getAbsolutePath());
 			e.printStackTrace();
 		}
+		// Wrapup reset
 		updateResetTime(world);
 		plugin.getLogger().info("World "+world.getName()+" has been reset");
 		plugin.increaseStatistic("resourceWorldReset."+world.getName());
