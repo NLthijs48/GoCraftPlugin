@@ -312,6 +312,7 @@ public class Utils {
 	 */
 	public static void teleportRandomly(Player player, World world, int radius, Callback<Boolean> callback) {
 		final Location spawn = world.getSpawnLocation();
+		final int finalRadius = Math.max(radius, 1);
 		new BukkitRunnable() {
 			private int current = 100;
 			private boolean found = false;
@@ -321,8 +322,8 @@ public class Utils {
 				current--;
 
 				Location attemptBase = spawn.clone();
-				double x = Utils.random.nextInt(radius*2)-radius+0.5;
-				double z = Utils.random.nextInt(radius*2)-radius+0.5;
+				double x = Utils.random.nextInt(finalRadius*2)-finalRadius+0.5;
+				double z = Utils.random.nextInt(finalRadius*2)-finalRadius+0.5;
 				attemptBase.setX(attemptBase.getBlockX()+x);
 				attemptBase.setZ(attemptBase.getBlockZ()+z);
 				int end = 0;
