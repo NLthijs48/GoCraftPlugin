@@ -338,6 +338,7 @@ public class Utils {
 					Location attempt = attemptBase.clone();
 					attempt.setY(i);
 					if(Utils.isSafe(attempt)) {
+						GoCraft.debug("   Utils.teleportRandomly: teleport "+player.getName()+", world: "+world.getName()+", radius: "+radius+", to: "+attempt.toString()+", attempt "+(100-current));
 						player.teleport(attempt);
 						callback.execute(true);
 						this.cancel();
