@@ -124,11 +124,12 @@ public class ResourceWorlds extends Feature {
 	public void resetWorld(World world) {
 		String regionPath = "region";
 		if(world.getEnvironment() == World.Environment.NETHER) {
-			regionPath = "DIM-1"+File.separator+"region";
+			regionPath = "DIM-1";
 		} else if(world.getEnvironment() == World.Environment.THE_END) {
-			regionPath = "DIM1"+File.separator+"region";
+			regionPath = "DIM1";
 		}
 		File regionFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+regionPath);
+		File dataFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+"data");
 		//GoCraft.debug("region folder of "+world.getName()+" at "+regionFolder.getAbsolutePath());
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			if(player.getWorld().getName().equals(world.getName())) {
@@ -140,7 +141,7 @@ public class ResourceWorlds extends Feature {
 			plugin.getLogger().warning("Could not unload resourceworld "+world.getName()+" for reset");
 			return;
 		}
-		// Delete individual files
+		// REGION folder
 		File[] files = regionFolder.listFiles();
 		if(files != null) {
 			for(File file : files) {
@@ -151,13 +152,30 @@ public class ResourceWorlds extends Feature {
 				}
 			}
 		}
-		// Delete folder
 		try {
 			FileDeleteStrategy.FORCE.delete(regionFolder);
 		} catch(IOException e) {
 			plugin.getLogger().warning("Could not reset resourceworld "+world.getName()+": "+regionFolder.getAbsolutePath());
 			e.printStackTrace();
 		}
+		// DATA folder
+		File[] dataFiles = dataFolder.listFiles();
+		if(dataFiles != null) {
+			for(File file : dataFiles) {
+				try {
+					FileDeleteStrategy.FORCE.delete(file);
+				} catch(IOException e) {
+					plugin.getLogger().warning("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
+				}
+			}
+		}
+		try {
+			FileDeleteStrategy.FORCE.delete(dataFolder);
+		} catch(IOException e) {
+			plugin.getLogger().warning("Could not reset resourceworld "+world.getName()+": "+dataFolder.getAbsolutePath());
+			e.printStackTrace();
+		}
+
 		// Wrapup reset
 		updateResetTime(world);
 		plugin.getLogger().info("World "+world.getName()+" has been reset");
