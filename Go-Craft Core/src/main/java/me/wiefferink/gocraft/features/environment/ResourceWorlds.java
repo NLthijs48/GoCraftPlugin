@@ -123,8 +123,10 @@ public class ResourceWorlds extends Feature {
 	 */
 	public void resetWorld(World world) {
 		String regionPath = "region";
-		if(world.getEnvironment() == World.Environment.NETHER || world.getEnvironment() == World.Environment.THE_END) {
+		if(world.getEnvironment() == World.Environment.NETHER) {
 			regionPath = "DIM-1"+File.separator+"region";
+		} else if(world.getEnvironment() == World.Environment.THE_END) {
+			regionPath = "DIM1"+File.separator+"region";
 		}
 		File regionFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+regionPath);
 		//GoCraft.debug("region folder of "+world.getName()+" at "+regionFolder.getAbsolutePath());
