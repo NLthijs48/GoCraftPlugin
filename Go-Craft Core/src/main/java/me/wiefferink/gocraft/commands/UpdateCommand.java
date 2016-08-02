@@ -33,6 +33,7 @@ public class UpdateCommand implements CommandExecutor {
 			operationFilter = args[1];
 		}
 		plugin.getDistributionManager().update(sender, serverFilter, operationFilter);
+		plugin.increaseStatistic("command.update.used");
 		return true;
 	}
 

@@ -37,6 +37,7 @@ public class RulesCommand implements CommandExecutor {
 		for (String rule : rules) {
 			plugin.messageNoPrefix(sender, "rules-rule", rule);
 		}
+		plugin.increaseStatistic("command.rules.used");
 		return true;
 	}
 

@@ -65,6 +65,7 @@ public class InspectCommand implements CommandExecutor {
 		if (inspection != null) {
 			// From existing to new target
 			inspection.switchToPlayer(newTarget, true);
+			plugin.increaseStatistic("command.inspect.switchTarget");
 			if (newTarget != null) {
 				plugin.message(inspector, "inspect-started", newTarget.getName());
 			} else {
@@ -84,8 +85,10 @@ public class InspectCommand implements CommandExecutor {
 		inspection.startInspection();
 		if (newTarget != null) {
 			plugin.message(inspector, "inspect-started", newTarget.getName());
+			plugin.increaseStatistic("command.inspect.withTarget");
 		} else {
 			plugin.message(inspector, "inspect-startedNoTarget");
+			plugin.increaseStatistic("command.inspect.withoutTarget");
 		}
 		return true;
 	}

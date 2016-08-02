@@ -27,6 +27,7 @@ public class ReloadCommand implements CommandExecutor {
 
 		plugin.reload();
 		plugin.message(sender, "reload-success");
+		plugin.increaseStatistic("command.reload.used");
 		return true;
 	}
 

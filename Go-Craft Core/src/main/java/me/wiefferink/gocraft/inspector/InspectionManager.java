@@ -194,6 +194,7 @@ public class InspectionManager {
 			final Inspection finalInspection = setupInspection(player);
 			final boolean inPVP = Utils.isInPvpArea(player);
 			finalInspection.startInspection();
+			plugin.increaseStatistic("command.inspect.restoredAtJoin");
 			new BukkitRunnable() {
 				@Override
 				public void run() {

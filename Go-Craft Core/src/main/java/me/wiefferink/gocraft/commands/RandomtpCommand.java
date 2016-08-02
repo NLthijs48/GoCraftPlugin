@@ -30,8 +30,10 @@ public class RandomtpCommand extends Feature implements CommandExecutor {
 			public void execute(Boolean teleported) {
 				if(teleported) {
 					plugin.message(player, "randomtp-success");
+					plugin.increaseStatistic("command.rtp."+player.getWorld().getName()+".success");
 				} else {
 					plugin.message(player, "randomtp-failed");
+					plugin.increaseStatistic("command.rtp."+player.getWorld().getName()+".failed");
 				}
 			}
 		});

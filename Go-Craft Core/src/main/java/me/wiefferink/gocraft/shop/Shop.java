@@ -233,6 +233,7 @@ public class Shop implements Listener {
 		ShopSession session = new ShopSession(player);
 		if (homeCategory != null) {
 			homeCategory.show(session);
+			plugin.increaseStatistic("shop.opened");
 		} else {
 			plugin.message(player, "shop-noHomeCategory");
 		}

@@ -78,6 +78,7 @@ public class TempbanCommand implements Listener {
 				}
 			}.runTaskLater(plugin, 10L);
 			event.setCancelled(true);
+			plugin.increaseStatistic("command.tempban.redirected");
 		}
 	}
 

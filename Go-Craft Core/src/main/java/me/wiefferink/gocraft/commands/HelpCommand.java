@@ -56,6 +56,7 @@ public class HelpCommand implements CommandExecutor {
 				}
 			}
 		}
+		plugin.increaseStatistic("command.help.used");
 		return true;
 	}
 

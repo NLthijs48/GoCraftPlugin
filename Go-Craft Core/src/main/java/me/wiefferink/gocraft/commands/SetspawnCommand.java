@@ -34,6 +34,7 @@ public class SetspawnCommand implements CommandExecutor {
 		plugin.getLocalStorage().set("spawnLocation", Utils.locationToConfig(player.getLocation(), true));
 		plugin.saveLocalStorage();
 		plugin.message(player, "setspawn-success");
+		plugin.increaseStatistic("command.setspawn.used");
 		return true;
 	}
 

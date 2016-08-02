@@ -202,6 +202,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 				GoCraft.getInstance().getLogger().info(finalPlayer.getName() + " killed " + result.killed + " out of " + result.spawned + " (checked by " + sender.getName() + ")");
 			}
 		});
+		plugin.increaseStatistic("command.auracheck.used");
 		return true;
 	}
 

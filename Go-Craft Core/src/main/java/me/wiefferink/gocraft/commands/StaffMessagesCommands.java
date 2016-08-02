@@ -45,6 +45,7 @@ public class StaffMessagesCommands implements CommandExecutor {
 			if (sender instanceof Player) {
 				plugin.message(sender, "staffbroadcast-success", type, message);
 			}
+			plugin.increaseStatistic("command.staffbroadcast.local");
 			return true;
 		} else if (command.getName().equalsIgnoreCase("DisplayStaffMessage")) {
 			if (!sender.hasPermission("gocraft.displayStaffMessage")) {
@@ -63,6 +64,7 @@ public class StaffMessagesCommands implements CommandExecutor {
 				message += " " + args[i];
 			}
 			Utils.displayStaffMessage(message);
+			plugin.increaseStatistic("command.staffbroadcast.broadcasted");
 		} else {
 			return false;
 		}

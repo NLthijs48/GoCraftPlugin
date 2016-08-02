@@ -51,8 +51,10 @@ public class PingCommand implements CommandExecutor {
 		int ping = Utils.getPing(target);
 		if (self) {
 			plugin.message(sender, "ping-successSelf", ping);
+			plugin.increaseStatistic("command.ping.self");
 		} else {
 			plugin.message(sender, "ping-successOther", target.getName(), ping);
+			plugin.increaseStatistic("command.ping.other");
 		}
 
 		return true;
