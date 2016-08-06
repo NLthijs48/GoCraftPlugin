@@ -4,11 +4,11 @@ import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
 import me.wiefferink.gocraft.shop.signs.KitSign;
 
-public abstract class Feature {
+public abstract class ShopFeature {
 
 	Kit kit;
 
-	public Feature(Kit kit) {
+	public ShopFeature(Kit kit) {
 		this.kit = kit;
 	}
 
@@ -43,14 +43,14 @@ public abstract class Feature {
 	}
 
 	/**
-	 * Indicate to the player why buying/selling is restricted, should work if Feature#allowsBuy() returns false
+	 * Indicate to the player why buying/selling is restricted, should work if ShopFeature#allowsBuy() returns false
 	 * @param session The session to tell it to
 	 */
 	public void indicateRestricted(ShopSession session) {
 	}
 
 	/**
-	 * Indicate to the player why buying is restricted, should work if Feature#allowsBuy() returns false
+	 * Indicate to the player why buying is restricted, should work if ShopFeature#allowsBuy() returns false
 	 * @param session The session to tell it to
 	 */
 	public void indicateRestrictedBuy(ShopSession session) {
@@ -58,7 +58,7 @@ public abstract class Feature {
 	}
 
 	/**
-	 * Indicate to the player why selling is restricted, should work if Feature#allowsBuy() returns false
+	 * Indicate to the player why selling is restricted, should work if ShopFeature#allowsBuy() returns false
 	 * @param session The session to tell it to
 	 */
 	public void indicateRestrictedSell(ShopSession session) {

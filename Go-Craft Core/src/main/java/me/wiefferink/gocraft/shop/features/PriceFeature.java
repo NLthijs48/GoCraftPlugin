@@ -7,7 +7,7 @@ import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.tools.Utils;
 import net.milkbowl.vault.economy.EconomyResponse;
 
-public class PriceFeature extends Feature {
+public class PriceFeature extends ShopFeature {
 
 	private double price;
 	private double sellPrice;

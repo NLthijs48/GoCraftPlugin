@@ -7,7 +7,7 @@ import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
 
-public class ItemsFeature extends Feature {
+public class ItemsFeature extends ShopFeature {
 
 	public ItemsFeature(Kit kit) {
 		super(kit);

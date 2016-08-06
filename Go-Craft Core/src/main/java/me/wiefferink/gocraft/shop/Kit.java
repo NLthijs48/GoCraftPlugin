@@ -29,7 +29,7 @@ public class Kit implements Button, View {
 	private ConfigurationSection details;
 	private String identifier;
 	private boolean onNewLine;
-	private Map<String, Feature> features;
+	private Map<String, ShopFeature> features;
 
 	public Kit(ConfigurationSection details, String identifier, Shop shop) {
 		this.details = details;
@@ -121,7 +121,7 @@ public class Kit implements Button, View {
 		if (session != null) {
 			result = result.copy();
 			boolean allowBuy = true;
-			List<Feature> list = new ArrayList<>(features.values());
+			List<ShopFeature> list = new ArrayList<>(features.values());
 			for (int i = list.size() - 1; i >= 0; i--) {
 				result.addLore(list.get(i).getBuyStatusLine(session), true);
 				allowBuy &= list.get(i).allowsBuy(session);
@@ -182,7 +182,7 @@ public class Kit implements Button, View {
 	 * Get the list of features
 	 * @return The map with features
 	 */
-	public Map<String, Feature> getFeatures() {
+	public Map<String, ShopFeature> getFeatures() {
 		return features;
 	}
 
@@ -222,7 +222,7 @@ public class Kit implements Button, View {
 		Player player = session.getPlayer();
 
 		// Check features
-		for (Feature feature : features.values()) {
+		for(ShopFeature feature : features.values()) {
 			if (!feature.allowsBuy(session)) {
 				feature.indicateRestrictedBuy(session);
 				Utils.playSound(session.getPlayer(), "anvil.land", "block.anvil.land", 0.4F, 0.8F);
@@ -232,7 +232,7 @@ public class Kit implements Button, View {
 
 		// Perform actions
 		boolean fail = false;
-		for (Feature feature : features.values()) {
+		for(ShopFeature feature : features.values()) {
 			if (!feature.executeBuy(session, sign)) {
 				fail = true;
 				break;
@@ -275,7 +275,7 @@ public class Kit implements Button, View {
 		Player player = session.getPlayer();
 
 		// Check features
-		for (Feature feature : features.values()) {
+		for(ShopFeature feature : features.values()) {
 			if (!feature.allowsSell(session)) {
 				feature.indicateRestrictedSell(session);
 				Utils.playSound(session.getPlayer(), "anvil.land", "block.anvil.land", 0.4F, 0.8F);
@@ -285,7 +285,7 @@ public class Kit implements Button, View {
 
 		// Perform actions
 		boolean fail = false;
-		for (Feature feature : features.values()) {
+		for(ShopFeature feature : features.values()) {
 			if (!feature.executeSell(session, sign)) {
 				fail = true;
 				break;

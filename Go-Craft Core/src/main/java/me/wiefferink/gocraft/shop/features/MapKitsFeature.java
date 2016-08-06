@@ -4,7 +4,7 @@ import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
 
-public class MapKitsFeature extends Feature {
+public class MapKitsFeature extends ShopFeature {
 
 	private String map;
 

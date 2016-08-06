@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.shop.buttons;
 
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
-import me.wiefferink.gocraft.shop.features.Feature;
+import me.wiefferink.gocraft.shop.features.ShopFeature;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import org.bukkit.Material;
 
@@ -33,7 +33,7 @@ public class BuyButton implements Button {
 	public ItemBuilder getButton(ShopSession session) {
 		ItemBuilder result = displayItem.copy();
 		boolean allowed = true;
-		List<Feature> list = new ArrayList<>(kit.getFeatures().values());
+		List<ShopFeature> list = new ArrayList<>(kit.getFeatures().values());
 		for (int i = list.size() - 1; i >= 0; i--) {
 			result.addLore(list.get(i).getBuyStatusLine(session), true);
 			allowed &= list.get(i).allowsBuy(session);

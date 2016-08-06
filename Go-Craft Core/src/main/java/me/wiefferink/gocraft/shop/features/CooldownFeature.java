@@ -8,7 +8,7 @@ import me.wiefferink.gocraft.tools.Utils;
 
 import java.util.Calendar;
 
-public class CooldownFeature extends Feature {
+public class CooldownFeature extends ShopFeature {
 
 	private long cooldown;
 	private String rawCooldown;

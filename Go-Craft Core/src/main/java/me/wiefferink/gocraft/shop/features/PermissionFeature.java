@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 
-public class PermissionFeature extends Feature {
+public class PermissionFeature extends ShopFeature {
 
 	private String permission;
 
