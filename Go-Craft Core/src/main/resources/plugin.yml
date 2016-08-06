@@ -90,7 +90,7 @@ commands:
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
   Inspect:
     description: Inspect players while being in Spectator mode
-    aliases: [in]
+    aliases: [in,i]
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
   Rules:
     description: Check the rules of the server
