@@ -52,14 +52,14 @@ public class SignManager implements Listener {
 				if ("kit".equals(type)) {
 					Kit kit = plugin.getShop().getKits().get(details.getString("kit"));
 					if (kit == null) {
-						plugin.getLogger().warning("Kit of sign at " + details.getString("location.x") + ", " + details.getString("location.y") + ", " + details.getString("location.z") + " does not exist: " + details.getString("kit"));
+						GoCraft.warn("Kit of sign at "+details.getString("location.x")+", "+details.getString("location.y")+", "+details.getString("location.z")+" does not exist: "+details.getString("kit"));
 						continue;
 					}
 					sign = new KitSign(details, signKey, kit);
 				} else if ("shop".equals(type)) {
 					sign = new ShopSign(details, signKey);
 				} else {
-					plugin.getLogger().warning("Incorrect sign type for key " + signKey + ": " + type);
+					GoCraft.warn("Incorrect sign type for key "+signKey+": "+type);
 					continue;
 				}
 				signs.put(Utils.locationToString(sign.getLocation()), sign);

@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.shop.buttons.BuyButton;
 import me.wiefferink.gocraft.shop.buttons.ItemButton;
@@ -57,7 +58,7 @@ public class Kit implements Button, View {
 		if (!details.isList("items")) {
 			String itemString = details.getString("items");
 			if (itemString == null || itemString.isEmpty()) {
-				plugin.getLogger().warning("Kit with zero items: " + getName());
+				GoCraft.warn("Kit with zero items: "+getName());
 				return;
 			}
 			ItemBuilder item = shop.stringToItem(itemString, "kit " + getName());
@@ -69,7 +70,7 @@ public class Kit implements Button, View {
 		} else {
 			List<String> itemStrings = details.getStringList("items");
 			if (itemStrings.size() == 0) {
-				plugin.getLogger().warning("Kit with zero items: " + getName());
+				GoCraft.warn("Kit with zero items: "+getName());
 				return;
 			}
 			// Items
@@ -246,7 +247,7 @@ public class Kit implements Button, View {
 		Utils.playSound(session.getPlayer(), "level.up", "entity.player.levelup", 0.7F, 1.5F);
 		String cooldown = "";
 		if (getCooldownFeature().getCooldown() > 60000) { // More than a minute
-			cooldown = plugin.getLanguageManager().getLang("shop-cooldownInfo", getCooldownFeature().getRawCooldown());
+			cooldown = Message.fromKey("shop-cooldownInfo").replacements(getCooldownFeature().getRawCooldown()).getPlain();
 		}
 		double price = getPriceFeature().getPrice();
 		String formatPrice = getPriceFeature().getFormattedPrice();

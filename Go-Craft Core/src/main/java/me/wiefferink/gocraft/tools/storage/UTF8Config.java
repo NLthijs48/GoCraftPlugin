@@ -40,7 +40,7 @@ public class UTF8Config extends YamlConfiguration {
 		try {
 			config.load(reader);
 		} catch (InvalidConfigurationException | IOException ex) {
-			GoCraft.getInstance().getLogger().warning("Could not load configuration from stream: " + ex);
+			GoCraft.warn("Could not load configuration from stream: "+ex);
 		}
 		return config;
 	}
@@ -53,7 +53,7 @@ public class UTF8Config extends YamlConfiguration {
 		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
 			writer.write(data);
 		} catch (IOException e) {
-			GoCraft.getInstance().getLogger().warning("Could not save config file: " + file.getAbsolutePath());
+			GoCraft.warn("Could not save config file: "+file.getAbsolutePath());
 		}
 	}
 

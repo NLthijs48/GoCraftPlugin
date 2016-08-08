@@ -17,8 +17,9 @@ import me.wiefferink.gocraft.features.players.*;
 import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.*;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
+import me.wiefferink.gocraft.messages.LanguageManager;
+import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.shop.Shop;
-import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.MySQLDatabase;
@@ -27,14 +28,12 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -45,9 +44,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.io.*;
 import java.sql.PreparedStatement;
 import java.util.*;
-import java.util.logging.Logger;
-
-import static me.wiefferink.gocraft.tools.Utils.applyColors;
 
 public final class GoCraft extends JavaPlugin {
 	// Constants
@@ -57,13 +53,14 @@ public final class GoCraft extends JavaPlugin {
 	public static final String generalPluginDataFoldername = "plugins";
 	public static final String generalRootDataFoldername = "root";
 	public static final String currencyEuro = "%euro%";
+	public static final String languageFolder = "lang";
 	// Variables
 	private ArrayList<Listener> listeners;
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
 	private InspectionManager inspectionManager;
 	private boolean debug = false;
-	private String chatprefix = null;
+	private List<String> chatPrefix = null;
 	private static GoCraft instance = null;
 	private Map<String, Cleaner> localStorageCleaners;
 	private boolean localStorageDirty;
@@ -92,7 +89,11 @@ public final class GoCraft extends JavaPlugin {
 		reloadConfig();
 		instance = this;
 		saveDefaultConfig();
-		this.chatprefix = getConfig().getString("chatPrefix");
+		if(getConfig().isList("chatPrefix")) {
+			chatPrefix = getConfig().getStringList("chatPrefix");
+		} else {
+			chatPrefix = Collections.singletonList(getConfig().getString("chatPrefix"));
+		}
 		this.debug = getConfig().getBoolean("debug");
 		localStorageCleaners = new HashMap<>();
 
@@ -180,7 +181,7 @@ public final class GoCraft extends JavaPlugin {
 			getLogger().info("Using " + version + " for version specific classes");
 		}
 
-		this.languageManager = new LanguageManager(this);
+		this.languageManager = new LanguageManager();
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + generalFolderName);
 		loadGeneralConfig();
 		distributionManager = new DistributionManager(this);
@@ -509,24 +510,28 @@ public final class GoCraft extends JavaPlugin {
 		inspectionManager = manager;
 	}
 
+	/**
+	 * Show the help page with all commands to the target
+	 * @param target The person to send it to
+	 */
 	public void showHelp(CommandSender target) {
-		List<String> messages = new ArrayList<>();
-		messages.add(this.chatprefix + getLanguageManager().getLang("help-header"));
-		messages.add(this.chatprefix + getLanguageManager().getLang("help-alias"));
+		List<Message> messages = new ArrayList<>();
+		messages.add(Message.fromKey("help-header").prefix());
+		messages.add(Message.fromKey("help-alias").prefix());
 		if (target.hasPermission("gocraft.resetstats")) {
-			messages.add(getLanguageManager().getLang("help-resetstats"));
+			messages.add(Message.fromKey("help-resetstats"));
 		}
 		if (target.hasPermission("gocraft.resetall")) {
-			messages.add(getLanguageManager().getLang("help-resetall"));
+			messages.add(Message.fromKey("help-resetall"));
 		}
-		messages.add(getLanguageManager().getLang("help-stats"));
-		for (String message : messages) {
-			target.sendMessage(applyColors(message));
+		messages.add(Message.fromKey("help-stats"));
+		for(Message message : messages) {
+			message.send(target);
 		}
 	}
 
 	public void deRegisterEvents() {
-		for (Listener listener : this.listeners) {
+		for(Listener listener : listeners) {
 			HandlerList.unregisterAll(listener);
 		}
 	}
@@ -582,7 +587,7 @@ public final class GoCraft extends JavaPlugin {
 			} else if ((world instanceof Entity)) {
 				worldString = ((Entity) world).getWorld().getName();
 			} else {
-				GoCraft.getInstance().getLogger().warning("GoCraft.onThisWorld: Cannot get world from object: "+world.toString());
+				GoCraft.warn("GoCraft.onThisWorld: Cannot get world from object: "+world.toString());
 			}
 			if (!worlds.contains(worldString)) {
 				result = false;
@@ -595,43 +600,24 @@ public final class GoCraft extends JavaPlugin {
 		return this.languageManager;
 	}
 
-	public void configurableMessage(String prefix, Object target, String key, Object... params) {
-		String langString = Utils.applyColors(this.languageManager.getLang(key, params));
-		if (langString == null) {
-			getLogger().info("Something is wrong with the language file, could not find key: " + key);
-		} else if ((target instanceof Player)) {
-			String message = langString;
-			if (prefix != null) {
-				message = prefix + message;
-			}
-			message = Utils.applyColors(message);
-			((Player) target).sendMessage(message);
-		} else if ((target instanceof CommandSender)) {
-			((CommandSender) target).sendMessage(langString);
-		} else if ((target instanceof Logger)) {
-			((Logger) target).info(ChatColor.stripColor(langString));
-		} else if (target instanceof BufferedWriter) {
-			try {
-				if (prefix != null) {
-					langString = prefix + langString;
-				}
-				((BufferedWriter) target).append(ChatColor.stripColor(langString));
-				((BufferedWriter) target).newLine();
-			} catch (IOException e) {
-				getLogger().warning("Error while printing message to BufferedWriter: " + e.getMessage());
-				e.printStackTrace();
-			}
-		} else {
-			getLogger().info("Could not send message, target is wrong: " + langString);
-		}
+	/**
+	 * Send a message to a target without a prefix
+	 * @param target       The target to send the message to
+	 * @param key          The key of the language string
+	 * @param replacements The replacements to insert in the message
+	 */
+	public void messageNoPrefix(Object target, String key, Object... replacements) {
+		Message.fromKey(key).replacements(replacements).send(target);
 	}
 
-	public void message(Object target, String key, Object... params) {
-		configurableMessage(this.chatprefix, target, key, params);
-	}
-
-	public void messageNoPrefix(Object target, String key, Object... params) {
-		configurableMessage(null, target, key, params);
+	/**
+	 * Send a message to a target, prefixed by the default chat prefix
+	 * @param target       The target to send the message to
+	 * @param key          The key of the language string
+	 * @param replacements The replacements to insert in the message
+	 */
+	public void message(Object target, String key, Object... replacements) {
+		Message.fromKey(key).prefix().replacements(replacements).send(target);
 	}
 
 	/**
@@ -733,13 +719,55 @@ public final class GoCraft extends JavaPlugin {
 		return true;
 	}
 
+	/**
+	 * Get the current chatPrefix
+	 * @return The current chatPrefix
+	 */
+	public List<String> getChatPrefix() {
+		return chatPrefix;
+	}
+
+	/**
+	 * Instance method of the debug function that can specified in an interface
+	 * @param message The message to send to the debug output
+	 */
 	public void _debug(String message) {
 		if (this.debug) {
-			getLogger().info("Debug: " + message);
+			getLogger().info("Debug: "+message);
 		}
 	}
 
-	public static void debug(String message) {
-		instance._debug(message);
+	/**
+	 * Sends an debug message to the console
+	 * @param message The message that should be printed to the console
+	 */
+	public static void debug(Object... message) {
+		if(GoCraft.getInstance().debug) {
+			GoCraft.getInstance().getLogger().info("Debug: "+StringUtils.join(message, " "));
+		}
+	}
+
+	/**
+	 * Print an information message to the console
+	 * @param message The message to print
+	 */
+	public static void info(String... message) {
+		GoCraft.getInstance().getLogger().info(StringUtils.join(message, " "));
+	}
+
+	/**
+	 * Print a warning to the console
+	 * @param message The message to print
+	 */
+	public static void warn(String... message) {
+		GoCraft.getInstance().getLogger().warning(StringUtils.join(message, " "));
+	}
+
+	/**
+	 * Print an error to the console
+	 * @param message The message to print
+	 */
+	public static void error(String... message) {
+		GoCraft.getInstance().getLogger().severe(StringUtils.join(message, " "));
 	}
 }

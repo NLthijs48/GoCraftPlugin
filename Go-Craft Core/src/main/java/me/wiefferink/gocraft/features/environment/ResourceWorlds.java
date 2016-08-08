@@ -43,7 +43,7 @@ public class ResourceWorlds extends Feature {
 			for(String worldName : rWorldsSection.getKeys(false)) {
 				World world = Bukkit.getWorld(worldName);
 				if(world == null) {
-					plugin.getLogger().warning("World "+worldName+" does not exist and therefore cannot be used as resource world");
+					GoCraft.warn("World "+worldName+" does not exist and therefore cannot be used as resource world");
 					continue;
 				}
 				long resetTime = getResetTime(world);
@@ -138,7 +138,7 @@ public class ResourceWorlds extends Feature {
 			}
 		}
 		if(!Bukkit.getServer().unloadWorld(world, false)) {
-			plugin.getLogger().warning("Could not unload resourceworld "+world.getName()+" for reset");
+			GoCraft.warn("Could not unload resourceworld "+world.getName()+" for reset");
 			return;
 		}
 		// REGION folder
@@ -148,14 +148,14 @@ public class ResourceWorlds extends Feature {
 				try {
 					FileDeleteStrategy.FORCE.delete(file);
 				} catch(IOException e) {
-					plugin.getLogger().warning("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
+					GoCraft.warn("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
 				}
 			}
 		}
 		try {
 			FileDeleteStrategy.FORCE.delete(regionFolder);
 		} catch(IOException e) {
-			plugin.getLogger().warning("Could not reset resourceworld "+world.getName()+": "+regionFolder.getAbsolutePath());
+			GoCraft.warn("Could not reset resourceworld "+world.getName()+": "+regionFolder.getAbsolutePath());
 			e.printStackTrace();
 		}
 		// DATA folder
@@ -165,20 +165,20 @@ public class ResourceWorlds extends Feature {
 				try {
 					FileDeleteStrategy.FORCE.delete(file);
 				} catch(IOException e) {
-					plugin.getLogger().warning("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
+					GoCraft.warn("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
 				}
 			}
 		}
 		try {
 			FileDeleteStrategy.FORCE.delete(dataFolder);
 		} catch(IOException e) {
-			plugin.getLogger().warning("Could not reset resourceworld "+world.getName()+": "+dataFolder.getAbsolutePath());
+			GoCraft.warn("Could not reset resourceworld "+world.getName()+": "+dataFolder.getAbsolutePath());
 			e.printStackTrace();
 		}
 
 		// Wrapup reset
 		updateResetTime(world);
-		plugin.getLogger().info("World "+world.getName()+" has been reset");
+		GoCraft.info("World "+world.getName()+" has been reset");
 		plugin.increaseStatistic("resourceWorldReset."+world.getName());
 		final String worldName = world.getName();
 		try {

@@ -17,7 +17,7 @@ public class CooldownFeature extends ShopFeature {
 		super(kit);
 		rawCooldown = kit.getDetails().getString("cooldown");
 		if (rawCooldown != null && !Utils.checkDuration(rawCooldown)) {
-			GoCraft.getInstance().getLogger().warning("Cooldown of kit " + kit.getName() + " in wrong format: " + rawCooldown);
+			GoCraft.warn("Cooldown of kit "+kit.getName()+" in wrong format: "+rawCooldown);
 		}
 		cooldown = Utils.durationStringToLong(rawCooldown);
 	}

@@ -31,7 +31,7 @@ public class Feature implements Listener {
 				if (commandClass != null) {
 					commandClass.setExecutor((CommandExecutor) this);
 				} else {
-					plugin.getLogger().warning("Command '" + command + "' is not added to plugin.yml and cannot be registered!");
+					GoCraft.warn("Command '"+command+"' is not added to plugin.yml and cannot be registered!");
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.distribution;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public class DistributionManager {
 			if (serverFile.isDirectory()) {
 				serverPluginFolders.put(serverId, serverFile);
 			} else {
-				plugin.getLogger().warning("Incorrect serverPluginFolder file: " + serverFile.getAbsolutePath() + "serverId=" + serverId);
+				GoCraft.warn("Incorrect serverPluginFolder file: "+serverFile.getAbsolutePath()+"serverId="+serverId);
 			}
 		}
 	}
@@ -77,8 +78,8 @@ public class DistributionManager {
 				Set<String> serverGroupContent = resolveServers(serverGroupString, warnings);
 				serverGroups.put(serverGroup, serverGroupContent);
 				for (String warning : warnings) {
-					plugin.getLogger().warning("Warnings for serverGroup " + serverGroup + ":");
-					plugin.getLogger().warning("  " + warning);
+					GoCraft.warn("Warnings for serverGroup "+serverGroup+":");
+					GoCraft.warn("  "+warning);
 				}
 			}
 		}
@@ -118,7 +119,7 @@ public class DistributionManager {
 			}
 			updateLogger = new BufferedWriter(new FileWriter(updates, true));
 		} catch (IOException e) {
-			plugin.getLogger().warning("Could not create writer to update.log:");
+			GoCraft.warn("Could not create writer to update.log:");
 			e.printStackTrace();
 		}
 		updateMessage(updateLogger, executor, "update-started");
@@ -293,7 +294,7 @@ public class DistributionManager {
 				updateLogger.close();
 			}
 		} catch (IOException e) {
-			plugin.getLogger().warning("Could not correctly close the updateLogger: " + e.getMessage());
+			GoCraft.warn("Could not correctly close the updateLogger: "+e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -321,7 +322,7 @@ public class DistributionManager {
 		for (int i = plugin.getServerName().length(); i < 20; i++) {
 			prefix.append(" ");
 		}
-		plugin.configurableMessage(prefix.toString(), updateLogger, key, args);
+		plugin.messageNoPrefix(updateLogger, prefix.toString()+Message.fromKey(key).replacements(args).getPlain());
 	}
 
 	/**

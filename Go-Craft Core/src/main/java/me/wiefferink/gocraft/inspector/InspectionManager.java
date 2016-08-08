@@ -278,12 +278,12 @@ public class InspectionManager {
 				PotionEffectType effect = PotionEffectType.getByName(effectString);
 				String optionsString = section.getString(effectString);
 				if (optionsString == null || effect == null) {
-					GoCraft.getInstance().getLogger().warning("InspectionManager.restoreInspection: potions of "+player.getName()+" no effect found for "+effectString);
+					GoCraft.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" no effect found for "+effectString);
 					continue;
 				}
 				String[] options = optionsString.split(":");
 				if (options.length < 4) {
-					GoCraft.getInstance().getLogger().warning("InspectionManager.restoreInspection: potions of "+player.getName()+" not enough options for "+effectString+", "+optionsString);
+					GoCraft.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" not enough options for "+effectString+", "+optionsString);
 					continue;
 				}
 				int duration, amplifier;
@@ -292,7 +292,7 @@ public class InspectionManager {
 					duration = Integer.parseInt(options[0]);
 					amplifier = Integer.parseInt(options[1]);
 				} catch (NumberFormatException e) {
-					GoCraft.getInstance().getLogger().warning("InspectionManager.restoreInspection: potions of "+player.getName()+" options are not numbers "+effectString+", "+optionsString);
+					GoCraft.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" options are not numbers "+effectString+", "+optionsString);
 					continue;
 				}
 				ambient = "true".equalsIgnoreCase(options[2]);
@@ -359,7 +359,7 @@ public class InspectionManager {
 			) {
 				inspectorStorage = UTF8Config.loadConfiguration(reader);
 			} catch (IOException e) {
-				plugin.getLogger().warning("Loading the inspectory inventories failed: " + inspectorsFile.getAbsolutePath());
+				GoCraft.warn("Loading the inspectory inventories failed: "+inspectorsFile.getAbsolutePath());
 			}
 		}
 		if (inspectorStorage == null) {
@@ -375,7 +375,7 @@ public class InspectionManager {
 		try {
 			inspectorStorage.save(inspectorsFile);
 		} catch (IOException e) {
-			plugin.getLogger().warning("Could not save inspector storage file: " + inspectorsFile.toString());
+			GoCraft.warn("Could not save inspector storage file: "+inspectorsFile.toString());
 			return false;
 		}
 		return true;

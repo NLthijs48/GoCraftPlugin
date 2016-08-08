@@ -11,7 +11,7 @@ public class GoPVPLink {
 	public GoPVPLink() {
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("GoPVP");
 		if (!(plugin instanceof GoPVP)) {
-			GoCraft.getInstance().getLogger().warning("Plugin with name GoPVP found, but it is not the correct one");
+			GoCraft.warn("Plugin with name GoPVP found, but it is not the correct one");
 		} else {
 			this.goPVP = (GoPVP) plugin;
 		}

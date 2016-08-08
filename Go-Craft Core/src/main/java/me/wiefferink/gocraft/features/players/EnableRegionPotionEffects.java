@@ -70,7 +70,7 @@ public class EnableRegionPotionEffects implements Listener {
 							for (String effect : effects.getKeys(false)) {
 								PotionEffectType realEffect = PotionEffectType.getByName(effect);
 								if (realEffect == null) {
-									plugin.getLogger().info("Wrong potion effect in the config: " + effect);
+									GoCraft.warn("Wrong potion effect in the config: "+effect);
 								} else {
 									player.addPotionEffect(new PotionEffect(realEffect, 59, effects.getInt(effect)), true);
 								}

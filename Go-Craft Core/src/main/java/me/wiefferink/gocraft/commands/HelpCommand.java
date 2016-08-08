@@ -35,7 +35,7 @@ public class HelpCommand implements CommandExecutor {
 		plugin.message(sender, "help-header");
 		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
 		if (ranksSection == null) {
-			plugin.getLogger().warning("[/help] ranksSection does not exist!");
+			GoCraft.warn("[/help] ranksSection does not exist!");
 			return true;
 		}
 		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
@@ -67,7 +67,7 @@ public class HelpCommand implements CommandExecutor {
 		helpMap = new HashMap<>();
 		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
 		if (ranksSection == null) {
-			plugin.getLogger().warning("[buildHelp] ranksSection does not exist!");
+			GoCraft.warn("[buildHelp] ranksSection does not exist!");
 			return;
 		}
 

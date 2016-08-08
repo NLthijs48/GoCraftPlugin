@@ -42,7 +42,7 @@ public class EnablePotionEffectsOnJoin implements Listener {
 			for (String effect : effects) {
 				PotionEffectType realEffect = PotionEffectType.getByName(effect);
 				if (realEffect == null) {
-					plugin.getLogger().info("Wrong potion effect in the config: " + effect);
+					GoCraft.warn("Wrong potion effect in the config: "+effect);
 				} else {
 					event.getPlayer().addPotionEffect(new PotionEffect(realEffect, Integer.MAX_VALUE, plugin.getConfig().getInt(configLinePotions + "." + effect), true));
 				}

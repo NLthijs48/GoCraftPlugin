@@ -48,7 +48,7 @@ public class RulesCommand implements CommandExecutor {
 		this.rules = new ArrayList<>();
 		ConfigurationSection rulesSection = plugin.getGeneralConfig().getConfigurationSection("rules");
 		if (rulesSection == null) {
-			plugin.getLogger().warning("Empty rules section!");
+			GoCraft.warn("Empty rules section!");
 			return;
 		}
 		for (String ruleKey : rulesSection.getKeys(false)) {

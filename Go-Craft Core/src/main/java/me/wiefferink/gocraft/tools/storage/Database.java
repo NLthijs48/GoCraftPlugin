@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.tools.storage;
 
 import com.sun.rowset.CachedRowSetImpl;
+import me.wiefferink.gocraft.GoCraft;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -47,14 +48,14 @@ public abstract class Database {
 		try {
 			Class.forName(className);
 		} catch (ClassNotFoundException e) {
-			plugin.getLogger().info("Could not find the jdbc driver: " + className);
+			GoCraft.warn("Could not find the jdbc driver: "+className);
 			e.printStackTrace();
 			return;
 		}
 		try {
 			connection = DriverManager.getConnection(jdbcURL, info);
 		} catch (SQLException e) {
-			plugin.getLogger().warning("Could not connect to the database: " + jdbcURL);
+			GoCraft.warn("Could not connect to the database: "+jdbcURL);
 			e.printStackTrace();
 			return;
 		}
@@ -74,7 +75,7 @@ public abstract class Database {
 
 	/**
 	 * Query the database and return a cached result.
-	 * @param query The statement to be queried.
+	 * @param preparedStatement The statement to be queried.
 	 * @return Cached rowset returned from query.
 	 */
 	public CachedRowSet query(final PreparedStatement preparedStatement) {
@@ -104,9 +105,7 @@ public abstract class Database {
 				if (future.get() != null) {
 					rowSet = future.get();
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
+			} catch(InterruptedException|ExecutionException e) {
 				e.printStackTrace();
 			}
 		}

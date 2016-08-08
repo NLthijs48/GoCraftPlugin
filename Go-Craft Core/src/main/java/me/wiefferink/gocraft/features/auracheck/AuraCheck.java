@@ -166,7 +166,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 			try {
 				ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, packet);
 			} catch (InvocationTargetException e) {
-				GoCraft.getInstance().getLogger().warning("Something went wrong with the chat packet to choose a target:");
+				GoCraft.warn("Something went wrong with the chat packet to choose a target:");
 				e.printStackTrace();
 			}
 			return true;
@@ -199,7 +199,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 				}
 				result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck] " + color + ChatColor.BOLD + finalPlayer.getName() + " killed " + result.killed + " out of " + result.spawned + " players.");
 				result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck]" + color + ChatColor.BOLD + " ► " + ChatColor.RESET + color + status);
-				GoCraft.getInstance().getLogger().info(finalPlayer.getName() + " killed " + result.killed + " out of " + result.spawned + " (checked by " + sender.getName() + ")");
+				GoCraft.info(finalPlayer.getName()+" killed "+result.killed+" out of "+result.spawned+" (checked by "+sender.getName()+")");
 			}
 		});
 		plugin.increaseStatistic("command.auracheck.used");
@@ -240,7 +240,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 									if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.staffChatWarning")) {
 										Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " killed " + result.killed + "/" + result.spawned + ", further inspection required.");
 									} else if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.consoleLogging")) {
-										GoCraft.getInstance().getLogger().info("[AuraCheck] staffchat warning for " + result.checked.getName() + ": " + result.killed + "/" + result.spawned + ".");
+										GoCraft.info("[AuraCheck] staffchat warning for "+result.checked.getName()+": "+result.killed+"/"+result.spawned+".");
 									}
 								}
 							}
@@ -248,7 +248,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 					}
 				} catch (Exception e) {
 					this.cancel();
-					GoCraft.getInstance().getLogger().warning("Something went wrong with automatic aura check:");
+					GoCraft.warn("Something went wrong with automatic aura check:");
 					e.printStackTrace();
 				}
 			}

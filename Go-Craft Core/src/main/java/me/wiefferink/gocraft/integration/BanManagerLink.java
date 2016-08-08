@@ -11,7 +11,7 @@ public class BanManagerLink {
 	public BanManagerLink() {
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("BanManager");
 		if (!(plugin instanceof BanManager)) {
-			GoCraft.getInstance().getLogger().warning("Plugin with name BanManager found, but it is not the correct one");
+			GoCraft.warn("Plugin with name BanManager found, but it is not the correct one");
 		} else {
 			this.banManager = (BanManager) plugin;
 		}

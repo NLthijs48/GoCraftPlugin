@@ -85,7 +85,7 @@ public class Shop implements Listener {
 		}
 		ConfigurationSection kitsSection = shopSection.getConfigurationSection("kits");
 		if (kitsSection == null) {
-			plugin.getLogger().warning("Kits section of the shop is empty!");
+			GoCraft.warn("Kits section of the shop is empty!");
 			return;
 		}
 		ConfigurationSection categoriesSection = shopSection.getConfigurationSection("categories");
@@ -106,7 +106,7 @@ public class Shop implements Listener {
 						categorySection = categoriesSection.getConfigurationSection(categoryPart);
 					}
 					if (categorySection == null) {
-						plugin.getLogger().warning("Category " + categoryPart + " specified in kit " + kitString + " not found in the categories list!");
+						GoCraft.warn("Category "+categoryPart+" specified in kit "+kitString+" not found in the categories list!");
 						continue;
 					}
 					category = new Category(categorySection, this);
@@ -247,12 +247,12 @@ public class Shop implements Listener {
 		for (Integer key : buttons.keySet()) {
 			Button button = buttons.get(key);
 			if (button == null) {
-				plugin.getLogger().warning("Button with key " + key + " is null");
+				GoCraft.warn("Button with key "+key+" is null");
 				continue;
 			}
 			ItemBuilder itemBuilder = button.getButton(session);
 			if (itemBuilder == null) {
-				plugin.getLogger().warning("ItemBuilder provided by button with key " + key + " is null");
+				GoCraft.warn("ItemBuilder provided by button with key "+key+" is null");
 				continue;
 			}
 			itemBuilder = itemBuilder.copy();
@@ -421,19 +421,19 @@ public class Shop implements Listener {
 				int data = 0;
 				String[] split = parts[i].split(":");
 				if (split.length < 1) {
-					GoCraft.getInstance().getLogger().warning("  No id provided for " + debugId);
+					GoCraft.warn("  No id provided for "+debugId);
 					return null;
 				}
 				try {
 					id = Integer.parseInt(split[0]);
 				} catch (NumberFormatException e) {
-					GoCraft.getInstance().getLogger().warning("  Incorrect item id " + split[0] + " for " + debugId);
+					GoCraft.warn("  Incorrect item id "+split[0]+" for "+debugId);
 				}
 				if (split.length > 1) {
 					try {
 						data = Integer.parseInt(split[1]);
 					} catch (NumberFormatException e) {
-						GoCraft.getInstance().getLogger().warning("  Incorrect data value " + split[1] + " for " + debugId);
+						GoCraft.warn("  Incorrect data value "+split[1]+" for "+debugId);
 					}
 				}
 				result = new ItemBuilder(id, 1, data);
@@ -446,7 +446,7 @@ public class Shop implements Listener {
 			else {
 				String[] split = parts[i].split(":");
 				if (split.length < 1) {
-					GoCraft.getInstance().getLogger().warning("  Incorrect attribute: " + parts[i] + " for " + debugId);
+					GoCraft.warn("  Incorrect attribute: "+parts[i]+" for "+debugId);
 					continue;
 				}
 				String identifier = split[0];
@@ -458,7 +458,7 @@ public class Shop implements Listener {
 					result.setName(ChatColor.DARK_GREEN + value);
 				} else if ("color".equalsIgnoreCase(identifier)) {
 					if (split.length <= 3) {
-						plugin.getLogger().warning("  Not enough numbers for the color attribute for " + debugId + ": " + parts[i]);
+						GoCraft.warn("  Not enough numbers for the color attribute for "+debugId+": "+parts[i]);
 					} else {
 						int red, green, blue;
 						try {
@@ -467,18 +467,18 @@ public class Shop implements Listener {
 							blue = Integer.parseInt(split[3]);
 							result.setColor(red, green, blue);
 						} catch (NumberFormatException e) {
-							plugin.getLogger().warning("  Color part is not a number for " + debugId + ": " + parts[i]);
+							GoCraft.warn("  Color part is not a number for "+debugId+": "+parts[i]);
 						}
 					}
 				} else if ("lore".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
-						plugin.getLogger().warning("  No arguments for lore for " + debugId);
+						GoCraft.warn("  No arguments for lore for "+debugId);
 					} else {
 						result.addLore(combineFrom(split, 1, ":"));
 					}
 				} else if ("action".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
-						plugin.getLogger().warning("  No arguments for action for " + debugId);
+						GoCraft.warn("  No arguments for action for "+debugId);
 					} else {
 						result.addAction(combineFrom(split, 1, ":"));
 					}
@@ -492,7 +492,7 @@ public class Shop implements Listener {
 					}
 					result.addEnchantment(enchantmentMap.get(identifier.toLowerCase()), number);
 				} else {
-					GoCraft.getInstance().getLogger().warning("  Unknown identifier: " + identifier + " (with value '" + value + "') for " + debugId);
+					GoCraft.warn("  Unknown identifier: "+identifier+" (with value '"+value+"') for "+debugId);
 				}
 			}
 		}

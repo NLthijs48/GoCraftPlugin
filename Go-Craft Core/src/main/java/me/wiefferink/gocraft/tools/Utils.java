@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.tools;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.messages.Message;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -203,7 +204,7 @@ public class Utils {
 	 * @param message The message, already prefixed by the type so no need to repeat that
 	 */
 	public static void sendStaffMessage(String type, String message) {
-		String result = GoCraft.getInstance().getLanguageManager().getLang("staffbroadcast-template", GoCraft.getInstance().getServerName(), type, message);
+		String result = Message.fromKey("staffbroadcast-template").replacements(GoCraft.getInstance().getServerName(), type, message).getPlain();
 		// Display in console
 		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(applyColors(result)));
 		// Send to other servers
@@ -216,7 +217,7 @@ public class Utils {
 	 * @param message The message, already prefixed by the type so no need to repeat that
 	 */
 	public static void displayStaffMessage(String type, String message) {
-		String result = GoCraft.getInstance().getLanguageManager().getLang("staffbroadcast-template", GoCraft.getInstance().getServerName(), type, message);
+		String result = Message.fromKey("staffbroadcast-template").replacements(GoCraft.getInstance().getServerName(), type, message).getPlain();
 		displayStaffMessage(result);
 	}
 
@@ -398,39 +399,39 @@ public class Utils {
 	 * @return A formatted string based on the language file
 	 */
 	public static String millisToHumanFormat(long milliseconds) {
-		long timeLeft = milliseconds + 500;
+		long timeLeft = milliseconds+500;
 		// To seconds
-		timeLeft = timeLeft / 1000;
-		if (timeLeft <= 0) {
-			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-ended");
-		} else if (timeLeft == 1) {
-			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-second", timeLeft);
-		} else if (timeLeft <= 120) {
-			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-seconds", timeLeft);
+		timeLeft = timeLeft/1000;
+		if(timeLeft <= 0) {
+			return Message.fromKey("timeleft-ended").getPlain();
+		} else if(timeLeft == 1) {
+			return Message.fromKey("timeleft-second").replacements(timeLeft).getPlain();
+		} else if(timeLeft <= 120) {
+			return Message.fromKey("timeleft-seconds").replacements(timeLeft).getPlain();
 		}
 		// To minutes
-		timeLeft = timeLeft / 60;
-		if (timeLeft <= 120) {
-			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-minutes", timeLeft);
+		timeLeft = timeLeft/60;
+		if(timeLeft <= 120) {
+			return Message.fromKey("timeleft-minutes").replacements(timeLeft).getPlain();
 		}
 		// To hours
-		timeLeft = timeLeft / 60;
-		if (timeLeft <= 48) {
-			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-hours", timeLeft);
+		timeLeft = timeLeft/60;
+		if(timeLeft <= 48) {
+			return Message.fromKey("timeleft-hours").replacements(timeLeft).getPlain();
 		}
 		// To days
-		timeLeft = timeLeft / 24;
-		if (timeLeft <= 60) {
-			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-days", timeLeft);
+		timeLeft = timeLeft/24;
+		if(timeLeft <= 60) {
+			return Message.fromKey("timeleft-days").replacements(timeLeft).getPlain();
 		}
 		// To months
-		timeLeft = timeLeft / 30;
-		if (timeLeft <= 24) {
-			return GoCraft.getInstance().getLanguageManager().getLang("timeleft-months", timeLeft);
+		timeLeft = timeLeft/30;
+		if(timeLeft <= 24) {
+			return Message.fromKey("timeleft-months").replacements(timeLeft).getPlain();
 		}
 		// To years
-		timeLeft = timeLeft / 12;
-		return GoCraft.getInstance().getLanguageManager().getLang("timeleft-years", timeLeft);
+		timeLeft = timeLeft/12;
+		return Message.fromKey("timeleft-years").replacements(timeLeft).getPlain();
 	}
 
 	/**
@@ -667,11 +668,9 @@ public class Utils {
 
 
 	private static final List<Alphabet> letters = Collections.unmodifiableList(Arrays.asList(Alphabet.values()));
-
 	private enum Alphabet {
-		a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
+		a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 	}
-
 	private static String getRandomLetter() {
 		return (letters.get(Utils.random.nextInt(letters.size()))).name();
 	}
@@ -687,6 +686,20 @@ public class Utils {
 		}
 		stringBuilder.append(Utils.random.nextInt(99));
 		return stringBuilder.toString();
+	}
+
+	/**
+	 * Get a start of the message with a maximum length
+	 * @param message       The message
+	 * @param maximumLength The maximum length to return
+	 * @return The start of the message with at most maximumLength characters
+	 */
+	public static String getMessageStart(Message message, int maximumLength) {
+		String messageStart = "";
+		for(int i = 0; i < message.getRaw().size() && messageStart.length() < maximumLength; i++) {
+			messageStart += message.getRaw().get(i).substring(0, Math.min(maximumLength, message.getRaw().get(i).length()));
+		}
+		return messageStart.substring(0, Math.min(maximumLength, messageStart.length()));
 	}
 
 }
