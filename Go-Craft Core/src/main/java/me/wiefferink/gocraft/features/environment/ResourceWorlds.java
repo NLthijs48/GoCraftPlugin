@@ -71,7 +71,7 @@ public class ResourceWorlds extends Feature {
 		double distanceFromSpawn = player.getWorld().getSpawnLocation().distance(player.getLocation());
 		boolean isSafe = Utils.isSafe(player.getLocation());
 		if(lastReset > 0 && (distanceFromSpawn < 10 || !isSafe)) {
-			GoCraft.debug("teleporting "+player.getName()+", lastPlayed: "+lastPlayed+", lastReset: "+lastReset+", distance: "+distanceFromSpawn+", isSafe: "+isSafe);
+			//GoCraft.debug("teleporting "+player.getName()+", lastPlayed: "+lastPlayed+", lastReset: "+lastReset+", distance: "+distanceFromSpawn+", isSafe: "+isSafe);
 			Utils.teleportRandomly(player, player.getWorld(), Utils.getWorldRadius(player.getWorld()), new Callback<Boolean>() {
 				@Override
 				public void execute(Boolean teleported) {
