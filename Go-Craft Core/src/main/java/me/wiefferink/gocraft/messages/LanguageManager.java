@@ -2,10 +2,14 @@ package me.wiefferink.gocraft.messages;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class LanguageManager {
@@ -95,11 +99,7 @@ public class LanguageManager {
 			}
 			// Retrieve the messages from the YAML file and create the result
 			for(String messageKey : ymlFile.getKeys(false)) {
-				if(ymlFile.isList(messageKey)) {
-					result.put(messageKey, new ArrayList<>(ymlFile.getStringList(messageKey)));
-				} else {
-					result.put(messageKey, new ArrayList<>(Collections.singletonList(ymlFile.getString(messageKey))));
-				}
+				result.put(messageKey, Utils.listOrSingle(ymlFile, messageKey));
 			}
 		} catch(IOException e) {
 			GoCraft.warn("Could not load set language file: "+file.getAbsolutePath());

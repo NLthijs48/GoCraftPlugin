@@ -6,6 +6,7 @@
 ########## OPTIONS
 chatPrefix: "&2[Go-Craft]&r "
 debug: true
+language: EN
 
 ########## CURRENCY
 moneyCharacter: '%euro%'
@@ -108,7 +109,6 @@ rewards:
 #    commands:
 #      - "/eco give %player% 500"
 #    message: <plain message or fancy>
-#      - ""
 
 shop:
 # categories:

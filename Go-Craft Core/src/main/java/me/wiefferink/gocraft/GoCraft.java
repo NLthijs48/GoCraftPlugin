@@ -483,9 +483,11 @@ public final class GoCraft extends JavaPlugin {
 		listeners.add(new DisableAboveNetherGlitching(this));
 		listeners.add(new AddDefaultRank(this));
 		listeners.add(new NauseaPotions(this));
+		// Feature based classes
 		listeners.add(new AuraCheck());
 		listeners.add(new ResourceWorlds());
 		listeners.add(new RandomtpCommand());
+		listeners.add(new Rewards());
 
 		for (Listener listener : listeners) {
 			if (listener instanceof Feature) {

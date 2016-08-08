@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -52,12 +53,11 @@ public class RulesCommand implements CommandExecutor {
 			return;
 		}
 		for (String ruleKey : rulesSection.getKeys(false)) {
-			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
+			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<>());
 			if (servers.contains(plugin.getServerId())) {
-				if (rulesSection.isList(ruleKey)) {
-					rules.addAll(rulesSection.getStringList(ruleKey));
-				} else {
-					rules.add(rulesSection.getString(ruleKey));
+				List<String> get = Utils.listOrSingle(rulesSection, ruleKey);
+				if(get != null) {
+					rules.addAll(get);
 				}
 			}
 		}

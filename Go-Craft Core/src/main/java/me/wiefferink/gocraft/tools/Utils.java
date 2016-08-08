@@ -702,4 +702,19 @@ public class Utils {
 		return messageStart.substring(0, Math.min(maximumLength, messageStart.length()));
 	}
 
+	/**
+	 * Get a string list from the config, with fallback to single string as list
+	 * @param section The section to look in
+	 * @param key     The key in the section to get
+	 * @return A list
+	 */
+	public static List<String> listOrSingle(ConfigurationSection section, String key) {
+		if(section.isList(key)) {
+			return section.getStringList(key);
+		} else if(section.isSet(key)) {
+			return new ArrayList<>(Collections.singletonList(section.getString(key)));
+		}
+		return null;
+	}
+
 }

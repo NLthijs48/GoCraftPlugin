@@ -583,12 +583,9 @@ public class DistributionManager {
 							groupPermissions = new ArrayList<>();
 							groupsPermissions.put(group, groupPermissions);
 						}
-						if (currentSection.isList("permissions")) {
-							groupPermissions.addAll(currentSection.getStringList("permissions"));
-						} else if (currentSection.isSet("permissions")) {
-							groupPermissions.add(currentSection.getString("permissions"));
-						} else {
-							// No permissions specified (maybe only help entry)
+						List<String> get = Utils.listOrSingle(currentSection, "permissions");
+						if(get != null) {
+							groupPermissions.addAll(get);
 						}
 					}
 				}
