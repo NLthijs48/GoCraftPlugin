@@ -48,7 +48,11 @@ public class MapKitsFeature extends ShopFeature {
 	 * @return The name of the map
 	 */
 	public String getMapName() {
-		return GoCraft.getInstance().getMapSwitcherLink().get().getMapName(getMap());
+		String result = GoCraft.getInstance().getMapSwitcherLink().get().getMapName(getMap());
+		if(result == null) {
+			result = "Upcoming";
+		}
+		return result;
 	}
 
 	/**
