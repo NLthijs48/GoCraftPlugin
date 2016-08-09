@@ -505,7 +505,7 @@ public class Utils {
 	 */
 	public static boolean isInPvpArea(Player player) {
 		return GoCraft.getInstance().getWorldGuardLink() != null && GoCraft.getInstance().getWorldGuardLink().get()
-				.getRegionManager(Bukkit.getWorld("world"))
+				.getRegionManager(player.getWorld())
 				.getApplicableRegions(player.getLocation())
 				.testState(GoCraft.getInstance().getWorldGuardLink().get().wrapPlayer(player), DefaultFlag.PVP);
 	}
