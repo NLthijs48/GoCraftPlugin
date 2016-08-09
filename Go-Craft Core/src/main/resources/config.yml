@@ -103,11 +103,10 @@ enableNauseaPotions: true
 
 rewards:
 # <key>:
-#    target:
-#      - "rank:<>, uuid:<>" # rank matches and uuid matches
-#      - "" # Or this line matches
-#    commands:
-#      - "/eco give %player% 500"
+#    permission: <string> # Permission node
+#    ranks: <string> # List or single rank
+#    uuids: <string> # List or single UUID
+#    commands: <string> # List or single command (has %player% and %uuid%)
 #    message: <plain message or fancy>
 
 shop:

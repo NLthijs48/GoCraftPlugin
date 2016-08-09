@@ -56,25 +56,22 @@ public class Rewards extends Feature {
 			if(targets == null || targets.isEmpty() || GoCraft.getInstance().getLocalStorage().getBoolean("players."+player.getUniqueId().toString()+".rewards."+key)) {
 				continue;
 			}
-			boolean matches = false;
-			// Player should match one of the target lines
-			for(String target : targets) {
-				String[] parts = target.split(", ");
-				boolean and = true;
-				// Player should match all parts of a target line
-				for(String part : parts) {
-					if(part.startsWith("rank:") && part.length() > 5) {
-						String rank = part.substring(5);
-						and &= groups.contains(rank);
-					} else if(part.startsWith("uuid:") && part.length() > 5) {
-						String uuid = part.substring(5);
-						and &= player.getUniqueId().toString().equals(uuid);
-					} else {
-						GoCraft.warn("Incorrect part '"+part+"' in rewards section "+key);
-					}
+			boolean matches;
+			// Check permission
+			String permission = rewardsSection.getString(key+".permission");
+			matches = (permission != null && player.hasPermission(permission));
+
+			// Check rank match
+			List<String> ranks = Utils.listOrSingle(rewardsSection, key+".ranks");
+			if(ranks != null) {
+				for(String rank : ranks) {
+					matches |= groups.contains(rank);
 				}
-				matches |= and;
 			}
+
+			// Check uuid match
+			List<String> uuids = Utils.listOrSingle(rewardsSection, key+".uuids");
+			matches |= (uuids != null && uuids.contains(player.getUniqueId().toString()));
 			if(!matches) {
 				continue;
 			}
