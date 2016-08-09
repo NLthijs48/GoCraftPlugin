@@ -552,6 +552,9 @@ public class Inspection {
 	 */
 	public void restoreInspectorState() {
 		// Restore inventory
+		for(int i = 0; i < inspector.getInventory().getSize(); i++) {
+			inspector.getInventory().setItem(i, null);
+		}
 		inspector.getInventory().setContents(inspectorInventory);
 		inspector.getInventory().setArmorContents(inspectorArmor);
 		// Restore potion effects
