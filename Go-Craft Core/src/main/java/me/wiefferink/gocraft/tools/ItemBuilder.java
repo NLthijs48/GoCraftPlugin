@@ -10,10 +10,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.material.SpawnEgg;
+import org.bukkit.potion.Potion;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ItemBuilder {
 	private ItemStack item;
@@ -51,24 +51,18 @@ public class ItemBuilder {
 	private ItemBuilder(ItemStack item, boolean clone) {
 		if(clone) {
 			item = item.clone();
-		}
-		if(item.getType() == Material.MONSTER_EGG) {
-			SpawnEgg egg = new SpawnEgg((byte)item.getDurability());
-			ItemMeta itemMeta = item.getItemMeta();
-			ItemMeta eggMeta = egg.toItemStack().getItemMeta();
-			if(itemMeta != null && eggMeta != null) {
-				if(itemMeta.hasDisplayName()) {
-					eggMeta.setDisplayName(itemMeta.getDisplayName());
+		} else {
+			if(item.getType() == Material.MONSTER_EGG) {
+				SpawnEgg egg = new SpawnEgg((byte)item.getDurability());
+				item = egg.toItemStack(item.getAmount());
+			} else if(item.getType() == Material.POTION || item.getType() == Material.SPLASH_POTION || item.getType() == Material.LINGERING_POTION) {
+				try {
+					Potion potion = Potion.fromDamage(item.getDurability());
+					item = potion.toItemStack(item.getAmount());
+				} catch(IllegalArgumentException e) {
+					GoCraft.warn("Wrong potion: type:", item.getType(), "durability:", item.getDurability());
 				}
-				for(ItemFlag itemFlag : itemMeta.getItemFlags()) {
-					eggMeta.addItemFlags(itemFlag);
-				}
-				for(Map.Entry<Enchantment, Integer> entry : itemMeta.getEnchants().entrySet()) {
-					eggMeta.addEnchant(entry.getKey(), entry.getValue(), true);
-				}
-				eggMeta.setLore(itemMeta.getLore());
 			}
-			item.setItemMeta(eggMeta);
 		}
 		this.item = item;
 	}

@@ -732,11 +732,11 @@ public final class GoCraft extends JavaPlugin {
 
 	/**
 	 * Instance method of the debug function that can specified in an interface
-	 * @param message The message to send to the debug output
+	 * @param messages The message to send to the debug output
 	 */
-	public void _debug(String message) {
+	public void _debug(Object... messages) {
 		if (this.debug) {
-			getLogger().info("Debug: "+message);
+			getLogger().info("Debug: "+StringUtils.join(messages, " "));
 		}
 	}
 
@@ -754,7 +754,7 @@ public final class GoCraft extends JavaPlugin {
 	 * Print an information message to the console
 	 * @param message The message to print
 	 */
-	public static void info(String... message) {
+	public static void info(Object... message) {
 		GoCraft.getInstance().getLogger().info(StringUtils.join(message, " "));
 	}
 
@@ -762,7 +762,7 @@ public final class GoCraft extends JavaPlugin {
 	 * Print a warning to the console
 	 * @param message The message to print
 	 */
-	public static void warn(String... message) {
+	public static void warn(Object... message) {
 		GoCraft.getInstance().getLogger().warning(StringUtils.join(message, " "));
 	}
 
@@ -770,7 +770,7 @@ public final class GoCraft extends JavaPlugin {
 	 * Print an error to the console
 	 * @param message The message to print
 	 */
-	public static void error(String... message) {
+	public static void error(Object... message) {
 		GoCraft.getInstance().getLogger().severe(StringUtils.join(message, " "));
 	}
 }
