@@ -78,7 +78,7 @@ worlds:
 #   radius: <number>
 #   resetTime: <duration>
 
-########## AURACHECK
+########## Combat
 ## Automatic aura checking (fake player spawning and hit detection)
 auracheck:
   enablePeriodicCheck: true
@@ -96,10 +96,11 @@ auracheck:
   ticksToKill: 10
   numberOfFakePlayers: 4
   visiblePlayers: false
-
 hacksConfirmedCommand: "gopvp:hackban %player% %reason%"
 staffJoinsInInspect: false
 enableNauseaPotions: true
+playerAttributes: # Set player attributes
+# generic_attack_speed: 12 # 4 is 1.9 PVP, 16 is 1.8 PVP
 
 rewards:
 # <key>:

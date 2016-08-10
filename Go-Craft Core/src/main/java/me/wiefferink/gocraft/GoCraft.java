@@ -488,6 +488,7 @@ public final class GoCraft extends JavaPlugin {
 		listeners.add(new ResourceWorlds());
 		listeners.add(new RandomtpCommand());
 		listeners.add(new Rewards());
+		listeners.add(new AttackSpeed());
 
 		for (Listener listener : listeners) {
 			if (listener instanceof Feature) {
