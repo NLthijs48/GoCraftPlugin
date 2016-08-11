@@ -16,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -458,7 +459,7 @@ public class Shop implements Listener {
 					result.setName(ChatColor.DARK_GREEN + value);
 				} else if ("color".equalsIgnoreCase(identifier)) {
 					if (split.length <= 3) {
-						GoCraft.warn("  Not enough numbers for the color attribute for "+debugId+": "+parts[i]);
+						GoCraft.warn("  Not enough numbers for the color attribute for", debugId+": "+parts[i]);
 					} else {
 						int red, green, blue;
 						try {
@@ -467,20 +468,33 @@ public class Shop implements Listener {
 							blue = Integer.parseInt(split[3]);
 							result.setColor(red, green, blue);
 						} catch (NumberFormatException e) {
-							GoCraft.warn("  Color part is not a number for "+debugId+": "+parts[i]);
+							GoCraft.warn("  Color part is not a number for", debugId+": "+parts[i]);
 						}
 					}
 				} else if ("lore".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
-						GoCraft.warn("  No arguments for lore for "+debugId);
+						GoCraft.warn("  No arguments for lore for", debugId);
 					} else {
 						result.addLore(combineFrom(split, 1, ":"));
 					}
 				} else if ("action".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
-						GoCraft.warn("  No arguments for action for "+debugId);
+						GoCraft.warn("  No arguments for action for", debugId);
 					} else {
 						result.addAction(combineFrom(split, 1, ":"));
+					}
+				} else if("potion".equalsIgnoreCase(identifier)) {
+					if(split.length < 2) {
+						GoCraft.warn("  No arguments for potion for", debugId);
+					} else {
+						boolean extended = (split.length > 2 && split[2] != null && split[2].equals("true"));
+						boolean upgraded = (split.length > 3 && split[3] != null && split[3].equals("true"));
+						try {
+							PotionType potionType = PotionType.valueOf(split[1].toUpperCase());
+							result.setPotionType(potionType, extended, upgraded);
+						} catch(IllegalArgumentException e) {
+							GoCraft.warn("Incorrect potionType:", identifier, "for", debugId);
+						}
 					}
 				} else if (enchantmentMap.containsKey(identifier.toLowerCase())) {
 					int number = 1;

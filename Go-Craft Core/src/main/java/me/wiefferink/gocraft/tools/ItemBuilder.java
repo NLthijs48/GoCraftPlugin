@@ -10,8 +10,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.SpawnEgg;
 import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,7 @@ public class ItemBuilder {
 	}
 
 	public ItemBuilder(int material, int amount, int data) {
+		//noinspection deprecation
 		this(new ItemStack(material, amount, (short)data), false);
 	}
 
@@ -54,12 +58,12 @@ public class ItemBuilder {
 			item = item.clone();
 		} else {
 			if(item.getType() == Material.MONSTER_EGG) {
-				SpawnEgg egg = new SpawnEgg((byte)item.getDurability());
+				@SuppressWarnings("deprecation") SpawnEgg egg = new SpawnEgg((byte)item.getDurability());
 				item = egg.toItemStack(item.getAmount());
 			} else if(!Bukkit.getBukkitVersion().startsWith("1.8")
 					&& (item.getType() == Material.POTION || item.getType() == Material.SPLASH_POTION || item.getType() == Material.LINGERING_POTION)) {
 				try {
-					Potion potion = Potion.fromDamage(item.getDurability());
+					@SuppressWarnings("deprecation") Potion potion = Potion.fromDamage(item.getDurability());
 					item = potion.toItemStack(item.getAmount());
 				} catch(IllegalArgumentException e) {
 					GoCraft.warn("Wrong potion: type:", item.getType(), "durability:", item.getDurability());
@@ -216,6 +220,33 @@ public class ItemBuilder {
 			meta.setLore(lores);
 			item.setItemMeta(meta);
 		}
+		return this;
+	}
+
+
+	/**
+	 * Set the potion type of potions and tipped arrows
+	 * @param type The potion type
+	 * @return this
+	 */
+	public ItemBuilder setPotionType(PotionType type) {
+		return setPotionType(type, false, false);
+	}
+
+	/**
+	 * Set the potion type of potions and tipped arrows
+	 * @param type    The potion type
+	 * @param extend  Extend the potion
+	 * @param upgrade Upgrade the potion
+	 * @return this
+	 */
+	public ItemBuilder setPotionType(PotionType type, boolean extend, boolean upgrade) {
+		if(type == null || !(item.getType() == Material.POTION || item.getType() == Material.TIPPED_ARROW)) {
+			return this;
+		}
+		PotionMeta potionMeta = (PotionMeta)item.getItemMeta();
+		potionMeta.setBasePotionData(new PotionData(type, extend, upgrade));
+		item.setItemMeta(potionMeta);
 		return this;
 	}
 
