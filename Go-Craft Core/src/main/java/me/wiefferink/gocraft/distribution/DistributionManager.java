@@ -124,7 +124,11 @@ public class DistributionManager {
 		}
 		updateMessage(updateLogger, executor, "update-started");
 
-		plugin.loadGeneralConfig(); // Make sure we have the latest plugin info
+		// Make sure we have the latest plugin info
+		plugin.loadGeneralConfig();
+		initializeServerGroups();
+		initializeServerPluginFolders();
+
 		final Set<String> include = resolveServers(serverFilter, generalWarnings);
 
 		int pluginsUpdated = 0, jarsUpdated = 0, configsUpdated = 0, permissionsUpdated = 0, rootFilesUpdated = 0;
