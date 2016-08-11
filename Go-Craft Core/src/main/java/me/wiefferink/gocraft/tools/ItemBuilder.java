@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.tools;
 
 import me.wiefferink.gocraft.GoCraft;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -55,7 +56,8 @@ public class ItemBuilder {
 			if(item.getType() == Material.MONSTER_EGG) {
 				SpawnEgg egg = new SpawnEgg((byte)item.getDurability());
 				item = egg.toItemStack(item.getAmount());
-			} else if(item.getType() == Material.POTION || item.getType() == Material.SPLASH_POTION || item.getType() == Material.LINGERING_POTION) {
+			} else if(!Bukkit.getBukkitVersion().startsWith("1.8")
+					&& (item.getType() == Material.POTION || item.getType() == Material.SPLASH_POTION || item.getType() == Material.LINGERING_POTION)) {
 				try {
 					Potion potion = Potion.fromDamage(item.getDurability());
 					item = potion.toItemStack(item.getAmount());
