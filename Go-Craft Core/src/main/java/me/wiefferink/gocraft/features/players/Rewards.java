@@ -54,8 +54,7 @@ public class Rewards extends Feature {
 		ConfigurationSection rewardsSection = getRewardsSection();
 		List<String> groups = Arrays.asList(GoCraft.getInstance().getPermissionProvider().getPlayerGroups(player));
 		for(String key : rewardsSection.getKeys(false)) {
-			List<String> targets = Utils.listOrSingle(rewardsSection, key+".target");
-			if(targets == null || targets.isEmpty() || GoCraft.getInstance().getLocalStorage().isSet("players."+player.getUniqueId().toString()+".rewards."+key)) {
+			if(GoCraft.getInstance().getLocalStorage().isSet("players."+player.getUniqueId().toString()+".rewards."+key)) {
 				continue;
 			}
 			boolean matches;
@@ -112,7 +111,9 @@ public class Rewards extends Feature {
 
 			// Record that reward is given
 			SimpleDateFormat time = new SimpleDateFormat(plugin.getConfig().getString("signLogTimeFormat"));
-			GoCraft.getInstance().getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, time.format(Calendar.getInstance().getTimeInMillis()));
+			String timeString = time.format(Calendar.getInstance().getTimeInMillis());
+			GoCraft.getInstance().getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, timeString);
+			GoCraft.getInstance().saveLocalStorage();
 		}
 	}
 
