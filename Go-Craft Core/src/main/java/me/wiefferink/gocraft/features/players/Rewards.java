@@ -14,7 +14,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class Rewards extends Feature {
@@ -53,7 +55,7 @@ public class Rewards extends Feature {
 		List<String> groups = Arrays.asList(GoCraft.getInstance().getPermissionProvider().getPlayerGroups(player));
 		for(String key : rewardsSection.getKeys(false)) {
 			List<String> targets = Utils.listOrSingle(rewardsSection, key+".target");
-			if(targets == null || targets.isEmpty() || GoCraft.getInstance().getLocalStorage().getBoolean("players."+player.getUniqueId().toString()+".rewards."+key)) {
+			if(targets == null || targets.isEmpty() || GoCraft.getInstance().getLocalStorage().isSet("players."+player.getUniqueId().toString()+".rewards."+key)) {
 				continue;
 			}
 			boolean matches;
@@ -109,7 +111,8 @@ public class Rewards extends Feature {
 			}
 
 			// Record that reward is given
-			GoCraft.getInstance().getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, true);
+			SimpleDateFormat time = new SimpleDateFormat(plugin.getConfig().getString("signLogTimeFormat"));
+			GoCraft.getInstance().getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, time.format(Calendar.getInstance().getTimeInMillis()));
 		}
 	}
 
