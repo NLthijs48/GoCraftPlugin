@@ -80,7 +80,7 @@ public final class GoCraft extends JavaPlugin {
 	// Version specific classes
 	private SpecificUtilsBase specificUtils = null;
 
-	private boolean noUpdate = false;
+	private boolean isReload = false;
 
 	private boolean dynMapInstalled = false;
 	public static boolean loadedCorrectly = false;
@@ -227,14 +227,20 @@ public final class GoCraft extends JavaPlugin {
 			shop.handleServerStop();
 		}
 		saveLocalStorageNow();
-		if (noUpdate) {
-			noUpdate = false;
-		} else {
+		if(!isReload) {
 			getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
 		}
 
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
+	}
+
+	/**
+	 * Check if this enable/disable is because of a reload or not
+	 * @return true if it is a reload, otherwise false
+	 */
+	public boolean isReload() {
+		return isReload;
 	}
 
 	/**
@@ -543,9 +549,10 @@ public final class GoCraft extends JavaPlugin {
 	 * Reload the plugin data
 	 */
 	public void reload() {
-		noUpdate = true;
+		isReload = true;
 		onDisable();
 		onEnable();
+		isReload = false;
 	}
 
 	/**

@@ -37,6 +37,9 @@ public class ResourceWorlds extends Feature {
 
 	@Override
 	public void stop() {
+		if(plugin.isReload()) {
+			return;
+		}
 		// Reset the resource worlds that need it
 		ConfigurationSection rWorldsSection = plugin.getConfig().getConfigurationSection("worlds");
 		if(rWorldsSection != null) {
