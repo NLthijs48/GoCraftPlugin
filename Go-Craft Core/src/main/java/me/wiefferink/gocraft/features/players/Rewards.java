@@ -112,8 +112,9 @@ public class Rewards extends Feature {
 			// Record that reward is given
 			SimpleDateFormat time = new SimpleDateFormat(plugin.getConfig().getString("signLogTimeFormat"));
 			String timeString = time.format(Calendar.getInstance().getTimeInMillis());
-			GoCraft.getInstance().getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, timeString);
-			GoCraft.getInstance().saveLocalStorage();
+			plugin.getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, timeString);
+			plugin.saveLocalStorage();
+			GoCraft.info("[Rewards]", player.getName(), "received reward", key);
 		}
 	}
 
@@ -122,7 +123,7 @@ public class Rewards extends Feature {
 	 * @return The configurationsection
 	 */
 	private ConfigurationSection getRewardsSection() {
-		return GoCraft.getInstance().getConfig().getConfigurationSection("rewards");
+		return plugin.getConfig().getConfigurationSection("rewards");
 	}
 
 }
