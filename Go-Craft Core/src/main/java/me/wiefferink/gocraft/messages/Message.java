@@ -170,6 +170,35 @@ public class Message {
 	}
 
 	/**
+	 * Append lines to the message
+	 * @param lines The lines to append
+	 * @return this
+	 */
+	public Message prepend(List<String> lines) {
+		message.addAll(0, lines);
+		return this;
+	}
+
+	/**
+	 * Append a message to this message
+	 * @param message The message to append
+	 * @return this
+	 */
+	public Message prepend(Message message) {
+		return append(message.get());
+	}
+
+	/**
+	 * Append lines to the message
+	 * @param line The line to append
+	 * @return this
+	 */
+	public Message prepend(String line) {
+		message.add(0, line);
+		return this;
+	}
+
+	/**
 	 * Send the message to a target
 	 * @param target The target to send the message to (Player, CommandSender, Logger)
 	 * @return this

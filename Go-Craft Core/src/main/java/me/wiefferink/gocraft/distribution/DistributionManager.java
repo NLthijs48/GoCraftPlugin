@@ -326,7 +326,7 @@ public class DistributionManager {
 		for (int i = plugin.getServerName().length(); i < 20; i++) {
 			prefix.append(" ");
 		}
-		plugin.messageNoPrefix(updateLogger, prefix.toString()+Message.fromKey(key).replacements(args).getPlain());
+		Message.fromKey(key).prepend(prefix.toString()).replacements(args).send(updateLogger);
 	}
 
 	/**

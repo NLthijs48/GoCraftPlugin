@@ -73,6 +73,7 @@ public final class GoCraft extends JavaPlugin {
 	private Economy economy = null;
 	private Permission permissionProvider = null;
 	private MapSwitcherLink mapSwitcherLink = null;
+
 	private GoPVPLink goPVPLink = null;
 	private EssentialsLink essentialsLink = null;
 	private WorldGuardLink worldGuardLink = null;
