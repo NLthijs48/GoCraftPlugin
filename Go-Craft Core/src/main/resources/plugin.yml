@@ -109,3 +109,6 @@ commands:
     description: Randomly teleport to a spot in this world
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
     aliases: [rtp]
+  Map:
+    description: Check the online map of the server
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

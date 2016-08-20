@@ -6,6 +6,8 @@
 # the config to the filename (excluding .yml)     #
 ###################################################
 
+action: "[gold][bold]<%0%>[/bold]"
+
 staff-noPermission: "You are not a staff member."
 
 general-mutedSignUse: "You cannot place signs while you are muted."
@@ -138,6 +140,13 @@ shop-noItems: "You do not have the items required to sell this."
 shop-sellFailed: "Could not sell the items, report this to the staff."
 shop-soldKit: "You have sold %0% for %1%, balance: %2%."
 shop-buyFailed: "Could not buy the items, report this to the staff."
+
+map-link:
+  - "Check the map on "
+  - "[bold]maps.go-craft.com[/bold]"
+  - "  hover: %lang:action|Click to open the map|%"
+  - "  link: http://maps.go-craft.com"
+  - "."
 
 ########## AURACHECK
 ac-noPermission: "You do not have permission to check for killaura."
