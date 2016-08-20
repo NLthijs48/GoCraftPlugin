@@ -1,28 +1,24 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TempbanCommand implements Listener {
+public class TempbanCommand extends Feature {
 
-	public final String configLine = "redirectTempban";
-	private GoCraft plugin;
 	private ArrayList<String> tempbanCommands = new ArrayList<>(Arrays.asList(
 			"tempban", "banmanager:tempban", "bmtempban", "banmanager:bmtempban",
 			"tempbanip", "banmanager:tempbanip", "bmtempbanip", "banmanager:bmtempbanip"));
 
-	public TempbanCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
+	public TempbanCommand() {
+		if(plugin.getConfig().getBoolean("redirectTempban")) {
+			listen();
 		}
 	}
 

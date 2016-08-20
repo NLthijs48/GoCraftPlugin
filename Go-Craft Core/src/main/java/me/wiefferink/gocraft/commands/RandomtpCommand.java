@@ -4,14 +4,13 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class RandomtpCommand extends Feature implements CommandExecutor {
+public class RandomtpCommand extends Feature {
 
 	public RandomtpCommand() {
-		commands.add("RandomTp");
+		command("RandomTp");
 	}
 
 	@Override

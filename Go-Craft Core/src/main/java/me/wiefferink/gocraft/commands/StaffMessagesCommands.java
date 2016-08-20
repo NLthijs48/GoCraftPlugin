@@ -1,23 +1,17 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class StaffMessagesCommands implements CommandExecutor {
+public class StaffMessagesCommands extends Feature {
 
-
-	public final String configLine = "enableStaffMessageCommands";
-	private GoCraft plugin;
-
-	public StaffMessagesCommands(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getCommand("StaffBroadcast").setExecutor(this);
-			plugin.getCommand("DisplayStaffMessage").setExecutor(this);
+	public StaffMessagesCommands() {
+		if(plugin.getConfig().getBoolean("enableStaffMessageCommands")) {
+			command("StaffBroadcast");
+			command("DisplayStaffMessage");
 		}
 	}
 

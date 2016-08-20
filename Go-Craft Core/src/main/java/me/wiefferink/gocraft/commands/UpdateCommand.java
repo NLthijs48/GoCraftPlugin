@@ -1,19 +1,14 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class UpdateCommand implements CommandExecutor {
+public class UpdateCommand extends Feature {
 
-	public final String configLine = "enableUpdateCommand";
-	private GoCraft plugin;
-
-	public UpdateCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getCommand("update").setExecutor(this);
+	public UpdateCommand() {
+		if(plugin.getConfig().getBoolean("enableUpdateCommand")) {
+			command("update");
 		}
 	}
 

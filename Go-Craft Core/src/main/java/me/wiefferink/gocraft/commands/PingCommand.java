@@ -1,23 +1,17 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PingCommand implements CommandExecutor {
+public class PingCommand extends Feature {
 
-
-	public final String configLine = "enablePingCommand";
-	private GoCraft plugin;
-
-	public PingCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getCommand("Ping").setExecutor(this);
+	public PingCommand() {
+		if(plugin.getConfig().getBoolean("enablePingCommand")) {
+			command("Ping");
 		}
 	}
 

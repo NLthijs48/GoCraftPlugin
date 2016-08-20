@@ -1,24 +1,18 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class InspectCommand implements CommandExecutor {
+public class InspectCommand extends Feature {
 
-
-	public final String configLine = "enableInspecting";
-	private GoCraft plugin;
-
-	public InspectCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getCommand("Inspect").setExecutor(this);
+	public InspectCommand() {
+		if(plugin.getConfig().getBoolean("enableInspecting")) {
+			command("Inspect");
 		}
 	}
 

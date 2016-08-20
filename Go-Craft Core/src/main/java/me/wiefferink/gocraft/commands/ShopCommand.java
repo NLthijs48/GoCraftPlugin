@@ -1,18 +1,14 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ShopCommand implements CommandExecutor {
+public class ShopCommand extends Feature {
 
-	private GoCraft plugin;
-
-	public ShopCommand(GoCraft plugin) {
-		this.plugin = plugin;
-		plugin.getCommand("Shop").setExecutor(this);
+	public ShopCommand() {
+		command("Shop");
 	}
 
 	@Override

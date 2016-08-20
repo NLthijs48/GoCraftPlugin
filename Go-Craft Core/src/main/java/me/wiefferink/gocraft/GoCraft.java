@@ -55,7 +55,7 @@ public final class GoCraft extends JavaPlugin {
 	public static final String currencyEuro = "%euro%";
 	public static final String languageFolder = "lang";
 	// Variables
-	private ArrayList<Listener> listeners;
+	private ArrayList<Listener> features;
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
 	private InspectionManager inspectionManager;
@@ -219,7 +219,7 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public void onDisable() {
 		// Call stop methods of the registered features
-		for (Listener listener : listeners) {
+		for(Listener listener : features) {
 			if (listener instanceof Feature) {
 				((Feature) listener).stopFeature();
 			}
@@ -436,69 +436,70 @@ public final class GoCraft extends JavaPlugin {
 	 * Register all listener and command classes
 	 */
 	public void addListeners() {
-		listeners = new ArrayList<>();
+		features = new ArrayList<>();
 		// Blocks
-		listeners.add(new DisableBedrockBreak(this));
-		listeners.add(new DisableBedrockPlace(this));
-		listeners.add(new DisableDispensers(this));
-		listeners.add(new DisableTradeSignPlacing(this));
-		listeners.add(new DisableBlockBreaking(this));
-		listeners.add(new DisableAnvilBreak(this));
-		listeners.add(new DisableWitherDamage(this));
+		features.add(new DisableBedrockBreak(this));
+		features.add(new DisableBedrockPlace(this));
+		features.add(new DisableDispensers(this));
+		features.add(new DisableTradeSignPlacing(this));
+		features.add(new DisableBlockBreaking(this));
+		features.add(new DisableAnvilBreak(this));
+		features.add(new DisableWitherDamage(this));
 		// General
-		listeners.add(new DisableRain(this));
-		listeners.add(new DisableMobSpawning(this));
-		listeners.add(new DisableHungerLoss(this));
-		listeners.add(new EnablePotionEffectsOnJoin(this));
-		listeners.add(new SpawnTeleport(this));
-		listeners.add(new EnableRegionPotionEffects(this));
+		features.add(new DisableRain(this));
+		features.add(new DisableMobSpawning(this));
+		features.add(new DisableHungerLoss(this));
+		features.add(new EnablePotionEffectsOnJoin(this));
+		features.add(new SpawnTeleport(this));
+		features.add(new EnableRegionPotionEffects(this));
 		if (getBanManagerLink() != null) {
-			listeners.add(new PunishmentNotifications(this));
+			features.add(new PunishmentNotifications(this));
 		}
-		listeners.add(new DisableStaffJoinLeaveMessages(this));
-		listeners.add(new OpenenderLimiter(this));
-		listeners.add(new DisableSignUseWhileMuted(this));
+		features.add(new DisableStaffJoinLeaveMessages(this));
+		features.add(new OpenenderLimiter(this));
+		features.add(new DisableSignUseWhileMuted(this));
 		// Items
-		listeners.add(new DisableItemDrops(this));
-		listeners.add(new DisableItemSpawning(this));
-		listeners.add(new DisablePotionSplash(this));
-		listeners.add(new DisablePotionThrow(this));
-		listeners.add(new DisablePotionInvisibleDrink(this));
-		listeners.add(new DisableXpBottleThrow(this));
-		listeners.add(new DisableFirework(this));
-		listeners.add(new DisableEnderpearl(this));
-		listeners.add(new DisableEyeOfEnder(this));
-		listeners.add(new DisableBooks(this));
+		features.add(new DisableItemDrops(this));
+		features.add(new DisableItemSpawning(this));
+		features.add(new DisablePotionSplash(this));
+		features.add(new DisablePotionThrow(this));
+		features.add(new DisablePotionInvisibleDrink(this));
+		features.add(new DisableXpBottleThrow(this));
+		features.add(new DisableFirework(this));
+		features.add(new DisableEnderpearl(this));
+		features.add(new DisableEyeOfEnder(this));
+		features.add(new DisableBooks(this));
 		// Logging
-		listeners.add(new LogSigns(this));
+		features.add(new LogSigns(this));
 		// PVP
-		listeners.add(new DisablePlayerDamage(this));
-		listeners.add(new DisableFallDamage(this));
-		// Commands
-		listeners.add(new TempbanCommand(this));
-		new PingCommand(this);
-		new SetspawnCommand(this);
-		new StaffMessagesCommands(this);
-		new UpdateCommand(this);
-		new ReloadCommand(this);
-		new InspectCommand(this);
-		new RulesCommand(this);
-		new HelpCommand(this);
-		new ShopCommand(this);
+		features.add(new DisablePlayerDamage(this));
+		features.add(new DisableFallDamage(this));
 		// Other
-		listeners.add(new ResetExpiredPlots(this));
-		listeners.add(new DisableAboveNetherGlitching(this));
-		listeners.add(new AddDefaultRank(this));
-		listeners.add(new NauseaPotions(this));
-		// Feature based classes
-		listeners.add(new AuraCheck());
-		listeners.add(new ResourceWorlds());
-		listeners.add(new RandomtpCommand());
-		listeners.add(new Rewards());
-		listeners.add(new AttackSpeed());
-		listeners.add(new MapCommand());
+		features.add(new ResetExpiredPlots(this));
+		features.add(new DisableAboveNetherGlitching(this));
+		features.add(new AddDefaultRank(this));
+		features.add(new NauseaPotions(this));
 
-		for (Listener listener : listeners) {
+
+		// Feature based classes
+		features.add(new TempbanCommand());
+		features.add(new PingCommand());
+		features.add(new SetspawnCommand());
+		features.add(new StaffMessagesCommands());
+		features.add(new UpdateCommand());
+		features.add(new ReloadCommand());
+		features.add(new InspectCommand());
+		features.add(new RulesCommand());
+		features.add(new HelpCommand());
+		features.add(new ShopCommand());
+		features.add(new AuraCheck());
+		features.add(new ResourceWorlds());
+		features.add(new RandomtpCommand());
+		features.add(new Rewards());
+		features.add(new AttackSpeed());
+		features.add(new MapCommand());
+
+		for(Listener listener : features) {
 			if (listener instanceof Feature) {
 				((Feature) listener).startFeature();
 			}
@@ -542,7 +543,7 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	public void deRegisterEvents() {
-		for(Listener listener : listeners) {
+		for(Listener listener : features) {
 			HandlerList.unregisterAll(listener);
 		}
 	}

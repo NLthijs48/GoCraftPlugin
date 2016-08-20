@@ -1,9 +1,9 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -11,19 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class RulesCommand implements CommandExecutor {
+public class RulesCommand extends Feature {
 
+	private List<String> rules;
 
-	public final String configLine = "enableRulesCommand";
-	private GoCraft plugin;
-
-	List<String> rules;
-
-	public RulesCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
+	public RulesCommand() {
+		if(plugin.getConfig().getBoolean("enableRulesCommand")) {
 			buildRules();
-			plugin.getCommand("Rules").setExecutor(this);
+			command("Rules");
 		}
 	}
 

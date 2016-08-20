@@ -1,21 +1,16 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SetspawnCommand implements CommandExecutor {
+public class SetspawnCommand extends Feature {
 
-	public final String configLine = "spawnTeleport"; // Same as in SpawnTeleport.java
-	private GoCraft plugin;
-
-	public SetspawnCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getCommand("SetGSpawn").setExecutor(this);
+	public SetspawnCommand() {
+		if(plugin.getConfig().getBoolean("spawnTeleport")) { // Same as in SpawnTeleport.java
+			command("SetGSpawn");
 		}
 	}
 

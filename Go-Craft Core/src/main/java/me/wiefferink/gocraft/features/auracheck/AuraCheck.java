@@ -47,7 +47,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 				}
 			}.runTaskLater(GoCraft.getInstance(), getNextPeriodicDelay());
 		}
-		commands.add("AuraCheck");
+		command("AuraCheck");
 		listen();
 	}
 

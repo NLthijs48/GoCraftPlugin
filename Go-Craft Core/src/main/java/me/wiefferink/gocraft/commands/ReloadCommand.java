@@ -1,20 +1,14 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class ReloadCommand implements CommandExecutor {
+public class ReloadCommand extends Feature {
 
-
-	public final String configLine = "enableReloadCommand";
-	private GoCraft plugin;
-
-	public ReloadCommand(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getCommand("GCReload").setExecutor(this);
+	public ReloadCommand() {
+		if(plugin.getConfig().getBoolean("enableReloadCommand")) {
+			command("GCReload");
 		}
 	}
 
