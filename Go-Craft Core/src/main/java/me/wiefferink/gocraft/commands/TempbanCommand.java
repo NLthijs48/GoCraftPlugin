@@ -17,9 +17,7 @@ public class TempbanCommand extends Feature {
 			"tempbanip", "banmanager:tempbanip", "bmtempbanip", "banmanager:bmtempbanip"));
 
 	public TempbanCommand() {
-		if(config.getBoolean("redirectTempban")) {
-			listen();
-		}
+		listen();
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

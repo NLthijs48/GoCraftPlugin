@@ -14,10 +14,8 @@ public class HelpCommand extends Feature {
 	private Map<String, List<String>> helpMap;
 
 	public HelpCommand() {
-		if(config.getBoolean("enableHelpCommand")) {
-			buildHelp();
-			command("Help");
-		}
+		buildHelp();
+		command("Help");
 	}
 
 	@Override

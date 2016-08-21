@@ -36,9 +36,5 @@ plugins:
       <name>:
         servers: <servers>
         groups: <ranks>
-        nodes: "single"
-      <name>:
-        servers: <servers>
-        groups: <ranks>
-        nodes:
-        - "multiple"
+        permissions: <single or list>
+        help: <single or list>

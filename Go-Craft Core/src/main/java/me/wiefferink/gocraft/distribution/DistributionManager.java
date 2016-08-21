@@ -1,10 +1,12 @@
 package me.wiefferink.gocraft.distribution;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -15,23 +17,42 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DistributionManager {
+public class DistributionManager extends Feature {
 
-	private GoCraft plugin;
 	private File self;
 	private Map<String, Set<String>> serverGroups;
 	private Map<String, File> serverPluginFolders;
 	private File pluginDataFolder, rootDataFolder;
 	private Set<String> binaryFiles = new HashSet<>(Arrays.asList("png", "jpg", "jpeg", "bmp", "jar"));
 
-	public DistributionManager(GoCraft plugin) {
+	public DistributionManager() {
 		self = new File(DistributionManager.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-		this.plugin = plugin;
 		pluginDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalPluginDataFoldername);
 		rootDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalRootDataFoldername);
 
 		initializeServerGroups();
 		initializeServerPluginFolders();
+		command("update");
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if(!sender.hasPermission("gocraft.update")) {
+			plugin.message(sender, "update-noPermission");
+			return true;
+		}
+
+		String serverFilter = null;
+		String operationFilter = null;
+		if(args.length >= 1) {
+			serverFilter = args[0];
+		}
+		if(args.length >= 2) {
+			operationFilter = args[1];
+		}
+		plugin.getDistributionManager().update(sender, serverFilter, operationFilter);
+		plugin.increaseStatistic("command.update.used");
+		return true;
 	}
 
 	/**

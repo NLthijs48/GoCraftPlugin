@@ -181,7 +181,7 @@ public final class GoCraft extends JavaPlugin {
 		this.languageManager = new LanguageManager();
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + generalFolderName);
 		loadGeneralConfig();
-		distributionManager = new DistributionManager(this);
+		distributionManager = new DistributionManager();
 		loadLocalStorage();
 
 		inspectionManager = new InspectionManager(this);
@@ -481,7 +481,6 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new PingCommand());
 		features.add(new SetspawnCommand());
 		features.add(new StaffMessagesCommands());
-		features.add(new UpdateCommand());
 		features.add(new ReloadCommand());
 		features.add(new InspectCommand());
 		features.add(new RulesCommand());

@@ -7,9 +7,7 @@ import org.bukkit.command.CommandSender;
 public class ReloadCommand extends Feature {
 
 	public ReloadCommand() {
-		if(config.getBoolean("enableReloadCommand")) {
-			command("GCReload");
-		}
+		command("GCReload");
 	}
 
 	@Override

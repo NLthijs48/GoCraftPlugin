@@ -16,10 +16,8 @@ public class RulesCommand extends Feature {
 	private List<String> rules;
 
 	public RulesCommand() {
-		if(config.getBoolean("enableRulesCommand")) {
-			buildRules();
-			command("Rules");
-		}
+		buildRules();
+		command("Rules");
 	}
 
 	@Override
