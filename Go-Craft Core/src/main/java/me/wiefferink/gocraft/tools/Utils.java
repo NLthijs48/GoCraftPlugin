@@ -204,11 +204,11 @@ public class Utils {
 	 * @param message The message, already prefixed by the type so no need to repeat that
 	 */
 	public static void sendStaffMessage(String type, String message) {
-		String result = Message.fromKey("staffbroadcast-template").replacements(GoCraft.getInstance().getServerName(), type, message).getPlain();
+		Message result = Message.fromKey("staffbroadcast-template").replacements(GoCraft.getInstance().getServerName(), type, message);
 		// Display in console
-		Bukkit.getConsoleSender().sendMessage(ChatColor.stripColor(applyColors(result)));
+		result.send(Bukkit.getConsoleSender());
 		// Send to other servers
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage " + result);
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage "+result.getPlain());
 	}
 
 	/**
@@ -217,20 +217,19 @@ public class Utils {
 	 * @param message The message, already prefixed by the type so no need to repeat that
 	 */
 	public static void displayStaffMessage(String type, String message) {
-		String result = Message.fromKey("staffbroadcast-template").replacements(GoCraft.getInstance().getServerName(), type, message).getPlain();
-		displayStaffMessage(result);
+		displayStaffMessage(Message.fromKey("staffbroadcast-template").replacements(GoCraft.getInstance().getServerName(), type, message).getPlain());
 	}
 
 	/**
 	 * Display a raw message to all staff in thes server (used as receiver of messages from other servers)
-	 * @param message The raw message
+	 * @param input The raw message
 	 */
-	public static void displayStaffMessage(String message) {
-		message = applyColors(message);
+	public static void displayStaffMessage(String input) {
+		Message message = Message.fromString(input);
 		// Display to all staff members
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (player.hasPermission("gocraft.staff")) {
-				player.sendMessage(message);
+				message.send(player);
 			}
 		}
 	}
