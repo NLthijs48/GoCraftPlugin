@@ -254,7 +254,7 @@ public final class GoCraft extends JavaPlugin {
 	 * @return The display name of this server
 	 */
 	public String getServerName() {
-		return getServerName(null);
+		return getServerName(getServerId());
 	}
 
 	/**
