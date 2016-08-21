@@ -12,17 +12,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class AttackSpeed extends Feature {
 
 	public AttackSpeed() {
-		if(plugin.getConfig().isSet("playerAttributes")) {
-			listen();
+		if(listen("playerAttributes")) {
 			for(Player player : Bukkit.getOnlinePlayers()) {
 				setPlayerAttributes(player);
 			}
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		setPlayerAttributes(event.getPlayer());
+		if(inWorld(event)) {
+			setPlayerAttributes(event.getPlayer());
+		}
 	}
 
 	/**
@@ -30,7 +31,7 @@ public class AttackSpeed extends Feature {
 	 * @param player The player to set it for
 	 */
 	private void setPlayerAttributes(Player player) {
-		ConfigurationSection attributesSection = plugin.getConfig().getConfigurationSection("playerAttributes");
+		ConfigurationSection attributesSection = config.getConfigurationSection("playerAttributes");
 		if(attributesSection != null) {
 			for(String attribute : attributesSection.getKeys(false)) {
 				try {

@@ -1,26 +1,19 @@
 package me.wiefferink.gocraft.features.items;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 
-public class DisableItemSpawning implements Listener {
+public class DisableItemSpawning extends Feature {
 
-	public final String configLine = "disableItemSpawning";
-	private GoCraft plugin;
-
-	public DisableItemSpawning(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableItemSpawning() {
+		listen("disableItemSpawning");
 	}
 
 	// Prevent items dropping from breaking a container
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onItemSpawn(ItemSpawnEvent event) {
-		if (plugin.onThisWorld(configLine, event.getLocation())) {
+		if(inWorld(event)) {
 			event.setCancelled(true);
 		}
 	}

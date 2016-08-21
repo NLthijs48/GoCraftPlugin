@@ -21,7 +21,7 @@ import java.util.Calendar;
 public class ResourceWorlds extends Feature {
 
 	public ResourceWorlds() {
-		ConfigurationSection resourceWorldsSection = plugin.getConfig().getConfigurationSection("worlds");
+		ConfigurationSection resourceWorldsSection = config.getConfigurationSection("worlds");
 		if(resourceWorldsSection != null && resourceWorldsSection.getKeys(false).size() > 0) {
 			int count = 0;
 			for(String world : resourceWorldsSection.getKeys(false)) {
@@ -41,7 +41,7 @@ public class ResourceWorlds extends Feature {
 			return;
 		}
 		// Reset the resource worlds that need it
-		ConfigurationSection rWorldsSection = plugin.getConfig().getConfigurationSection("worlds");
+		ConfigurationSection rWorldsSection = config.getConfigurationSection("worlds");
 		if(rWorldsSection != null) {
 			for(String worldName : rWorldsSection.getKeys(false)) {
 				World world = Bukkit.getWorld(worldName);
@@ -57,12 +57,12 @@ public class ResourceWorlds extends Feature {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void playerJoin(PlayerJoinEvent event) {
 		checkWorldSpawn(event.getPlayer());
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void switchWorld(PlayerChangedWorldEvent event) {
 		checkWorldSpawn(event.getPlayer());
 	}
@@ -95,7 +95,7 @@ public class ResourceWorlds extends Feature {
 	 */
 	public long getResetTime(World world) {
 		long result = -1;
-		ConfigurationSection section = plugin.getConfig().getConfigurationSection("worlds");
+		ConfigurationSection section = config.getConfigurationSection("worlds");
 		if(section != null) {
 			result = Utils.durationStringToLong(section.getString(world.getName()+".resetTime"));
 		}

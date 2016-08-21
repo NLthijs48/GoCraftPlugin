@@ -1,29 +1,19 @@
 package me.wiefferink.gocraft.features.blocks;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-public class DisableBedrockBreak implements Listener {
+public class DisableBedrockBreak extends Feature {
 
-	public final String configLine = "disableBedrockBreak";
-	private GoCraft plugin;
-
-	public DisableBedrockBreak(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableBedrockBreak() {
+		listen("disableBedrockBreak");
 	}
 
 	// Prevent breaking bedrock
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (plugin.onThisWorld(this.configLine, event.getBlock())
-				&& event.getBlock().getType() == Material.BEDROCK && !event.getPlayer().isOp()) {
-			event.setCancelled(true);
-		}
+		event.setCancelled(event.getBlock().getType() == Material.BEDROCK && !event.getPlayer().isOp() && inWorld(event));
 	}
 }

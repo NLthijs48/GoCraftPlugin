@@ -1,29 +1,22 @@
 package me.wiefferink.gocraft.features.blocks;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-public class DisableTradeSignPlacing implements Listener {
+public class DisableTradeSignPlacing extends Feature {
 
-	public final String configLine = "disableTradeSignPlacing";
-	private GoCraft plugin;
-
-	public DisableTradeSignPlacing(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableTradeSignPlacing() {
+		listen("disableTradeSignPlacing");
 	}
 
 	// Prevent breaking bedrock
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
-		if (plugin.onThisWorld(this.configLine, event.getBlock())
+		if(inWorld(event)
 				&& (event.getBlock().getType() == Material.SIGN || event.getBlock().getType() == Material.SIGN_POST || event.getBlock().getType() == Material.WALL_SIGN)
 				&& !event.getPlayer().isOp()) {
 			// Check for trade signs

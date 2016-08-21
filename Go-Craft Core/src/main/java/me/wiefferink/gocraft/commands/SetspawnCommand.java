@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class SetspawnCommand extends Feature {
 
 	public SetspawnCommand() {
-		if(plugin.getConfig().getBoolean("spawnTeleport")) { // Same as in SpawnTeleport.java
+		if(config.getBoolean("spawnTeleport")) { // Same as in SpawnTeleport.java
 			command("SetGSpawn");
 		}
 	}

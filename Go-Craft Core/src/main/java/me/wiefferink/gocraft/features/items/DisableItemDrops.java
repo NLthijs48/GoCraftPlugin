@@ -1,27 +1,19 @@
 package me.wiefferink.gocraft.features.items;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
-public class DisableItemDrops implements Listener {
+public class DisableItemDrops extends Feature {
 
-	public final String configLine = "disableItemDrops";
-	private GoCraft plugin;
-
-	public DisableItemDrops(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableItemDrops() {
+		listen("disableItemDrops");
 	}
 
 	// Prevent dropping items from inventory
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onItemDrop(PlayerDropItemEvent event) {
-		if (plugin.onThisWorld(configLine, event.getPlayer())
-				&& !event.getPlayer().isOp()) {
+		if(inWorld(event) && !event.getPlayer().isOp()) {
 			event.setCancelled(true);
 		}
 	}

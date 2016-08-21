@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class PingCommand extends Feature {
 
 	public PingCommand() {
-		if(plugin.getConfig().getBoolean("enablePingCommand")) {
+		if(config.getBoolean("enablePingCommand")) {
 			command("Ping");
 		}
 	}

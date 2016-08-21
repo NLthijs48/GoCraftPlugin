@@ -1,26 +1,19 @@
 package me.wiefferink.gocraft.features.items;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PotionSplashEvent;
 
-public class DisablePotionSplash implements Listener {
+public class DisablePotionSplash extends Feature {
 
-	public final String configLine = "disablePotionSplash";
-	private GoCraft plugin;
-
-	public DisablePotionSplash(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisablePotionSplash() {
+		listen("disablePotionSplash");
 	}
 
 	// Block effect when a splash potion hits the ground
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPotionSplash(PotionSplashEvent event) {
-		if (plugin.onThisWorld(configLine, event.getEntity())) {
+		if(inWorld(event)) {
 			event.setCancelled(true);
 		}
 	}

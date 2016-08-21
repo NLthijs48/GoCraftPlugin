@@ -1,27 +1,18 @@
 package me.wiefferink.gocraft.features.blocks;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
 
-public class DisableDispensers implements Listener {
+public class DisableDispensers extends Feature {
 
-	public final String configLine = "disableDispensers";
-	private GoCraft plugin;
-
-	public DisableDispensers(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableDispensers() {
+		listen("disableDispensers");
 	}
 
 	// Prevent dispensing items
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockDispense(BlockDispenseEvent event) {
-		if (plugin.onThisWorld(configLine, event.getBlock())) {
-			event.setCancelled(true);
-		}
+		event.setCancelled(inWorld(event));
 	}
 }

@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class InspectCommand extends Feature {
 
 	public InspectCommand() {
-		if(plugin.getConfig().getBoolean("enableInspecting")) {
+		if(config.getBoolean("enableInspecting")) {
 			command("Inspect");
 		}
 	}

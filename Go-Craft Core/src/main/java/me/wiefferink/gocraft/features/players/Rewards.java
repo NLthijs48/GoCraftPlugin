@@ -22,19 +22,19 @@ import java.util.List;
 public class Rewards extends Feature {
 
 	public Rewards() {
-		if(getRewardsSection() == null) {
-			return;
-		}
-		listen();
-
-		// Give currently online people rewards (after a reload for example)
-		for(Player player : Bukkit.getOnlinePlayers()) {
-			giveRewards(player);
+		if(getRewardsSection() != null && listen()) {
+			// Give currently online people rewards (after a reload for example)
+			for(Player player : Bukkit.getOnlinePlayers()) {
+				giveRewards(player);
+			}
 		}
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		if(!inWorld(event)) {
+			return;
+		}
 		Player player = event.getPlayer();
 		new BukkitRunnable() {
 			@Override
@@ -51,6 +51,9 @@ public class Rewards extends Feature {
 	 * @param player The player to check for
 	 */
 	public void giveRewards(Player player) {
+		if(!inWorld(player)) {
+			return;
+		}
 		ConfigurationSection rewardsSection = getRewardsSection();
 		List<String> groups = Arrays.asList(GoCraft.getInstance().getPermissionProvider().getPlayerGroups(player));
 		for(String key : rewardsSection.getKeys(false)) {
@@ -110,7 +113,7 @@ public class Rewards extends Feature {
 			}
 
 			// Record that reward is given
-			SimpleDateFormat time = new SimpleDateFormat(plugin.getConfig().getString("signLogTimeFormat"));
+			SimpleDateFormat time = new SimpleDateFormat(config.getString("signLogTimeFormat"));
 			String timeString = time.format(Calendar.getInstance().getTimeInMillis());
 			plugin.getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, timeString);
 			plugin.saveLocalStorage();
@@ -123,7 +126,7 @@ public class Rewards extends Feature {
 	 * @return The configurationsection
 	 */
 	private ConfigurationSection getRewardsSection() {
-		return plugin.getConfig().getConfigurationSection("rewards");
+		return config.getConfigurationSection("rewards");
 	}
 
 }

@@ -14,7 +14,7 @@ public class InventoryListener implements Listener {
 		this.manager = manager;
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		//GoCraft.debug("clicktype=" + event.getClick() + ", rawSlot=" + event.getRawSlot() + ", slot=" + event.getSlot() + ", action=" + event.getAction() + ", clicker=" + event.getWhoClicked().getName());
 		if (event.getWhoClicked() instanceof Player && manager.getInspectionByInspector((Player) event.getWhoClicked()) != null) {

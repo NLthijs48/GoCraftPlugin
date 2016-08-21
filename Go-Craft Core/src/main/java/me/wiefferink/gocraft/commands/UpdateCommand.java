@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 public class UpdateCommand extends Feature {
 
 	public UpdateCommand() {
-		if(plugin.getConfig().getBoolean("enableUpdateCommand")) {
+		if(config.getBoolean("enableUpdateCommand")) {
 			command("update");
 		}
 	}

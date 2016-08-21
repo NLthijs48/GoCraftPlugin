@@ -305,13 +305,13 @@ public class Shop implements Listener {
 	 * Inventory closing, remove the ShopSession
 	 * @param event The InventoryCloseEvent
 	 */
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onInventoryClose(InventoryCloseEvent event) {
 		shopSessions.remove(event.getPlayer().getUniqueId());
 	}
 
 	// Block certain actions that cause a starter item to be moved to another inventory
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onInventoryClick(InventoryClickEvent event) {
 		ShopSession session = shopSessions.get(event.getWhoClicked().getUniqueId());
 		if (session == null) {
@@ -348,7 +348,7 @@ public class Shop implements Listener {
 	}
 
 	// Prevent dragging items to other inventory
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onItemDrag(InventoryDragEvent event) {
 		if (shopSessions.get(event.getWhoClicked().getUniqueId()) == null) {
 			return;

@@ -14,7 +14,7 @@ public class HelpCommand extends Feature {
 	private Map<String, List<String>> helpMap;
 
 	public HelpCommand() {
-		if(plugin.getConfig().getBoolean("enableHelpCommand")) {
+		if(config.getBoolean("enableHelpCommand")) {
 			buildHelp();
 			command("Help");
 		}
@@ -70,7 +70,7 @@ public class HelpCommand extends Feature {
 		ConfigurationSection helpSection = plugin.getGeneralConfig().getConfigurationSection("help");
 		if (helpSection != null) {
 			for (String ruleKey : helpSection.getKeys(false)) {
-				Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<String>());
+				Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<>());
 				if (servers.contains(plugin.getServerId())) {
 					addHelpEntry("default", Utils.listOrSingle(helpSection, ruleKey));
 				}
@@ -84,7 +84,7 @@ public class HelpCommand extends Feature {
 		}
 		for (String pluginKey : pluginsSection.getKeys(false)) {
 			String pushTo = pluginsSection.getString(pluginKey + ".pushTo");
-			Set<String> pushToServers = plugin.getDistributionManager().resolveServers(pushTo, new ArrayList<String>());
+			Set<String> pushToServers = plugin.getDistributionManager().resolveServers(pushTo, new ArrayList<>());
 			ConfigurationSection permissionsSection = pluginsSection.getConfigurationSection(pluginKey + ".permissions");
 			if (pushTo == null || permissionsSection == null) {
 				continue;
@@ -109,7 +109,7 @@ public class HelpCommand extends Feature {
 				String serversString = permissionsSection.getString(permissionsKey + ".servers");
 				Set<String> servers = null;
 				if (serversString != null) {
-					servers = plugin.getDistributionManager().resolveServers(serversString, new ArrayList<String>());
+					servers = plugin.getDistributionManager().resolveServers(serversString, new ArrayList<>());
 				}
 				if ((servers != null && servers.contains(plugin.getServerId()))
 						|| (servers == null && pushToServers != null && pushToServers.contains(plugin.getServerId()))) {

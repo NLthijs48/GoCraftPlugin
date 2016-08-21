@@ -14,12 +14,12 @@ public class QuitJoinListener implements Listener {
 		this.plugin = plugin;
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerLeave(PlayerQuitEvent event) {
 		plugin.getInspectionManager().handlePlayerStopped(event.getPlayer());
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		plugin.getInspectionManager().handlePlayerJoined(event.getPlayer(), false);
 	}

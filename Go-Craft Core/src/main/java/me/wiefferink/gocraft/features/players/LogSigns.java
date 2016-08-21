@@ -1,40 +1,36 @@
 package me.wiefferink.gocraft.features.players;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class LogSigns implements Listener {
+public class LogSigns extends Feature {
 
 	public final String configLine = "signLoggingEnabled";
-	private GoCraft plugin;
 
-	public LogSigns(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-			this.plugin = plugin;
-		}
+	public LogSigns() {
+		listen("signLoggingEnabled");
 	}
 
 	/**
 	 * Called when a sign is changed
 	 * @param event The event
 	 */
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
 		Player player = event.getPlayer();
 
-		if (plugin.onThisWorld(configLine, event.getBlock()) && (player.hasPermission("gocraft.signLog"))) {
-			SimpleDateFormat time = new SimpleDateFormat(plugin.getConfig().getString("signLogTimeFormat"));
+		if(inWorld(event) && (player.hasPermission("gocraft.signLog"))) {
+			SimpleDateFormat time = new SimpleDateFormat(config.getString("signLogTimeFormat"));
 			plugin.logLine(GoCraft.signLog,
 					Message.fromKey("signLogfileLine")
 							.replacements(

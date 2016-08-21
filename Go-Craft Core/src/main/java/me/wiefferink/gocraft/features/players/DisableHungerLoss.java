@@ -1,26 +1,19 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
-public class DisableHungerLoss implements Listener {
+public class DisableHungerLoss extends Feature {
 
-	public final String configLine = "disableHungerLoss";
-	private GoCraft plugin;
-
-	public DisableHungerLoss(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableHungerLoss() {
+		listen("disableHungerLoss");
 	}
 
 	// Stay at full hunger
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onHungerChange(FoodLevelChangeEvent event) {
-		if (plugin.onThisWorld(configLine, event.getEntity())) {
+		if(inWorld(event)) {
 			event.setFoodLevel(20);
 		}
 	}

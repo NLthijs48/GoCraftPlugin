@@ -17,7 +17,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +28,7 @@ import java.util.*;
 
 import static me.wiefferink.gocraft.tools.Utils.random;
 
-public class AuraCheck extends Feature implements CommandExecutor {
+public class AuraCheck extends Feature {
 
 	private HashMap<UUID, AuraCheckRun> running;
 	private boolean isRegistered;
@@ -59,7 +58,7 @@ public class AuraCheck extends Feature implements CommandExecutor {
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onDisconnect(PlayerQuitEvent event) {
 		AuraCheckRun check = removeCheck(event.getPlayer().getUniqueId());
 		if (check != null) {

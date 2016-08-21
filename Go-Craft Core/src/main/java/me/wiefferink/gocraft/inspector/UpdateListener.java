@@ -127,44 +127,6 @@ public class UpdateListener implements Listener {
 		}
 	}
 
-	// Update on inventory changing
-	/* Too spammy, timer task will get this
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getWhoClicked() instanceof Player) {
-            if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getWhoClicked()).isEmpty()) {
-                final Player finalPlayer = (Player) event.getWhoClicked();
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-                            inspection.updateArmor();
-                        }
-                    }
-                }.runTaskLater(plugin, 1L);
-            }
-        }
-    }
-    */
-
-	// Update when the XP level changes
-    /* Too spammy, timer task will get this
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onXPLevelChange(PlayerLevelChangeEvent event) {
-        if (!plugin.getInspectionManager().getInspectionsByInspected(event.getPlayer()).isEmpty()) {
-            final Player finalPlayer = event.getPlayer();
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-                        inspection.updateScoreboard();
-                    }
-                }
-            }.runTaskLater(plugin, 1L);
-        }
-    }
-    */
-
 	// Update on item breakage
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onItemBreak(PlayerItemBreakEvent event) {
@@ -182,7 +144,7 @@ public class UpdateListener implements Listener {
 	}
 
 	// Disable sign clicking when in inspect mode
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onSignClick(PlayerInteractEvent event) {
 		if (!plugin.getInspectionManager().isInspecting(event.getPlayer())) {
 			return;
@@ -192,7 +154,7 @@ public class UpdateListener implements Listener {
 	}
 
 	// Teleport inspectors to their target if the target teleports
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onTargetTeleport(PlayerTeleportEvent event) {
 		// Ignore cancelled events and teleport of less than 3 blocks
 		if (event.isCancelled() || (event.getFrom().getWorld().equals(event.getTo().getWorld()) && event.getFrom().distanceSquared(event.getTo()) < 9)) {
@@ -214,7 +176,7 @@ public class UpdateListener implements Listener {
 	}
 
 	// Ensure flying is always on by cancelling toggling it off
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onToggleFlight(PlayerToggleFlightEvent event) {
 		if (!event.isFlying() && event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
 			event.setCancelled(true);
@@ -222,7 +184,7 @@ public class UpdateListener implements Listener {
 	}
 
 	// Ensure flying is on by reenabling it immediately
-	@EventHandler(priority = EventPriority.MONITOR)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onToggleFlightMonitor(PlayerToggleFlightEvent event) {
 		final Player finalPlayer = event.getPlayer();
 		if (!event.isFlying() && !event.isCancelled() && event.getPlayer().getGameMode() == GameMode.SPECTATOR) {

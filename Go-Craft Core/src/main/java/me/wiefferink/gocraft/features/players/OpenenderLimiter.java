@@ -1,30 +1,26 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class OpenenderLimiter implements Listener {
-	public final String configLine = "disableOpenEnderSelf";
-	private GoCraft plugin;
+public class OpenenderLimiter extends Feature {
 
-	public OpenenderLimiter(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public OpenenderLimiter() {
+		listen("disableOpenEnderSelf");
 	}
 
-
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onCommand(PlayerCommandPreprocessEvent event) {
+		if(!inWorld(event)) {
+			return;
+		}
 		String fullMessage = event.getMessage();
 		boolean hasArguments = fullMessage.contains(" ");
 		String command, arguments = "";

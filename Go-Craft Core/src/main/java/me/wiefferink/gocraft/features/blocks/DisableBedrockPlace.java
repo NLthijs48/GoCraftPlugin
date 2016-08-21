@@ -1,29 +1,19 @@
 package me.wiefferink.gocraft.features.blocks;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class DisableBedrockPlace implements Listener {
+public class DisableBedrockPlace extends Feature {
 
-	public final String configLine = "disableBedrockPlace";
-	private GoCraft plugin;
-
-	public DisableBedrockPlace(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableBedrockPlace() {
+		listen("disableBedrockPlace");
 	}
 
 	// Prevent placing bedrock
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
-		if (plugin.onThisWorld(configLine, event.getBlock())
-				&& event.getBlock().getType() == Material.BEDROCK && !event.getPlayer().isOp()) {
-			event.setCancelled(true);
-		}
+		event.setCancelled(event.getBlock().getType() == Material.BEDROCK && !event.getPlayer().isOp() && inWorld(event));
 	}
 }

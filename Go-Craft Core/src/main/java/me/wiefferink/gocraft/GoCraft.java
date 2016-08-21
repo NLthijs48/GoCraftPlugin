@@ -28,12 +28,8 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -438,50 +434,49 @@ public final class GoCraft extends JavaPlugin {
 	public void addListeners() {
 		features = new ArrayList<>();
 		// Blocks
-		features.add(new DisableBedrockBreak(this));
-		features.add(new DisableBedrockPlace(this));
-		features.add(new DisableDispensers(this));
-		features.add(new DisableTradeSignPlacing(this));
-		features.add(new DisableBlockBreaking(this));
-		features.add(new DisableAnvilBreak(this));
-		features.add(new DisableWitherDamage(this));
+		features.add(new DisableBedrockBreak());
+		features.add(new DisableBedrockPlace());
+		features.add(new DisableDispensers());
+		features.add(new DisableTradeSignPlacing());
+		features.add(new DisableBlockBreaking());
+		features.add(new DisableAnvilBreak());
+		features.add(new DisableWitherDamage());
 		// General
-		features.add(new DisableRain(this));
-		features.add(new DisableMobSpawning(this));
-		features.add(new DisableHungerLoss(this));
-		features.add(new EnablePotionEffectsOnJoin(this));
-		features.add(new SpawnTeleport(this));
-		features.add(new EnableRegionPotionEffects(this));
+		features.add(new DisableRain());
+		features.add(new DisableMobSpawning());
+		features.add(new DisableHungerLoss());
+		features.add(new EnablePotionEffectsOnJoin());
+		features.add(new SpawnTeleport());
+		features.add(new EnableRegionPotionEffects());
 		if (getBanManagerLink() != null) {
-			features.add(new PunishmentNotifications(this));
+			features.add(new PunishmentNotifications());
 		}
-		features.add(new DisableStaffJoinLeaveMessages(this));
-		features.add(new OpenenderLimiter(this));
-		features.add(new DisableSignUseWhileMuted(this));
+		features.add(new DisableStaffJoinLeaveMessages());
+		features.add(new OpenenderLimiter());
+		features.add(new DisableSignUseWhileMuted());
 		// Items
-		features.add(new DisableItemDrops(this));
-		features.add(new DisableItemSpawning(this));
-		features.add(new DisablePotionSplash(this));
-		features.add(new DisablePotionThrow(this));
-		features.add(new DisablePotionInvisibleDrink(this));
-		features.add(new DisableXpBottleThrow(this));
-		features.add(new DisableFirework(this));
-		features.add(new DisableEnderpearl(this));
-		features.add(new DisableEyeOfEnder(this));
-		features.add(new DisableBooks(this));
+		features.add(new DisableItemDrops());
+		features.add(new DisableItemSpawning());
+		features.add(new DisablePotionSplash());
+		features.add(new DisablePotionThrow());
+		features.add(new DisablePotionInvisibleDrink());
+		features.add(new DisableXpBottleThrow());
+		features.add(new DisableFirework());
+		features.add(new DisableEnderpearl());
+		features.add(new DisableEyeOfEnder());
+		features.add(new DisableBooks());
 		// Logging
-		features.add(new LogSigns(this));
+		features.add(new LogSigns());
 		// PVP
-		features.add(new DisablePlayerDamage(this));
-		features.add(new DisableFallDamage(this));
+		features.add(new DisablePlayerDamage());
+		features.add(new DisableFallDamage());
 		// Other
-		features.add(new ResetExpiredPlots(this));
-		features.add(new DisableAboveNetherGlitching(this));
-		features.add(new AddDefaultRank(this));
-		features.add(new NauseaPotions(this));
+		features.add(new ResetExpiredPlots());
+		features.add(new DisableAboveNetherGlitching());
+		features.add(new AddDefaultRank());
+		features.add(new NauseaPotions());
 
 
-		// Feature based classes
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());
 		features.add(new SetspawnCommand());
@@ -584,31 +579,10 @@ public final class GoCraft extends JavaPlugin {
 		}
 	}
 
-	public boolean onThisWorld(String configLine, Object world) {
-		boolean result = true;
-		List<String> worlds = getConfig().getStringList(configLine + "Worlds");
-		if (worlds.size() != 0) {
-			String worldString = "";
-			if ((world instanceof String)) {
-				worldString = (String) world;
-			} else if ((world instanceof World)) {
-				worldString = ((World) world).getName();
-			} else if ((world instanceof Block)) {
-				worldString = ((Block) world).getWorld().getName();
-			} else if ((world instanceof Location)) {
-				worldString = ((Location) world).getWorld().getName();
-			} else if ((world instanceof Entity)) {
-				worldString = ((Entity) world).getWorld().getName();
-			} else {
-				GoCraft.warn("GoCraft.onThisWorld: Cannot get world from object: "+world.toString());
-			}
-			if (!worlds.contains(worldString)) {
-				result = false;
-			}
-		}
-		return result;
-	}
-
+	/**
+	 * Get the language manager
+	 * @return The language manager
+	 */
 	public LanguageManager getLanguageManager() {
 		return this.languageManager;
 	}

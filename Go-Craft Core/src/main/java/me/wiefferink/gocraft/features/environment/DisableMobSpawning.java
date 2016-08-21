@@ -1,29 +1,18 @@
 package me.wiefferink.gocraft.features.environment;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-public class DisableMobSpawning implements Listener {
+public class DisableMobSpawning extends Feature {
 
-	public final String configLine = "disableMobSpawning";
-	private GoCraft plugin;
-
-	public DisableMobSpawning(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableMobSpawning() {
+		listen("disableMobSpawning");
 	}
 
-	// Prevent spawning of mobs
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if (plugin.onThisWorld(configLine, event.getLocation())
-				&& event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM) {
-			event.setCancelled(true);
-		}
+		event.setCancelled(inWorld(event) && event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM); // Allow plugin spawned entities
 	}
 }

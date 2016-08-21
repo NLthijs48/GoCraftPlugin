@@ -16,7 +16,7 @@ public class RulesCommand extends Feature {
 	private List<String> rules;
 
 	public RulesCommand() {
-		if(plugin.getConfig().getBoolean("enableRulesCommand")) {
+		if(config.getBoolean("enableRulesCommand")) {
 			buildRules();
 			command("Rules");
 		}

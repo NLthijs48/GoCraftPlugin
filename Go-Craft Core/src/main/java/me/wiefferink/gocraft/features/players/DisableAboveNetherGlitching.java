@@ -1,25 +1,22 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class DisableAboveNetherGlitching implements Listener {
+public class DisableAboveNetherGlitching extends Feature {
 
-	public final String configLine = "disableAboveNetherGlitching";
-
-	public DisableAboveNetherGlitching(final GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
+	public DisableAboveNetherGlitching() {
+		if(listen("disableAboveNetherGlitching")) {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
 					for (Player player : Bukkit.getOnlinePlayers()) {
-						if (player.getWorld().getEnvironment() == World.Environment.NETHER
+						if(inWorld(player) && player.getWorld().getEnvironment() == World.Environment.NETHER
 								&& player.getLocation().getBlockY() >= 128) {
 							// Try to move the player down
 							Location tryLoc = player.getLocation().subtract(0, 5, 0);

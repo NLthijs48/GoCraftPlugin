@@ -4,10 +4,10 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -15,14 +15,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnableRegionPotionEffects implements Listener {
+public class EnableRegionPotionEffects extends Feature {
 	public final String configLine = "enableRegionPotionEffects";
 	public final String configLinePotions = "regionPotionEffects";
-	private GoCraft plugin;
 
-	public EnableRegionPotionEffects(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine) && plugin.getWorldGuardLink() != null) {
-			this.plugin = plugin;
+	public EnableRegionPotionEffects() {
+		if(plugin.getWorldGuardLink() != null && listen("enableRegionPotionEffects")) {
 			new BukkitRunnable() {
 				@Override
 				public void run() {
@@ -40,7 +38,7 @@ public class EnableRegionPotionEffects implements Listener {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			playersFirst.add(player);
 		}
-		final ConfigurationSection regions = plugin.getConfig().getConfigurationSection("regionPotionEffects");
+		final ConfigurationSection regions = config.getConfigurationSection("regionPotionEffects");
 		final List<Player> players = playersFirst;
 		new BukkitRunnable() {
 			private int current = 0;
@@ -49,11 +47,11 @@ public class EnableRegionPotionEffects implements Listener {
 			public void run() {
 				for (int i = 0; i < 3; i++) {
 					if (current < players.size()) {
-						if (regions == null) {
+						Player player = players.get(current);
+						if(regions == null || !inWorld(player)) {
 							current++;
 							continue;
 						}
-						Player player = players.get(current);
 						// Find applicable regions
 						RegionManager manager = plugin.getWorldGuardLink().get().getRegionManager(player.getWorld());
 						if (manager == null) {

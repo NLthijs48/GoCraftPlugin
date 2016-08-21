@@ -1,31 +1,22 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-public class DisableFallDamage implements Listener {
+public class DisableFallDamage extends Feature {
 
-	public final String configLine = "disableFallDamage";
-	private GoCraft plugin;
-
-	public DisableFallDamage(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableFallDamage() {
+		listen("disableFallDamage");
 	}
 
 	// Disable fall damage
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onDamage(EntityDamageEvent event) {
-		if (plugin.onThisWorld(configLine, event.getEntity())) {
-			if (event.getEntity() instanceof Player && event.getCause().equals(DamageCause.FALL)) {
-				event.setCancelled(true);
-			}
+		if(inWorld(event) && event.getEntity() instanceof Player && event.getCause().equals(DamageCause.FALL)) {
+			event.setCancelled(true);
 		}
 	}
 }

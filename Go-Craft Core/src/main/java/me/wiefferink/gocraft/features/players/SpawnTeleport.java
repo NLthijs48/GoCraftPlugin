@@ -1,30 +1,23 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class SpawnTeleport implements Listener {
+public class SpawnTeleport extends Feature {
 
-	public final String configLine = "spawnTeleport"; // Same as in SetspawnCommand.java
-	private GoCraft plugin;
-
-	public SpawnTeleport(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public SpawnTeleport() {
+		listen("spawnTeleport");
 	}
 
 	// Spawn the player at the spawnlocation
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (plugin.onThisWorld(configLine, event.getPlayer())) {
+		if(inWorld(event)) {
 			ConfigurationSection section = plugin.getLocalStorage().getConfigurationSection("spawnLocation");
 			Location location = null;
 			if (section != null) {

@@ -74,6 +74,7 @@ enableHelpCommand: true
 enableExpiredPlotsRestoration: false
 disableAboveNetherGlitching: false
 enableAddDefaultRank: false
+enablePunishmentNotifications: true
 worlds:
 # <worldname>:
 #   radius: <number>

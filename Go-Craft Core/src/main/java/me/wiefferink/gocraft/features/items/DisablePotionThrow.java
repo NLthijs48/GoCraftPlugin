@@ -1,28 +1,21 @@
 package me.wiefferink.gocraft.features.items;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class DisablePotionThrow implements Listener {
+public class DisablePotionThrow extends Feature {
 
-	public final String configLine = "disablePotionThrow";
-	private GoCraft plugin;
-
-	public DisablePotionThrow(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisablePotionThrow() {
+		listen("disablePotionThrow");
 	}
 
 	// Prevent Potion throw
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onItemUse(PlayerInteractEvent event) {
 		int potionData = event.getPlayer().getItemInHand().getDurability() % 32768;
-		if (plugin.onThisWorld(configLine, event.getPlayer())
+		if(inWorld(event)
 				&& (event.getAction() == Action.RIGHT_CLICK_AIR
 				|| event.getAction() == Action.RIGHT_CLICK_BLOCK)
 				&& potionData / 16384 > 0) {

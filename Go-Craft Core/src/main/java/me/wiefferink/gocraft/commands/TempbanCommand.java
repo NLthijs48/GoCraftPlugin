@@ -17,12 +17,12 @@ public class TempbanCommand extends Feature {
 			"tempbanip", "banmanager:tempbanip", "bmtempbanip", "banmanager:bmtempbanip"));
 
 	public TempbanCommand() {
-		if(plugin.getConfig().getBoolean("redirectTempban")) {
+		if(config.getBoolean("redirectTempban")) {
 			listen();
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onCommand(PlayerCommandPreprocessEvent event) {
 		String fullMessage = event.getMessage();
 		boolean hasArguments = fullMessage.contains(" ");

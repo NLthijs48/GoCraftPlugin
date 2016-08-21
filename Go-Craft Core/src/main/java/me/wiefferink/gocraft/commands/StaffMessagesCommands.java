@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class StaffMessagesCommands extends Feature {
 
 	public StaffMessagesCommands() {
-		if(plugin.getConfig().getBoolean("enableStaffMessageCommands")) {
+		if(config.getBoolean("enableStaffMessageCommands")) {
 			command("StaffBroadcast");
 			command("DisplayStaffMessage");
 		}

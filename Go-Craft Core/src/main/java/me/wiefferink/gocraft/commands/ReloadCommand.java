@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 public class ReloadCommand extends Feature {
 
 	public ReloadCommand() {
-		if(plugin.getConfig().getBoolean("enableReloadCommand")) {
+		if(config.getBoolean("enableReloadCommand")) {
 			command("GCReload");
 		}
 	}

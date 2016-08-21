@@ -1,28 +1,18 @@
 package me.wiefferink.gocraft.features.environment;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
-public class DisableRain implements Listener {
+public class DisableRain extends Feature {
 
-	public final String configLine = "disableRain";
-	private GoCraft plugin;
-
-	public DisableRain(GoCraft plugin) {
-		if (plugin.getConfig().getBoolean(configLine)) {
-			this.plugin = plugin;
-			plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		}
+	public DisableRain() {
+		listen("disableRain");
 	}
 
 	// Prevent rain and thunder
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onWeatherChange(WeatherChangeEvent event) {
-		if (plugin.onThisWorld(configLine, event.getWorld())
-				&& event.toWeatherState()) {
-			event.setCancelled(true);
-		}
+		event.setCancelled(inWorld(event) && event.toWeatherState());
 	}
 }

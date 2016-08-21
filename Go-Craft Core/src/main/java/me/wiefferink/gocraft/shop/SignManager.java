@@ -98,7 +98,7 @@ public class SignManager implements Listener {
 	 * Handle players clicking the sign and forward the event to the sign itself
 	 * @param event The event
 	 */
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (event.isCancelled()) {
 			return;
