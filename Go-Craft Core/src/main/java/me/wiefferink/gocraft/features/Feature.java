@@ -58,7 +58,7 @@ public class Feature implements Listener, CommandExecutor {
 	 */
 	protected boolean listen(String configKey) {
 		this.configKey = configKey;
-		if(configKey == null || (config.isBoolean(configKey) && config.getBoolean(configKey)) || config.isSet(configKey)) {
+		if(configKey == null || (config.isBoolean(configKey) && config.getBoolean(configKey)) || (!config.isBoolean(configKey) && config.isSet(configKey))) {
 			plugin.getServer().getPluginManager().registerEvents(this, plugin);
 			return true;
 		}
