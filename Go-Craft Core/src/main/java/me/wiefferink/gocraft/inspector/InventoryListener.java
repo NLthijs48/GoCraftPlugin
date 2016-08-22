@@ -14,7 +14,7 @@ public class InventoryListener implements Listener {
 		this.manager = manager;
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		//GoCraft.debug("clicktype=" + event.getClick() + ", rawSlot=" + event.getRawSlot() + ", slot=" + event.getSlot() + ", action=" + event.getAction() + ", clicker=" + event.getWhoClicked().getName());
 		if (event.getWhoClicked() instanceof Player && manager.getInspectionByInspector((Player) event.getWhoClicked()) != null) {
@@ -29,7 +29,7 @@ public class InventoryListener implements Listener {
 			} else {
 				// Overlay click closes inventory
 				if (event.getRawSlot() == -999 && event.getAction() == org.bukkit.event.inventory.InventoryAction.NOTHING) {
-					//debug("closing inventory...");
+					//GoCraft.debug("closing inventory...");
 					event.getWhoClicked().closeInventory();
 				}
 			}
