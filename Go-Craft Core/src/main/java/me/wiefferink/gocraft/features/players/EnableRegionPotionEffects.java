@@ -48,7 +48,7 @@ public class EnableRegionPotionEffects extends Feature {
 				for (int i = 0; i < 3; i++) {
 					if (current < players.size()) {
 						Player player = players.get(current);
-						if(regions == null || !inWorld(player)) {
+						if(regions == null || !inWorld(player) || !player.isOnline()) {
 							current++;
 							continue;
 						}
