@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityEvent;
@@ -63,6 +64,13 @@ public class Feature implements Listener, CommandExecutor {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Stop listening to events
+	 */
+	public void stopListen() {
+		HandlerList.unregisterAll(this);
 	}
 
 	/**
