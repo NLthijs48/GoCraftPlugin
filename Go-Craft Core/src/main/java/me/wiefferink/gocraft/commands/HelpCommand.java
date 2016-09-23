@@ -38,13 +38,17 @@ public class HelpCommand extends Feature {
 			if (entries != null) {
 				for (String entry : entries) {
 					String[] parts = entry.split(" \\| ");
-					if (parts.length < 2) {
-						continue;
+					// <info item>
+					if(parts.length == 1) {
+						plugin.messageNoPrefix(sender, "help-info", parts[0]);
 					}
-					if (rankPrefix == null || rankPrefix.isEmpty()) {
-						plugin.messageNoPrefix(sender, "help-rule", parts[0], parts[1]);
-					} else {
-						plugin.messageNoPrefix(sender, "help-ruleRank", rankPrefix, parts[0], parts[1]);
+					// <command> | <description>
+					else if(parts.length == 2) {
+						if(rankPrefix == null || rankPrefix.isEmpty()) {
+							plugin.messageNoPrefix(sender, "help-rule", parts[0], parts[1]);
+						} else {
+							plugin.messageNoPrefix(sender, "help-ruleRank", rankPrefix, parts[0], parts[1]);
+						}
 					}
 				}
 			}

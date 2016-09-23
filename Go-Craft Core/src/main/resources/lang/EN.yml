@@ -72,6 +72,7 @@ help-noPermission: "You do no have permission to check the help page."
 help-header: "&2Available commands:"
 help-rule: "[gold]%0%[gray]: [white]%1%"
 help-ruleRank: "%0%[reset]+ [gold]%1%[gray]: [white]%2%"
+help-info: "%0%"
 
 ########## SIGN LIMITING
 tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn! Check /as to see all shop commands."
