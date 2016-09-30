@@ -2,7 +2,6 @@ package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.commands.*;
-import me.wiefferink.gocraft.distribution.DistributionManager;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.features.auracheck.AuraCheck;
 import me.wiefferink.gocraft.features.blocks.*;
@@ -10,6 +9,7 @@ import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
 import me.wiefferink.gocraft.features.environment.DisableRain;
 import me.wiefferink.gocraft.features.environment.ResourceWorlds;
 import me.wiefferink.gocraft.features.items.*;
+import me.wiefferink.gocraft.features.management.DistributionManager;
 import me.wiefferink.gocraft.features.other.AddDefaultRank;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
 import me.wiefferink.gocraft.features.other.ResetExpiredPlots;
@@ -475,6 +475,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new DisableAboveNetherGlitching());
 		features.add(new AddDefaultRank());
 		features.add(new NauseaPotions());
+		features.add(new FixInventories());
 
 
 		features.add(new TempbanCommand());

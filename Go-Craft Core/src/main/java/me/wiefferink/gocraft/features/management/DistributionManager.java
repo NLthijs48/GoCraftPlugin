@@ -1,4 +1,4 @@
-package me.wiefferink.gocraft.distribution;
+package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
