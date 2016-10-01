@@ -149,6 +149,13 @@ map-link:
   - "  link: http://maps.go-craft.com"
   - "."
 
+discord-link:
+    - "Join our Discord voice/text chat server: "
+    - "[bold]https://discord.gg/tRxg9TG[/bold]"
+    - "  hover: %lang:action|Click to join Discord|%"
+    - "  link: https://discord.gg/tRxg9TG"
+    - "."
+
 ########## AURACHECK
 ac-noPermission: "You do not have permission to check for killaura."
 ac-stillRunning: "There is already an AuraCheck running for %0%."

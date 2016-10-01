@@ -114,3 +114,7 @@ commands:
   Map:
     description: Check the online map of the server
     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  Discord:
+     description: Get the link to the Discord server
+     usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+     aliases: [voice, teamspeak, ts]
