@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft.commands;
 
+import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.tools.Utils;
@@ -77,6 +78,7 @@ public class InspectCommand extends Feature {
 		// Start inspection
 		inspection = plugin.getInspectionManager().setupInspection(inspector, newTarget);
 		inspection.startInspection();
+		GoCraft.debug("Inspect: starting inspection by command for", inspector.getName());
 		if (newTarget != null) {
 			plugin.message(inspector, "inspect-started", newTarget.getName());
 			plugin.increaseStatistic("command.inspect.withTarget");

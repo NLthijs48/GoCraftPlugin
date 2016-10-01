@@ -95,6 +95,7 @@ public class Inspection {
 	 * @param restore true if this inspection is restored from disk, otherwise false
 	 */
 	public void startInspection(boolean restore) {
+		GoCraft.debug("Inspect:", inspector.getName(), " starts inspecting", inspected == null ? "nobody" : inspected.getName(), "restore:", restore, ", gamemode:", inspector.getGameMode().toString());
 		plugin.getInspectionManager().addInspection(this);
 		if (!restore && !saveInspectorState()) {
 			// Ending inspection, because this is before most things apply we dont have to restore much
@@ -123,12 +124,13 @@ public class Inspection {
 		// Prepare and select actions
 		updateAll(true);
 		plugin.getInspectionManager().registerUpdater();
-		// Fix for glitch in Factions, TODO think about proper solution
+		// Fix for glitch in Factions and reloads
 		final Player finalPlayer = inspector;
 		new BukkitRunnable() {
 			public void run() {
 				finalPlayer.setAllowFlight(true);
 				finalPlayer.setFlying(true);
+				finalPlayer.setGameMode(GameMode.SPECTATOR);
 			}
 		}.runTaskLater(plugin, 1L);
 	}
@@ -151,8 +153,8 @@ public class Inspection {
 			oldInspected = inspected.getName();
 		}
 		inspected = newInspected;
+		String name = "nobody";
 		if (!noMessage) {
-			String name = "nobody";
 			if (inspected != null) {
 				name = inspected.getName();
 			}
@@ -176,6 +178,7 @@ public class Inspection {
 				updateAll(true);
 			}
 		}.runTask(plugin);
+		GoCraft.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", name);
 	}
 
 	/**
@@ -491,6 +494,7 @@ public class Inspection {
 	 * Store the inspectors state to memory and disk
 	 */
 	public boolean saveInspectorState() {
+		GoCraft.debug("Inspect: save inventory of", inspector.getName(), "while inspecting", inspected == null ? "nobody" : inspected.getName());
 		String baseKey = inspector.getUniqueId().toString() + ".";
 		YamlConfiguration storage = plugin.getInspectionManager().getInspectorStorage();
 
@@ -551,6 +555,7 @@ public class Inspection {
 	 * Restore saved inspector state from the items in memory
 	 */
 	public void restoreInspectorState() {
+		GoCraft.debug("Inspect: restore inspection from memory for", inspector.getName(), "when ending inspect of", inspected == null ? "nobody" : inspected.getName(), "restoring gamemode", gamemode.toString());
 		// Restore inventory
 		for(int i = 0; i < inspector.getInventory().getSize(); i++) {
 			inspector.getInventory().setItem(i, null);

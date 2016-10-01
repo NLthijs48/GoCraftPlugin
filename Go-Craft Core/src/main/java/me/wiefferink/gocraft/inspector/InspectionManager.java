@@ -168,6 +168,7 @@ public class InspectionManager {
 		// Restore stored inspection state
 		final Inspection inspection = restoreInspection(player);
 		if (inspection != null) {
+			GoCraft.debug("Inspect: starting restored inspection on join for", player.getName());
 			inspection.startInspection(true);
 			if (!player.hasPermission("gocraft.staff")) {
 				inspection.endInspection();
@@ -193,6 +194,7 @@ public class InspectionManager {
 				&& !player.isDead()) { // Prevent switching to inspect when killed by combat logging
 			final Inspection finalInspection = setupInspection(player);
 			final boolean inPVP = Utils.isInPvpArea(player);
+			GoCraft.debug("Inspect: starting join in inspect inspection for", player.getName());
 			finalInspection.startInspection();
 			plugin.increaseStatistic("command.inspect.restoredAtJoin");
 			new BukkitRunnable() {
@@ -217,6 +219,7 @@ public class InspectionManager {
 	 * @return The Inspection object created from the stored copy if there is one, otherwise null
 	 */
 	public Inspection restoreInspection(Player player) {
+		GoCraft.debug("Inspect: trying to restore inspection from disk for", player.getName());
 		if (!getInspectorStorage().contains(player.getUniqueId().toString())) {
 			return null;
 		}
@@ -308,6 +311,7 @@ public class InspectionManager {
 		result.isFlying = getInspectorStorage().getBoolean(baseKey + "isFlying");
 		// Restore location
 		result.location = Utils.configToLocation(getInspectorStorage().getConfigurationSection(baseKey + "location"));
+		GoCraft.debug("Inspect: found stored inspection on disk for", player.getName(), "gamemode:", gamemode.toString());
 		return result;
 	}
 
