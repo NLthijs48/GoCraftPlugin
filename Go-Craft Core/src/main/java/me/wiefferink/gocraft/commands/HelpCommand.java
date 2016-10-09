@@ -3,7 +3,6 @@ package me.wiefferink.gocraft.commands;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -19,17 +18,17 @@ public class HelpCommand extends Feature {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public void onCommand(CommandSender sender, String command, String[] args) {
 		if (!sender.hasPermission("gocraft.help")) {
 			plugin.message(sender, "help-noPermission");
-			return true;
+			return;
 		}
 		// Show the help page
 		plugin.message(sender, "help-header");
 		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
 		if (ranksSection == null) {
 			GoCraft.warn("[/help] ranksSection does not exist!");
-			return true;
+			return;
 		}
 		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
 		for (int i = ranks.size() - 1; i >= 0; i--) {
@@ -54,7 +53,6 @@ public class HelpCommand extends Feature {
 			}
 		}
 		plugin.increaseStatistic("command.help.used");
-		return true;
 	}
 
 	/**

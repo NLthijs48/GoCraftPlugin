@@ -16,7 +16,6 @@ import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayClientUseEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -124,13 +123,14 @@ public class AuraCheck extends Feature {
 	}
 
 	@Override
-	public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
+	public void onCommand(CommandSender sender, String command, String[] args) {
 		if (args.length < 1) {
-			return false;
+			plugin.message(sender, "ac-help");
+			return;
 		}
 		if (!sender.hasPermission("gocraft.auracheck")) {
 			plugin.message(sender, "ac-noPermission");
-			return true;
+			return;
 		}
 
 		@SuppressWarnings("deprecation")
@@ -138,7 +138,7 @@ public class AuraCheck extends Feature {
 		Player player;
 		if (playerList.size() == 0) {
 			plugin.message(sender, "general-noPlayer", args[0]);
-			return true;
+			return;
 		}
 		if (playerList.size() == 1) {
 			player = playerList.get(0);
@@ -168,11 +168,11 @@ public class AuraCheck extends Feature {
 				GoCraft.warn("Something went wrong with the chat packet to choose a target:");
 				e.printStackTrace();
 			}
-			return true;
+			return;
 		}
 		if (running.containsKey(player.getUniqueId())) {
 			plugin.message(sender, "ac-stillRunning", player.getName());
-			return true;
+			return;
 		}
 		final Player finalPlayer = player;
 		AuraCheckRun check = new AuraCheckRun(this, player);
@@ -202,7 +202,6 @@ public class AuraCheck extends Feature {
 			}
 		});
 		plugin.increaseStatistic("command.auracheck.used");
-		return true;
 	}
 
 	/**

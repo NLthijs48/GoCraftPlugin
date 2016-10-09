@@ -2,7 +2,6 @@ package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,16 +13,16 @@ public class StaffMessagesCommands extends Feature {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (command.getName().equalsIgnoreCase("StaffBroadcast")) {
+	public void onCommand(CommandSender sender, String command, String[] args) {
+		if(command.equalsIgnoreCase("StaffBroadcast")) {
 			if (!sender.hasPermission("gocraft.sendstaffBroadcast")) {
 				plugin.message(sender, "staffbroadcast-noPermission");
-				return true;
+				return;
 			}
 
 			if (args.length <= 1) {
 				plugin.message(sender, "staffbroadcast-help");
-				return true;
+				return;
 			}
 
 			String type = args[0];
@@ -38,16 +37,15 @@ public class StaffMessagesCommands extends Feature {
 				plugin.message(sender, "staffbroadcast-success", type, message);
 			}
 			plugin.increaseStatistic("command.staffbroadcast.local");
-			return true;
-		} else if (command.getName().equalsIgnoreCase("DisplayStaffMessage")) {
+		} else if(command.equalsIgnoreCase("DisplayStaffMessage")) {
 			if (!sender.hasPermission("gocraft.displayStaffMessage")) {
 				plugin.message(sender, "displaystaffmessage-noPermission");
-				return true;
+				return;
 			}
 
 			if (args.length == 0) {
 				plugin.message(sender, "displaystaffmessage-help");
-				return true;
+				return;
 			}
 
 			// Construct the message
@@ -57,10 +55,7 @@ public class StaffMessagesCommands extends Feature {
 			}
 			Utils.displayStaffMessage(message);
 			plugin.increaseStatistic("command.staffbroadcast.broadcasted");
-		} else {
-			return false;
 		}
-		return true;
 	}
 
 }

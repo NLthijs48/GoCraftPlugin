@@ -5,7 +5,6 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.GameMode;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,15 +18,15 @@ public class InspectCommand extends Feature {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public void onCommand(CommandSender sender, String command, String[] args) {
 		if (!(sender instanceof Player)) {
 			plugin.message(sender, "general-playerOnly");
-			return true;
+			return;
 		}
 		Player inspector = (Player) sender;
 		if (!sender.hasPermission("gocraft.staff")) {
 			plugin.message(inspector, "inspect-noPermission");
-			return true;
+			return;
 		}
 		Inspection inspection = plugin.getInspectionManager().getInspectionByInspector(inspector);
 		if (inspection != null && args.length == 0) {
@@ -38,7 +37,7 @@ public class InspectCommand extends Feature {
 			} else {
 				plugin.message(inspector, "inspect-endedNoTarget");
 			}
-			return true;
+			return;
 		}
 
 		Player newTarget = null;
@@ -47,14 +46,14 @@ public class InspectCommand extends Feature {
 			// Did not play before
 			if (newTarget == null) {
 				plugin.message(inspector, "inspect-notAvailable", args[0]);
-				return true;
+				return;
 			} else if (plugin.getInspectionManager().getInspectionByInspector(newTarget) != null) {
 				// Trying to inspect an inspector
 				plugin.message(inspector, "inspect-inspection", newTarget.getName());
-				return true;
+				return;
 			} else if (inspector.getUniqueId().equals(newTarget.getUniqueId())) {
 				plugin.message(inspector, "inspect-self");
-				return true;
+				return;
 			}
 		}
 		if (inspection != null) {
@@ -66,13 +65,13 @@ public class InspectCommand extends Feature {
 			} else {
 				plugin.message(inspector, "inspect-startedNoTarget");
 			}
-			return true;
+			return;
 		}
 
 		// New inspection
 		if (Utils.isInPvpArea(inspector) && inspector.getGameMode() == GameMode.SURVIVAL) {
 			plugin.message(inspector, "inspect-inNonPVP");
-			return true;
+			return;
 		}
 
 		// Start inspection
@@ -86,7 +85,6 @@ public class InspectCommand extends Feature {
 			plugin.message(inspector, "inspect-startedNoTarget");
 			plugin.increaseStatistic("command.inspect.withoutTarget");
 		}
-		return true;
 	}
 
 }

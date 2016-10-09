@@ -1,7 +1,6 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.features.Feature;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class MapCommand extends Feature {
@@ -11,9 +10,8 @@ public class MapCommand extends Feature {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public void onCommand(CommandSender sender, String command, String[] args) {
 		plugin.message(sender, "map-link");
-		return true;
 	}
 
 }

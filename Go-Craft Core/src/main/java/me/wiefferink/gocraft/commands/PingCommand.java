@@ -3,7 +3,6 @@ package me.wiefferink.gocraft.commands;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,10 +14,10 @@ public class PingCommand extends Feature {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public void onCommand(CommandSender sender, String command, String[] args) {
 		if (!sender.hasPermission("gocraft.ping")) {
 			plugin.message(sender, "ping-noPermission");
-			return true;
+			return;
 		}
 
 		Player target = null;
@@ -27,7 +26,7 @@ public class PingCommand extends Feature {
 			target = Bukkit.getPlayer(args[0]);
 			if (target == null) {
 				plugin.message(sender, "ping-playerNotFound", args[0]);
-				return true;
+				return;
 			}
 			self = false;
 		}
@@ -37,7 +36,7 @@ public class PingCommand extends Feature {
 
 		if (target == null) {
 			plugin.message(sender, "ping-noTarget");
-			return true;
+			return;
 		}
 
 		int ping = Utils.getPing(target);
@@ -48,8 +47,6 @@ public class PingCommand extends Feature {
 			plugin.message(sender, "ping-successOther", target.getName(), ping);
 			plugin.increaseStatistic("command.ping.other");
 		}
-
-		return true;
 	}
 
 }

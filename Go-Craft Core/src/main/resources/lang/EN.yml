@@ -157,5 +157,6 @@ discord-link:
     - "."
 
 ########## AURACHECK
+ac-help: "/ac <player>"
 ac-noPermission: "You do not have permission to check for killaura."
 ac-stillRunning: "There is already an AuraCheck running for %0%."

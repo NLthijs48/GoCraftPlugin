@@ -131,6 +131,10 @@ public class Feature implements Listener, CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		onCommand(sender, command.getName(), args);
 		return false;
+	}
+
+	public void onCommand(CommandSender sender, String command, String[] args) {
 	}
 }

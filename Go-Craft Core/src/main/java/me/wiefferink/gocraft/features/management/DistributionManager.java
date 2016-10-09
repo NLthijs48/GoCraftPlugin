@@ -6,7 +6,6 @@ import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -36,10 +35,10 @@ public class DistributionManager extends Feature {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public void onCommand(CommandSender sender, String command, String[] args) {
 		if(!sender.hasPermission("gocraft.update")) {
 			plugin.message(sender, "update-noPermission");
-			return true;
+			return;
 		}
 
 		String serverFilter = null;
@@ -52,7 +51,6 @@ public class DistributionManager extends Feature {
 		}
 		plugin.getDistributionManager().update(sender, serverFilter, operationFilter);
 		plugin.increaseStatistic("command.update.used");
-		return true;
 	}
 
 	/**
