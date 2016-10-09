@@ -118,3 +118,9 @@ commands:
      description: Get the link to the Discord server
      usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
      aliases: [voice, teamspeak, ts]
+  SyncBungee:
+    description: Sync a command to the BungeeCord server
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'
+  SyncServers:
+    description: Sync a command to all servers
+    usage: 'Go-Craft plugin has not started correctly, contact a staff member.'

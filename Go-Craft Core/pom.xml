@@ -121,6 +121,11 @@
             <type>javadoc</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.2</version>
+        </dependency>
     </dependencies>
 
 
@@ -142,6 +147,10 @@
                             <target>
                                 <copy file="./target/${project.build.finalName}.jar"
                                       tofile="${copyResult}\${project.build.finalName}.jar"/>
+                                <copy file="./target/${project.build.finalName}.jar"
+                                      tofile="${copyResultTwo}\${project.build.finalName}.jar"/>
+                                <copy file="./target/${project.build.finalName}.jar"
+                                      tofile="${copyResultThree}\${project.build.finalName}.jar"/>
                             </target>
                         </configuration>
                         <executions>

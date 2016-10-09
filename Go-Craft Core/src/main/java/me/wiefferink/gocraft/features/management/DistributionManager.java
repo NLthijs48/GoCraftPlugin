@@ -130,7 +130,7 @@ public class DistributionManager extends Feature {
 		try {
 			File updates = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + "updates.log");
 			if (!updates.exists()) {
-				if (!updates.mkdirs()) {
+				if(!updates.getParentFile().mkdirs()) {
 					generalWarnings.add("Could not create directories to updates.log file: " + updates.getAbsolutePath());
 				} else if (!updates.createNewFile()) {
 					generalWarnings.add("Could not create updates.log file: " + updates.getAbsolutePath());

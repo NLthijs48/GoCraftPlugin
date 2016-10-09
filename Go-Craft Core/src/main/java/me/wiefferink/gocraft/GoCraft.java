@@ -10,6 +10,7 @@ import me.wiefferink.gocraft.features.environment.DisableRain;
 import me.wiefferink.gocraft.features.environment.ResourceWorlds;
 import me.wiefferink.gocraft.features.items.*;
 import me.wiefferink.gocraft.features.management.DistributionManager;
+import me.wiefferink.gocraft.features.management.SyncCommandsServer;
 import me.wiefferink.gocraft.features.other.AddDefaultRank;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
 import me.wiefferink.gocraft.features.other.ResetExpiredPlots;
@@ -30,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -81,6 +83,9 @@ public final class GoCraft extends JavaPlugin {
 
 	private boolean dynMapInstalled = false;
 	public static boolean loadedCorrectly = false;
+
+	private ConfigurationSection serverSettings;
+	private String serverId;
 
 	public void onEnable() {
 		reloadConfig();
@@ -258,18 +263,30 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
+	 * Get the directory the server is in
+	 * @return The server directory
+	 */
+	public String getServerDirectory() {
+		String result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
+		if(result != null) {
+			result = result.substring(1);
+		}
+		return result;
+	}
+
+	public ConfigurationSection getServerSettings() {
+		return serverSettings;
+	}
+
+	/**
 	 * Get the name of this server
 	 * @param result The id of the server to get the name for
 	 * @return The display name of this server
 	 */
 	public String getServerName(String result) {
 		if (result == null) {
-			result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
-			if (result != null) {
-				result = result.substring(1);
-			}
-		}
-		if (result != null) {
+			result = serverSettings.getString("name");
+		} else {
 			ConfigurationSection servers = getGeneralConfig().getConfigurationSection("servers");
 			if (servers != null) {
 				for (String id : servers.getKeys(false)) {
@@ -292,26 +309,15 @@ public final class GoCraft extends JavaPlugin {
 	 * @return The id of this server
 	 */
 	public String getServerId() {
-		String result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
-		if (result != null) {
-			result = result.substring(1);
-		}
-		if (result != null) {
-			ConfigurationSection servers = getGeneralConfig().getConfigurationSection("servers");
-			if (servers != null) {
-				for (String id : servers.getKeys(false)) {
-					if (result.equalsIgnoreCase(id)
-							|| result.equalsIgnoreCase(servers.getString(id + ".name"))
-							|| result.equalsIgnoreCase(servers.getString(id + ".directory"))) {
-						result = id;
-					}
-				}
-			}
-		}
-		if (result == null || result.length() == 0) {
-			result = "UNKNOWN";
-		}
-		return result;
+		return serverId;
+	}
+
+	/**
+	 * Get the BungeeCord name
+	 * @return The BungeeCord id
+	 */
+	public String getBungeeId() {
+		return serverSettings.getString("bungeeId");
 	}
 
 	/**
@@ -476,7 +482,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new AddDefaultRank());
 		features.add(new NauseaPotions());
 		features.add(new FixInventories());
-
+		features.add(new SyncCommandsServer());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());
@@ -703,6 +709,23 @@ public final class GoCraft extends JavaPlugin {
 		}
 		if (generalConfig == null) {
 			generalConfig = new UTF8Config();
+		}
+
+		// Get serverSettings section
+		String directory = getServerDirectory();
+		ConfigurationSection servers = generalConfig.getConfigurationSection("servers");
+		if(servers != null) {
+			for(String id : servers.getKeys(false)) {
+				if(directory.equalsIgnoreCase(id)
+						|| directory.equalsIgnoreCase(servers.getString(id+".name"))
+						|| directory.equalsIgnoreCase(servers.getString(id+".directory"))) {
+					serverId = id;
+					serverSettings = servers.getConfigurationSection(serverId);
+				}
+			}
+		}
+		if(serverSettings == null) {
+			serverSettings = new YamlConfiguration();
 		}
 		return true;
 	}

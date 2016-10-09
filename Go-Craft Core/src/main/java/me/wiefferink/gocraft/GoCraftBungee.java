@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft;
 
+import me.wiefferink.gocraft.features.management.SyncCommandsBungee;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -10,20 +11,91 @@ import net.md_5.bungee.event.EventPriority;
 
 public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements Listener {
 
+	private static GoCraftBungee instance;
+	private SyncCommandsBungee syncCommandsBungee;
+
+	public GoCraftBungee getInstance() {
+		return instance;
+	}
+
 	@Override
 	public void onEnable() {
+		instance = this;
 		this.getProxy().getPluginManager().registerListener(this, this);
+		syncCommandsBungee = new SyncCommandsBungee(this);
+	}
+
+	@Override
+	public void onDisable() {
+		if(syncCommandsBungee != null) {
+			syncCommandsBungee.stop();
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PreLoginEvent event) {
-		getLogger().info("PreLoginEvent of "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
+		GoCraftBungee.info("PreLoginEvent of "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 			if(player.getName().equalsIgnoreCase(event.getConnection().getName())) {
 				event.setCancelled(true);
 				event.setCancelReason(ChatColor.DARK_RED+"You cannot login with the same name as an online player!");
-				getLogger().warning("Blocked an attempt to login with the same name as an online player, name: "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
+				GoCraftBungee.warn("Blocked an attempt to login with the same name as an online player, name: "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
 			}
 		}
+	}
+
+	/**
+	 * Print an information message to the console
+	 * @param message The message to print
+	 */
+	public static void info(Object... message) {
+		instance.getLogger().info(join(message, " "));
+	}
+
+	/**
+	 * Print a warning to the console
+	 * @param message The message to print
+	 */
+	public static void warn(Object... message) {
+		instance.getLogger().warning(join(message, " "));
+	}
+
+	/**
+	 * Print an error to the console
+	 * @param message The message to print
+	 */
+	public static void error(Object... message) {
+		instance.getLogger().severe(join(message, " "));
+	}
+
+	/**
+	 * Join string parts with a glue
+	 * @param parts The parts to join
+	 * @param glue  The glue to put between the parts
+	 * @return Glued string parts with the glue
+	 */
+	public static String join(Object[] parts, String glue) {
+		return join(parts, glue, 0);
+	}
+
+	/**
+	 * Join string parts with a glue
+	 * @param parts  The parts to join
+	 * @param glue   The glue to put between the parts
+	 * @param offset The position to start from
+	 * @return Glued string parts with the glue
+	 */
+	public static String join(Object[] parts, String glue, int offset) {
+		StringBuilder result = new StringBuilder();
+		if(offset < 0) {
+			offset = 0;
+		}
+		for(int i = offset; i < parts.length; i++) {
+			result.append(parts[i]);
+			if(i != parts.length-1) {
+				result.append(glue);
+			}
+		}
+		return result.toString();
 	}
 }
