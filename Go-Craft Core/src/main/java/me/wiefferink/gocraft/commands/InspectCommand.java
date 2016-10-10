@@ -12,7 +12,7 @@ public class InspectCommand extends Feature {
 
 	public InspectCommand() {
 		if(config.getBoolean("enableInspecting")) {
-			command("Inspect");
+			command("inspect", "Inspect a player (for detecting hacks)", "/inspect [player]", "i", "in");
 		}
 	}
 

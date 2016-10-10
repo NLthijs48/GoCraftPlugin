@@ -34,6 +34,9 @@ public class SyncCommandsServer extends Feature {
 	private BukkitTask reconnectTask; // Indicate if we have scheduled a reconnect task
 
 	public SyncCommandsServer() {
+		if(!plugin.getConfig().getBoolean("commandSyncEnabled")) {
+			return;
+		}
 		shouldRun = true;
 		reconnectTask = null;
 		new BukkitRunnable() {
@@ -42,8 +45,8 @@ public class SyncCommandsServer extends Feature {
 				connect();
 			}
 		}.runTaskAsynchronously(plugin);
-		command("SyncBungee");
-		command("SyncServers");
+		command("syncbungee", "Sync a command to the BungeeCord server", "/syncbungee <command...>");
+		command("syncservers", "Sync a command to all servers", "/syncservers <command...>");
 	}
 
 	@Override

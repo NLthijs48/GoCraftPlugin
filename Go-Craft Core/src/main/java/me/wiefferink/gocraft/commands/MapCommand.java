@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 public class MapCommand extends Feature {
 
 	public MapCommand() {
-		command("Map");
+		command("map", "Get a link to the online map");
 	}
 
 	@Override

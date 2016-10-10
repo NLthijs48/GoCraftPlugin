@@ -45,7 +45,7 @@ public class AuraCheck extends Feature {
 				}
 			}.runTaskLater(GoCraft.getInstance(), getNextPeriodicDelay());
 		}
-		command("AuraCheck");
+		command("auracheck", "Check if ap player has kill aura hacks", "/auracheck <player>", "ac");
 		listen();
 	}
 

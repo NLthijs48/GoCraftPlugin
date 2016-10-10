@@ -16,7 +16,7 @@ public class RulesCommand extends Feature {
 
 	public RulesCommand() {
 		buildRules();
-		command("Rules");
+		command("rules", "Check the rules of the current server");
 	}
 
 	@Override

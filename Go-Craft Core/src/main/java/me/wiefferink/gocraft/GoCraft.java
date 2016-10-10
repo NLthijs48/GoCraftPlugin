@@ -486,7 +486,6 @@ public final class GoCraft extends JavaPlugin {
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());
-		features.add(new SetspawnCommand());
 		features.add(new StaffMessagesCommands());
 		features.add(new ReloadCommand());
 		features.add(new InspectCommand());
@@ -726,6 +725,9 @@ public final class GoCraft extends JavaPlugin {
 		}
 		if(serverSettings == null) {
 			serverSettings = new YamlConfiguration();
+		}
+		if(serverId == null) {
+			serverId = directory;
 		}
 		return true;
 	}

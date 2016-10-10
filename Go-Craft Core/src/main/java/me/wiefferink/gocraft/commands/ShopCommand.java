@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class ShopCommand extends Feature {
 
 	public ShopCommand() {
-		command("Shop");
+		command("shop", "Open the item shop");
 	}
 
 	@Override

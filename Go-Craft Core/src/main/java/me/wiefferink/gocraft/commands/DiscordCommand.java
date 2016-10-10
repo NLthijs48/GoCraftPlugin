@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 public class DiscordCommand extends Feature {
 
 	public DiscordCommand() {
-		command("Discord");
+		command("discord", "Get a link to join Discord", "/discord", "voice", "teamspeak", "ts");
 	}
 
 	@Override

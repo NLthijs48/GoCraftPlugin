@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 public class StaffMessagesCommands extends Feature {
 
 	public StaffMessagesCommands() {
-		command("StaffBroadcast");
-		command("DisplayStaffMessage");
+		command("staffbroadcast", "Broadcast a staff message to all servers", "/staffbroadcast <type> <message...>");
+		command("displaystaffmessage", "Display a staff message in the chat", "/displaystaffmessage <message...>");
 	}
 
 	@Override

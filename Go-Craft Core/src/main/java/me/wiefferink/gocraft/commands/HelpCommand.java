@@ -14,7 +14,7 @@ public class HelpCommand extends Feature {
 
 	public HelpCommand() {
 		buildHelp();
-		command("Help");
+		command("help", "Get a list of commands you can use");
 	}
 
 	@Override

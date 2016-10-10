@@ -1,15 +1,17 @@
 package me.wiefferink.gocraft.features;
 
 import me.wiefferink.gocraft.GoCraft;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
@@ -20,9 +22,10 @@ import org.bukkit.event.vehicle.VehicleEvent;
 import org.bukkit.event.weather.WeatherEvent;
 import org.bukkit.event.world.WorldEvent;
 
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.*;
 
-public class Feature implements Listener, CommandExecutor {
+public class Feature implements Listener {
 	public static GoCraft plugin = GoCraft.getInstance();
 	public static FileConfiguration config = plugin.getConfig();
 
@@ -38,10 +41,12 @@ public class Feature implements Listener, CommandExecutor {
 	public void stop() {
 	}
 
+
 	/**
 	 * Startup actions of the feature
 	 */
 	public void startFeature() {
+		// TODO properly use start/stop instead of constructor?
 	}
 
 	/**
@@ -75,14 +80,85 @@ public class Feature implements Listener, CommandExecutor {
 
 	/**
 	 * Register for a certain command
-	 * @param name The command to register for
+	 * @param name        The command to register for
+	 * @param description       The usage of the command
 	 */
-	protected void command(String name) {
-		PluginCommand command = plugin.getCommand(name);
-		if(command != null) {
-			command.setExecutor(this);
-		} else {
-			GoCraft.warn("Could not register for command: "+name);
+	protected void command(String name, String description) {
+		command(name, description, null);
+	}
+
+	/**
+	 * Register for a certain command
+	 * @param name The command to register for
+	 * @param description The description of the command
+	 * @param usage The usage of the command
+	 * @param aliases The aliases to add for the command
+	 */
+	protected void command(String name, String description, String usage, String... aliases) {
+		// Create new Command instance that proxies the execute() and tabComplete()
+		Command newCommand = new Command(name) {
+			@Override
+			public boolean execute(CommandSender sender, String label, String[] args) {
+				onCommand(sender, getName(), args);
+				return true;
+			}
+
+			@Override
+			public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
+				List<String> result = onTabComplete(sender, getName(), args);
+				// Filter and sort the results
+				if(result.size() > 0 && args.length > 0) {
+					SortedSet<String> set = new TreeSet<>();
+					for(String suggestion : result) {
+						if(suggestion.toLowerCase().startsWith(args[args.length-1])) {
+							set.add(suggestion);
+						}
+					}
+					result.clear();
+					result.addAll(set);
+				}
+				return result;
+			}
+		};
+
+		// Set settings on the command
+		if(usage != null) {
+			newCommand.setUsage(usage);
+		}
+		if(description != null) {
+			newCommand.setDescription(description);
+		}
+		if(aliases != null && aliases.length > 0) {
+			newCommand.setAliases(Arrays.asList(aliases));
+		}
+
+		// Register the new command, overriding existing commands
+		try {
+			// Get commandMap
+			Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+			bukkitCommandMap.setAccessible(true);
+			CommandMap commandMap = (CommandMap)bukkitCommandMap.get(Bukkit.getServer());
+
+			// Get knowCommands map from commandMap
+			Field knowCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
+			knowCommandsField.setAccessible(true);
+			Map<String, Command> knownCommands = (Map<String, Command>)knowCommandsField.get(commandMap);
+
+			// Remove this command from the map to be able to override it (and possible aliases)
+			knownCommands.remove(name.toLowerCase());
+			if(aliases != null && aliases.length > 0) {
+				for(String alias : aliases) {
+					knownCommands.remove(alias);
+				}
+			}
+
+			// Register command
+			boolean register = commandMap.register(name, plugin.getName(), newCommand);
+			if(!register) {
+				GoCraft.error("Could not register command", name, "(another command is already registered with the same name)");
+			}
+		} catch(NoSuchFieldException|IllegalAccessException|IllegalArgumentException|SecurityException|ClassCastException e) {
+			GoCraft.error("Could not register command", name+":", ExceptionUtils.getStackTrace(e));
 		}
 	}
 
@@ -120,7 +196,7 @@ public class Feature implements Listener, CommandExecutor {
 			} else if(world instanceof WorldEvent) {
 				worldString = ((WorldEvent)world).getWorld().getName();
 			} else {
-				GoCraft.warn("GoCraft.inWorld: Cannot get world from object:", world.toString());
+				GoCraft.warn("GoCraft.inWorld: Cannot get world from object:", world.getClass().getName());
 			}
 			if(!worlds.contains(worldString)) {
 				return false;
@@ -129,12 +205,27 @@ public class Feature implements Listener, CommandExecutor {
 		return true;
 	}
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		onCommand(sender, command.getName(), args);
-		return true;
+	/**
+	 * Executed when a registered command is called (to be overridden by an extending class)
+	 * @param sender  The CommandSender using the command
+	 * @param command The command being executed
+	 * @param args    The arguments of the command
+	 */
+	public void onCommand(CommandSender sender, String command, String[] args) {
 	}
 
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	/**
+	 * Executed when a CommandSender uses tab completion (to be overridden by an extending class)
+	 * @param sender  The CommandSender that uses tab completion
+	 * @param command The command that is being completed
+	 * @param args    The arguments of the command
+	 * @return A list of possible tab completions (will be filtered to match the requested prefix)
+	 */
+	public List<String> onTabComplete(CommandSender sender, String command, String[] args) {
+		List<String> result = new ArrayList<>();
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			result.add(player.getName());
+		}
+		return result;
 	}
 }

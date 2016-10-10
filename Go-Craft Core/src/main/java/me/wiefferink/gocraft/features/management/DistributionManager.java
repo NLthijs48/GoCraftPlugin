@@ -31,7 +31,7 @@ public class DistributionManager extends Feature {
 
 		initializeServerGroups();
 		initializeServerPluginFolders();
-		command("update");
+		command("update", "Update servers with the latest plugin files and configurations", "/update [servers...] [pluginJar,pluginConfig,permissions,rootfiles]");
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class PingCommand extends Feature {
 
 	public PingCommand() {
-		command("Ping");
+		command("ping", "Get the ping of yourself or another player", "/ping [player]", "p");
 	}
 
 	@SuppressWarnings("deprecation")

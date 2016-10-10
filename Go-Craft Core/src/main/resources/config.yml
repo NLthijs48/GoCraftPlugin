@@ -69,6 +69,7 @@ enableExpiredPlotsRestoration: false
 disableAboveNetherGlitching: false
 enableAddDefaultRank: false
 enablePunishmentNotifications: true
+commandSyncEnabled: true
 commandSyncPort: 9191 # CommandSync uses 9190, but we don't want to clash with that
 commandSyncVerification: cbpyiSsZqU6Mu88gqqFcbqLmxZdJNiXr6ePj6TWmUiKQqz67MJMEPUXMaKhX63Sz
 
