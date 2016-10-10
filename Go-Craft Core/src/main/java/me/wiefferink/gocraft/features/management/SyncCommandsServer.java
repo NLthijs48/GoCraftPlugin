@@ -77,7 +77,7 @@ public class SyncCommandsServer extends Feature {
 	@Override
 	public void stop() {
 		shouldRun = false;
-		disconnect();
+		disconnect(null);
 	}
 
 	/**
@@ -141,7 +141,9 @@ public class SyncCommandsServer extends Feature {
 		in = null;
 		connected = false;
 
-		GoCraft.warn("SyncCommands: "+message, shouldRun ? "(scheduling reconnect)" : "");
+		if(message != null) {
+			GoCraft.warn("SyncCommands: "+message, shouldRun ? "(scheduling reconnect)" : "");
+		}
 
 		if(shouldRun && reconnectTask == null) {
 			reconnectTask = new BukkitRunnable() {
