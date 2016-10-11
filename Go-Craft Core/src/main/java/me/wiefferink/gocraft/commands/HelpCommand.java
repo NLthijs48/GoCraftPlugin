@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.*;
 
@@ -13,8 +14,10 @@ public class HelpCommand extends Feature {
 	private Map<String, List<String>> helpMap;
 
 	public HelpCommand() {
-		buildHelp();
+		permission("help", "View the help list", PermissionDefault.TRUE);
 		command("help", "Get a list of commands you can use");
+
+		buildHelp();
 	}
 
 	@Override

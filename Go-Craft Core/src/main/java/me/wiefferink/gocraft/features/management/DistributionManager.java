@@ -25,13 +25,15 @@ public class DistributionManager extends Feature {
 	private Set<String> binaryFiles = new HashSet<>(Arrays.asList("png", "jpg", "jpeg", "bmp", "jar"));
 
 	public DistributionManager() {
+		permission("update", "Update servers");
+		command("update", "Update servers with the latest plugin files and configurations", "/update [servers...] [pluginJar,pluginConfig,permissions,rootfiles]");
+
 		self = new File(DistributionManager.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		pluginDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalPluginDataFoldername);
 		rootDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalRootDataFoldername);
 
 		initializeServerGroups();
 		initializeServerPluginFolders();
-		command("update", "Update servers with the latest plugin files and configurations", "/update [servers...] [pluginJar,pluginConfig,permissions,rootfiles]");
 	}
 
 	@Override

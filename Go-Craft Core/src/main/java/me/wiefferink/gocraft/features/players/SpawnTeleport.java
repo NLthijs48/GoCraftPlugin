@@ -14,6 +14,7 @@ public class SpawnTeleport extends Feature {
 
 	public SpawnTeleport() {
 		if(config.getBoolean("spawnTeleport")) {
+			permission("setgspawn", "Set the spawn of the server");
 			command("setgspawn", "Set the spawn location of the server");
 			listen();
 		}

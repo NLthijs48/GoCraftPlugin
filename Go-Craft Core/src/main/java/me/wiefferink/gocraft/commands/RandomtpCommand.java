@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 public class RandomtpCommand extends Feature {
 
 	public RandomtpCommand() {
+		permission("randomtp", "Allows you to teleport to random places");
 		command("randomtp", "Teleport to a random location in the current world", "/randomtp", "rtp");
 	}
 

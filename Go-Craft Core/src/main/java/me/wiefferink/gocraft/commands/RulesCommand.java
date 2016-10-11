@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,10 @@ public class RulesCommand extends Feature {
 	private List<String> rules;
 
 	public RulesCommand() {
-		buildRules();
+		permission("rules", "View the rules list", PermissionDefault.TRUE);
 		command("rules", "Check the rules of the current server");
+
+		buildRules();
 	}
 
 	@Override

@@ -5,10 +5,12 @@ import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 
 public class PingCommand extends Feature {
 
 	public PingCommand() {
+		permission("ping", "Use the ping command on yourself and others", PermissionDefault.TRUE);
 		command("ping", "Get the ping of yourself or another player", "/ping [player]", "p");
 	}
 

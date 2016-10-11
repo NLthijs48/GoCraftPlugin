@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 public class StaffMessagesCommands extends Feature {
 
 	public StaffMessagesCommands() {
+		permission("sendStaffBroadcast", "Send a message to all staff on the network");
 		command("staffbroadcast", "Broadcast a staff message to all servers", "/staffbroadcast <type> <message...>");
+		permission("displayStaffMessage", "Display a staff message to all staff on this server");
 		command("displaystaffmessage", "Display a staff message in the chat", "/displaystaffmessage <message...>");
 	}
 

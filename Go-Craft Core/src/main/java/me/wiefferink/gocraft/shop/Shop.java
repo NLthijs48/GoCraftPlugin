@@ -82,6 +82,8 @@ public class Shop extends Feature {
 		kits = new HashMap<>();
 		categories = new HashMap<>();
 		shopSection = plugin.getConfig().getConfigurationSection("shop");
+
+		// Check if we should really enable
 		if (shopSection == null) { // Shop not in use
 			return;
 		}
@@ -90,6 +92,14 @@ public class Shop extends Feature {
 			GoCraft.warn("Kits section of the shop is empty!");
 			return;
 		}
+
+		permission("placeKitSign", "Place kit shop signs to buy kits (for possibly another price)");
+		permission("placeShopSign", "Place shop sign that opens the shop when clicked");
+		permission("shop", "Use the item shop");
+		command("shop", "Open the item shop");
+		listen();
+
+		// Setup kits and start
 		ConfigurationSection categoriesSection = shopSection.getConfigurationSection("categories");
 		for (String kitString : kitsSection.getKeys(false)) {
 			ConfigurationSection kitSection = kitsSection.getConfigurationSection(kitString);
@@ -197,9 +207,6 @@ public class Shop extends Feature {
 
 			}
 		}.runTask(plugin);
-
-		listen();
-		command("shop", "Open the item shop");
 	}
 
 	@Override

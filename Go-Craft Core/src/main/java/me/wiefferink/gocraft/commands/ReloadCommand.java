@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 public class ReloadCommand extends Feature {
 
 	public ReloadCommand() {
+		permission("reload", "Reload configuration data");
 		command("gcreload", "Reload the configuration files of the Go-Craft plugin");
 	}
 

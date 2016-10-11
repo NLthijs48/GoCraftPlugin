@@ -21,6 +21,8 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.vehicle.VehicleEvent;
 import org.bukkit.event.weather.WeatherEvent;
 import org.bukkit.event.world.WorldEvent;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -159,6 +161,29 @@ public class Feature implements Listener {
 			}
 		} catch(NoSuchFieldException|IllegalAccessException|IllegalArgumentException|SecurityException|ClassCastException e) {
 			GoCraft.error("Could not register command", name+":", ExceptionUtils.getStackTrace(e));
+		}
+	}
+
+	/**
+	 * Register a permission
+	 * @param permission  The permission to register
+	 * @param description Description of the permission
+	 */
+	protected void permission(String permission, String description) {
+		permission(permission, description, PermissionDefault.OP);
+	}
+
+	/**
+	 * Register a permission
+	 * @param permission        The permission to register
+	 * @param description       Description of the permission
+	 * @param permissionDefault Default permission state
+	 */
+	protected void permission(String permission, String description, PermissionDefault permissionDefault) {
+		Permission newPermission = new Permission("gocraft."+permission, description, permissionDefault);
+		try {
+			Bukkit.getPluginManager().addPermission(newPermission);
+		} catch(IllegalArgumentException ignored) {
 		}
 	}
 

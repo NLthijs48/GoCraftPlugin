@@ -2,15 +2,18 @@ package me.wiefferink.gocraft.inspector;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,7 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class InspectionManager {
+public class InspectionManager extends Feature {
 
 	private Map<UUID, Inspection> currentInspections;
 	private final GoCraft plugin;
@@ -32,7 +35,16 @@ public class InspectionManager {
 	private BukkitRunnable updateTask;
 
 	public InspectionManager(final GoCraft plugin) {
+		permission("staff", "Indicates the player is staff or not"); // Does not really make sense here, no better place for it now though
+
 		this.plugin = plugin;
+		if(!config.getBoolean("enableInspecting")) {
+			return;
+		}
+		permission("inspect", "Inspect players to see if they are hacking");
+		permission("joinInInspect", "Join the server in inspect mode", PermissionDefault.FALSE);
+		command("inspect", "Inspect a player (for detecting hacks)", "/inspect [player]", "i", "in");
+
 		plugin.setInspectionManager(this);
 		inspectorsFile = new File(plugin.getDataFolder(), "inspectors.yml");
 		currentInspections = new HashMap<>();
@@ -391,6 +403,77 @@ public class InspectionManager {
 	 */
 	public YamlConfiguration getInspectorStorage() {
 		return inspectorStorage;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onCommand(CommandSender sender, String command, String[] args) {
+		if(!(sender instanceof Player)) {
+			plugin.message(sender, "general-playerOnly");
+			return;
+		}
+		Player inspector = (Player)sender;
+		if(!sender.hasPermission("gocraft.staff")) {
+			plugin.message(inspector, "inspect-noPermission");
+			return;
+		}
+		Inspection inspection = plugin.getInspectionManager().getInspectionByInspector(inspector);
+		if(inspection != null && args.length == 0) {
+			// Stop existing inspection
+			inspection.endInspection();
+			if(inspection.hasInspected()) {
+				plugin.message(inspector, "inspect-ended", inspection.getInspected().getName());
+			} else {
+				plugin.message(inspector, "inspect-endedNoTarget");
+			}
+			return;
+		}
+
+		Player newTarget = null;
+		if(args.length > 0) {
+			newTarget = Utils.loadPlayer(args[0]);
+			// Did not play before
+			if(newTarget == null) {
+				plugin.message(inspector, "inspect-notAvailable", args[0]);
+				return;
+			} else if(plugin.getInspectionManager().getInspectionByInspector(newTarget) != null) {
+				// Trying to inspect an inspector
+				plugin.message(inspector, "inspect-inspection", newTarget.getName());
+				return;
+			} else if(inspector.getUniqueId().equals(newTarget.getUniqueId())) {
+				plugin.message(inspector, "inspect-self");
+				return;
+			}
+		}
+		if(inspection != null) {
+			// From existing to new target
+			inspection.switchToPlayer(newTarget, true);
+			plugin.increaseStatistic("command.inspect.switchTarget");
+			if(newTarget != null) {
+				plugin.message(inspector, "inspect-started", newTarget.getName());
+			} else {
+				plugin.message(inspector, "inspect-startedNoTarget");
+			}
+			return;
+		}
+
+		// New inspection
+		if(Utils.isInPvpArea(inspector) && inspector.getGameMode() == GameMode.SURVIVAL) {
+			plugin.message(inspector, "inspect-inNonPVP");
+			return;
+		}
+
+		// Start inspection
+		inspection = plugin.getInspectionManager().setupInspection(inspector, newTarget);
+		inspection.startInspection();
+		GoCraft.debug("Inspect: starting inspection by command for", inspector.getName());
+		if(newTarget != null) {
+			plugin.message(inspector, "inspect-started", newTarget.getName());
+			plugin.increaseStatistic("command.inspect.withTarget");
+		} else {
+			plugin.message(inspector, "inspect-startedNoTarget");
+			plugin.increaseStatistic("command.inspect.withoutTarget");
+		}
 	}
 
 }

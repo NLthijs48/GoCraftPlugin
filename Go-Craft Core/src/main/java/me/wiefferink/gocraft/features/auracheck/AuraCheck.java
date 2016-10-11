@@ -34,6 +34,10 @@ public class AuraCheck extends Feature {
 	private static AuraCheck self;
 
 	public AuraCheck() {
+		permission("auracheck", "Allow checking players for kill aura");
+		command("auracheck", "Check if ap player has kill aura hacks", "/auracheck <player>", "ac");
+		listen();
+
 		random = new Random();
 		running = new HashMap<>();
 		self = this;
@@ -45,8 +49,6 @@ public class AuraCheck extends Feature {
 				}
 			}.runTaskLater(GoCraft.getInstance(), getNextPeriodicDelay());
 		}
-		command("auracheck", "Check if ap player has kill aura hacks", "/auracheck <player>", "ac");
-		listen();
 	}
 
 	@Override

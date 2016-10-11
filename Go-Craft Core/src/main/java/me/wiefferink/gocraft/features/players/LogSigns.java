@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +19,8 @@ public class LogSigns extends Feature {
 	public final String configLine = "signLoggingEnabled";
 
 	public LogSigns() {
+		permission("signLog", "Track signs placed by these players", PermissionDefault.NOT_OP);
+		permission("signTell", "Log placed signs to these players", PermissionDefault.OP);
 		listen("signLoggingEnabled");
 	}
 

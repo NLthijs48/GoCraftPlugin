@@ -488,7 +488,6 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new PingCommand());
 		features.add(new StaffMessagesCommands());
 		features.add(new ReloadCommand());
-		features.add(new InspectCommand());
 		features.add(new RulesCommand());
 		features.add(new HelpCommand());
 		features.add(new AuraCheck());
