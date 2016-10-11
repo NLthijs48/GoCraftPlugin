@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
@@ -8,12 +9,12 @@ import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionType;
@@ -21,7 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class Shop implements Listener {
+public class Shop extends Feature {
 
 	private GoCraft plugin;
 	private Map<String, Kit> kits;
@@ -196,6 +197,24 @@ public class Shop implements Listener {
 
 			}
 		}.runTask(plugin);
+
+		listen();
+		command("shop", "Open the item shop");
+	}
+
+	@Override
+	public void onCommand(CommandSender sender, String command, String[] args) {
+		if(plugin.getShop() == null) {
+			plugin.message(sender, "shop-notEnabled");
+			return;
+		}
+
+		if(!(sender instanceof Player)) {
+			plugin.message(sender, "general-playerOnly");
+			return;
+		}
+		Player player = (Player)sender;
+		plugin.getShop().open(player);
 	}
 
 	/**

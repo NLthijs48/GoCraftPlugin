@@ -491,7 +491,6 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new InspectCommand());
 		features.add(new RulesCommand());
 		features.add(new HelpCommand());
-		features.add(new ShopCommand());
 		features.add(new AuraCheck());
 		features.add(new ResourceWorlds());
 		features.add(new RandomtpCommand());
