@@ -208,7 +208,7 @@ public class Utils {
 		// Display in console
 		result.send(Bukkit.getConsoleSender());
 		// Send to other servers
-		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console all displaystaffmessage "+result.getPlain());
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "syncservers displaystaffmessage "+result.getPlain());
 	}
 
 	/**
