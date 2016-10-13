@@ -178,7 +178,7 @@ public class Inspection {
 				updateAll(true);
 			}
 		}.runTask(plugin);
-		GoCraft.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", name);
+		GoCraft.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", newInspected==null ? "nobody" : newInspected.getName());
 	}
 
 	/**

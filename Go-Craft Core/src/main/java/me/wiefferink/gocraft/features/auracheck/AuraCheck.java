@@ -53,7 +53,8 @@ public class AuraCheck extends Feature {
 
 	@Override
 	public void stop() {
-		for (UUID uuid : running.keySet()) {
+		ArrayList<UUID> list = new ArrayList<>(running.keySet()); // Prevent concurrent modification
+		for (UUID uuid : list) {
 			AuraCheckRun check = removeCheck(uuid);
 			check.wrapup();
 		}
