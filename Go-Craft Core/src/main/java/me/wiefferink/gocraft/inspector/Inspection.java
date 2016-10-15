@@ -178,7 +178,7 @@ public class Inspection {
 				updateAll(true);
 			}
 		}.runTask(plugin);
-		GoCraft.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", newInspected==null ? "nobody" : newInspected.getName());
+		GoCraft.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", newInspected==null ? "nobody" : newInspected.getName(), "gamemode:", gamemode);
 	}
 
 	/**
@@ -494,7 +494,7 @@ public class Inspection {
 	 * Store the inspectors state to memory and disk
 	 */
 	public boolean saveInspectorState() {
-		GoCraft.debug("Inspect: save inventory of", inspector.getName(), "while inspecting", inspected == null ? "nobody" : inspected.getName());
+		GoCraft.debug("Inspect: save inventory of", inspector.getName(), "while inspecting", inspected == null ? "nobody" : inspected.getName(), "gamemode:", inspector.getGameMode());
 		String baseKey = inspector.getUniqueId().toString() + ".";
 		YamlConfiguration storage = plugin.getInspectionManager().getInspectorStorage();
 
