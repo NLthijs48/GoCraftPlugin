@@ -212,17 +212,20 @@ public class Message {
 			boolean sendPlain = true;
 			if(GoCraft.getInstance().getConfig().getBoolean("useFancyMessages") && fancyWorks) {
 				try {
-					String jsonString = FancyMessageFormat.convertToJSON(message);
-					if(jsonString.length() > MAXIMUMJSONLENGTH) {
-						GoCraft.error("Message with key "+key+" could not be send, results in a JSON string that is too big to send to the client, start of the message: "+Utils.getMessageStart(this, 100));
-						return this;
+					boolean result = true;
+					List<String> jsonMessages = FancyMessageFormat.convertToJSON(message);
+					for(String jsonMessage : jsonMessages) {
+						if(jsonMessage.length() > MAXIMUMJSONLENGTH) {
+							GoCraft.error("Message with key", key, "could not be send, results in a JSON string that is too big to send to the client, start of the message:", Utils.getMessageStart(this, 100));
+							return this;
+						}
+						result &= Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw "+((Player)target).getName()+" "+jsonMessage);
 					}
-					boolean result = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw "+((Player)target).getName()+" "+jsonString);
 					sendPlain = !result;
 					fancyWorks = result;
 				} catch(Exception e) {
 					fancyWorks = false;
-					GoCraft.warn("Sending fancy message did not work, falling back to plain messages. Message key: "+key);
+					GoCraft.error("Sending fancy message did not work, falling back to plain messages. Message key:", key);
 					GoCraft.debug(ExceptionUtils.getStackTrace(e));
 				}
 			}
