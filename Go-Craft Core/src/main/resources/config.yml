@@ -73,6 +73,11 @@ commandSyncEnabled: true
 commandSyncPort: 9191 # CommandSync uses 9190, but we don't want to clash with that
 commandSyncVerification: cbpyiSsZqU6Mu88gqqFcbqLmxZdJNiXr6ePj6TWmUiKQqz67MJMEPUXMaKhX63Sz
 
+spawnPoints:
+  enable: false
+  randomizeDirection: true
+  regions: # whitelist of regions where you can use the /respawn command
+
 ########## Combat
 auracheck:
   enablePeriodicCheck: true

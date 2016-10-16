@@ -7,12 +7,34 @@
 ###################################################
 
 action: "[gold][bold]<%0%>[/bold]"
+button: "[bold]<%0%>[/bold]"
+clickable: "[bold]%0%[/bold]"
+location: "[gray](%0%: %1%,%2%,%3%)[white]" # (world,x,y,z)
 
 staff-noPermission: "You are not a staff member."
 
 general-mutedSignUse: "You cannot place signs while you are muted."
 general-noPlayer: "Player %0% is not online."
 general-playerOnly: "This command can only be used by a player."
+
+########## PAGES
+page-wrong: "%0% is not a correct page number."
+page-status:
+  - "[gold]Page %0%/%1%"
+page-previous:
+  - "    [gold][bold]◄Previous[/bold]    "
+  - "    hover: %lang:action|Show previous page|%"
+  - "    command: %0%"
+page-noPrevious:
+  - "    [darkgray][bold]◄Previous[/bold]    "
+  - "    hover: This is already the first page"
+page-next:
+  - "    [gold][bold]Next►[/bold]"
+  - "    hover: %lang:action|Show next page|%"
+  - "    command: %0%"
+page-noNext:
+  - "    [darkgray][bold]Next►[/bold]"
+  - "    hover: This is already the last page"
 
 ########## LOGGING
 signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
@@ -142,18 +164,49 @@ shop-sellFailed: "Could not sell the items, report this to the staff."
 shop-soldKit: "You have sold %0% for %1%, balance: %2%."
 shop-buyFailed: "Could not buy the items, report this to the staff."
 
+spawnpoints-help: "/sp <add,remove,list,tp>."
+spawnpoints-helpRemove: "/sp remove <number>."
+spawnpoints-helpTp: "/sp tp <number>."
+spawnpoints-noPermission: "You do not have permission to manage spawnpoints."
+spawnpoints-noPermissionSpawn: "You do not have permission to respawn."
+spawnpoints-added: "Spawnpoint %0% added: %lang:location|%1%|%2%|%3%|%4%|%."
+spawnpoints-noSpawnpoint: "Spawnpoint '%0%' does not exist, check with '/sp list'."
+spawnpoints-removed: "Spawnpoint %0% at %lang:location|%1%|%2%|%3%|%4%|% removed."
+spawnpoints-removedBroken: "Spawnpoint %0% removed (it was not a proper location)."
+spawnpoints-brokenSpawnpoint: "Spawnpoint '%0%' is broken, it has no proper location."
+spawnpoints-teleported: "Teleported to '%0%' at %lang:location|%1%|%2%|%3%|%4%|%."
+spawnpoints-noSafeSpot: "No safe spot around '%0%' has been found, consider removing this spawnpoint %lang:location|%1%|%2%|%3%|%4%|%."
+spawnpoints-spawned: "You have respawned in a random location."
+spawnpoints-failed: "Failed to find a proper spawning location, notify staff about this."
+spawnpoints-notInRegion: "You need to be in the spawn region to use /respawn."
+spawnpoints-listNone: "There are no spawn points added, add them with '/sp add'."
+spawnpoints-listHeader: "The following spawnpoints are defined:"
+spawnpoints-listImproper:
+  - "%0%: [red]Improper location, "
+  - "%lang:clickable|remove|%"
+  - "    hover: %lang:action|Remove spawnpoint %0%|%"
+  - "    command: /spawnpoints remove %0%"
+  - "."
+spawnpoints-listItem:
+  - "%0%: %lang:location|%1%|%2%|%3%|%4%|%"
+  - "    hover: %lang:action|Teleport to spawnpoint %0%|%"
+  - "    command: /spawnpoints tp %0%"
+  - "[red]%lang:clickable| -|%[white]"
+  - "    hover: %lang:action|Remove spawnpoint|%"
+  - "    command: /spawnpoints remove %0%"
+
 map-link:
   - "Check the map on "
   - "[bold]maps.go-craft.com[/bold]"
-  - "  hover: %lang:action|Click to open the map|%"
-  - "  link: http://maps.go-craft.com"
+  - "    hover: %lang:action|Click to open the map|%"
+  - "    link: http://maps.go-craft.com"
   - "."
 
 discord-link:
     - "Join our Discord voice/text chat server: "
     - "[bold]https://discord.gg/tRxg9TG[/bold]"
-    - "  hover: %lang:action|Click to join Discord|%"
-    - "  link: https://discord.gg/tRxg9TG"
+    - "    hover: %lang:action|Click to join Discord|%"
+    - "    link: https://discord.gg/tRxg9TG"
     - "."
 
 ########## AURACHECK
@@ -164,3 +217,14 @@ ac-stillRunning: "There is already an AuraCheck running for %0%."
 ########## COMMANDSYNC
 sync-noPermission: "You do not have permission for this command." # Bit vague on purpose
 sync-added: "Executing command: [bold]%0%[/bold] %1%"
+
+
+
+
+
+
+
+
+
+
+

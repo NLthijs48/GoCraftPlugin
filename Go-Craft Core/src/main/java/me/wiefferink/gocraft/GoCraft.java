@@ -483,6 +483,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new NauseaPotions());
 		features.add(new FixInventories());
 		features.add(new SyncCommandsServer());
+		features.add(new SpawnPoints());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());

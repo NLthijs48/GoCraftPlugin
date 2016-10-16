@@ -356,6 +356,159 @@ public class Utils {
 	}
 
 	/**
+	 * Teleport a player to a location, or somewhere close to it where it is safe
+	 * @param player           Player that should be teleported
+	 * @param location The location to teleport to
+	 * @return true if the teleport succeeded, otherwise false
+	 */
+	public static boolean teleportToLocation(Player player, Location location, int maximumAttempts) {
+		int checked = 1;
+
+		// Setup startlocation at the center of the block (simplifies safe location check)
+		Location startLocation = location.clone();
+		startLocation.setX(startLocation.getBlockX()+0.5);
+		startLocation.setZ(startLocation.getBlockZ()+0.5);
+
+		// Check locations starting from startLocation and then a cube that increases
+		// radius around that (until no block in the region is found at all cube sides)
+		Location safeLocation = startLocation;
+		int radius = 1;
+		boolean done = isSafe(safeLocation);
+		while(!done) {
+			// North side
+			for(int x = -radius+1; x <= radius && !done; x++) {
+				for(int y = -radius+1; y < radius && !done; y++) {
+					safeLocation = startLocation.clone().add(x, y, -radius);
+					if(safeLocation.getBlockY() > 256 || safeLocation.getBlockY() < 0) {
+						continue;
+					}
+					checked++;
+					done = isSafe(safeLocation) || checked > maximumAttempts;
+				}
+			}
+
+			// East side
+			for(int z = -radius+1; z <= radius && !done; z++) {
+				for(int y = -radius+1; y < radius && !done; y++) {
+					safeLocation = startLocation.clone().add(radius, y, z);
+					if(safeLocation.getBlockY() > 256 || safeLocation.getBlockY() < 0) {
+						continue;
+					}
+					checked++;
+					done = isSafe(safeLocation) || checked > maximumAttempts;
+				}
+			}
+
+			// South side
+			for(int x = radius-1; x >= -radius && !done; x--) {
+				for(int y = -radius+1; y < radius && !done; y++) {
+					safeLocation = startLocation.clone().add(x, y, radius);
+					if(safeLocation.getBlockY() > 256 || safeLocation.getBlockY() < 0) {
+						continue;
+					}
+					checked++;
+					done = isSafe(safeLocation) || checked > maximumAttempts;
+				}
+			}
+
+			// West side
+			for(int z = radius-1; z >= -radius && !done; z--) {
+				for(int y = -radius+1; y < radius && !done; y++) {
+					safeLocation = startLocation.clone().add(-radius, y, z);
+					if(safeLocation.getBlockY() > 256 || safeLocation.getBlockY() < 0) {
+						continue;
+					}
+					checked++;
+					done = isSafe(safeLocation) || checked > maximumAttempts;
+				}
+			}
+
+			// Top side
+			if(startLocation.getBlockY()+radius < 256 && !done) {
+				// Middle block of the top
+				safeLocation = startLocation.clone().add(0, radius, 0);
+				checked++;
+				done = isSafe(safeLocation) || checked > maximumAttempts;
+				// Blocks around it
+				for(int r = 1; r <= radius && !done; r++) {
+					// North
+					for(int x = -r+1; x <= r && !done; x++) {
+						safeLocation = startLocation.clone().add(x, radius, -r);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+					// East
+					for(int z = -r+1; z <= r && !done; z++) {
+						safeLocation = startLocation.clone().add(r, radius, z);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+					// South side
+					for(int x = r-1; x >= -r && !done; x--) {
+						safeLocation = startLocation.clone().add(x, radius, r);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+					// West side
+					for(int z = r-1; z >= -r && !done; z--) {
+						safeLocation = startLocation.clone().add(-r, radius, z);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+				}
+			}
+
+			// Bottom side
+			if(startLocation.getBlockY()-radius >= 0 && !done) {
+				// Middle block of the bottom
+				safeLocation = startLocation.clone().add(0, -radius, 0);
+				checked++;
+				done = isSafe(safeLocation) || checked > maximumAttempts;
+				// Blocks around it
+				for(int r = 1; r <= radius && !done; r++) {
+					// North
+					for(int x = -r+1; x <= r && !done; x++) {
+						safeLocation = startLocation.clone().add(x, -radius, -r);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+					// East
+					for(int z = -r+1; z <= r && !done; z++) {
+						safeLocation = startLocation.clone().add(r, -radius, z);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+					// South side
+					for(int x = r-1; x >= -r && !done; x--) {
+						safeLocation = startLocation.clone().add(x, -radius, r);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+					// West side
+					for(int z = r-1; z >= -r && !done; z--) {
+						safeLocation = startLocation.clone().add(-r, -radius, z);
+						checked++;
+						done = isSafe(safeLocation) || checked > maximumAttempts;
+					}
+				}
+			}
+
+			// Increase cube radius
+			radius++;
+		}
+
+		// Either found safe location or ran out of attempts
+		if(isSafe(safeLocation)) {
+			player.teleport(safeLocation);
+			//GoCraft.debug("Found location: "+safeLocation.toString()+" Tries: "+(checked-1));
+			return true;
+		} else {
+			GoCraft.debug("No location found, checked "+(checked-1)+" spots of max "+maximumAttempts);
+			return false;
+		}
+	}
+
+	/**
 	 * Get the radius of the world
 	 * @param world The world to get it for
 	 * @return The maximum radius from spawn to teleport from
@@ -714,6 +867,20 @@ public class Utils {
 			return new ArrayList<>(Collections.singletonList(section.getString(key)));
 		}
 		return null;
+	}
+
+	/**
+	 * Check if an input is numeric
+	 * @param input The input to check
+	 * @return true if the input is numeric, otherwise false
+	 */
+	public static boolean isNumeric(String input) {
+		try {
+			Integer.parseInt(input);
+			return true;
+		} catch(NumberFormatException ignored) {
+			return false;
+		}
 	}
 
 }

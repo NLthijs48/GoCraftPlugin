@@ -1,0 +1,28 @@
+statistics:
+  pvp:
+    totalDeaths: <number>
+    totalKills: <number>
+  shop:
+    bought:
+      <kit>: <number>
+    sold:
+      <kit>: <number>
+    opened: <number>
+  command: # Number of times certain commands are used
+  administration:
+    fixedinventory: <number>
+players:
+ <uuid>:
+   shop:
+     cooldowns:
+       <kit>: <timestamp> # When it can be used again
+shop:
+  signs:
+    <number>:
+      type: <kit,shop>
+      location: <location>
+      kit?: <kit>
+spawnPoints:
+  max: <number> # Maximum number used as key
+  <number>:
+    location: <location>
