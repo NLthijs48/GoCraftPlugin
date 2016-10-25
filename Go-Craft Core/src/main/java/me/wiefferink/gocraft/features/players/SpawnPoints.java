@@ -4,6 +4,7 @@ import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,7 +24,7 @@ public class SpawnPoints extends Feature {
 		if(config.getBoolean("spawnPoints.enable")) {
 			permission("spawnpoints.manage", "Manage spawnpoints");
 			permission("spawnpoints.spawn", "Spawn at one of the spawnpoints", PermissionDefault.TRUE);
-			command("spawnpoints", "Manage spawnpoints", "/spawnpoints <add,remove,list,tp>", "sp");
+			command("spawnpoints", "Manage spawnpoints", "/spawnpoints <add,remove,list,tp,updatemarkers>", "sp");
 			command("respawn", "Spawn at a random spawnpoint");
 		}
 	}
@@ -110,6 +111,8 @@ public class SpawnPoints extends Feature {
 			plugin.getLocalStorage().set(PATH+"."+key+".location", Utils.locationToConfig(location, true));
 			plugin.saveLocalStorage();
 			plugin.message(sender, "spawnpoints-added", key, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getPitch(), location.getYaw());
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker addset id:spawnpoints Spawnpoints");
+			addOnDynmap(key+"");
 		}
 
 		////////// REMOVE
@@ -132,6 +135,7 @@ public class SpawnPoints extends Feature {
 			} else {
 				plugin.message(sender, "spawnpoints-removed", args[1], location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
 			}
+			removeFromDynmap(args[1]);
 		}
 
 		////////// TP
@@ -213,15 +217,42 @@ public class SpawnPoints extends Feature {
 			}.renderPage(args.length>1 ? args[1] : null);
 		}
 
+		////////// UPDATEMARKERS
+		else if("updatemarkers".equalsIgnoreCase(args[0])) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker deleteset id:spawnpoints");
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker addset id:spawnpoints Spawnpoints");
+			ConfigurationSection spawnPoints = plugin.getLocalStorage().getConfigurationSection(PATH);
+			if(spawnPoints != null) {
+				for(String id : spawnPoints.getKeys(false)) {
+					addOnDynmap(id);
+				}
+			}
+			plugin.message(sender, "spawnpoints-markersUpdated");
+
+		}
+
+		else {
+			plugin.message(sender, "spawnpoints-help");
+		}
 	}
 
 	/**
-	 * Teleport the given player to the spawnpoint
-	 * @param player The player to teleport
-	 * @param key The key of the spawnpoint
+	 * Add marker on DynMap
+	 * @param id The id of the marker to add
 	 */
-	private void gotoSpawnpoint(Player player, String key) {
+	public void addOnDynmap(String id) {
+		Location location = Utils.configToLocation(plugin.getLocalStorage().getConfigurationSection(PATH+"."+id+".location"));
+		if(location != null) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker add id:"+id+" Spawnpoint-"+id+" icon:"+config.getString("spawnPoints.dynmapMarkerIcon")+" set:spawnpoints x:"+location.getBlockX()+" y:"+location.getBlockY()+" z:"+location.getBlockZ()+" world:"+location.getWorld().getName());
+		}
+	}
 
+	/**
+	 * Remove marker from the DynMap
+	 * @param id The id of the marker to remove
+	 */
+	public void removeFromDynmap(String id) {
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker delete set:spawnpoints id:"+id);
 	}
 
 	@Override
@@ -232,6 +263,7 @@ public class SpawnPoints extends Feature {
 			result.add("remove");
 			result.add("list");
 			result.add("tp");
+			result.add("updatemarkers");
 		}
 		return result;
 	}
