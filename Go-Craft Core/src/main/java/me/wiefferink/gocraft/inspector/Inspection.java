@@ -113,10 +113,6 @@ public class Inspection {
 		if (plugin.dynMapInstalled()) {
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dynmap:dynmap hide " + getInspector().getName());
 		}
-		// Remove current potion effects (could be annoying, will be restoread after)
-		for (PotionEffect effect : inspector.getActivePotionEffects()) {
-			inspector.removePotionEffect(effect.getType());
-		}
 		// Teleport to 1 block behind the direction the inspected player is looking at (third person like view)
 		this.teleportToInspected();
 		inspector.setGameMode(GameMode.SPECTATOR);
@@ -267,6 +263,13 @@ public class Inspection {
 			if (action.doUpdates() || inventory.getItem(slot) == null || forceUpdate) {
 				inventory.setItem(slot, action.getItem().hideAllAttributes().getItemStack());
 			}
+		}
+		// Update potion effects (for indicators in top right)
+		for(PotionEffect potionEffect : inspector.getActivePotionEffects()) {
+			inspector.removePotionEffect(potionEffect.getType());
+		}
+		if(inspected != null) {
+			inspector.addPotionEffects(inspected.getActivePotionEffects());
 		}
 	}
 

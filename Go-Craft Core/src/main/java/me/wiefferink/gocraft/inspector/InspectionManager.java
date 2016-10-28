@@ -440,10 +440,10 @@ public class InspectionManager extends Feature {
 				// Trying to inspect an inspector
 				plugin.message(inspector, "inspect-inspection", newTarget.getName());
 				return;
-			} else if(inspector.getUniqueId().equals(newTarget.getUniqueId())) {
+			} /*else if(inspector.getUniqueId().equals(newTarget.getUniqueId())) {
 				plugin.message(inspector, "inspect-self");
 				return;
-			}
+			}*/
 		}
 		if(inspection != null) {
 			// From existing to new target
