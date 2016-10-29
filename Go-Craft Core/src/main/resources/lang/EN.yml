@@ -196,6 +196,14 @@ spawnpoints-listItem:
   - "    hover: %lang:action|Remove spawnpoint|%"
   - "    command: /spawnpoints remove %0%"
 
+hackban-help: "/hackban <player> [reason], default reason: &7Hacking is forbidden!"
+hackban-noPermission: "You don't have permission to ban players."
+hackban-finished: "Hackban on '%0%' is finished &7(killed, money reset, stats reset, banned for %1% by ip and name)."
+hackban-failed: "Failed to ban correctly, check the errors above."
+hackban-alreadyBanned: "%0% is already banned, only the other actions have been performed."
+hackban-noPlayerData: "Failed to load the player data from BanManager, are you sure '%1%' is correct?"
+
+
 map-link:
   - "Check the map on "
   - "[bold]maps.go-craft.com[/bold]"

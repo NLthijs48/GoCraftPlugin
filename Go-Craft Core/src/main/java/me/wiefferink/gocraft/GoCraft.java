@@ -456,6 +456,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new EnableRegionPotionEffects());
 		if (getBanManagerLink() != null) {
 			features.add(new PunishmentNotifications());
+			features.add(new HackBanCommand());
 		}
 		features.add(new DisableStaffJoinLeaveMessages());
 		features.add(new OpenenderLimiter());
