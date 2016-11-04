@@ -12,7 +12,9 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class LogSigns extends Feature {
 
@@ -34,6 +36,17 @@ public class LogSigns extends Feature {
 
 		if(inWorld(event) && (player.hasPermission("gocraft.signLog"))) {
 			SimpleDateFormat time = new SimpleDateFormat(config.getString("signLogTimeFormat"));
+			List<String> lines = Arrays.asList(event.getLine(0), event.getLine(1), event.getLine(2), event.getLine(3));
+			boolean empty = true;
+			for(int i=0; i<lines.size(); i++) {
+				if(lines.get(i).startsWith("&0")) {
+					lines.set(i, lines.get(i).substring(2));
+				}
+				empty &= lines.get(i).isEmpty();
+			}
+			if(empty) { // No need to log empty signs
+				return;
+			}
 			plugin.logLine(GoCraft.signLog,
 					Message.fromKey("signLogfileLine")
 							.replacements(
@@ -43,19 +56,23 @@ public class LogSigns extends Feature {
 									event.getBlock().getLocation().getBlockY(),
 									event.getBlock().getLocation().getBlockZ(),
 									player.getName(),
-									event.getLine(0),
-									event.getLine(1),
-									event.getLine(2),
-									event.getLine(3)
+									lines.get(0),
+									lines.get(1),
+									lines.get(2),
+									lines.get(3)
 							).getPlain());
+			// Strip color
+			for(int i=0; i<lines.size(); i++) {
+				lines.set(i, ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', lines.get(i))));
+			}
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				if (p.hasPermission("gocraft.signTell")) {
 					plugin.message(p, "signNotifyLine",
 							player.getName(),
-							ChatColor.stripColor(event.getLine(0)),
-							ChatColor.stripColor(event.getLine(1)),
-							ChatColor.stripColor(event.getLine(2)),
-							ChatColor.stripColor(event.getLine(3)),
+							lines.get(0),
+							lines.get(1),
+							lines.get(2),
+							lines.get(3),
 							event.getBlock().getLocation().getWorld().getName(),
 							event.getBlock().getLocation().getBlockX(),
 							event.getBlock().getLocation().getBlockY(),

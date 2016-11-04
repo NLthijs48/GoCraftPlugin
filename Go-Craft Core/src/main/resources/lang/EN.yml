@@ -38,7 +38,7 @@ page-noNext:
 
 ########## LOGGING
 signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
-signNotifyLine: "%0% placed sign: %1%&0|&r%2%&0|&r%3%&0|&r%4% &7(%5%,%6%,%7%,%8%)"
+signNotifyLine: "%0% placed sign: %1%[black]|[reset]%2%[black]|[reset]%3%[black]|[reset]%4% [gray](%5%,%6%,%7%,%8%)"
 
 ########## COMMANDS
 tempban-redirected: "Banned %0% for %1% by name and ip: &7%2%."
