@@ -265,7 +265,9 @@ public class Inspection {
 		}
 		// Update potion effects (for indicators in top right)
 		for(PotionEffect potionEffect : inspector.getActivePotionEffects()) {
-			inspector.removePotionEffect(potionEffect.getType());
+			if(potionEffect.getDuration() > 300) {
+				inspector.removePotionEffect(potionEffect.getType());
+			}
 		}
 		if(inspected != null) {
 			inspector.addPotionEffects(inspected.getActivePotionEffects());
