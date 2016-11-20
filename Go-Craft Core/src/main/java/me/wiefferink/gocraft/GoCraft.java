@@ -15,6 +15,7 @@ import me.wiefferink.gocraft.features.other.AddDefaultRank;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
 import me.wiefferink.gocraft.features.other.ResetExpiredPlots;
 import me.wiefferink.gocraft.features.players.*;
+import me.wiefferink.gocraft.information.InformationManager;
 import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.*;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
@@ -485,6 +486,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new FixInventories());
 		features.add(new SyncCommandsServer());
 		features.add(new SpawnPoints());
+		features.add(new InformationManager());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());

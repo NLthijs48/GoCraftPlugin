@@ -5,7 +5,6 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -163,40 +162,37 @@ public class Shop extends Feature {
 		}
 
 		// Register localstorage cleaners
-		GoCraft.getInstance().registerLocalStorageCleaner("kitcooldowns", new Cleaner() {
-			@Override
-			public boolean clean(UTF8Config config) {
-				boolean save = false;
-				ConfigurationSection playersSection = config.getConfigurationSection("players");
-				if (playersSection != null) {
-					long currentTime = Calendar.getInstance().getTimeInMillis();
-					for (String playerKey : playersSection.getKeys(false)) {
-						ConfigurationSection cooldownSection = playersSection.getConfigurationSection(playerKey + ".shop.cooldowns");
-						if (cooldownSection != null) {
-							for (String kitKey : cooldownSection.getKeys(false)) {
-								if (cooldownSection.getLong(kitKey) <= currentTime) {
-									cooldownSection.set(kitKey, null);
-									save = true;
-								}
-							}
-							if (cooldownSection.getKeys(false).size() == 0) {
-								playersSection.set(playerKey + ".shop.cooldowns", null);
-								save = true;
-							}
-							if (playersSection.getConfigurationSection(playerKey + ".shop").getKeys(false).size() == 0) {
-								playersSection.set(playerKey + ".shop", null);
+		GoCraft.getInstance().registerLocalStorageCleaner("kitcooldowns", (UTF8Config config) -> {
+			boolean save = false;
+			ConfigurationSection playersSection = config.getConfigurationSection("players");
+			if (playersSection != null) {
+				long currentTime = Calendar.getInstance().getTimeInMillis();
+				for (String playerKey : playersSection.getKeys(false)) {
+					ConfigurationSection cooldownSection = playersSection.getConfigurationSection(playerKey + ".shop.cooldowns");
+					if (cooldownSection != null) {
+						for (String kitKey : cooldownSection.getKeys(false)) {
+							if (cooldownSection.getLong(kitKey) <= currentTime) {
+								cooldownSection.set(kitKey, null);
 								save = true;
 							}
 						}
-						ConfigurationSection playerSection = playersSection.getConfigurationSection(playerKey);
-						if (playerSection.getKeys(false).size() == 0) {
-							playersSection.set(playerKey, null);
+						if (cooldownSection.getKeys(false).size() == 0) {
+							playersSection.set(playerKey + ".shop.cooldowns", null);
+							save = true;
+						}
+						if (playersSection.getConfigurationSection(playerKey + ".shop").getKeys(false).size() == 0) {
+							playersSection.set(playerKey + ".shop", null);
 							save = true;
 						}
 					}
+					ConfigurationSection playerSection = playersSection.getConfigurationSection(playerKey);
+					if (playerSection.getKeys(false).size() == 0) {
+						playersSection.set(playerKey, null);
+						save = true;
+					}
 				}
-				return save;
 			}
+			return save;
 		});
 
 		// Needs to be after contructor completion
