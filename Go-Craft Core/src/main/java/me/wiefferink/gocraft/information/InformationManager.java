@@ -1,10 +1,10 @@
 package me.wiefferink.gocraft.information;
 
-import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -74,7 +74,7 @@ public class InformationManager extends Feature {
 				if(i == healthNumber) {
 					health += ChatColor.GRAY;
 				}
-				health += "▌"; // Half-block: ▌
+				health += "▌";
 			}
 			plugin.messageNoPrefix(to, "information-itemHealth", health, healthNumber, about.getMaxHealth());
 		});
@@ -94,15 +94,36 @@ public class InformationManager extends Feature {
 				if(i == foodNumber) {
 					health += ChatColor.GRAY;
 				}
-				health += "▌"; // Half-block: ▌
+				health += "▌";
 			}
 			Message saturation = Message.none();
 			if(about.getSaturation() > 0) {
 				saturation = Message.fromKey("information-itemHungerSaturation").replacements(about.getSaturation());
-				GoCraft.debug("Saturation Message:", saturation.getPlain());
 			}
-			GoCraft.debug("Message:", saturation.getPlain());
 			plugin.messageNoPrefix(to, "information-itemHunger", health, foodNumber, 20.0, saturation);
+		});
+
+		// Location
+		addInformationProvider((Player about, CommandSender to) -> {
+			if(!to.hasPermission("gocraft.staff")) {
+				return;
+			}
+
+			Location location = about.getLocation();
+			plugin.messageNoPrefix(to, "information-itemLocation", location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), Math.round(location.getYaw()), Math.round(location.getPitch()));
+		});
+
+		// Ip address
+		addInformationProvider((Player about, CommandSender to) -> {
+			if(!about.isOnline()) {
+				return;
+			}
+
+			if(!to.hasPermission("gocraft.staff")) {
+				return;
+			}
+
+			plugin.messageNoPrefix(to, "information-itemIp", about.getAddress().getHostName());
 		});
 	}
 

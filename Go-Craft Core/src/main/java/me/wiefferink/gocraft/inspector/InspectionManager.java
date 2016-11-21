@@ -35,7 +35,7 @@ public class InspectionManager extends Feature {
 	private BukkitRunnable updateTask;
 
 	public InspectionManager(final GoCraft plugin) {
-		permission("staff", "Indicates the player is staff or not"); // Does not really make sense here, no better place for it now though
+		permission("staff", "Indicates the player is staff or not", PermissionDefault.OP); // Does not really make sense here, no better place for it now though
 
 		this.plugin = plugin;
 		if(!config.getBoolean("enableInspecting")) {

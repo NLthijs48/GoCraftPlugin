@@ -883,4 +883,13 @@ public class Utils {
 		}
 	}
 
+
+	public static Message locationMessage(World world, double x, double y, double z) {
+		return Message.fromKey("location").replacements(world.getName(), Math.round(x), Math.round(y), Math.round(z));
+	}
+
+	public static Message locationMessage(World world, double x, double y, double z, float yaw, float pitch) {
+		return Message.fromKey("locationRotation").replacements(world.getName(), Math.round(x), Math.round(y), Math.round(z), Math.round(yaw), Math.round(pitch));
+	}
+
 }

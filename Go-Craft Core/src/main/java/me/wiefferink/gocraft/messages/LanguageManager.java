@@ -124,6 +124,7 @@ public class LanguageManager {
 			message = defaultLanguage.get(key);
 		}
 		if(message == null) {
+			GoCraft.warn("Cannot find message with key:", key);
 			return new ArrayList<>();
 		}
 		return new ArrayList<>(message);

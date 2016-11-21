@@ -10,6 +10,7 @@ action: "[gold][bold]<%0%>[/bold]"
 button: "[bold]<%0%>[/bold]"
 clickable: "[bold]%0%[/bold]"
 location: "[gray](%0%: %1%,%2%,%3%)[white]" # (world,x,y,z)
+locationRotation: "[gray](%0%: %1%,%2%,%3%, yaw:%5%, pitch:%4%)[white]" # (world,x,y,z, yaw:yaw, pitch:pitch)
 
 staff-noPermission: "You are not a staff member."
 
@@ -210,6 +211,22 @@ information-header: "[darkgreen]Information about %0%:"
 information-itemHealth: "%0% [reset][gray]%1%/%2%[white] health."
 information-itemHunger: "%0% [reset][gray]%1%/%2%[white] hunger%3%."
 information-itemHungerSaturation: " [gray](+%0% saturation)[white]"
+information-itemIp: "[darkgreen][bold]►[reset] IP address: %0%."
+information-itemLocation:
+  - "[darkgreen][bold]►[reset] Location: "
+  - "%lang:locationRotation|%0%|%1%|%2%|%3%|%4%|%5%|%"
+  - "    hover: %lang:action|Teleport to the player|%"
+  - "    command: /safeteleport %0% %1% %2% %3% %4% %5%"
+  - "."
+
+safetp-help: "/safeteleport [player] <world> <x> <y> <z> [<yaw> <pitch>]"
+safetp-noPermission: "You do not have permission to use teleport to locations."
+safetp-noPlayer: "You did not specify a player and are not a player yourself, specify it as first argument."
+safetp-wrongPlayer: "Player %0% is not online and therefore cannot be teleported."
+safetp-wrongWorld: "World %0% cannot be found, try one of the following: %1%."
+safetp-wrongNumber: "Incorrect %0%: %1%."
+safetp-success: "Teleported to %0%."
+safetp-failed: "Failed to teleport to %0%, could not find safe location."
 
 map-link:
   - "Check the map on "

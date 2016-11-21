@@ -501,6 +501,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new AttackSpeed());
 		features.add(new MapCommand());
 		features.add(new DiscordCommand());
+		features.add(new SafeTeleportCommand());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {
