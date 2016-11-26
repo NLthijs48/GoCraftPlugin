@@ -123,7 +123,7 @@ public class InformationManager extends Feature {
 				return;
 			}
 
-			plugin.messageNoPrefix(to, "information-itemIp", about.getAddress().getHostName());
+			plugin.messageNoPrefix(to, "information-itemIp", about.getAddress().getAddress().getHostAddress(), about.getAddress().getHostName());
 		});
 	}
 

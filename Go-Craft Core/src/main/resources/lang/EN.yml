@@ -211,7 +211,7 @@ information-header: "[darkgreen]Information about %0%:"
 information-itemHealth: "%0% [reset][gray]%1%/%2%[white] health."
 information-itemHunger: "%0% [reset][gray]%1%/%2%[white] hunger%3%."
 information-itemHungerSaturation: " [gray](+%0% saturation)[white]"
-information-itemIp: "[darkgreen][bold]►[reset] IP address: %0%."
+information-itemIp: "[darkgreen][bold]►[reset] IP address: %0% (%1%)."
 information-itemLocation:
   - "[darkgreen][bold]►[reset] Location: "
   - "%lang:locationRotation|%0%|%1%|%2%|%3%|%4%|%5%|%"
