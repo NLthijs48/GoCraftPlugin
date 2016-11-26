@@ -25,7 +25,7 @@ public class SyncCommandsServer extends Feature {
 	private static final int TRYCONNECT = 200; // Ticks, 10 seconds
 
 	private final List<String> queue = Collections.synchronizedList(new ArrayList<>()); // Queue of commands to send to Bungee
-	private boolean shouldRun; // Activated
+	private volatile boolean shouldRun; // Activated
 	private boolean connected; // Connected to bungee
 	private Socket socket;
 	private PrintWriter out;

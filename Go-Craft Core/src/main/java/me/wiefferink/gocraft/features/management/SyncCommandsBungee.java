@@ -19,8 +19,8 @@ public class SyncCommandsBungee {
 
 	private static final String password = "cbpyiSsZqU6Mu88gqqFcbqLmxZdJNiXr6ePj6TWmUiKQqz67MJMEPUXMaKhX63Sz";
 
+	private volatile boolean shouldRun;
 	private ServerSocket server;
-	private boolean shouldRun;
 	private GoCraftBungee plugin;
 	private final Map<String, ClientHandler> servers = Collections.synchronizedMap(new HashMap<>());
 	private final Map<String, List<String>> queue = Collections.synchronizedMap(new HashMap<>());
@@ -28,15 +28,12 @@ public class SyncCommandsBungee {
 	public SyncCommandsBungee(GoCraftBungee plugin) {
 		this.plugin = plugin;
 		shouldRun = true;
-		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-			@Override
-			public void run() {
-				try {
-					server = new ServerSocket(9191, 50, InetAddress.getByName("localhost"));
-					plugin.getProxy().getScheduler().runAsync(plugin, new ClientListener());
-				} catch(IOException e) {
-					GoCraftBungee.error("SyncCommands: failed to setup server:", ExceptionUtils.getStackTrace(e));
-				}
+		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+			try {
+				server = new ServerSocket(9191, 50, InetAddress.getByName("localhost"));
+				plugin.getProxy().getScheduler().runAsync(plugin, new ClientListener());
+			} catch(IOException e) {
+				GoCraftBungee.error("SyncCommands: failed to setup server:", ExceptionUtils.getStackTrace(e));
 			}
 		});
 		plugin.getProxy().getPluginManager().registerCommand(plugin, new SyncServersCommand());
@@ -62,19 +59,16 @@ public class SyncCommandsBungee {
 	 * @param command The command to run
 	 */
 	public void runCommand(String server, String command) {
-		plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
-			@Override
-			public void run() {
-				List<String> commands = queue.get(server);
-				if(commands == null) {
-					commands = Collections.synchronizedList(new ArrayList<String>());
-					queue.put(server, commands);
-				}
-				commands.add(command);
-				ClientHandler handler = servers.get(server);
-				if(handler != null) {
-					handler.sendCommands();
-				}
+		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+			List<String> commands = queue.get(server);
+			if(commands == null) {
+				commands = Collections.synchronizedList(new ArrayList<String>());
+				queue.put(server, commands);
+			}
+			commands.add(command);
+			ClientHandler handler = servers.get(server);
+			if(handler != null) {
+				handler.sendCommands();
 			}
 		});
 	}
@@ -129,7 +123,7 @@ public class SyncCommandsBungee {
 
 		private Socket client;
 		private String name = "<no name>";
-		private boolean clientRun;
+		private volatile boolean clientRun;
 		private PrintWriter out;
 		private BufferedReader in;
 
