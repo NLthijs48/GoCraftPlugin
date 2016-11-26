@@ -2,7 +2,6 @@ package me.wiefferink.gocraft.features.environment;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.bukkit.Bukkit;
@@ -75,14 +74,11 @@ public class ResourceWorlds extends Feature {
 		boolean isSafe = Utils.isSafe(player.getLocation());
 		if(lastReset > 0 && (distanceFromSpawn < 10 || !isSafe)) {
 			//GoCraft.debug("teleporting "+player.getName()+", lastPlayed: "+lastPlayed+", lastReset: "+lastReset+", distance: "+distanceFromSpawn+", isSafe: "+isSafe);
-			Utils.teleportRandomly(player, player.getWorld(), Utils.getWorldRadius(player.getWorld()), new Callback<Boolean>() {
-				@Override
-				public void execute(Boolean teleported) {
-					if(teleported) {
-						plugin.message(player, "resetworld-randomtp");
-					} else {
-						plugin.message(player, "resetworld-randomtpFailed");
-					}
+			Utils.teleportRandomly(player, player.getWorld(), Utils.getWorldRadius(player.getWorld()), (Boolean teleported) -> {
+				if(teleported) {
+					plugin.message(player, "resetworld-randomtp");
+				} else {
+					plugin.message(player, "resetworld-randomtpFailed");
 				}
 			});
 		}

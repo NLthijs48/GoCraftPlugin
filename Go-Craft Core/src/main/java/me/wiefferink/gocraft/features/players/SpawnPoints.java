@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class SpawnPoints extends Feature {
@@ -180,17 +178,14 @@ public class SpawnPoints extends Feature {
 
 			ArrayList<String> spawnPointList = new ArrayList<>(spawnPoints.getKeys(false));
 			// Sort numerically
-			Collections.sort(spawnPointList, new Comparator<String>() {
-				@Override
-				public int compare(String one, String two) {
-					Integer oneNumber, twoNumber;
-					try {
-						oneNumber = Integer.parseInt(one);
-						twoNumber = Integer.parseInt(two);
-						return oneNumber.compareTo(twoNumber);
-					} catch(NumberFormatException ignored) {}
-					return one.compareTo(two);
-				}
+			spawnPointList.sort((String one, String two) -> {
+				Integer oneNumber, twoNumber;
+				try {
+					oneNumber = Integer.parseInt(one);
+					twoNumber = Integer.parseInt(two);
+					return oneNumber.compareTo(twoNumber);
+				} catch(NumberFormatException ignored) {}
+				return one.compareTo(two);
 			});
 			new PageDisplay(sender, spawnPointList.size(), "/spawnpoints list") {
 				@Override

@@ -28,17 +28,6 @@ import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
-import java.util.UUID;
-
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.util.Vector;
-
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-
 public class WrapperPlayServerNamedEntitySpawn extends AbstractPacket {
 	public static final PacketType TYPE =
 			PacketType.Play.Server.NAMED_ENTITY_SPAWN;

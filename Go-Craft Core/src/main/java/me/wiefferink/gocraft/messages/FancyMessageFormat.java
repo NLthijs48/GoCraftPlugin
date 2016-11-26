@@ -346,13 +346,7 @@ public class FancyMessageFormat {
 		}
 
 		// Cleanup empty parts (some parts only affected the formatting of next parts, but do not have actual content)
-		Iterator<InteractiveMessagePart> it = message.iterator();
-		while(it.hasNext()) {
-			InteractiveMessagePart check = it.next();
-			if(check.content.size() == 0 && !check.newline) {
-				it.remove();
-			}
-		}
+		message.removeIf((InteractiveMessagePart part) -> part.content.size() == 0 && !part.newline);
 		return message;
 	}
 

@@ -736,7 +736,7 @@ public class DistributionManager extends Feature {
 		if (server == null) {
 			return line;
 		}
-		Pattern variables = Pattern.compile("<<<(?<variable>[a-zA-Z0-9-_:\\.]+)>>>");
+		Pattern variables = Pattern.compile("<<<(?<variable>[a-zA-Z0-9-_:.]+)>>>");
 		Matcher matcher = variables.matcher(line);
 		while (matcher.find()) {
 			String rawVariable = matcher.group("variable");

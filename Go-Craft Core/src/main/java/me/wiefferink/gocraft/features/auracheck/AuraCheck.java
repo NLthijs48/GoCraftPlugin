@@ -9,7 +9,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.VoidCommandSender;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayClientUseEntity;
@@ -179,30 +178,28 @@ public class AuraCheck extends Feature {
 		}
 		final Player finalPlayer = player;
 		AuraCheckRun check = new AuraCheckRun(this, player);
-		check.start(sender, new Callback<AuraCheckRun.AuraCheckRunResult>() {
-			public void execute(AuraCheckRun.AuraCheckRunResult result) {
-				String status = null;
-				ChatColor color = null;
-				if (result.killed == 0) {
-					status = "No threat as of yet.";
-					color = ChatColor.DARK_GREEN;
-				} else if (result.killed == 1) {
-					status = "Might be hacking, check head moving and repeat.";
-					color = ChatColor.YELLOW;
-				} else if (result.killed == 2) {
-					status = "Likely hacking, repeat to confirm.";
-					color = ChatColor.RED;
-				} else if (result.killed == 3) {
-					status = "For sure hacking, ban with /hackban.";
-					color = ChatColor.DARK_RED;
-				} else if (result.killed == 4) {
-					status = "Definitely hacking, ban with /hackban.";
-					color = ChatColor.DARK_RED;
-				}
-				result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck] " + color + ChatColor.BOLD + finalPlayer.getName() + " killed " + result.killed + " out of " + result.spawned + " players.");
-				result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck]" + color + ChatColor.BOLD + " ► " + ChatColor.RESET + color + status);
-				GoCraft.info(finalPlayer.getName()+" killed "+result.killed+" out of "+result.spawned+" (checked by "+sender.getName()+")");
+		check.start(sender, (AuraCheckRun.AuraCheckRunResult result) -> {
+			String status = null;
+			ChatColor color = null;
+			if (result.killed == 0) {
+				status = "No threat as of yet.";
+				color = ChatColor.DARK_GREEN;
+			} else if (result.killed == 1) {
+				status = "Might be hacking, check head moving and repeat.";
+				color = ChatColor.YELLOW;
+			} else if (result.killed == 2) {
+				status = "Likely hacking, repeat to confirm.";
+				color = ChatColor.RED;
+			} else if (result.killed == 3) {
+				status = "For sure hacking, ban with /hackban.";
+				color = ChatColor.DARK_RED;
+			} else if (result.killed == 4) {
+				status = "Definitely hacking, ban with /hackban.";
+				color = ChatColor.DARK_RED;
 			}
+			result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck] " + color + ChatColor.BOLD + finalPlayer.getName() + " killed " + result.killed + " out of " + result.spawned + " players.");
+			result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck]" + color + ChatColor.BOLD + " ► " + ChatColor.RESET + color + status);
+			GoCraft.info(finalPlayer.getName()+" killed "+result.killed+" out of "+result.spawned+" (checked by "+sender.getName()+")");
 		});
 		plugin.increaseStatistic("command.auracheck.used");
 	}
@@ -230,19 +227,16 @@ public class AuraCheck extends Feature {
 					}
 					Player toCheck = players.remove(0);
 					if (toCheck != null && toCheck.isOnline() && toCheck.getGameMode() == GameMode.SURVIVAL) {
-						new AuraCheckRun(self, toCheck).start(new VoidCommandSender(), new Callback<AuraCheckRun.AuraCheckRunResult>() {
-							@Override
-							public void execute(AuraCheckRun.AuraCheckRunResult result) {
-								if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.hacksConfirmed")) {
-									String baseCommand = GoCraft.getInstance().getConfig().getString("hacksConfirmedCommand");
-									Utils.consoleCommand(baseCommand.replace("%player%", result.checked.getName()).replace("%reason%", "Hacking is forbidden! [ac " + result.killed + "/" + result.spawned + "]"));
-									Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " got banned: " + result.killed + "/" + result.spawned + ".");
-								} else {
-									if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.staffChatWarning")) {
-										Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " killed " + result.killed + "/" + result.spawned + ", further inspection required.");
-									} else if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.consoleLogging")) {
-										GoCraft.info("[AuraCheck] staffchat warning for "+result.checked.getName()+": "+result.killed+"/"+result.spawned+".");
-									}
+						new AuraCheckRun(self, toCheck).start(new VoidCommandSender(), (AuraCheckRun.AuraCheckRunResult result) -> {
+							if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.hacksConfirmed")) {
+								String baseCommand = GoCraft.getInstance().getConfig().getString("hacksConfirmedCommand");
+								Utils.consoleCommand(baseCommand.replace("%player%", result.checked.getName()).replace("%reason%", "Hacking is forbidden! [ac " + result.killed + "/" + result.spawned + "]"));
+								Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " got banned: " + result.killed + "/" + result.spawned + ".");
+							} else {
+								if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.staffChatWarning")) {
+									Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " killed " + result.killed + "/" + result.spawned + ", further inspection required.");
+								} else if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.consoleLogging")) {
+									GoCraft.info("[AuraCheck] staffchat warning for "+result.checked.getName()+": "+result.killed+"/"+result.spawned+".");
 								}
 							}
 						});

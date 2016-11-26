@@ -89,11 +89,7 @@ public class AuraCheckRun {
 			}
 		}
 		final AuraCheckRun self = this;
-		Bukkit.getScheduler().runTaskLater(GoCraft.getInstance(), new Runnable() {
-			public void run() {
-				self.end();
-			}
-		}, GoCraft.getInstance().getConfig().getInt("auracheck.ticksToKill", 10));
+		Bukkit.getScheduler().runTaskLater(GoCraft.getInstance(), self::end, GoCraft.getInstance().getConfig().getInt("auracheck.ticksToKill", 10));
 	}
 
 	/**
