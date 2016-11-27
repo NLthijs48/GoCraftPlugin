@@ -101,7 +101,8 @@ help-info: "%0%"
 tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn! Check /as to see all shop commands."
 
 ########## OTHER
-netherGlitching: "You may not go above the nether ceiling!"
+other-netherGlitching: "You may not go above the nether ceiling!"
+other-fallenThroughWorld: "You have fallen through the world somehow, you have been teleported to spawn to prevent you from dying!"
 
 timeleft-years: "%0% years"
 timeleft-months: "%0% months"

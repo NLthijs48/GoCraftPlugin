@@ -5,9 +5,7 @@ import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.features.auracheck.AuraCheck;
 import me.wiefferink.gocraft.features.blocks.*;
-import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
-import me.wiefferink.gocraft.features.environment.DisableRain;
-import me.wiefferink.gocraft.features.environment.ResourceWorlds;
+import me.wiefferink.gocraft.features.environment.*;
 import me.wiefferink.gocraft.features.items.*;
 import me.wiefferink.gocraft.features.management.DistributionManager;
 import me.wiefferink.gocraft.features.management.SyncCommandsServer;
@@ -487,6 +485,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new SyncCommandsServer());
 		features.add(new SpawnPoints());
 		features.add(new InformationManager());
+		features.add(new DisableVoidFall());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());

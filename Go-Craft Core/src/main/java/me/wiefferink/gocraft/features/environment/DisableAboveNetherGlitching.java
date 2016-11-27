@@ -1,4 +1,4 @@
-package me.wiefferink.gocraft.features.players;
+package me.wiefferink.gocraft.features.environment;
 
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
@@ -28,7 +28,7 @@ public class DisableAboveNetherGlitching extends Feature {
 							} else {
 								player.teleport(Bukkit.getWorld("world").getSpawnLocation());
 							}
-							plugin.message(player, "netherGlitching");
+							plugin.message(player, "other-netherGlitching");
 						}
 					}
 				}
