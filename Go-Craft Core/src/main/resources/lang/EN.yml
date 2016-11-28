@@ -9,8 +9,8 @@
 action: "[gold][bold]<%0%>[/bold]"
 button: "[bold]<%0%>[/bold]"
 clickable: "[bold]%0%[/bold]"
-location: "[gray](%0%: %1%,%2%,%3%)[white]" # (world,x,y,z)
-locationRotation: "[gray](%0%: %1%,%2%,%3%, yaw:%5%, pitch:%4%)[white]" # (world,x,y,z, yaw:yaw, pitch:pitch)
+location: "[gray](%0%: %1%,%2%,%3%)" # (world,x,y,z)
+locationRotation: "[gray](%0%: %1%,%2%,%3%, yaw:%5%, pitch:%4%)" # (world,x,y,z, yaw:yaw, pitch:pitch)
 
 staff-noPermission: "You are not a staff member."
 
@@ -171,13 +171,13 @@ spawnpoints-helpRemove: "/sp remove <number>."
 spawnpoints-helpTp: "/sp tp <number>."
 spawnpoints-noPermission: "You do not have permission to manage spawnpoints."
 spawnpoints-noPermissionSpawn: "You do not have permission to respawn."
-spawnpoints-added: "Spawnpoint %0% added: %lang:location|%1%|%2%|%3%|%4%|%."
+spawnpoints-added: "Spawnpoint %0% added: %lang:location|%1%|%2%|%3%|%4%|%[white]."
 spawnpoints-noSpawnpoint: "Spawnpoint '%0%' does not exist, check with '/sp list'."
-spawnpoints-removed: "Spawnpoint %0% at %lang:location|%1%|%2%|%3%|%4%|% removed."
+spawnpoints-removed: "Spawnpoint %0% at %lang:location|%1%|%2%|%3%|%4%|%[white] removed."
 spawnpoints-removedBroken: "Spawnpoint %0% removed (it was not a proper location)."
 spawnpoints-brokenSpawnpoint: "Spawnpoint '%0%' is broken, it has no proper location."
-spawnpoints-teleported: "Teleported to '%0%' at %lang:location|%1%|%2%|%3%|%4%|%."
-spawnpoints-noSafeSpot: "No safe spot around '%0%' has been found, consider removing this spawnpoint %lang:location|%1%|%2%|%3%|%4%|%."
+spawnpoints-teleported: "Teleported to '%0%' at %lang:location|%1%|%2%|%3%|%4%|%[white]."
+spawnpoints-noSafeSpot: "No safe spot around '%0%' has been found, consider removing this spawnpoint %lang:location|%1%|%2%|%3%|%4%|%[white]."
 spawnpoints-spawned: "You have respawned in a random location."
 spawnpoints-failed: "Failed to find a proper spawning location, notify staff about this."
 spawnpoints-markersUpdated: "Spawnpoint markers on the dynmap have been updated."
@@ -209,16 +209,24 @@ information-noPermission: "You do not have permission to check information and s
 information-wrongPlayer: "Player %0% could not be found."
 information-noPlayer: "As console you need to specify a player: /information [player]."
 information-header: "[darkgreen]Information about %0%:"
-information-itemHealth: "%0% [reset][gray]%1%/%2%[white] health."
-information-itemHunger: "%0% [reset][gray]%1%/%2%[white] hunger%3%."
+information-itemHealth: "[darkgreen][bold]►[reset] %0% [reset][gray]%1%/%2% health."
+information-itemHunger: "[darkgreen][bold]►[reset] %0% [reset][gray]%1%/%2% hunger%3%."
 information-itemHungerSaturation: " [gray](+%0% saturation)[white]"
-information-itemIp: "[darkgreen][bold]►[reset] IP address: %0% (%1%)."
+information-ip: "[darkgreen][bold]►[reset] IP address: [gray]%0%."
+information-ipHostname: " (%0%)"
 information-itemLocation:
   - "[darkgreen][bold]►[reset] Location: "
   - "%lang:locationRotation|%0%|%1%|%2%|%3%|%4%|%5%|%"
-  - "    hover: %lang:action|Teleport to the player|%"
+  - "    hover: %lang:action|Teleport to %6%|%"
   - "    command: /safeteleport %0% %1% %2% %3% %4% %5%"
   - "."
+information-gameMode: "[darkgreen][bold]►[reset] Gamemode: [gray]%0%%1%[gray]."
+information-gameModeOP: ", [red]has OP"
+information-gameModeSelected: "[green]<%0%>[gray]"
+information-gameModeNotSelected:
+  - "%0%"
+  - "    hover: %lang:action|Set to %0% mode|%"
+  - "    command: /gamemode %0% %1%"
 
 safetp-help: "/safeteleport [player] <world> <x> <y> <z> [<yaw> <pitch>]"
 safetp-noPermission: "You do not have permission to use teleport to locations."

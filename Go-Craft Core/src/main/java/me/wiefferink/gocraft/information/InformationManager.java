@@ -3,7 +3,9 @@ package me.wiefferink.gocraft.information;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -59,6 +61,7 @@ public class InformationManager extends Feature {
 	}
 
 	public void setupBasicProviders() {
+
 		// Health
 		addInformationProvider((Player about, CommandSender to) -> {
 			String health = "";
@@ -78,6 +81,7 @@ public class InformationManager extends Feature {
 			}
 			plugin.messageNoPrefix(to, "information-itemHealth", health, healthNumber, about.getMaxHealth());
 		});
+
 
 		// Hunger
 		addInformationProvider((Player about, CommandSender to) -> {
@@ -103,6 +107,34 @@ public class InformationManager extends Feature {
 			plugin.messageNoPrefix(to, "information-itemHunger", health, foodNumber, 20.0, saturation);
 		});
 
+
+		// Gamemode
+		addInformationProvider((Player about, CommandSender to) -> {
+			if(!to.hasPermission("gocraft.staff")) {
+				return;
+			}
+
+			Message OPPart = Message.none();
+			if(to.isOp()) {
+				OPPart = Message.fromKey("information-gameModeOP");
+			}
+
+			Message gameModes = Message.none();
+			for(GameMode gameMode : GameMode.values()) {
+				if(!gameModes.isEmpty()) {
+					gameModes.append(", ");
+				}
+				if(about.getGameMode() == gameMode) {
+					gameModes.append(Message.fromKey("information-gameModeSelected").replacements(StringUtils.capitalize(gameMode.name().toLowerCase())));
+				} else {
+					gameModes.append(Message.fromKey("information-gameModeNotSelected").replacements(StringUtils.capitalize(gameMode.name().toLowerCase()), about.getName()));
+				}
+			}
+
+			plugin.messageNoPrefix(to, "information-gameMode", gameModes, OPPart);
+		});
+
+
 		// Location
 		addInformationProvider((Player about, CommandSender to) -> {
 			if(!to.hasPermission("gocraft.staff")) {
@@ -110,8 +142,9 @@ public class InformationManager extends Feature {
 			}
 
 			Location location = about.getLocation();
-			plugin.messageNoPrefix(to, "information-itemLocation", location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), Math.round(location.getYaw()), Math.round(location.getPitch()));
+			plugin.messageNoPrefix(to, "information-itemLocation", location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), Math.round(location.getYaw()), Math.round(location.getPitch()), about.getName());
 		});
+
 
 		// Ip address
 		addInformationProvider((Player about, CommandSender to) -> {
@@ -123,7 +156,14 @@ public class InformationManager extends Feature {
 				return;
 			}
 
-			plugin.messageNoPrefix(to, "information-itemIp", about.getAddress().getAddress().getHostAddress(), about.getAddress().getHostName());
+			// Show numeric ip and (if available) the hostname
+			String numerical = about.getAddress().getAddress().getHostAddress();
+			String hostname = about.getAddress().getHostName();
+			Message hostnamePart = Message.none();
+			if(!hostname.equals(numerical)) {
+				hostnamePart = Message.fromKey("information-ipHostname").replacements(hostname);
+			}
+			plugin.messageNoPrefix(to, "information-ip", numerical, hostnamePart);
 		});
 	}
 

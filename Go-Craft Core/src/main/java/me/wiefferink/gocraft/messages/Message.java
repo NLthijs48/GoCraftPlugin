@@ -112,6 +112,14 @@ public class Message {
 	}
 
 	/**
+	 * Check if the message is empty
+	 * @return true if the message is empty, otherwise false
+	 */
+	public boolean isEmpty() {
+		return message.isEmpty();
+	}
+
+	/**
 	 * Add the default prefix to the message
 	 * @param doIt true if the prefix should be added, otherwise false
 	 * @return this
