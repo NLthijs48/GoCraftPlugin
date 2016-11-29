@@ -119,16 +119,21 @@ public class InformationManager extends Feature {
 				OPPart = Message.fromKey("information-gameModeOP");
 			}
 
+			// Admins have a gamemode selector, staff only sees gamemode status, could improve this by actually checking essentials gamemode permissions
 			Message gameModes = Message.none();
-			for(GameMode gameMode : GameMode.values()) {
-				if(!gameModes.isEmpty()) {
-					gameModes.append(", ");
+			if(to.hasPermission("gocraft.admin")) {
+				for(GameMode gameMode : GameMode.values()) {
+					if(!gameModes.isEmpty()) {
+						gameModes.append(", ");
+					}
+					if(about.getGameMode() == gameMode) {
+						gameModes.append(Message.fromKey("information-gameModeSelected").replacements(StringUtils.capitalize(gameMode.name().toLowerCase())));
+					} else {
+						gameModes.append(Message.fromKey("information-gameModeNotSelected").replacements(StringUtils.capitalize(gameMode.name().toLowerCase()), about.getName()));
+					}
 				}
-				if(about.getGameMode() == gameMode) {
-					gameModes.append(Message.fromKey("information-gameModeSelected").replacements(StringUtils.capitalize(gameMode.name().toLowerCase())));
-				} else {
-					gameModes.append(Message.fromKey("information-gameModeNotSelected").replacements(StringUtils.capitalize(gameMode.name().toLowerCase()), about.getName()));
-				}
+			} else {
+				gameModes = Message.fromString(StringUtils.capitalize(about.getGameMode().name().toLowerCase()));
 			}
 
 			plugin.messageNoPrefix(to, "information-gameMode", gameModes, OPPart);
