@@ -181,6 +181,7 @@ public class Feature implements Listener {
 	 */
 	protected void permission(String permission, String description, PermissionDefault permissionDefault) {
 		Permission newPermission = new Permission("gocraft."+permission, description, permissionDefault);
+		newPermission.addParent("gocraft.*", true);
 		try {
 			Bukkit.getPluginManager().addPermission(newPermission);
 		} catch(IllegalArgumentException ignored) {
