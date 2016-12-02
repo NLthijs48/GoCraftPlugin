@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.features.management;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +30,8 @@ public class DistributionManager extends Feature {
 		command("update", "Update servers with the latest plugin files and configurations", "/update [servers...] [pluginJar,pluginConfig,permissions,rootfiles]");
 
 		self = new File(DistributionManager.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-		pluginDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalPluginDataFoldername);
-		rootDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + GoCraft.generalRootDataFoldername);
+		pluginDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + Constant.GENERAL_PLUGIN_DATA_FOLDERNAME);
+		rootDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + Constant.GENERAL_ROOT_DATA_FOLDERNAME);
 
 		initializeServerGroups();
 		initializeServerPluginFolders();

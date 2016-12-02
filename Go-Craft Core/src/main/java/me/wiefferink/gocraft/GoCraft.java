@@ -20,9 +20,8 @@ import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.messages.LanguageManager;
 import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.shop.Shop;
+import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
-import me.wiefferink.gocraft.tools.storage.Database;
-import me.wiefferink.gocraft.tools.storage.MySQLDatabase;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -39,16 +38,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
-import java.sql.PreparedStatement;
 import java.util.*;
 
 public final class GoCraft extends JavaPlugin {
 	// Constants
 	public static final String signLog = "signs";
-	public static final String generalFolderName = "GENERAL";
-	public static final String generalConfigName = "config.yml";
-	public static final String generalPluginDataFoldername = "plugins";
-	public static final String generalRootDataFoldername = "root";
 	public static final String currencyEuro = "%euro%";
 	public static final String languageFolder = "lang";
 	// Variables
@@ -183,7 +177,7 @@ public final class GoCraft extends JavaPlugin {
 		}
 
 		this.languageManager = new LanguageManager();
-		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + generalFolderName);
+		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + Constant.GENERAL_FOLDER_NAME);
 		loadGeneralConfig();
 		distributionManager = new DistributionManager();
 		loadLocalStorage();
@@ -414,23 +408,6 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public Shop getShop() {
 		return shop;
-	}
-
-	public void testStorage() {
-		String host = "localhost";
-		int port = 3306;
-		String database = "testdb";
-		String username = "root";
-		String password = "";
-		Database db = new MySQLDatabase(host, port, database, username, password, this);
-		//debug("is connected: " + db.isConnected());
-		PreparedStatement statement = db.prepareStatement("CREATE TABLE IF NOT EXISTS combat (kills int, deaths int)");
-		db.execute(statement);
-		// ORDER not kept! running as async tasks
-		for (int i = 0; i < 10; i++) {
-			//debug("Doing: i=" + i);
-			db.execute("INSERT INTO combat VALUES (?, ?)", i, 10 - i);
-		}
 	}
 
 	/**
@@ -700,7 +677,7 @@ public final class GoCraft extends JavaPlugin {
 	 * @return true if it has been loaded successfully, otherwise false
 	 */
 	public boolean loadGeneralConfig() {
-		File commonConfigFile = new File(generalFolder, generalConfigName);
+		File commonConfigFile = new File(generalFolder, Constant.GENERAL_CONFIG_NAME);
 		try (
 				InputStreamReader reader = new InputStreamReader(new FileInputStream(commonConfigFile), Charsets.UTF_8)
 		) {
