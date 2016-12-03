@@ -1,7 +1,9 @@
 package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.GoCraftBungee;
+import me.wiefferink.gocraft.tools.storage.Database;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -9,6 +11,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import org.hibernate.Session;
 
+import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,7 +30,6 @@ import java.util.UUID;
 public class SessionTracker implements Listener {
 
 	private GoCraftBungee plugin;
-	private SessionConnector connector;
 	private Map<UUID, BungeeSession> onlineBungee;
 	private Map<UUID, ServerSession> onlineServer;
 
@@ -36,16 +38,11 @@ public class SessionTracker implements Listener {
 		this.onlineBungee = new HashMap<>();
 		this.onlineServer = new HashMap<>();
 
-		connector = new SessionConnector(
-				plugin.getGeneralConfig().getString("settings.sessionTracker.database"),
-				plugin.getGeneralConfig().getString("settings.sessionTracker.username"),
-				plugin.getGeneralConfig().getString("settings.sessionTracker.password")
-		);
-		if(connector.isReady()) {
-			plugin.getProxy().getPluginManager().registerListener(plugin, this);
+		if(Database.isReady()) {
 			ensureConsistentEntries();
+			plugin.getProxy().getPluginManager().registerListener(plugin, this);
 		} else {
-			GoCraftBungee.error("SessionTracker: Failed to setup sessionFactory");
+			GoCraftBungee.error("SessionTracker: Database is not ready yet, did not start");
 		}
 	}
 
@@ -53,10 +50,27 @@ public class SessionTracker implements Listener {
 	 * Crash recovery, close lingering sessions
 	 */
 	private void ensureConsistentEntries() {
-		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-			BungeeSession.ensureConsistency(connector);
-			ServerSession.ensureConsistency(connector);
-		});
+		BungeeSession.ensureConsistency();
+		ServerSession.ensureConsistency();
+	}
+
+	/**
+	 * Get or create a GCPlayer
+	 * @param player The player data to get/create it from
+	 * @return The created or loaded GCPlayer
+	 */
+	public GCPlayer getCreatePlayer(ProxiedPlayer player) {
+		GCPlayer result;
+		try {
+			result = Database.getSession()
+					.createQuery("FROM GCPlayer WHERE uuid = :uuid", GCPlayer.class)
+					.setParameter("uuid", player.getUniqueId().toString())
+					.getSingleResult();
+		} catch(NoResultException e) {
+			result = new GCPlayer(player.getUniqueId(), player.getName());
+			Database.getSession().save(result);
+		}
+		return result;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -67,40 +81,41 @@ public class SessionTracker implements Listener {
 		}
 
 		GoCraftBungee.info("ServerConnectEvent of", event.getPlayer().getName(), "from", (event.getPlayer().getServer() == null ? "nothing" : event.getPlayer().getServer().getInfo().getName()), "to", event.getTarget().getName());
-		UUID player = event.getPlayer().getUniqueId();
+		ProxiedPlayer player = event.getPlayer();
 		ServerInfo server = event.getTarget();
 		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-			Session session = connector.session();
-			session.beginTransaction();
+			Session session = Database.getSession();
 
-			BungeeSession bungeeSession = onlineBungee.get(player);
+			GCPlayer gcPlayer = getCreatePlayer(player);
+
+			// Start BungeeSession if not started already
+			BungeeSession bungeeSession = onlineBungee.get(player.getUniqueId());
 			if(bungeeSession == null) {
-				bungeeSession = new BungeeSession(event.getPlayer().getUniqueId(), event.getPlayer().getName(), event.getPlayer().getPendingConnection().getAddress().getAddress().getHostAddress());
-				onlineBungee.put(player, bungeeSession);
+				bungeeSession = new BungeeSession(gcPlayer, player.getPendingConnection().getAddress().getAddress().getHostAddress());
+				onlineBungee.put(player.getUniqueId(), bungeeSession);
 				session.save(bungeeSession);
 			}
 
 			// End old ServerSession, does not exist for initial join
-			ServerSession oldServerSession = onlineServer.get(player);
+			ServerSession oldServerSession = onlineServer.get(player.getUniqueId());
 			boolean sameServer = false;
 			if(oldServerSession != null) {
-				sameServer = oldServerSession.getServer().equals(server.getName());
+				sameServer = oldServerSession.getServerName().equals(server.getName());
 				if(!sameServer) {
 					oldServerSession.hasLeft();
 					session.update(oldServerSession);
-					onlineServer.remove(player);
+					onlineServer.remove(player.getUniqueId());
 				}
 			}
 
 			// Start new ServerSession
 			if(!sameServer) {
 				ServerSession newServerSession = new ServerSession(bungeeSession, server.getName());
-				onlineServer.put(player, newServerSession);
+				onlineServer.put(player.getUniqueId(), newServerSession);
 				session.save(newServerSession);
 			}
 
-			session.getTransaction().commit();
-			session.clear();
+			Database.closeSession();
 		});
 
 	}
@@ -111,8 +126,7 @@ public class SessionTracker implements Listener {
 
 		UUID player = event.getPlayer().getUniqueId();
 		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-			Session session = connector.session();
-			session.beginTransaction();
+			Session session = Database.getSession();
 
 			// Bungee
 			BungeeSession bungeeSession = onlineBungee.remove(player);
@@ -124,8 +138,7 @@ public class SessionTracker implements Listener {
 			serverSession.hasLeft();
 			session.update(serverSession);
 
-			session.getTransaction().commit();
-			session.clear();
+			Database.closeSession();
 		});
 	}
 

@@ -1,36 +1,35 @@
 package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.GoCraftBungee;
+import me.wiefferink.gocraft.tools.storage.Database;
 import org.hibernate.Session;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
-@Table(name = "bungeeSessions")
+@Table
 public class BungeeSession {
 
-	@Id @GeneratedValue
-	@Column(name = "id")
+	@Id
+	@GeneratedValue
+	@Column
 	private long id;
 
-	@Column(name = "player_uuid", nullable = false)
-	private String uuid;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(nullable = false)
+	private GCPlayer gcPlayer;
 
-	@Column(name = "player_name", nullable = false)
-	private String name;
+	@Column(nullable = false)
+	private String playerIp;
 
-	@Column(name = "player_ip", nullable = false)
-	private String ip;
+	@Column(nullable = false)
+	private Date joinedBungee;
 
-	@Column(name = "joined_bungee", nullable = false)
-	private Date joined;
-
-	@Column(name = "left_bungee")
-	private Date left;
+	@Column
+	private Date leftBungee;
 
 	@OneToMany(mappedBy = "bungeeSession", fetch = FetchType.LAZY)
 	private Set<ServerSession> serverSessions;
@@ -42,73 +41,54 @@ public class BungeeSession {
 
 	/**
 	 * Create a new BungeeSession
-	 * @param playerUuid The UUID of the player
-	 * @param playerName The name of the player
-	 * @param ip The ip of the player
+	 * @param gcPlayer The gcPlayer that has joinedBungee
 	 */
-	public BungeeSession(UUID playerUuid, String playerName, String ip) {
-		this.uuid = playerUuid.toString();
-		this.name = playerName;
-		this.ip = ip;
-		this.joined = new Date();
-		this.left = null;
+	public BungeeSession(GCPlayer gcPlayer, String ip) {
+		this.gcPlayer = gcPlayer;
+		this.playerIp = ip;
+		this.joinedBungee = new Date();
+		this.leftBungee = null;
 		this.serverSessions = new HashSet<>();
 	}
 
 	/**
-	 * Get the id
-	 * @return The id of the BungeeSession
+	 * Get the player
+	 * @return The player that has this session
 	 */
-	public long getId() {
-		return id;
+	public GCPlayer getPlayer() {
+		return gcPlayer;
 	}
 
 	/**
-	 * Get the UUID of the player
-	 * @return The unique id of the player that was online
+	 * Get the playerIp address of the player
+	 * @return The playerIp address of the player
 	 */
-	public UUID getPlayerUniqueId() {
-		return UUID.fromString(uuid);
+	public String getPlayerIp() {
+		return playerIp;
 	}
 
 	/**
-	 * Get the name of the player
-	 * @return The name of the player
-	 */
-	public String getPlayerName() {
-		return name;
-	}
-
-	/**
-	 * Get the ip address of the player
-	 * @return The ip address of the player
-	 */
-	public String getIp() {
-		return ip;
-	}
-
-	/**
-	 * Get the time at which the player joined
+	 * Get the time at which the player joinedBungee
 	 * @return The join time
 	 */
 	public Date getJoined() {
-		return joined;
+		return joinedBungee;
 	}
 
 	/**
-	 * Get the time at which the player left
+	 * Get the time at which the player leftBungee
 	 * @return The leave time or null if still online
 	 */
 	public Date getLeft() {
-		return left;
+		return leftBungee;
 	}
 
 	/**
-	 * Set the time at which the player left if not set yet
+	 * Set the time at which the player leftBungee if not set yet
 	 */
 	public void hasLeft() {
-		if(left == null) {
-			left = new Date();
+		if(leftBungee == null) {
+			leftBungee = new Date();
 		}
 	}
 
@@ -124,18 +104,15 @@ public class BungeeSession {
 	/**
 	 * Ensure all BungeeSession entries are consistent:
 	 * - Set the left_bungee field to the current time if not set
-	 * @param connector The connector
 	 */
-	public static void ensureConsistency(SessionConnector connector) {
-		Session session = connector.session();
-		session.beginTransaction();
+	public static void ensureConsistency() {
+		Session session = Database.getSession();
 
-		int fixedBungeeSessions = session.createQuery("UPDATE BungeeSession SET left_bungee = current_date() WHERE left_bungee IS NULL").executeUpdate();
+		int fixedBungeeSessions = session.createQuery("UPDATE BungeeSession SET leftBungee = current_date() WHERE leftBungee IS NULL").executeUpdate();
 		if(fixedBungeeSessions > 0) {
 			GoCraftBungee.warn("Closed", fixedBungeeSessions, " BungeeSession entries (crash recovery)");
 		}
 
-		session.getTransaction().commit();
-		session.clear();
+		Database.closeSession();
 	}
 }

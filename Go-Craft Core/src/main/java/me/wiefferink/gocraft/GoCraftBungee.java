@@ -3,6 +3,7 @@ package me.wiefferink.gocraft;
 import me.wiefferink.gocraft.features.management.SyncCommandsBungee;
 import me.wiefferink.gocraft.sessions.SessionTracker;
 import me.wiefferink.gocraft.tools.Constant;
+import me.wiefferink.gocraft.tools.storage.Database;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -42,6 +43,13 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 		} catch(IOException e) {
 			GoCraftBungee.error("Failed to load general config file at:", generalConfigFile.getAbsolutePath());
 		}
+
+		// Startup database
+		Database.setup(
+				getGeneralConfig().getString("settings.sessionTracker.database"),
+				getGeneralConfig().getString("settings.sessionTracker.username"),
+				getGeneralConfig().getString("settings.sessionTracker.password")
+		);
 
 		// Start features
 		this.getProxy().getPluginManager().registerListener(this, this);
