@@ -414,6 +414,9 @@ public final class GoCraft extends JavaPlugin {
 	 * Register all listener and command classes
 	 */
 	public void addListeners() {
+		// TODO replace by dynamic instantiation: https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
+
+
 		features = new ArrayList<>();
 		// Blocks
 		features.add(new DisableBedrockBreak());
