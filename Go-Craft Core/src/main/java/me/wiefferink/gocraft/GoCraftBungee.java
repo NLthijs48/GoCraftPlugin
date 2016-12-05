@@ -48,7 +48,8 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 		Database.setup(
 				getGeneralConfig().getString("settings.sessionTracker.database"),
 				getGeneralConfig().getString("settings.sessionTracker.username"),
-				getGeneralConfig().getString("settings.sessionTracker.password")
+				getGeneralConfig().getString("settings.sessionTracker.password"),
+				getGeneralConfig().getBoolean("debug")
 		);
 
 		// Start features

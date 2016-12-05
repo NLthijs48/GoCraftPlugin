@@ -23,7 +23,7 @@ public class Database {
 	 * @param password The password of the database
 	 * @return true if the database is ready for usage, otherwise false
 	 */
-	public static boolean setup(String database, String username, String password) {
+	public static boolean setup(String database, String username, String password, boolean debug) {
 		StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
 				.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
 				.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
@@ -32,7 +32,7 @@ public class Database {
 				.applySetting("hibernate.connection.password", password)
 				.applySetting("hibernate.hbm2ddl.auto", "update") // Deploy and update schema automatically
 				.applySetting("hibernate.jdbc.batch_size", 50) // Group queries into batches if possible
-				.applySetting("hibernate.show_sql", true) // Debug option to show SQL statements in console
+				.applySetting("hibernate.show_sql", debug) // Debug option to show SQL statements in console
 				.build();
 
 		try {
