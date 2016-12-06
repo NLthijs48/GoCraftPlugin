@@ -3,6 +3,8 @@ package me.wiefferink.gocraft.information;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.information.providers.*;
 import me.wiefferink.gocraft.tools.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -22,8 +24,20 @@ public class InformationManager extends Feature {
 		setupBasicProviders();
 	}
 
+	/**
+	 * Add an information provider that has information about a player
+	 * @param provider The provider
+	 */
 	public void addProvider(InformationProvider provider) {
 		informationProviders.add(provider);
+	}
+
+	/**
+	 * Get the information providers
+	 * @return The registered information providers
+	 */
+	public List<InformationProvider> getInformationProviders() {
+		return informationProviders;
 	}
 
 
@@ -37,6 +51,11 @@ public class InformationManager extends Feature {
 		// Determine target
 		Player about;
 		if(args.length > 0) {
+			OfflinePlayer testPlayer = Bukkit.getOfflinePlayer(args[0]);
+			if(testPlayer == null || testPlayer.getName() == null || (testPlayer.getLastPlayed() == 0 && !testPlayer.isOnline())) {
+				plugin.message(sender, "information-neverPlayed", args[0]);
+				return;
+			}
 			about = Utils.loadPlayer(args[0]);
 			if(about == null) {
 				plugin.message(sender, "information-wrongPlayer", args[0]);
@@ -50,16 +69,16 @@ public class InformationManager extends Feature {
 		}
 
 		// Send messages
-		plugin.message(sender, "information-header", about.getName());
-		for(InformationProvider provider : informationProviders) {
-			provider.show(about, sender);
-		}
+		InformationRequest request = new InformationRequest(about, sender);
+		request.execute();
 	}
 
 	public void setupBasicProviders() {
+		// TODO setup explicit ordering with InformationProvider
 		addProvider(new HealthInfo());
 		addProvider(new HungerInfo());
 		addProvider(new GamemodeInfo());
+		addProvider(new SeenInfo());
 		addProvider(new LocationInfo());
 		addProvider(new IPInfo());
 	}

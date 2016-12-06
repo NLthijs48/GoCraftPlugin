@@ -1,17 +1,16 @@
 package me.wiefferink.gocraft.information.providers;
 
 import me.wiefferink.gocraft.information.InformationProvider;
+import me.wiefferink.gocraft.information.InformationRequest;
 import me.wiefferink.gocraft.messages.Message;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class HungerInfo extends InformationProvider {
 
 	@Override
-	public void show(Player about, CommandSender to) {
+	public void showSync(InformationRequest request) {
 		String health = "";
-		int foodNumber = about.getFoodLevel();
+		int foodNumber = request.getAbout().getFoodLevel();
 		if(foodNumber < 7) {
 			health += ChatColor.RED;
 		} else if(foodNumber < 13) {
@@ -26,9 +25,10 @@ public class HungerInfo extends InformationProvider {
 			health += "▌";
 		}
 		Message saturation = Message.none();
-		if(about.getSaturation() > 0) {
-			saturation = Message.fromKey("information-itemHungerSaturation").replacements(about.getSaturation());
+		if(request.getAbout().getSaturation() > 0) {
+			saturation = Message.fromKey("information-itemHungerSaturation").replacements(request.getAbout().getSaturation());
 		}
-		plugin.messageNoPrefix(to, "information-itemHunger", health, foodNumber, 20.0, saturation);
+
+		request.message(Message.fromKey("information-itemHunger").replacements(health, foodNumber, 20.0, saturation));
 	}
 }
