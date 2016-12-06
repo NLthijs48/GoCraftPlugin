@@ -108,11 +108,16 @@ public class BungeeSession {
 	public static void ensureConsistency() {
 		Session session = Database.getSession();
 
-		int fixedBungeeSessions = session.createQuery("UPDATE BungeeSession SET leftBungee = current_date() WHERE leftBungee IS NULL").executeUpdate();
+		int fixedBungeeSessions = session.createQuery("UPDATE BungeeSession SET leftBungee = current_timestamp() WHERE leftBungee IS NULL").executeUpdate();
 		if(fixedBungeeSessions > 0) {
 			GoCraftBungee.warn("Closed", fixedBungeeSessions, " BungeeSession entries (crash recovery)");
 		}
 
 		Database.closeSession();
+	}
+
+	@Override
+	public String toString() {
+		return "BungeeSession(player="+gcPlayer.getPlayerName()+", joined="+getJoined()+", left="+getLeft()+", ip="+getPlayerIp()+")";
 	}
 }
