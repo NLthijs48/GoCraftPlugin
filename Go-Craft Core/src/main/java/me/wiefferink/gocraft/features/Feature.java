@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.features;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.tools.Run;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +24,7 @@ import org.bukkit.event.weather.WeatherEvent;
 import org.bukkit.event.world.WorldEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -253,5 +255,31 @@ public class Feature implements Listener {
 			result.add(player.getName());
 		}
 		return result;
+	}
+
+	/**
+	 * Run a task on the main server thread
+	 * @param runnable The BukkitRunnable to run
+	 */
+	public void sync(Run runnable) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				runnable.run();
+			}
+		}.runTask(plugin);
+	}
+
+	/**
+	 * Run a task on an asynchronous thread
+	 * @param runnable The BukkitRunnable to run
+	 */
+	public void async(Run runnable) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				runnable.run();
+			}
+		}.runTaskAsynchronously(plugin);
 	}
 }
