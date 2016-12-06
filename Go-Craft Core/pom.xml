@@ -148,6 +148,7 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.2.5.Final</version>
         </dependency>
+
     </dependencies>
 
 
@@ -276,7 +277,13 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!--<minimizeJar>true</minimizeJar> Takes an extra ~3 seconds... -->
+                            <relocations>
+                                <!-- Relocate JPA 2.0 because Spigot/Bukkit includes JPA 1.0 -->
+                                <relocation>
+                                    <pattern>javax.persistence</pattern>
+                                    <shadedPattern>javax.persistencenew</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>

@@ -651,6 +651,33 @@ public class Utils {
 	}
 
 	/**
+	 * Get a string showing how long ago a time is
+	 * @param timestamp The time to show
+	 * @return Indication how long ago this is
+	 */
+	public static String agoString(long timestamp) {
+		return millisToHumanFormat(Calendar.getInstance().getTimeInMillis()-timestamp)+Message.fromKey("time-ago").getPlain();
+	}
+
+	/**
+	 * Get a timestamp in a long readable format
+	 * @param timestamp The time to display
+	 * @return An absolute time indication
+	 */
+	public static String longTimeString(long timestamp) {
+		return GoCraft.longTimeFormat.format(timestamp);
+	}
+
+	/**
+	 * Get a timestamp in a short readable format
+	 * @param timestamp The time to display
+	 * @return An absolute time indication
+	 */
+	public static String shorTimeString(long timestamp) {
+		return GoCraft.shortTimeFormat.format(timestamp);
+	}
+
+	/**
 	 * Check if a player is in PVP area
 	 * @param player The player to check
 	 * @return true if the player is in a PVP area, otherwise false

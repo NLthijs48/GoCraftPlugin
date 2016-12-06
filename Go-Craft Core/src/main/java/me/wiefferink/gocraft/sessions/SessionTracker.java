@@ -11,21 +11,9 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import org.hibernate.Session;
 
-import javax.persistence.NoResultException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-/*
-	Get onlineBungee players at time X:
-		SELECT count(*) FROM bungeeSessions WHERE X>joinTime AND (leaveTime==NULL OR leaveTime>X));
-	On certain server
-		SELECT count(*) FROM serverSessions WHERE X>joinTime AND (leaveTime==NULL OR leaveTime>X));
-	Certain player was onlineBungee:
-		SELECT * FROM bungeeSessions WHERE uuid==uuid ORDER BY joinTime DESC LIMIT 10;
-	On which server:
-		SELECT * FROM serverSessions WHERE uuid==uuid ORDER BY joinTime DESC LIMIT 10;
-*/
 
 public class SessionTracker implements Listener {
 
@@ -54,25 +42,6 @@ public class SessionTracker implements Listener {
 		ServerSession.ensureConsistency();
 	}
 
-	/**
-	 * Get or create a GCPlayer
-	 * @param player The player data to get/create it from
-	 * @return The created or loaded GCPlayer
-	 */
-	public GCPlayer getCreatePlayer(ProxiedPlayer player) {
-		GCPlayer result;
-		try {
-			result = Database.getSession()
-					.createQuery("FROM GCPlayer WHERE uuid = :uuid", GCPlayer.class)
-					.setParameter("uuid", player.getUniqueId().toString())
-					.getSingleResult();
-		} catch(NoResultException e) {
-			result = new GCPlayer(player.getUniqueId(), player.getName());
-			Database.getSession().save(result);
-		}
-		return result;
-	}
-
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onServerSwitch(ServerConnectEvent event) {
 		// Ignore cancelled events and initial server joins
@@ -86,7 +55,7 @@ public class SessionTracker implements Listener {
 		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
 			Session session = Database.getSession();
 
-			GCPlayer gcPlayer = getCreatePlayer(player);
+			GCPlayer gcPlayer = Database.getCreatePlayer(player.getUniqueId(), player.getName());
 
 			// Start BungeeSession if not started already
 			BungeeSession bungeeSession = onlineBungee.get(player.getUniqueId());

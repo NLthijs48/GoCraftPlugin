@@ -22,6 +22,7 @@ import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
+import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -38,6 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public final class GoCraft extends JavaPlugin {
@@ -45,11 +47,14 @@ public final class GoCraft extends JavaPlugin {
 	public static final String signLog = "signs";
 	public static final String currencyEuro = "%euro%";
 	public static final String languageFolder = "lang";
+	public static final SimpleDateFormat shortTimeFormat = new SimpleDateFormat("dd-MM HH:mm");
+	public static final SimpleDateFormat longTimeFormat = new SimpleDateFormat("dd MMMMMMMMMMMMMMMMM yyyy HH:mm");
 	// Variables
 	private ArrayList<Listener> features;
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
 	private InspectionManager inspectionManager;
+	private InformationManager informationManager;
 	private boolean debug = false;
 	private List<String> chatPrefix = null;
 	private static GoCraft instance = null;
@@ -169,6 +174,7 @@ public final class GoCraft extends JavaPlugin {
 		} catch (final Exception e) {
 			this.getLogger().severe("Could not load version specific classes (tried to load " + version + ").");
 		}
+
 		// Assign a default if failed
 		if (specificUtils == null) {
 			specificUtils = new SpecificUtilsBase();
@@ -179,8 +185,18 @@ public final class GoCraft extends JavaPlugin {
 		this.languageManager = new LanguageManager();
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + Constant.GENERAL_FOLDER_NAME);
 		loadGeneralConfig();
+
+		// Startup database
+		Database.setup(
+				getGeneralConfig().getString("settings.sessionTracker.database", "wrong"),
+				getGeneralConfig().getString("settings.sessionTracker.username", "wrong"),
+				getGeneralConfig().getString("settings.sessionTracker.password", "wrong"),
+				getGeneralConfig().getBoolean("debug", false)
+		);
+
 		distributionManager = new DistributionManager();
 		loadLocalStorage();
+		informationManager = new InformationManager();
 
 		inspectionManager = new InspectionManager(this);
 		addListeners();
@@ -464,7 +480,6 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new FixInventories());
 		features.add(new SyncCommandsServer());
 		features.add(new SpawnPoints());
-		features.add(new InformationManager());
 		features.add(new DisableVoidFall());
 
 		features.add(new TempbanCommand());
@@ -547,6 +562,15 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public DistributionManager getDistributionManager() {
 		return distributionManager;
+	}
+
+
+	/**
+	 * Get the InformationManager
+	 * @return The InformationManager
+	 */
+	public InformationManager getInformationManager() {
+		return informationManager;
 	}
 
 	public void logLine(String fileName, String message) {

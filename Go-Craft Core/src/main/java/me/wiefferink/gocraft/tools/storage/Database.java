@@ -10,6 +10,9 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import javax.persistence.NoResultException;
+import java.util.UUID;
+
 
 public class Database {
 
@@ -24,18 +27,19 @@ public class Database {
 	 * @return true if the database is ready for usage, otherwise false
 	 */
 	public static boolean setup(String database, String username, String password, boolean debug) {
-		StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-				.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
-				.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
-				.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database)
-				.applySetting("hibernate.connection.username", username)
-				.applySetting("hibernate.connection.password", password)
-				.applySetting("hibernate.hbm2ddl.auto", "update") // Deploy and update schema automatically
-				.applySetting("hibernate.jdbc.batch_size", 50) // Group queries into batches if possible
-				.applySetting("hibernate.show_sql", debug) // Debug option to show SQL statements in console
-				.build();
-
+		StandardServiceRegistry registry = null;
 		try {
+			registry = new StandardServiceRegistryBuilder()
+					.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+					.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
+					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database)
+					.applySetting("hibernate.connection.username", username)
+					.applySetting("hibernate.connection.password", password)
+					.applySetting("hibernate.hbm2ddl.auto", "update") // Deploy and update schema automatically
+					.applySetting("hibernate.jdbc.batch_size", 50) // Group queries into batches if possible
+					.applySetting("hibernate.show_sql", debug) // Debug option to show SQL statements in console
+					.build();
+
 			sessionFactory = new MetadataSources(registry)
 					.addPackage("me.wiefferink.gocraft")
 					.addAnnotatedClass(GCPlayer.class)
@@ -44,7 +48,9 @@ public class Database {
 					.buildMetadata()
 					.buildSessionFactory();
 		} catch(Exception e) {
-			StandardServiceRegistryBuilder.destroy(registry);
+			if(registry != null) {
+				StandardServiceRegistryBuilder.destroy(registry);
+			}
 			// TODO do logging through proper logging classes
 			System.out.println("Exception while setting up Hibernate SessionFactory:");
 			e.printStackTrace();
@@ -100,6 +106,25 @@ public class Database {
 			session.clear();
 		}
 		threadSession.remove();
+	}
+
+	/**
+	 * Get or create a GCPlayer
+	 * @param player The player data to get/create it from
+	 * @return The created or loaded GCPlayer
+	 */
+	public static GCPlayer getCreatePlayer(UUID uuid, String name) {
+		GCPlayer result;
+		try {
+			result = Database.getSession()
+					.createQuery("FROM GCPlayer WHERE uuid = :uuid", GCPlayer.class)
+					.setParameter("uuid", uuid.toString())
+					.getSingleResult();
+		} catch(NoResultException e) {
+			result = new GCPlayer(uuid, name);
+			Database.getSession().save(result);
+		}
+		return result;
 	}
 
 }
