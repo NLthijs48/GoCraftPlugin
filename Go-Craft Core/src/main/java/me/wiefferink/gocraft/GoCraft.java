@@ -481,6 +481,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new SyncCommandsServer());
 		features.add(new SpawnPoints());
 		features.add(new DisableVoidFall());
+		features.add(new OldHunger());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());
