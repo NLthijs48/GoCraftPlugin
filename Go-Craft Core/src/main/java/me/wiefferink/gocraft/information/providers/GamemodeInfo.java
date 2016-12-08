@@ -15,7 +15,7 @@ public class GamemodeInfo extends InformationProvider {
 		}
 
 		Message OPPart = Message.none();
-		if(request.getAbout().isOp()) {
+		if(request.getAboutOffline().isOp()) {
 			OPPart = Message.fromKey("information-gameModeOP");
 		}
 

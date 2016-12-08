@@ -2,6 +2,8 @@ package me.wiefferink.gocraft.information;
 
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -11,12 +13,14 @@ import java.util.List;
 public class InformationRequest extends Feature {
 
 	private Player about;
+	private OfflinePlayer aboutOffline;
 	private CommandSender to;
 	private List<Message> messages;
 	private final InformationRequest self = this;
 
 	public InformationRequest(Player about, CommandSender to) {
 		this.about = about;
+		this.aboutOffline = Bukkit.getOfflinePlayer(about.getUniqueId());
 		this.to = to;
 		this.messages = new ArrayList<>();
 	}
@@ -57,6 +61,14 @@ public class InformationRequest extends Feature {
 	 */
 	public Player getAbout() {
 		return about;
+	}
+
+	/**
+	 * Get the OfflinePlayer that the information should be about
+	 * @return The OfflinePlayer
+	 */
+	public OfflinePlayer getAboutOffline() {
+		return aboutOffline;
 	}
 
 	/**

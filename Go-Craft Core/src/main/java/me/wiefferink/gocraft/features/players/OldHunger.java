@@ -1,6 +1,5 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
