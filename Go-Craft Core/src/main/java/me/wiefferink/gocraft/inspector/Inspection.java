@@ -400,7 +400,7 @@ public class Inspection {
 					}
 					String text = "Never";
 					if (lastPlayed >= 0) {
-						text = Utils.millisToHumanFormat(Calendar.getInstance().getTimeInMillis() - lastPlayed) + " ago";
+						text = Utils.agoString(lastPlayed);
 					}
 					objective.getScore(" " + text).setScore(currentScore);
 					currentScore++;

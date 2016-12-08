@@ -1,11 +1,12 @@
 package me.wiefferink.gocraft.tools;
 
-import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public abstract class PageDisplay extends Feature {
 	public CommandSender target;
@@ -13,6 +14,7 @@ public abstract class PageDisplay extends Feature {
 	private int itemsPerPage = maxItems-2;
 	private int itemCount;
 	private String baseCommand;
+	private List<Message> rendered;
 
 	/**
 	 * Create a page display for a certain target
@@ -27,18 +29,30 @@ public abstract class PageDisplay extends Feature {
 	/**
 	 * Render the header of the list (supposed to be on one line)
 	 */
-	public abstract void renderHeader();
+	public abstract Message renderHeader();
 
 	/**
 	 * Render a message that there are no items in the list
 	 */
-	public abstract void renderEmpty();
+	public abstract Message renderEmpty();
 
 	/**
 	 * Render an item (supposed to be on one line)
 	 * @param itemNumber The item number to render (0 is the first of the list, will never be itemCount or higher)
 	 */
-	public abstract void renderItem(int itemNumber);
+	public Message renderItem(int itemNumber) {
+		return null;
+	}
+
+	/**
+	 * Render all items, if it returns true calling renderItem() for each item is skipped
+	 * @param start The starting item
+	 * @param end The last item
+	 * @return true if the work is complete, false to let renderItem() handle it
+	 */
+	public boolean renderItems(int start, int end) {
+		return false;
+	}
 
 	/**
 	 * Set the maximum height of the page display (default 20)
@@ -53,23 +67,24 @@ public abstract class PageDisplay extends Feature {
 	 * Render a page
 	 * @param pageInput The page number to render (or the first one if not given)
 	 */
-	public void renderPage(String pageInput) {
+	public PageDisplay renderPage(String pageInput) {
+		rendered = new ArrayList<>();
 		int page = 1;
 		if(pageInput != null && Utils.isNumeric(pageInput)) {
 			try {
 				page = Integer.parseInt(pageInput);
 			} catch(NumberFormatException e) {
-				plugin.message(target, "page-wrong", pageInput);
-				return;
+				message(Message.fromKey("page-wrong").replacements(pageInput));
+				return this;
 			}
 		}
 		if(itemCount <= 0) {
-			renderEmpty();
-			return;
+			message(renderEmpty());
+			return this;
 		}
 
-		long start = Calendar.getInstance().getTimeInMillis();
-		renderHeader();
+		long startTime = Calendar.getInstance().getTimeInMillis();
+		message(renderHeader());
 		// Page entries
 		int totalPages = (int)Math.ceil(itemCount/(double)itemsPerPage); // Clip page to correct boundaries, not much need to tell the user
 		int renderItemsPerPage = itemsPerPage;
@@ -79,10 +94,12 @@ public abstract class PageDisplay extends Feature {
 		}
 
 		page = Math.max(1, Math.min(totalPages, page));
-		int linesPrinted = 1; // header
-		for(int i = (page-1)*renderItemsPerPage; i < page*renderItemsPerPage && i < itemCount; i++) {
-			renderItem(i);
-			linesPrinted++;
+		int startItem = (page-1)*renderItemsPerPage;
+		int endItem = Math.min(page*renderItemsPerPage, itemCount)-1;
+		if(!renderItems(startItem, endItem)) {
+			for(int i = startItem; i <= endItem; i++) {
+				message(renderItem(i));
+			}
 		}
 
 		// Page status (no need for a footer if there is only one page)
@@ -105,12 +122,32 @@ public abstract class PageDisplay extends Feature {
 				footer.append(Message.fromKey("page-noNext"));
 			}
 			// Fill up space if the page is not full (aligns header nicely)
-			for(int i = linesPrinted; i < maxItems-1; i++) {
-				target.sendMessage(" ");
+			for(int i = rendered.size(); i < maxItems-1; i++) {
+				message(Message.fromString(" "));
 			}
-			footer.send(target);
+			message(footer);
 		}
-		long end = Calendar.getInstance().getTimeInMillis();
-		GoCraft.debug("Printing page for command '"+baseCommand+"' took", end-start, "ms");
+		long endTime = Calendar.getInstance().getTimeInMillis();
+		//GoCraft.debug("Rendering page for command '"+baseCommand+"' took", endTime-startTime, "ms");
+		return this;
+	}
+
+	/**
+	 * Show the rendered page
+	 */
+	public void show() {
+		for(Message message : rendered) {
+			message.send(target);
+		}
+	}
+
+	/**
+	 * Adds a message to the output
+	 * @param message The message to add to the output
+	 */
+	public void message(Message message) {
+		if(message != null) {
+			rendered.add(message);
+		}
 	}
 }

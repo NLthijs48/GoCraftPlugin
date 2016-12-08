@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.features.players;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
@@ -189,27 +190,26 @@ public class SpawnPoints extends Feature {
 			});
 			new PageDisplay(sender, spawnPointList.size(), "/spawnpoints list") {
 				@Override
-				public void renderHeader() {
-					plugin.message(target, "spawnpoints-listHeader");
+				public Message renderHeader() {
+					return Message.fromKey("spawnpoints-listHeader").prefix();
 				}
 
 				@Override
-				public void renderEmpty() {
-					plugin.message(target, "spawnpoints-listNone");
+				public Message renderEmpty() {
+					return Message.fromKey("spawnpoints-listNone").prefix();
 				}
 
 				@Override
-				public void renderItem(int itemNumber) {
+				public Message renderItem(int itemNumber) {
 					String key = spawnPointList.get(itemNumber);
 					Location location = Utils.configToLocation(spawnPoints.getConfigurationSection(key+".location"));
 					if(location == null) {
 						GoCraft.warn("Spawn point '"+key+"' has no proper location");
-						plugin.messageNoPrefix(target, "spawnpoints-listImproper", key);
-						return;
+						return Message.fromKey("spawnpoints-listImproper").replacements(key);
 					}
-					plugin.messageNoPrefix(target, "spawnpoints-listItem", key, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockY());
+					return Message.fromKey("spawnpoints-listItem").replacements(key, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockY());
 				}
-			}.renderPage(args.length>1 ? args[1] : null);
+			}.renderPage(args.length>1 ? args[1] : null).show();
 		}
 
 		////////// UPDATEMARKERS

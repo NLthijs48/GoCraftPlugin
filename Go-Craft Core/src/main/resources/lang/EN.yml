@@ -104,15 +104,15 @@ tradesign-blocked: "You can only use [Trade] signs inside the shops at the spawn
 other-netherGlitching: "You may not go above the nether ceiling!"
 other-fallenThroughWorld: "You have fallen through the world somehow, you have been teleported to spawn to prevent you from dying!"
 
-timeleft-years: "%0% years"
-timeleft-months: "%0% months"
-timeleft-days: "%0% days"
-timeleft-hours: "%0% hours"
-timeleft-minutes: "%0% minutes"
-timeleft-second: "%0% second"
-timeleft-seconds: "%0% seconds"
-timeleft-ended: "Expired"
-time-ago: " ago"
+timeleft-years: "%0% years%1%"
+timeleft-months: "%0% months%1%"
+timeleft-days: "%0% days%1%"
+timeleft-hours: "%0% hours%1%"
+timeleft-minutes: "%0% minutes%1%"
+timeleft-second: "%0% second%1%"
+timeleft-seconds: "%0% seconds%1%"
+timeleft-ended: "No time"
+timeleft-ago: " ago"
 
 ########## INSPECT
 help-inspector: "&6/inspect <player> &7-&r Inspect a player"
@@ -229,8 +229,21 @@ information-gameModeNotSelected:
   - "%0%"
   - "    hover: %lang:action|Set to %0% mode|%"
   - "    command: /gamemode %0% %1%"
-information-lastOnline: "[darkgreen][bold]►[reset] Last online: %0% (%1%)."
-information-nowOnline: "[darkgreen][bold]►[reset] Now online on %0%."
+information-lastOnline: "[darkgreen][bold]►[reset] Last online: %0% (%1%)%2%."
+information-nowOnline: "[darkgreen][bold]►[reset] Now online on %0%%1%."
+information-onlineHistory:
+  - ", "
+  - "[bold]history[/bold]"
+  - "    hover: %lang:action|View online history|%"
+  - "    command: /seen %0%"
+
+seen-noPermission: "You do not have permission to use this command." # Vague on purpose
+seen-wrongPlayer: "Could not find player '%0%'."
+seen-help: "/seen <player>"
+seen-noRecords: "There is no information about %0%, looks like this player did not visit yet."
+seen-header: "[darkgreen]Online history of %0%:"
+seen-item: "[darkgreen][bold]►[reset] %0% [gray]until[reset] %1%%2%."
+seen-itemLength: " [gray](%0%)"
 
 safetp-help: "/safeteleport [player] <world> <x> <y> <z> [<yaw> <pitch>]"
 safetp-noPermission: "You do not have permission to use teleport to locations."

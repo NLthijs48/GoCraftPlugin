@@ -551,39 +551,46 @@ public class Utils {
 	 * @return A formatted string based on the language file
 	 */
 	public static String millisToHumanFormat(long milliseconds) {
+		// Flip to time ago when negative
+		Message ago = Message.none();
+		if(milliseconds < 0) {
+			ago = Message.fromKey("timeleft-ago");
+			milliseconds *= -1;
+		}
+
 		long timeLeft = milliseconds+500;
 		// To seconds
 		timeLeft = timeLeft/1000;
 		if(timeLeft <= 0) {
 			return Message.fromKey("timeleft-ended").getPlain();
 		} else if(timeLeft == 1) {
-			return Message.fromKey("timeleft-second").replacements(timeLeft).getPlain();
+			return Message.fromKey("timeleft-second").replacements(timeLeft, ago).getPlain();
 		} else if(timeLeft <= 120) {
-			return Message.fromKey("timeleft-seconds").replacements(timeLeft).getPlain();
+			return Message.fromKey("timeleft-seconds").replacements(timeLeft, ago).getPlain();
 		}
 		// To minutes
 		timeLeft = timeLeft/60;
 		if(timeLeft <= 120) {
-			return Message.fromKey("timeleft-minutes").replacements(timeLeft).getPlain();
+			return Message.fromKey("timeleft-minutes").replacements(timeLeft, ago).getPlain();
 		}
 		// To hours
 		timeLeft = timeLeft/60;
 		if(timeLeft <= 48) {
-			return Message.fromKey("timeleft-hours").replacements(timeLeft).getPlain();
+			return Message.fromKey("timeleft-hours").replacements(timeLeft, ago).getPlain();
 		}
 		// To days
 		timeLeft = timeLeft/24;
 		if(timeLeft <= 60) {
-			return Message.fromKey("timeleft-days").replacements(timeLeft).getPlain();
+			return Message.fromKey("timeleft-days").replacements(timeLeft, ago).getPlain();
 		}
 		// To months
 		timeLeft = timeLeft/30;
 		if(timeLeft <= 24) {
-			return Message.fromKey("timeleft-months").replacements(timeLeft).getPlain();
+			return Message.fromKey("timeleft-months").replacements(timeLeft, ago).getPlain();
 		}
 		// To years
 		timeLeft = timeLeft/12;
-		return Message.fromKey("timeleft-years").replacements(timeLeft).getPlain();
+		return Message.fromKey("timeleft-years").replacements(timeLeft, ago).getPlain();
 	}
 
 	/**
@@ -656,7 +663,7 @@ public class Utils {
 	 * @return Indication how long ago this is
 	 */
 	public static String agoString(long timestamp) {
-		return millisToHumanFormat(Calendar.getInstance().getTimeInMillis()-timestamp)+Message.fromKey("time-ago").getPlain();
+		return millisToHumanFormat(timestamp-Calendar.getInstance().getTimeInMillis());
 	}
 
 	/**

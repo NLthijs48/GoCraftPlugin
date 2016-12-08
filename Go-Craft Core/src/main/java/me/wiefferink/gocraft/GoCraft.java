@@ -19,6 +19,7 @@ import me.wiefferink.gocraft.integration.*;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.messages.LanguageManager;
 import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
@@ -497,6 +498,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new MapCommand());
 		features.add(new DiscordCommand());
 		features.add(new SafeTeleportCommand());
+		features.add(new SeenCommand());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {

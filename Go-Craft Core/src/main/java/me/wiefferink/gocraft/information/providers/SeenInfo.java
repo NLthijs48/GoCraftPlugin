@@ -30,6 +30,7 @@ public class SeenInfo extends InformationProvider {
 				.uniqueResult();
 		GoCraft.info("Found lastSession:", lastSession);
 		if(lastSession != null) {
+			Message history = Message.fromKey("information-onlineHistory").replacements(request.getAbout().getName());
 			// Still online
 			if(lastSession.getLeft() == null) {
 				ServerSession serverSession = session.createQuery("FROM ServerSession WHERE bungeeSession = :bungeeSession ORDER BY joinedServer DESC", ServerSession.class)
@@ -40,16 +41,18 @@ public class SeenInfo extends InformationProvider {
 				if(serverSession != null) {
 					server = serverSession.getServerName();
 				}
-				request.message(Message.fromKey("information-nowOnline").replacements(server));
+				// TODO able to click servername
+				request.message(Message.fromKey("information-nowOnline").replacements(server, history));
 			}
 			// Offline
 			else {
-				request.message(
-						Message.fromKey("information-lastOnline")
-								.replacements(
-										Utils.agoString(lastSession.getLeft().getTime()),
-										Utils.longTimeString(lastSession.getLeft().getTime())
-								)
+				// TODO show server?
+				request.message(Message.fromKey("information-lastOnline")
+						.replacements(
+								Utils.agoString(lastSession.getLeft().getTime()),
+								Utils.longTimeString(lastSession.getLeft().getTime()),
+								history
+						)
 				);
 			}
 		}

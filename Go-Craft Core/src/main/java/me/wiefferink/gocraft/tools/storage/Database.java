@@ -110,20 +110,32 @@ public class Database {
 
 	/**
 	 * Get or create a GCPlayer
-	 * @param player The player data to get/create it from
+	 * @param uuid The uuid of the player to get
+	 * @param name The name the player should get when created
 	 * @return The created or loaded GCPlayer
 	 */
 	public static GCPlayer getCreatePlayer(UUID uuid, String name) {
-		GCPlayer result;
+		GCPlayer result = getPlayer(uuid);
+		if(result == null) {
+			result = new GCPlayer(uuid, name);
+			Database.getSession().save(result);
+		}
+		return result;
+	}
+
+	/**
+	 * Get GCPlayer for a player if it is defined in the database
+	 * @param uuid The UUID of the player to get
+	 * @return The GCPlayer
+	 */
+	public static GCPlayer getPlayer(UUID uuid) {
+		GCPlayer result = null;
 		try {
 			result = Database.getSession()
 					.createQuery("FROM GCPlayer WHERE uuid = :uuid", GCPlayer.class)
 					.setParameter("uuid", uuid.toString())
 					.getSingleResult();
-		} catch(NoResultException e) {
-			result = new GCPlayer(uuid, name);
-			Database.getSession().save(result);
-		}
+		} catch(NoResultException ignored) {}
 		return result;
 	}
 
