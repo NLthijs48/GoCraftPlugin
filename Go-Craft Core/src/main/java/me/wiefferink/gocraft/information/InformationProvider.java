@@ -1,13 +1,11 @@
 package me.wiefferink.gocraft.information;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.features.Feature;
 
 /**
  * Provider of information about a player
  */
-public abstract class InformationProvider {
-
-	public static GoCraft plugin = GoCraft.getInstance();
+public abstract class InformationProvider extends Feature {
 
 	/**
 	 * Show the information to the sender (executed sync)

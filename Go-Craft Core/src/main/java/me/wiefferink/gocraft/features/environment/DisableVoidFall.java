@@ -1,6 +1,5 @@
 package me.wiefferink.gocraft.features.environment;
 
-import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
@@ -15,7 +14,6 @@ import org.bukkit.util.Vector;
 public class DisableVoidFall extends Feature {
 
 	public DisableVoidFall() {
-		GoCraft.debug("disableVoidFall construct");
 		listen("disableVoidFall");
 	}
 

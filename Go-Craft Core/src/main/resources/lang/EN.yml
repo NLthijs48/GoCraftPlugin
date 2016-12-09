@@ -236,6 +236,7 @@ information-onlineHistory:
   - "[bold]history[/bold]"
   - "    hover: %lang:action|View online history|%"
   - "    command: /seen %0%"
+information-balance: "[darkgreen][bold]►[reset] Balance: %0%"
 
 seen-noPermission: "You do not have permission to use this command." # Vague on purpose
 seen-wrongPlayer: "Could not find player '%0%'."

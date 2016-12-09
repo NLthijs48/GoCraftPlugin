@@ -81,6 +81,7 @@ public class InformationManager extends Feature {
 		addProvider(new SeenInfo());
 		addProvider(new LocationInfo());
 		addProvider(new IPInfo());
+		addProvider(new BalanceInfo());
 	}
 
 }
