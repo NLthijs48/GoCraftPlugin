@@ -78,10 +78,11 @@ public class InformationManager extends Feature {
 		addProvider(new HealthInfo());
 		addProvider(new HungerInfo());
 		addProvider(new GamemodeInfo());
+		addProvider(new PingInfo());
 		addProvider(new SeenInfo());
+		addProvider(new BalanceInfo());
 		addProvider(new LocationInfo());
 		addProvider(new IPInfo());
-		addProvider(new BalanceInfo());
 	}
 
 }

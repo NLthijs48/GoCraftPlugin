@@ -117,6 +117,9 @@ timeleft-second: "%0% second%1%"
 timeleft-seconds: "%0% seconds%1%"
 timeleft-ended: "No time"
 timeleft-ago: " ago"
+ago:
+  - "%0%"
+  - "    hover: %1%"
 
 ########## INSPECT
 help-inspector: "&6/inspect <player> &7-&r Inspect a player"
@@ -233,14 +236,16 @@ information-gameModeNotSelected:
   - "%0%"
   - "    hover: %lang:action|Set to %0% mode|%"
   - "    command: /gamemode %0% %1%"
-information-lastOnline: "[darkgreen][bold]►[reset] Last online: %0% (%1%)%2%."
-information-nowOnline: "[darkgreen][bold]►[reset] Now online on %0%%1%."
+information-lastOnline: "[darkgreen][bold]►[reset] Last online: [gray]%0%%1%."
+
+information-nowOnline: "[darkgreen][bold]►[reset] Now online: [gray]server %0%%1%."
 information-onlineHistory:
   - ", "
   - "[bold]history[/bold]"
   - "    hover: %lang:action|View online history|%"
   - "    command: /seen %0%"
 information-balance: "[darkgreen][bold]►[reset] Balance: [gray]%0%"
+information-ping: "[darkgreen][bold]►[reset] Ping: [gray]%0% milliseconds."
 
 seen-noPermission: "You do not have permission to use this command." # Vague on purpose
 seen-wrongPlayer: "Could not find player '%0%'."

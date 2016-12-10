@@ -304,8 +304,9 @@ public class Message {
 	/**
 	 * Apply all replacements to the message
 	 */
-	private void executeReplacements() {
+	public Message executeReplacements() {
 		executeReplacements(new Limit(REPLACEMENTLIMIT, this));
+		return this;
 	}
 
 	private void executeReplacements(Limit limit) {

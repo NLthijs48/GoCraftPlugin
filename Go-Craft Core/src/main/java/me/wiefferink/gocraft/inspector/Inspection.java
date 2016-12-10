@@ -400,7 +400,7 @@ public class Inspection {
 					}
 					String text = "Never";
 					if (lastPlayed >= 0) {
-						text = Utils.agoString(lastPlayed);
+						text = Utils.agoMessage(lastPlayed).getPlain();
 					}
 					objective.getScore(" " + text).setScore(currentScore);
 					currentScore++;

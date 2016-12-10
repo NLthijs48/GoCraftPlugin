@@ -21,7 +21,7 @@ public class LocationInfo extends InformationProvider {
 				location.getBlockZ(),
 				Math.round(location.getYaw()),
 				Math.round(location.getPitch()),
-				request.getAbout()
+				request.getAbout().getName()
 		));
 	}
 }

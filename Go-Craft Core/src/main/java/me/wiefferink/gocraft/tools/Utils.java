@@ -662,8 +662,8 @@ public class Utils {
 	 * @param timestamp The time to show
 	 * @return Indication how long ago this is
 	 */
-	public static String agoString(long timestamp) {
-		return millisToHumanFormat(timestamp-Calendar.getInstance().getTimeInMillis());
+	public static Message agoMessage(long timestamp) {
+		return Message.fromKey("ago").replacements(millisToHumanFormat(timestamp-Calendar.getInstance().getTimeInMillis()), Utils.longTimeString(timestamp));
 	}
 
 	/**

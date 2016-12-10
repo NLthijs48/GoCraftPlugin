@@ -28,7 +28,6 @@ public class SeenInfo extends InformationProvider {
 				.setParameter("player", gcPlayer)
 				.setMaxResults(1)
 				.uniqueResult();
-		GoCraft.info("Found lastSession:", lastSession);
 		if(lastSession != null) {
 			Message history = Message.fromKey("information-onlineHistory").replacements(request.getAbout().getName());
 			// Still online
@@ -49,8 +48,7 @@ public class SeenInfo extends InformationProvider {
 				// TODO show server?
 				request.message(Message.fromKey("information-lastOnline")
 						.replacements(
-								Utils.agoString(lastSession.getLeft().getTime()),
-								Utils.longTimeString(lastSession.getLeft().getTime()),
+								Utils.agoMessage(lastSession.getLeft().getTime()),
 								history
 						)
 				);
