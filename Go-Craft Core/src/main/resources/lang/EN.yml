@@ -27,18 +27,18 @@ page-wrong: "%0% is not a correct page number."
 page-status:
   - "[gold]Page %0%/%1%"
 page-previous:
-  - "    [gold][bold]◄Previous[/bold]    "
+  - "    [gold]%lang:clickable|◄Previous|%    "
   - "    hover: %lang:action|Show previous page|%"
   - "    command: %0%"
 page-noPrevious:
-  - "    [darkgray][bold]◄Previous[/bold]    "
+  - "    [darkgray]%lang:clickable|◄Previous|%    "
   - "    hover: This is already the first page"
 page-next:
-  - "    [gold][bold]Next►[/bold]"
+  - "    [gold]%lang:clickable|Next►|%"
   - "    hover: %lang:action|Show next page|%"
   - "    command: %0%"
 page-noNext:
-  - "    [darkgray][bold]Next►[/bold]"
+  - "    [darkgray]%lang:clickable|Next►|%"
   - "    hover: This is already the last page"
 
 ########## LOGGING
@@ -241,11 +241,17 @@ information-lastOnline: "[darkgreen][bold]►[reset] Last online: [gray]%0%%1%."
 information-nowOnline: "[darkgreen][bold]►[reset] Now online: [gray]server %0%%1%."
 information-onlineHistory:
   - ", "
-  - "[bold]history[/bold]"
+  - "%lang:clickable|history|%"
   - "    hover: %lang:action|View online history|%"
   - "    command: /seen %0%"
 information-balance: "[darkgreen][bold]►[reset] Balance: [gray]%0%"
 information-ping: "[darkgreen][bold]►[reset] Ping: [gray]%0% milliseconds."
+information-inspect:
+  - "[darkgreen][bold]►[reset] "
+  - "%lang:clickable|Start inspecting|%"
+  - "    hover: %lang:action|Inspect %0%|%"
+  - "    command: /inspect %0%"
+  - "."
 
 seen-noPermission: "You do not have permission to use this command." # Vague on purpose
 seen-wrongPlayer: "Could not find player '%0%'."
