@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft.sessions;
 
+import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.PageDisplay;
@@ -10,7 +11,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.hibernate.Session;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SeenCommand extends Feature {
 
@@ -67,12 +71,31 @@ public class SeenCommand extends Feature {
 				@Override
 				public boolean renderItems(int itemStart, int itemEnd) {
 					//GoCraft.debug("renderItems: start:", itemStart, "end:", itemEnd, "count:", sessionCount);
-					List<BungeeSession> pageSessions = session.createQuery("FROM BungeeSession WHERE gcPlayer = :player ORDER BY joinedBungee DESC", BungeeSession.class)
+
+					// Get the BungeeSession objects for this page
+					@SuppressWarnings("unchecked")
+					List<BungeeSession> bungeeSessions = session.createQuery("FROM BungeeSession WHERE gcPlayer = :player ORDER BY joinedBungee DESC", BungeeSession.class)
 							.setParameter("player", gcPlayer)
 							.setMaxResults(itemEnd-itemStart+1)
 							.setFirstResult(itemStart)
 							.getResultList();
-					for(BungeeSession bungeeSession : pageSessions) {
+					// Get the ServerSession objects that belong to the BungeSession objects
+					@SuppressWarnings("unchecked")
+					List<ServerSession> allServerSessions = session.createQuery("FROM ServerSession WHERE bungeeSession in (:bungeeSessions) ORDER BY joinedServer DESC", ServerSession.class)
+							.setParameterList("bungeeSessions", bungeeSessions)
+							.setMaxResults(itemEnd-itemStart+1)
+							.setFirstResult(itemStart)
+							.getResultList();
+					// Bundle the ServerSession objects for the BungeeSession objects
+					Map<BungeeSession, List<ServerSession>> mapped = new HashMap<>();
+					for(ServerSession serverSession : allServerSessions) {
+						mapped.computeIfAbsent(serverSession.getBungeeSession(), k -> new ArrayList<>())
+								.add(serverSession);
+					}
+					// Construct the lines in the history
+					for(BungeeSession bungeeSession : bungeeSessions) {
+
+						// Build start, end, length
 						String left = "Now";
 						Message length = Message.none();
 						if(bungeeSession.getLeft() != null) {
@@ -80,20 +103,39 @@ public class SeenCommand extends Feature {
 							length = Message.fromKey("seen-itemLength")
 									.replacements(Utils.millisToHumanFormat(bungeeSession.getLeft().getTime()-bungeeSession.getJoined().getTime()));
 						}
-						// TODO hover tooltip for time display
+
+						// Build hover
+						Message hover = Message.none();
+
+						List<ServerSession> serverSessions = mapped.get(bungeeSession);
+						if(serverSessions == null || serverSessions.isEmpty()) {
+							hover.append(Message.fromKey("seen-hoverNone"));
+						} else {
+							for(ServerSession serverSession : serverSessions) {
+								String leftServer = "Now";
+								Message lengthServer = Message.none();
+								if(serverSession.getLeft() != null) {
+									leftServer = Utils.shorTimeString(serverSession.getLeft().getTime());
+									lengthServer = Message.fromKey("seen-itemLength")
+											.replacements(Utils.millisToHumanFormat(serverSession.getLeft().getTime()-serverSession.getJoined().getTime()));
+								}
+								hover.append(Message.fromKey("seen-hoverLine")
+										.replacements(Utils.shorTimeString(serverSession.getJoined().getTime()), leftServer, serverSession.getServerName(), lengthServer));
+							}
+						}
+
+						// Build final line
+						GoCraft.debug("Raw hover:", hover);
 						message(Message.fromKey("seen-item")
-								.replacements(
-										Utils.shorTimeString(bungeeSession.getJoined().getTime()),
-										left,
-										length));
+								.replacements(hover, Utils.shorTimeString(bungeeSession.getJoined().getTime()), left, length));
 					}
 					return true;
 				}
 			}.renderPage(args.length > 1 ? args[1] : null);
 
-			sync(display::show);
-
 			Database.closeSession();
+
+			sync(display::show);
 		});
 	}
 }

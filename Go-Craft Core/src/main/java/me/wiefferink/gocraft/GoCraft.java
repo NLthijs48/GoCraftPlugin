@@ -48,7 +48,7 @@ public final class GoCraft extends JavaPlugin {
 	public static final String signLog = "signs";
 	public static final String currencyEuro = "%euro%";
 	public static final String languageFolder = "lang";
-	public static final SimpleDateFormat shortTimeFormat = new SimpleDateFormat("dd-MM HH:mm");
+	public static final SimpleDateFormat shortTimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 	public static final SimpleDateFormat longTimeFormat = new SimpleDateFormat("dd MMMMMMMMMMMMMMMMM yyyy HH:mm");
 	// Variables
 	private ArrayList<Listener> features;

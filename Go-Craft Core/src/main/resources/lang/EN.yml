@@ -11,6 +11,10 @@ button: "[bold]<%0%>[/bold]"
 clickable: "[bold]%0%[/bold]"
 location: "[gray](%0%: %1%,%2%,%3%)" # (world,x,y,z)
 locationRotation: "[gray](%0%: %1%,%2%,%3%, yaw:%5%, pitch:%4%)" # (world,x,y,z, yaw:yaw, pitch:pitch)
+player:
+  - "[bold]%0%[/bold]"
+  - "    hover: %lang:action|View player information|%"
+  - "    command: /information %0%"
 
 staff-noPermission: "You are not a staff member."
 
@@ -42,15 +46,15 @@ signLogfileLine: "[%0%,world=%1%,x=%2%,y=%3%,z=%4%] %5%: %6%║%7%║%8%║%9%"
 signNotifyLine: "%0% placed sign: %1%[black]|[reset]%2%[black]|[reset]%3%[black]|[reset]%4% [gray](%5%,%6%,%7%,%8%)"
 
 ########## COMMANDS
-tempban-redirected: "Banned %0% for %1% by name and ip: &7%2%."
+tempban-redirected: "Banned %lang:player|%0%|% for %1% by name and ip: &7%2%."
 tempban-failed: "Failed to ban correctly, check the errors above."
 tempban-help: "/tempban <playername> <timeDiff> <reason>."
 
 ping-noPermission: "You do not have permission to check the ping of players."
-ping-playerNotFound: "Player %0% is not online on the server."
+ping-playerNotFound: "Player %lang:player|%0%|% is not online on the server."
 ping-noTarget: "Please specify a target: /ping <player>."
 ping-successSelf: "Your ping is %0% milliseconds."
-ping-successOther: "The ping of %0% is %1% milliseconds."
+ping-successOther: "The ping of %lang:player|%0%|% is %1% milliseconds."
 
 setspawn-noPermission: "You don't have permission to set the spawnpoint."
 setspawn-onlyByPlayers: "You can only set the spawn as a player."
@@ -119,9 +123,9 @@ help-inspector: "&6/inspect <player> &7-&r Inspect a player"
 inspect-help: "/inspect <player>"
 inspect-noPermission: "You don't have permission to inspect players."
 inspect-notAvailable: "Player %0% never played on the server and therefore cannot be inspected."
-inspect-started: "Started inspection of %0%."
+inspect-started: "Started inspection of %lang:player|%0%|%."
 inspect-startedNoTarget: "Started inspection without target."
-inspect-ended: "Stopped inspecting %0%."
+inspect-ended: "Stopped inspecting %lang:player|%0%|%."
 inspect-endedNoTarget: "Stopped inspecting."
 inspect-inNonPVP: "You can only start inspecting when you are in a non-PVP area."
 inspect-cancel: "Inspection cancelled because your inventory could not be saved to disk properly, inform an Admin about this issue."
@@ -130,8 +134,8 @@ inspect-outsideMap: "Stay inside the map while inspecting please."
 inspect-self: "You cannot inspect yourself."
 inspect-inspection: "You cannot inspect someone that is inspecting himself."
 inspect-switched: "Switched inspection from %0% to %1% &7(left-clicking a player switches inspection)."
-inspect-teleportedToInspected: "Teleported to %0%."
-inspect-restore: "Your inspection of %0% has resumed."
+inspect-teleportedToInspected: "Teleported to %lang:player|%0%|%."
+inspect-restore: "Your inspection of %lang:player|%0%|% has resumed."
 inspect-restoreNoTarget: "Your inspection has resumed."
 inspect-joinEnable: "You have entered the server in inspect mode."
 inspect-joinEnableInPVP: "&4Warning: You have joined inspect while in a PVP zone, when leaving inspect you will be in PVP again."
@@ -210,7 +214,7 @@ information-noPermission: "You do not have permission to check information and s
 information-wrongPlayer: "Player %0% could not be found."
 information-neverPlayed: "%0% has never played on the server yet."
 information-noPlayer: "As console you need to specify a player: /information [player]."
-information-header: "[darkgreen]Information about %0%:"
+information-header: "[darkgreen]Information about %lang:player|%0%|%:"
 information-itemHealth: "[darkgreen][bold]►[reset] %0% [reset][gray]%1%/%2% health."
 information-itemHunger: "[darkgreen][bold]►[reset] %0% [reset][gray]%1%/%2% hunger%3%."
 information-itemHungerSaturation: " [gray](+%0% saturation)[white]"
@@ -242,9 +246,15 @@ seen-noPermission: "You do not have permission to use this command." # Vague on 
 seen-wrongPlayer: "Could not find player '%0%'."
 seen-help: "/seen <player>"
 seen-noRecords: "There is no information about %0%, looks like this player did not visit yet."
-seen-header: "[darkgreen]Online history of %0%:"
-seen-item: "[darkgreen][bold]►[reset] %0% [gray]until[reset] %1%%2%."
+seen-header: "[darkgreen]Online history of %lang:player|%0%|%:"
+seen-item:
+  - "[darkgreen][bold]►[reset] "
+  - "%1% [gray]until[reset] %2%%3%"
+  - "%0%" # Replaced by hover lines
+  - "."
 seen-itemLength: " [gray](%0%)"
+seen-hoverNone: "    hover: Did not visit any servers, this should not be possible"
+seen-hoverLine: "    hover: %0% [gray]until[reset] %1% %2%%3%"
 
 safetp-help: "/safeteleport [player] <world> <x> <y> <z> [<yaw> <pitch>]"
 safetp-noPermission: "You do not have permission to use teleport to locations."
@@ -272,7 +282,7 @@ discord-link:
 ########## AURACHECK
 ac-help: "/ac <player>"
 ac-noPermission: "You do not have permission to check for killaura."
-ac-stillRunning: "There is already an AuraCheck running for %0%."
+ac-stillRunning: "There is already an AuraCheck running for %lang:player|%0%|%."
 
 ########## COMMANDSYNC
 sync-noPermission: "You do not have permission for this command." # Bit vague on purpose

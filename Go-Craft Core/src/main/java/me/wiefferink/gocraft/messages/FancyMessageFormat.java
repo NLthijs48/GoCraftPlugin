@@ -328,9 +328,13 @@ public class FancyMessageFormat {
 						} else if(tag instanceof FormatCloseTag) {
 							currentLineFormatting.remove(((FormatCloseTag)tag).closes);
 						} else if(tag == ControlTag.BREAK) {
-							messagePart.newline = true;
-							currentLineFormatting.clear();
-							continue lineLoop;
+							if(isHoverLine) {
+								targetList.getLast().text += "\n";
+							} else {
+								messagePart.newline = true;
+								currentLineFormatting.clear();
+								continue lineLoop;
+							}
 						} else if(tag == ControlTag.RESET) {
 							currentLineFormatting.clear();
 							currentLineColor = Color.WHITE;
@@ -624,6 +628,9 @@ public class FancyMessageFormat {
 		StringBuilder toSimpleString(StringBuilder sb) {
 			for(TextMessagePart part : content) {
 				part.toSimpleString(sb);
+			}
+			if(newline) {
+				sb.append("\n");
 			}
 			return sb;
 		}
