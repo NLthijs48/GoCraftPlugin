@@ -224,6 +224,7 @@ public class SyncCommandsBungee {
 				} catch(IOException e) {
 					if(shouldRun) {
 						GoCraftBungee.error("SyncCommands["+name+"]: receiving commands failed:", ExceptionUtils.getStackTrace(e));
+						disconnect();
 					}
 				}
 			}
