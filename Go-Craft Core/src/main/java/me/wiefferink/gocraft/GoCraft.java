@@ -315,6 +315,16 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
+	 * Get a settting of this server
+	 * @param path The path of the setting
+	 * @return The value of the setting
+	 */
+	public boolean getStringSetting(String path, boolean fallback) {
+		GoCraft.debug("getStringSetting path:", "servers."+getServerId()+"."+path);
+		return getGeneralConfig().getBoolean("servers."+getServerId()+"."+path, fallback);
+	}
+
+	/**
 	 * Get the id of this server for use with the general config
 	 * @return The id of this server
 	 */

@@ -29,7 +29,9 @@ public class InformationManager extends Feature {
 	 * @param provider The provider
 	 */
 	public void addProvider(InformationProvider provider) {
-		informationProviders.add(provider);
+		if(plugin.getStringSetting("informationProviders."+provider.getClass().getSimpleName(), true)) {
+			informationProviders.add(provider);
+		}
 	}
 
 	/**
