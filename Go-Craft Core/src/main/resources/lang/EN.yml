@@ -252,6 +252,10 @@ information-inspect:
   - "    hover: %lang:action|Inspect %0%|%"
   - "    command: /inspect %0%"
   - "."
+information-kills: "[darkgreen][bold]►[reset] Kills: [gray]%0%"
+information-deaths: "[darkgreen][bold]►[reset] Deaths: [gray]%0%"
+information-killDeath: "[darkgreen][bold]►[reset] Kills/deaths: [gray]%0%"
+
 
 seen-noPermission: "You do not have permission to use this command." # Vague on purpose
 seen-wrongPlayer: "Could not find player '%0%'."

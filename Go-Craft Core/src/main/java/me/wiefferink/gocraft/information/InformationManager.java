@@ -84,6 +84,7 @@ public class InformationManager extends Feature {
 		addProvider(new LocationInfo());
 		addProvider(new IPInfo());
 		addProvider(new InspectInfo());
+		addProvider(new KillInfo());
 	}
 
 }
