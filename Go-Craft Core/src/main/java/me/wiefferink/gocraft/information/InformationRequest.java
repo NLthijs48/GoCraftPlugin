@@ -34,6 +34,7 @@ public class InformationRequest extends Feature {
 
 		// Add sync messages
 		List<InformationProvider> providers = plugin.getInformationManager().getInformationProviders();
+		providers.removeIf((InformationProvider provider) -> !hasAccess(provider));
 		for(InformationProvider provider : providers) {
 			provider.showSync(this);
 		}
@@ -48,11 +49,40 @@ public class InformationRequest extends Feature {
 
 			// Send the messages in sync
 			sync(() -> {
+				// Only the header, tell no information available
+				if(messages.size() == 1) {
+					plugin.message(to, "information-noneAvailable", about.getName());
+					return;
+				}
+
+				// Send messages
 				for(Message message : messages) {
 					message.send(to);
 				}
 			});
 		});
+	}
+
+	/**
+	 * Check if the player has access to the content of an information provider
+	 * @param provider The provider to check
+	 * @return true if the player has access, otherwise false
+	 */
+	private boolean hasAccess(InformationProvider provider) {
+		String access = plugin.getStringSetting("informationProviders."+provider.getClass().getSimpleName());
+
+		// Staff access level
+		if("staff".equals(access)) {
+			return to.hasPermission("gocraft.staff");
+		}
+		// Admin access level
+		else if("admin".equals(access)) {
+			return to.hasPermission("gocraft.admin");
+		}
+		// Allow by default, false disables it
+		else {
+			return !"false".equalsIgnoreCase(access);
+		}
 	}
 
 	/**

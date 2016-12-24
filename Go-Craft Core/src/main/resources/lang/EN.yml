@@ -216,6 +216,7 @@ hackban-noPlayerData: "Failed to load the player data from BanManager, are you s
 information-noPermission: "You do not have permission to check information and stats about players."
 information-wrongPlayer: "Player %0% could not be found."
 information-neverPlayed: "%0% has never played on the server yet."
+information-noneAvailable: "There is no information available for player %0%."
 information-noPlayer: "As console you need to specify a player: /information [player]."
 information-header: "[darkgreen]Information about %lang:player|%0%|%:"
 information-itemHealth: "[darkgreen][bold]►[reset] %0% [reset][gray]%1%/%2% health."
