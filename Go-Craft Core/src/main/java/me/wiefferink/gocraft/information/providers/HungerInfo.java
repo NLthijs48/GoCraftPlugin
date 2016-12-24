@@ -26,9 +26,9 @@ public class HungerInfo extends InformationProvider {
 		}
 		Message saturation = Message.none();
 		if(request.getAbout().getSaturation() > 0) {
-			saturation = Message.fromKey("information-itemHungerSaturation").replacements(request.getAbout().getSaturation());
+			saturation = Message.fromKey("information-itemHungerSaturation").replacements(((double)Math.round(request.getAbout().getSaturation()*10))/10);
 		}
 
-		request.message(Message.fromKey("information-itemHunger").replacements(health, foodNumber, 20.0, saturation));
+		request.message(Message.fromKey("information-itemHunger").replacements(health, foodNumber, 20, saturation));
 	}
 }

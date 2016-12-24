@@ -25,6 +25,6 @@ public class HealthInfo extends InformationProvider {
 			health += "▌";
 		}
 
-		request.message(Message.fromKey("information-itemHealth").replacements(health, healthNumber, request.getAbout().getMaxHealth()));
+		request.message(Message.fromKey("information-itemHealth").replacements(health, healthNumber, Math.round(request.getAbout().getMaxHealth())));
 	}
 }

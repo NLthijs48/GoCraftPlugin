@@ -32,7 +32,7 @@ public class Database {
 			registry = new StandardServiceRegistryBuilder()
 					.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
 					.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
-					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database)
+					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database) // TODO HikarCP
 					.applySetting("hibernate.connection.username", username)
 					.applySetting("hibernate.connection.password", password)
 					.applySetting("hibernate.hbm2ddl.auto", "update") // Deploy and update schema automatically
