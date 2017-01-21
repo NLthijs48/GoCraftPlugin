@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
@@ -23,7 +22,7 @@ public class JoinLeaveMessages extends Feature {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if(event.getJoinMessage() != null && !event.getJoinMessage().isEmpty()) {
 			event.setJoinMessage(null);
-			broadcast(event.getPlayer(), Message.fromKey("general-joinedServer").replacements(event.getPlayer().getDisplayName()));
+			broadcast(event.getPlayer(), Message.fromKey("general-joinedServer").replacements(event.getPlayer().getName()));
 		}
 	}
 
@@ -31,15 +30,7 @@ public class JoinLeaveMessages extends Feature {
 	public void onPlayerLeave(PlayerQuitEvent event) {
 		if(event.getQuitMessage() != null && !event.getQuitMessage().isEmpty()) {
 			event.setQuitMessage(null);
-			broadcast(event.getPlayer(), Message.fromKey("general-leftServer").replacements(event.getPlayer().getDisplayName()));
-		}
-	}
-
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onPlayerKick(PlayerKickEvent event){
-		if(event.getLeaveMessage() != null && !event.getLeaveMessage().isEmpty()) {
-			event.setLeaveMessage(null);
-			broadcast(event.getPlayer(), Message.fromKey("general-leftServer").replacements(event.getPlayer().getDisplayName()));
+			broadcast(event.getPlayer(), Message.fromKey("general-leftServer").replacements(event.getPlayer().getName()));
 		}
 	}
 
