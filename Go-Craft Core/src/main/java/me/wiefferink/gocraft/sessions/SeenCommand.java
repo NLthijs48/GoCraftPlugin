@@ -1,6 +1,5 @@
 package me.wiefferink.gocraft.sessions;
 
-import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.tools.PageDisplay;
@@ -125,7 +124,6 @@ public class SeenCommand extends Feature {
 						}
 
 						// Build final line
-						GoCraft.debug("Raw hover:", hover);
 						message(Message.fromKey("seen-item")
 								.replacements(hover, Utils.shorTimeString(bungeeSession.getJoined().getTime()), left, length));
 					}
