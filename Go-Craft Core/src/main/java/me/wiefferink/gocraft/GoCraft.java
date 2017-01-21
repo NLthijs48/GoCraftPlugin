@@ -463,7 +463,6 @@ public final class GoCraft extends JavaPlugin {
 			features.add(new PunishmentNotifications());
 			features.add(new HackBanCommand());
 		}
-		features.add(new DisableStaffJoinLeaveMessages());
 		features.add(new OpenenderLimiter());
 		features.add(new DisableSignUseWhileMuted());
 		// Items

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
@@ -15,23 +16,34 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class JoinLeaveMessages extends Feature {
 
 	public JoinLeaveMessages() {
+		configKey = "disableStaffJoinLeaveMessages";
 		listen();
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if(event.getJoinMessage() != null && !event.getJoinMessage().isEmpty()) {
-			event.setJoinMessage(null);
-			broadcast(event.getPlayer(), Message.fromKey("general-joinedServer").replacements(event.getPlayer().getName()));
+		event.setJoinMessage(null);
+		if(inWorld(event) && event.getPlayer().hasPermission("gocraft.staff")) {
+			return;
 		}
+		broadcast(event.getPlayer(), Message.fromKey("general-joinedServer").replacements(event.getPlayer().getName()));
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onPlayerLeave(PlayerQuitEvent event) {
-		if(event.getQuitMessage() != null && !event.getQuitMessage().isEmpty()) {
-			event.setQuitMessage(null);
-			broadcast(event.getPlayer(), Message.fromKey("general-leftServer").replacements(event.getPlayer().getName()));
+		event.setQuitMessage(null);
+		if(inWorld(event) && event.getPlayer().hasPermission("gocraft.staff")) {
+			return;
 		}
+		broadcast(event.getPlayer(), Message.fromKey("general-leftServer").replacements(event.getPlayer().getName()));
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void onPlayerKick(PlayerKickEvent event) {
+		if(inWorld(event) && event.getPlayer().hasPermission("gocraft.staff")) {
+			event.setLeaveMessage(null);
+		}
+		// Don't send custom leave message, onPlayerLeave is also triggered
 	}
 
 	/**
