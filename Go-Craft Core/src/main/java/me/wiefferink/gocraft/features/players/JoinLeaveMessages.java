@@ -20,7 +20,7 @@ public class JoinLeaveMessages extends Feature {
 		listen();
 	}
 
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		event.setJoinMessage(null);
 		if(inWorld(event) && event.getPlayer().hasPermission("gocraft.staff")) {
@@ -29,7 +29,7 @@ public class JoinLeaveMessages extends Feature {
 		broadcast(event.getPlayer(), Message.fromKey("general-joinedServer").replacements(event.getPlayer().getName()));
 	}
 
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerLeave(PlayerQuitEvent event) {
 		event.setQuitMessage(null);
 		if(inWorld(event) && event.getPlayer().hasPermission("gocraft.staff")) {
@@ -38,7 +38,7 @@ public class JoinLeaveMessages extends Feature {
 		broadcast(event.getPlayer(), Message.fromKey("general-leftServer").replacements(event.getPlayer().getName()));
 	}
 
-	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerKick(PlayerKickEvent event) {
 		if(inWorld(event) && event.getPlayer().hasPermission("gocraft.staff")) {
 			event.setLeaveMessage(null);
@@ -53,9 +53,7 @@ public class JoinLeaveMessages extends Feature {
 	 */
 	private void broadcast(Player self, Message message) {
 		for(Player player : Bukkit.getOnlinePlayers()) {
-			if(!self.equals(player)) {
-				message.send(player);
-			}
+			message.send(player);
 		}
 	}
 }
