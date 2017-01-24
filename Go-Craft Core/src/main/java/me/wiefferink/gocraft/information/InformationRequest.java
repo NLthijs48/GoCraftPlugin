@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.information;
 
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;

@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileUtils;

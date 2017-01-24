@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.shop.buttons.BuyButton;
 import me.wiefferink.gocraft.shop.buttons.ItemButton;

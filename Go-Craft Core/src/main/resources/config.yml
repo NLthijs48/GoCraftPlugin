@@ -14,7 +14,7 @@ worlds:
 #   resetTime: <duration>
 
 ########## CURRENCY
-moneyCharacter: '%euro%'
+moneyCharacter: '€'
 moneyCharacterAfter: ''
 fractionalNumbers: 2
 hideEmptyFractionalPart: true

@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.information.providers;
 
 import me.wiefferink.gocraft.information.InformationProvider;
 import me.wiefferink.gocraft.information.InformationRequest;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 
 public class InspectInfo extends InformationProvider {
 

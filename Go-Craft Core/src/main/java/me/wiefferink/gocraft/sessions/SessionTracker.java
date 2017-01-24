@@ -40,6 +40,7 @@ public class SessionTracker implements Listener {
 	private void ensureConsistentEntries() {
 		BungeeSession.ensureConsistency();
 		ServerSession.ensureConsistency();
+		GCPlayer.ensureConsistency();
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

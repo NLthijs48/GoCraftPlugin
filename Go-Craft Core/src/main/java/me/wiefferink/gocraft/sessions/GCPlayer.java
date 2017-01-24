@@ -1,9 +1,11 @@
 package me.wiefferink.gocraft.sessions;
 
+import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.tools.storage.Database;
+import org.hibernate.Session;
+
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table
@@ -14,7 +16,7 @@ public class GCPlayer {
 	@Column
 	private long id;
 
-	@Column(nullable = false, length = 36)
+	@Column(nullable = false, length = 36, unique = true)
 	private String uuid;
 
 	@Column(nullable = false, length = 16)
@@ -69,6 +71,60 @@ public class GCPlayer {
 	 */
 	public Set<BungeeSession> getBungeeSessions() {
 		return bungeeSessions;
+	}
+
+	/**
+	 * Fixes duplicate player object
+	 */
+	public static void ensureConsistency() {
+		Session session = Database.getSession();
+
+		// Get duplicate players
+		List<GCPlayer> duplicatePlayers = session.createQuery("SELECT one FROM GCPlayer one WHERE (select count(*) FROM GCPlayer two WHERE one.uuid = two.uuid) > 1", GCPlayer.class)
+				.getResultList();
+
+		// Group per UUID
+		Map<String, LinkedList<GCPlayer>> players = new HashMap<>();
+		for(GCPlayer player : duplicatePlayers) {
+			LinkedList<GCPlayer> playerSet = players.get(player.getUniqueId());
+			if(playerSet == null) {
+				playerSet = new LinkedList<>();
+				players.put(player.getUniqueId(), playerSet);
+			}
+			playerSet.add(player);
+		}
+
+		// Fix each group of players
+		for(LinkedList<GCPlayer> samePlayers : players.values()) {
+			GCPlayer keepPlayer = samePlayers.remove();
+
+			while(!samePlayers.isEmpty()) {
+				GCPlayer mergePlayer = samePlayers.remove();
+				for(BungeeSession bungeeSession : mergePlayer.bungeeSessions) {
+					bungeeSession.setPlayer(keepPlayer);
+					session.update(bungeeSession);
+				}
+				keepPlayer.bungeeSessions.addAll(mergePlayer.bungeeSessions);
+				session.remove(mergePlayer);
+			}
+			session.update(keepPlayer);
+		}
+
+		if(players.size() > 0) {
+			GoCraft.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
+		}
+
+		Database.closeSession();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		return object instanceof GCPlayer && ((GCPlayer)object).getUniqueId().equals(uuid);
+	}
+
+	@Override
+	public String toString() {
+		return "GCPlayer(name:"+name+", uuid:"+uuid+")";
 	}
 
 }

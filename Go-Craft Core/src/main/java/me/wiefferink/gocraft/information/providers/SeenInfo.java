@@ -1,14 +1,13 @@
 package me.wiefferink.gocraft.information.providers;
 
-import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.information.InformationProvider;
 import me.wiefferink.gocraft.information.InformationRequest;
-import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.Database;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.hibernate.Session;
 
 public class SeenInfo extends InformationProvider {

@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.information.providers;
 
 import me.wiefferink.gocraft.information.InformationProvider;
 import me.wiefferink.gocraft.information.InformationRequest;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 
 public class IPInfo extends InformationProvider {
 
@@ -19,7 +19,7 @@ public class IPInfo extends InformationProvider {
 		// Show numeric ip and (if available) the hostname
 		String numerical = request.getAbout().getAddress().getAddress().getHostAddress();
 		String hostname = request.getAbout().getAddress().getHostName();
-		Message hostnamePart = Message.none();
+		Message hostnamePart = Message.empty();
 		if(!hostname.equals(numerical)) {
 			hostnamePart = Message.fromKey("information-ipHostname").replacements(hostname);
 		}

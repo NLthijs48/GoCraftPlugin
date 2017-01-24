@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.tools;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -552,7 +552,7 @@ public class Utils {
 	 */
 	public static String millisToHumanFormat(long milliseconds) {
 		// Flip to time ago when negative
-		Message ago = Message.none();
+		Message ago = Message.empty();
 		if(milliseconds < 0) {
 			ago = Message.fromKey("timeleft-ago");
 			milliseconds *= -1;
@@ -703,9 +703,9 @@ public class Utils {
 	 */
 	public static String formatCurrency(double amount) {
 		String before = GoCraft.getInstance().getConfig().getString("moneyCharacter");
-		before = before.replace(GoCraft.currencyEuro, "\u20ac");
+		before = before.replace("%euro%", "\u20ac");
 		String after = GoCraft.getInstance().getConfig().getString("moneyCharacterAfter");
-		after = after.replace(GoCraft.currencyEuro, "\u20ac");
+		after = after.replace("%euro%", "\u20ac");
 		String result;
 		// Check for infinite and NaN
 		if (Double.isInfinite(amount)) {

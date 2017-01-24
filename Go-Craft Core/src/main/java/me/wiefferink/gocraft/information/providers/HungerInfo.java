@@ -2,7 +2,7 @@ package me.wiefferink.gocraft.information.providers;
 
 import me.wiefferink.gocraft.information.InformationProvider;
 import me.wiefferink.gocraft.information.InformationRequest;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.ChatColor;
 
 public class HungerInfo extends InformationProvider {
@@ -24,7 +24,7 @@ public class HungerInfo extends InformationProvider {
 			}
 			health += "▌";
 		}
-		Message saturation = Message.none();
+		Message saturation = Message.empty();
 		if(request.getAbout().getSaturation() > 0) {
 			saturation = Message.fromKey("information-itemHungerSaturation").replacements(((double)Math.round(request.getAbout().getSaturation()*10))/10);
 		}

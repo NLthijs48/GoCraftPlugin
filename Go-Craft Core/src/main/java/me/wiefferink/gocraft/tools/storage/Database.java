@@ -18,6 +18,7 @@ public class Database {
 
 	private static SessionFactory sessionFactory;
 	private static final ThreadLocal<Session> threadSession = new ThreadLocal<>();
+	private static StandardServiceRegistry registry;
 
 	/**
 	 * Setup database connection
@@ -27,17 +28,25 @@ public class Database {
 	 * @return true if the database is ready for usage, otherwise false
 	 */
 	public static boolean setup(String database, String username, String password, boolean debug) {
-		StandardServiceRegistry registry = null;
 		try {
 			registry = new StandardServiceRegistryBuilder()
+					// Connection
 					.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
-					.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
-					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database) // TODO HikarCP
+					//.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
+					.applySetting("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider")
+					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database)
 					.applySetting("hibernate.connection.username", username)
 					.applySetting("hibernate.connection.password", password)
+					// Settings
 					.applySetting("hibernate.hbm2ddl.auto", "update") // Deploy and update schema automatically
 					.applySetting("hibernate.jdbc.batch_size", 50) // Group queries into batches if possible
 					.applySetting("hibernate.show_sql", debug) // Debug option to show SQL statements in console
+					// Caching
+					.applySetting("hibernate.hikari.dataSource.cachePrepStmts", "true")
+					.applySetting("hibernate.hikari.dataSource.prepStmtCacheSize", "250")
+					.applySetting("hibernate.hikari.dataSource.prepStmtCacheSqlLimit", "2048")
+					.applySetting("hibernate.hikari.autoCommit", "false")
+
 					.build();
 
 			sessionFactory = new MetadataSources(registry)
@@ -48,15 +57,32 @@ public class Database {
 					.buildMetadata()
 					.buildSessionFactory();
 		} catch(Exception e) {
-			if(registry != null) {
-				StandardServiceRegistryBuilder.destroy(registry);
-			}
+			shutdown();
 			// TODO do logging through proper logging classes
 			System.out.println("Exception while setting up Hibernate SessionFactory:");
 			e.printStackTrace();
-
 		}
 		return isReady();
+	}
+
+	/**
+	 * Shutdown the database
+	 */
+	public static void shutdown() {
+		if(sessionFactory != null) {
+			try {
+				sessionFactory.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if(registry != null) {
+			try {
+				StandardServiceRegistryBuilder.destroy(registry);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -118,7 +144,7 @@ public class Database {
 		GCPlayer result = getPlayer(uuid);
 		if(result == null) {
 			result = new GCPlayer(uuid, name);
-			Database.getSession().save(result);
+			Database.getSession().saveOrUpdate(result);
 		}
 		return result;
 	}

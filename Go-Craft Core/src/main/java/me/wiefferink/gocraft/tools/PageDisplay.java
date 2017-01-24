@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.tools;
 
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ public abstract class PageDisplay extends Feature {
 
 		// Page status (no need for a footer if there is only one page)
 		if(totalPages > 1) {
-			Message footer = Message.none();
+			Message footer = Message.empty();
 			// Previous button
 			if(page > 1) {
 				footer.append(Message.fromKey("page-previous").replacements(baseCommand+" "+(page-1)));

@@ -121,6 +121,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- InteractiveMessenger library -->
+        <dependency>
+            <groupId>me.wiefferink</groupId>
+            <artifactId>interactivemessenger</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- BungeeCord dependencies -->
         <dependency>
             <groupId>net.md-5</groupId>
@@ -142,11 +149,27 @@
             <version>2.2</version>
         </dependency>
 
-        <!-- Hibernate -->
+        <!-- Hibernate, HikariCP and logging -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.2.5.Final</version>
+            <version>5.2.6.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-hikaricp</artifactId>
+            <version>5.2.6.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.22</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.22</version>
+            <scope>runtime</scope>
         </dependency>
 
     </dependencies>
@@ -282,6 +305,11 @@
                                 <relocation>
                                     <pattern>javax.persistence</pattern>
                                     <shadedPattern>javax.persistencenew</shadedPattern>
+                                </relocation>
+                                <!-- Relocate messaging framework -->
+                                <relocation>
+                                    <pattern>me.wiefferink.fancymessageformat</pattern>
+                                    <shadedPattern>me.wiefferink.gocraft.messaging</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.messages.Message;
+import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.Database;
@@ -96,7 +96,7 @@ public class SeenCommand extends Feature {
 
 						// Build start, end, length
 						String left = "Now";
-						Message length = Message.none();
+						Message length = Message.empty();
 						if(bungeeSession.getLeft() != null) {
 							left = Utils.shorTimeString(bungeeSession.getLeft().getTime());
 							length = Message.fromKey("seen-itemLength")
@@ -104,7 +104,7 @@ public class SeenCommand extends Feature {
 						}
 
 						// Build hover
-						Message hover = Message.none();
+						Message hover = Message.empty();
 
 						List<ServerSession> serverSessions = mapped.get(bungeeSession);
 						if(serverSessions == null || serverSessions.isEmpty()) {
@@ -112,7 +112,7 @@ public class SeenCommand extends Feature {
 						} else {
 							for(ServerSession serverSession : serverSessions) {
 								String leftServer = "Now";
-								Message lengthServer = Message.none();
+								Message lengthServer = Message.empty();
 								if(serverSession.getLeft() != null) {
 									leftServer = Utils.shorTimeString(serverSession.getLeft().getTime());
 									lengthServer = Message.fromKey("seen-itemLength")

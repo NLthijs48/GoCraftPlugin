@@ -60,6 +60,13 @@ public class BungeeSession {
 	}
 
 	/**
+	 * Set the player (normally should never be used)
+	 */
+	public void setPlayer(GCPlayer newPlayer) {
+		gcPlayer = newPlayer;
+	}
+
+	/**
 	 * Get the playerIp address of the player
 	 * @return The playerIp address of the player
 	 */

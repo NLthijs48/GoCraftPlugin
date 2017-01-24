@@ -17,14 +17,14 @@ import me.wiefferink.gocraft.information.InformationManager;
 import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.*;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
-import me.wiefferink.gocraft.messages.LanguageManager;
-import me.wiefferink.gocraft.messages.Message;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
+import me.wiefferink.interactivemessenger.processing.Message;
+import me.wiefferink.interactivemessenger.source.LanguageManager;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.StringUtils;
@@ -46,8 +46,6 @@ import java.util.*;
 public final class GoCraft extends JavaPlugin {
 	// Constants
 	public static final String signLog = "signs";
-	public static final String currencyEuro = "%euro%";
-	public static final String languageFolder = "lang";
 	public static final SimpleDateFormat shortTimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 	public static final SimpleDateFormat longTimeFormat = new SimpleDateFormat("dd MMMMMMMMMMMMMMMMM yyyy HH:mm");
 	// Variables
@@ -183,7 +181,13 @@ public final class GoCraft extends JavaPlugin {
 			getLogger().info("Using " + version + " for version specific classes");
 		}
 
-		this.languageManager = new LanguageManager();
+		this.languageManager = new LanguageManager(
+				this,
+				"lang",
+				getConfig().getString("language"),
+				"EN",
+				getChatPrefix()
+		);
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + Constant.GENERAL_FOLDER_NAME);
 		loadGeneralConfig();
 
@@ -245,6 +249,7 @@ public final class GoCraft extends JavaPlugin {
 
 		Bukkit.getScheduler().cancelTasks(this);
 		HandlerList.unregisterAll(this);
+		Database.shutdown();
 	}
 
 	/**
