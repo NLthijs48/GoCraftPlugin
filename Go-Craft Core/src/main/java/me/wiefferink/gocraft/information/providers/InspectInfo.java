@@ -12,6 +12,11 @@ public class InspectInfo extends InformationProvider {
 			return;
 		}
 
+		// You cannot inspect yourself
+		if(request.getAbout().equals(request.getTo())) {
+			return;
+		}
+
 		request.message(Message.fromKey("information-inspect").replacements(request.getAbout().getName()));
 	}
 
