@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.sessions;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.tools.storage.Database;
 import org.hibernate.Session;
 
@@ -111,7 +111,7 @@ public class GCPlayer {
 		}
 
 		if(players.size() > 0) {
-			GoCraft.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
+			GoCraftBungee.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
 		}
 
 		Database.closeSession();
