@@ -40,9 +40,9 @@ enableRegionPotionEffects: false
 regionPotionEffects:
 spawnTeleport: false
 enableInspecting: true
-disableStaffJoinLeaveMessages: true
 disableOpenEnderSelf: true
 disableSignUseWhileMuted: true
+clickChatMessages: true
 
 ########## ITEMS
 disableItemDrops: false

@@ -10,6 +10,7 @@ import me.wiefferink.gocraft.features.items.*;
 import me.wiefferink.gocraft.features.management.DistributionManager;
 import me.wiefferink.gocraft.features.management.SyncCommandsServer;
 import me.wiefferink.gocraft.features.other.AddDefaultRank;
+import me.wiefferink.gocraft.features.other.ClickChatMessages;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
 import me.wiefferink.gocraft.features.other.ResetExpiredPlots;
 import me.wiefferink.gocraft.features.players.*;
@@ -497,6 +498,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new DisableVoidFall());
 		features.add(new OldHunger());
 		features.add(new JoinLeaveMessages());
+		features.add(new ClickChatMessages());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());
