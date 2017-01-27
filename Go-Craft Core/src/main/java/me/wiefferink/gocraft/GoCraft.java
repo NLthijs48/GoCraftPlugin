@@ -21,6 +21,7 @@ import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
+import me.wiefferink.gocraft.tools.SentryReporting;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
@@ -84,6 +85,8 @@ public final class GoCraft extends JavaPlugin {
 
 	private ConfigurationSection serverSettings;
 	private String serverId;
+
+	private SentryReporting sentryReporting;
 
 	public void onEnable() {
 		reloadConfig();
@@ -220,6 +223,9 @@ public final class GoCraft extends JavaPlugin {
 			}
 		}.runTaskTimer(this, 18000L, 18000L);
 		loadedCorrectly = true;
+
+		// Setup sentry
+		sentryReporting = new SentryReporting(getStringSetting("sentryDSN"));
 	}
 
 	/**
@@ -326,7 +332,11 @@ public final class GoCraft extends JavaPlugin {
 	 * @return The value of the setting
 	 */
 	public String getStringSetting(String path) {
-		return getGeneralConfig().getString("servers."+getServerId()+"."+path);
+		String result = getGeneralConfig().getString("servers."+getServerId()+"."+path);
+		if(result == null) {
+			result = getGeneralConfig().getString("servers.DEFAULT."+path);
+		}
+		return result;
 	}
 
 	/**
