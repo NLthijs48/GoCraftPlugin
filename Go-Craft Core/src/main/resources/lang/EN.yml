@@ -247,7 +247,7 @@ information-gameModeNotSelected:
   - "    command: /gamemode %0% %1%"
 information-lastOnline: "[darkgreen][bold]►[reset] Last online: [gray]%0%%1%."
 
-information-nowOnline: "[darkgreen][bold]►[reset] Now online: [gray]server %0%%1%."
+information-nowOnline: "[darkgreen][bold]►[reset] Now online: [gray]%0%%1%."
 information-onlineHistory:
   - ", "
   - "%lang:clickable|history|%"
