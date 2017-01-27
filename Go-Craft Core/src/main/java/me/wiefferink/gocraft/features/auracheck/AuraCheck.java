@@ -178,7 +178,7 @@ public class AuraCheck extends Feature {
 		}
 		final Player finalPlayer = player;
 		AuraCheckRun check = new AuraCheckRun(this, player);
-		check.start(sender, (AuraCheckRun.AuraCheckRunResult result) -> {
+		check.start(sender, result -> {
 			String status = null;
 			ChatColor color = null;
 			if (result.killed == 0) {
@@ -227,7 +227,7 @@ public class AuraCheck extends Feature {
 					}
 					Player toCheck = players.remove(0);
 					if (toCheck != null && toCheck.isOnline() && toCheck.getGameMode() == GameMode.SURVIVAL) {
-						new AuraCheckRun(self, toCheck).start(new VoidCommandSender(), (AuraCheckRun.AuraCheckRunResult result) -> {
+						new AuraCheckRun(self, toCheck).start(new VoidCommandSender(), result -> {
 							if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.hacksConfirmed")) {
 								String baseCommand = GoCraft.getInstance().getConfig().getString("hacksConfirmedCommand");
 								Utils.consoleCommand(baseCommand.replace("%player%", result.checked.getName()).replace("%reason%", "Hacking is forbidden! [ac " + result.killed + "/" + result.spawned + "]"));

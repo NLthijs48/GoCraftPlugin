@@ -34,7 +34,7 @@ public class InformationRequest extends Feature {
 
 		// Add sync messages
 		List<InformationProvider> providers = plugin.getInformationManager().getInformationProviders();
-		providers.removeIf((InformationProvider provider) -> !hasAccess(provider));
+		providers.removeIf(provider -> !hasAccess(provider));
 		for(InformationProvider provider : providers) {
 			provider.showSync(this);
 		}

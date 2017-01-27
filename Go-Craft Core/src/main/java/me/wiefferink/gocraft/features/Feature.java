@@ -1,7 +1,9 @@
 package me.wiefferink.gocraft.features;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.tools.DatabaseRun;
 import me.wiefferink.gocraft.tools.Run;
+import me.wiefferink.gocraft.tools.storage.Database;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -281,5 +283,13 @@ public class Feature implements Listener {
 				runnable.run();
 			}
 		}.runTaskAsynchronously(plugin);
+	}
+
+	/**
+	 * Run code in a database session
+	 * @param runnable The code to run
+	 */
+	public void database(DatabaseRun runnable) {
+		Database.run(runnable);
 	}
 }

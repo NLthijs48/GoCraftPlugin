@@ -289,6 +289,11 @@ safetp-wrongNumber: "Incorrect %0%: %1%."
 safetp-success: "Teleported to %0%."
 safetp-failed: "Failed to teleport to %0%, could not find safe location."
 
+timedfly-noPermission: "You do not have permission to add timed rewards."
+timedfly-help: "/addtimedfly <player> <duration amount> <duration identifier>."
+timedfly-wrongDuration: "The specified duration is not recognized: %0%."
+timedfly-wrongPlayer: "The specified player cannot be found: %0%."
+
 map-link:
   - "Check the map on "
   - "[bold]maps.go-craft.com[/bold]"

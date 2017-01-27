@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+
+// TODO consider moving to InteractiveMessenger project
 public abstract class PageDisplay extends Feature {
 	public CommandSender target;
 	private int maxItems = 20;

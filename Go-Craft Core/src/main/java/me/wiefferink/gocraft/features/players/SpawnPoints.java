@@ -179,7 +179,7 @@ public class SpawnPoints extends Feature {
 
 			ArrayList<String> spawnPointList = new ArrayList<>(spawnPoints.getKeys(false));
 			// Sort numerically
-			spawnPointList.sort((String one, String two) -> {
+			spawnPointList.sort((one, two) -> {
 				Integer oneNumber, twoNumber;
 				try {
 					oneNumber = Integer.parseInt(one);

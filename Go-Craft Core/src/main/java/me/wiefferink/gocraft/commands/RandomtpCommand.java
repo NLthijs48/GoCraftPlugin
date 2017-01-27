@@ -23,7 +23,7 @@ public class RandomtpCommand extends Feature {
 			plugin.message(player, "randomtp-noPermission");
 			return;
 		}
-		Utils.teleportRandomly(player, player.getWorld(), Utils.getWorldRadius(player.getWorld()), (Boolean teleported) -> {
+		Utils.teleportRandomly(player, player.getWorld(), Utils.getWorldRadius(player.getWorld()), teleported -> {
 			if(teleported) {
 				plugin.message(player, "randomtp-success");
 				plugin.increaseStatistic("command.rtp."+player.getWorld().getName()+".success");

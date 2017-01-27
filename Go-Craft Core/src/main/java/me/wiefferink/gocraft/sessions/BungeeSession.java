@@ -2,7 +2,6 @@ package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.tools.storage.Database;
-import org.hibernate.Session;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -113,14 +112,12 @@ public class BungeeSession {
 	 * - Set the left_bungee field to the current time if not set
 	 */
 	public static void ensureConsistency() {
-		Session session = Database.getSession();
-
-		int fixedBungeeSessions = session.createQuery("UPDATE BungeeSession SET leftBungee = current_timestamp() WHERE leftBungee IS NULL").executeUpdate();
-		if(fixedBungeeSessions > 0) {
-			GoCraftBungee.warn("Closed", fixedBungeeSessions, " BungeeSession entries (crash recovery)");
-		}
-
-		Database.closeSession();
+		Database.run(session -> {
+			int fixedBungeeSessions = session.createQuery("UPDATE BungeeSession SET leftBungee = current_timestamp() WHERE leftBungee IS NULL").executeUpdate();
+			if(fixedBungeeSessions > 0) {
+				GoCraftBungee.warn("Closed", fixedBungeeSessions, " BungeeSession entries (crash recovery)");
+			}
+		});
 	}
 
 	@Override

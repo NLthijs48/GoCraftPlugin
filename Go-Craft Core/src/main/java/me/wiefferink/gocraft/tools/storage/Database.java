@@ -1,8 +1,10 @@
 package me.wiefferink.gocraft.tools.storage;
 
+import me.wiefferink.gocraft.features.players.timedfly.TimedFly;
 import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
+import me.wiefferink.gocraft.tools.DatabaseRun;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -54,6 +56,7 @@ public class Database {
 					.addAnnotatedClass(GCPlayer.class)
 					.addAnnotatedClass(BungeeSession.class)
 					.addAnnotatedClass(ServerSession.class)
+					.addAnnotatedClass(TimedFly.class)
 					.buildMetadata()
 					.buildSessionFactory();
 		} catch(Exception e) {
@@ -94,10 +97,18 @@ public class Database {
 	}
 
 	/**
+	 * Check if this thread already has a database session open
+	 * @return true if there is an open session, otherwise false
+	 */
+	public static boolean hasSession() {
+		return threadSession.get() != null;
+	}
+
+	/**
 	 * Get a database Session for the current thread and start a transaction
 	 * @return The Session
 	 */
-	public static Session getSession() {
+	private static Session getSession() {
 		Session result = threadSession.get();
 		if(result == null) {
 			result = sessionFactory.openSession();
@@ -108,17 +119,10 @@ public class Database {
 	}
 
 	/**
-	 * Close and commit the session of the current thread
-	 */
-	public static void closeSession() {
-		closeSession(true);
-	}
-
-	/**
 	 * Close the session of the current thread
 	 * @param commit true to commit the current transaction, false to rollback
 	 */
-	public static void closeSession(boolean commit) {
+	private static void closeSession(boolean commit) {
 		Session session = threadSession.get();
 		if(session != null && session.isOpen()) {
 			Transaction transaction = session.getTransaction();
@@ -135,12 +139,34 @@ public class Database {
 	}
 
 	/**
+	 * Run code in a database session
+	 * @param runnable The code to run in a database session
+	 */
+	public static void run(DatabaseRun runnable) {
+		boolean hadSession = hasSession();
+		try {
+			runnable.run(Database.getSession());
+			if(!hadSession) {
+				Database.closeSession(true);
+			}
+		} catch(Exception e) {
+			if(!hadSession) {
+				Database.closeSession(false);
+			}
+			throw e; // Possibly cause session above us to fail and print to console
+		}
+	}
+
+	/**
 	 * Get or create a GCPlayer
 	 * @param uuid The uuid of the player to get
 	 * @param name The name the player should get when created
 	 * @return The created or loaded GCPlayer
 	 */
 	public static GCPlayer getCreatePlayer(UUID uuid, String name) {
+		if(!hasSession()) {
+			return null;
+		}
 		GCPlayer result = getPlayer(uuid);
 		if(result == null) {
 			result = new GCPlayer(uuid, name);
@@ -155,6 +181,9 @@ public class Database {
 	 * @return The GCPlayer
 	 */
 	public static GCPlayer getPlayer(UUID uuid) {
+		if(!hasSession()) {
+			return null;
+		}
 		GCPlayer result = null;
 		try {
 			result = Database.getSession()

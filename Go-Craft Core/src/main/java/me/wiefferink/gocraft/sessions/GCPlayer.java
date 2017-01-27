@@ -2,7 +2,6 @@ package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.tools.storage.Database;
-import org.hibernate.Session;
 
 import javax.persistence.*;
 import java.util.*;
@@ -77,44 +76,42 @@ public class GCPlayer {
 	 * Fixes duplicate player object
 	 */
 	public static void ensureConsistency() {
-		Session session = Database.getSession();
+		Database.run((session -> {
+			// Get duplicate players
+			List<GCPlayer> duplicatePlayers = session.createQuery("SELECT one FROM GCPlayer one WHERE (select count(*) FROM GCPlayer two WHERE one.uuid = two.uuid) > 1", GCPlayer.class)
+					.getResultList();
 
-		// Get duplicate players
-		List<GCPlayer> duplicatePlayers = session.createQuery("SELECT one FROM GCPlayer one WHERE (select count(*) FROM GCPlayer two WHERE one.uuid = two.uuid) > 1", GCPlayer.class)
-				.getResultList();
-
-		// Group per UUID
-		Map<String, LinkedList<GCPlayer>> players = new HashMap<>();
-		for(GCPlayer player : duplicatePlayers) {
-			LinkedList<GCPlayer> playerSet = players.get(player.getUniqueId());
-			if(playerSet == null) {
-				playerSet = new LinkedList<>();
-				players.put(player.getUniqueId(), playerSet);
-			}
-			playerSet.add(player);
-		}
-
-		// Fix each group of players
-		for(LinkedList<GCPlayer> samePlayers : players.values()) {
-			GCPlayer keepPlayer = samePlayers.remove();
-
-			while(!samePlayers.isEmpty()) {
-				GCPlayer mergePlayer = samePlayers.remove();
-				for(BungeeSession bungeeSession : mergePlayer.bungeeSessions) {
-					bungeeSession.setPlayer(keepPlayer);
-					session.update(bungeeSession);
+			// Group per UUID
+			Map<String, LinkedList<GCPlayer>> players = new HashMap<>();
+			for(GCPlayer player : duplicatePlayers) {
+				LinkedList<GCPlayer> playerSet = players.get(player.getUniqueId());
+				if(playerSet == null) {
+					playerSet = new LinkedList<>();
+					players.put(player.getUniqueId(), playerSet);
 				}
-				keepPlayer.bungeeSessions.addAll(mergePlayer.bungeeSessions);
-				session.remove(mergePlayer);
+				playerSet.add(player);
 			}
-			session.update(keepPlayer);
-		}
 
-		if(players.size() > 0) {
-			GoCraftBungee.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
-		}
+			// Fix each group of players
+			for(LinkedList<GCPlayer> samePlayers : players.values()) {
+				GCPlayer keepPlayer = samePlayers.remove();
 
-		Database.closeSession();
+				while(!samePlayers.isEmpty()) {
+					GCPlayer mergePlayer = samePlayers.remove();
+					for(BungeeSession bungeeSession : mergePlayer.bungeeSessions) {
+						bungeeSession.setPlayer(keepPlayer);
+						session.update(bungeeSession);
+					}
+					keepPlayer.bungeeSessions.addAll(mergePlayer.bungeeSessions);
+					session.remove(mergePlayer);
+				}
+				session.update(keepPlayer);
+			}
+
+			if(players.size() > 0) {
+				GoCraftBungee.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
+			}
+		}));
 	}
 
 	@Override

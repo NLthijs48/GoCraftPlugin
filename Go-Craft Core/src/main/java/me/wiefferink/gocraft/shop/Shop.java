@@ -5,7 +5,6 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -17,7 +16,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -72,7 +70,6 @@ public class Shop extends Feature {
 		enchantmentMap.put("luckofthesea", Enchantment.LUCK);
 		enchantmentMap.put("lure", Enchantment.LURE);
 	}
-
 
 	public Shop(GoCraft plugin) {
 		this.plugin = plugin;
@@ -162,7 +159,7 @@ public class Shop extends Feature {
 		}
 
 		// Register localstorage cleaners
-		GoCraft.getInstance().registerLocalStorageCleaner("kitcooldowns", (UTF8Config config) -> {
+		GoCraft.getInstance().registerLocalStorageCleaner("kitcooldowns", config -> {
 			boolean save = false;
 			ConfigurationSection playersSection = config.getConfigurationSection("players");
 			if (playersSection != null) {
@@ -196,13 +193,7 @@ public class Shop extends Feature {
 		});
 
 		// Needs to be after contructor completion
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				signManager = new SignManager();
-
-			}
-		}.runTask(plugin);
+		sync(() -> signManager = new SignManager());
 	}
 
 	@Override

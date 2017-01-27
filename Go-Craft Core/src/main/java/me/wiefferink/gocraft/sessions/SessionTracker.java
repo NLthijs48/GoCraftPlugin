@@ -9,7 +9,6 @@ import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import org.hibernate.Session;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,41 +52,38 @@ public class SessionTracker implements Listener {
 		GoCraftBungee.info("ServerConnectEvent of", event.getPlayer().getName(), "from", (event.getPlayer().getServer() == null ? "nothing" : event.getPlayer().getServer().getInfo().getName()), "to", event.getTarget().getName());
 		ProxiedPlayer player = event.getPlayer();
 		ServerInfo server = event.getTarget();
-		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-			Session session = Database.getSession();
+		plugin.getProxy().getScheduler().runAsync(plugin, () ->
+			Database.run(session -> {
+				GCPlayer gcPlayer = Database.getCreatePlayer(player.getUniqueId(), player.getName());
 
-			GCPlayer gcPlayer = Database.getCreatePlayer(player.getUniqueId(), player.getName());
-
-			// Start BungeeSession if not started already
-			BungeeSession bungeeSession = onlineBungee.get(player.getUniqueId());
-			if(bungeeSession == null) {
-				bungeeSession = new BungeeSession(gcPlayer, player.getPendingConnection().getAddress().getAddress().getHostAddress());
-				onlineBungee.put(player.getUniqueId(), bungeeSession);
-				session.save(bungeeSession);
-			}
-
-			// End old ServerSession, does not exist for initial join
-			ServerSession oldServerSession = onlineServer.get(player.getUniqueId());
-			boolean sameServer = false;
-			if(oldServerSession != null) {
-				sameServer = oldServerSession.getServerName().equals(server.getName());
-				if(!sameServer) {
-					oldServerSession.hasLeft();
-					session.update(oldServerSession);
-					onlineServer.remove(player.getUniqueId());
+				// Start BungeeSession if not started already
+				BungeeSession bungeeSession = onlineBungee.get(player.getUniqueId());
+				if(bungeeSession == null) {
+					bungeeSession = new BungeeSession(gcPlayer, player.getPendingConnection().getAddress().getAddress().getHostAddress());
+					onlineBungee.put(player.getUniqueId(), bungeeSession);
+					session.save(bungeeSession);
 				}
-			}
 
-			// Start new ServerSession
-			if(!sameServer) {
-				ServerSession newServerSession = new ServerSession(bungeeSession, server.getName());
-				onlineServer.put(player.getUniqueId(), newServerSession);
-				session.save(newServerSession);
-			}
+				// End old ServerSession, does not exist for initial join
+				ServerSession oldServerSession = onlineServer.get(player.getUniqueId());
+				boolean sameServer = false;
+				if(oldServerSession != null) {
+					sameServer = oldServerSession.getServerName().equals(server.getName());
+					if(!sameServer) {
+						oldServerSession.hasLeft();
+						session.update(oldServerSession);
+						onlineServer.remove(player.getUniqueId());
+					}
+				}
 
-			Database.closeSession();
-		});
-
+				// Start new ServerSession
+				if(!sameServer) {
+					ServerSession newServerSession = new ServerSession(bungeeSession, server.getName());
+					onlineServer.put(player.getUniqueId(), newServerSession);
+					session.save(newServerSession);
+				}
+			})
+		);
 	}
 
 	@EventHandler()
@@ -95,21 +91,19 @@ public class SessionTracker implements Listener {
 		GoCraftBungee.info("PlayerDisconnectEvent of", event.getPlayer().getName(), "ip:", event.getPlayer().getAddress().getHostString());
 
 		UUID player = event.getPlayer().getUniqueId();
-		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-			Session session = Database.getSession();
+		plugin.getProxy().getScheduler().runAsync(plugin, () ->
+			Database.run(session -> {
+				// Bungee
+				BungeeSession bungeeSession = onlineBungee.remove(player);
+				bungeeSession.hasLeft();
+				session.update(bungeeSession);
 
-			// Bungee
-			BungeeSession bungeeSession = onlineBungee.remove(player);
-			bungeeSession.hasLeft();
-			session.update(bungeeSession);
-
-			// Server
-			ServerSession serverSession = onlineServer.remove(player);
-			serverSession.hasLeft();
-			session.update(serverSession);
-
-			Database.closeSession();
-		});
+				// Server
+				ServerSession serverSession = onlineServer.remove(player);
+				serverSession.hasLeft();
+				session.update(serverSession);
+			})
+		);
 	}
 
 }
