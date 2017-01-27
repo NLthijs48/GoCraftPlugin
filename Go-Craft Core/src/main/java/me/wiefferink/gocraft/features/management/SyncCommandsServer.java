@@ -141,8 +141,8 @@ public class SyncCommandsServer extends Feature {
 		in = null;
 		connected = false;
 
-		if(message != null) {
-			GoCraft.warn("SyncCommands: "+message, shouldRun ? "(scheduling reconnect)" : "");
+		if(message != null && shouldRun) {
+			GoCraft.warn("SyncCommands: "+message, "(scheduling reconnect)");
 		}
 
 		if(shouldRun && reconnectTask == null) {
