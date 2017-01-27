@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.commands;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.PermissionDefault;
@@ -36,7 +37,7 @@ public class HelpCommand extends Feature {
 		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
 		for (int i = ranks.size() - 1; i >= 0; i--) {
 			List<String> entries = helpMap.get(ranks.get(i));
-			String rankPrefix = ranksSection.getString(ranks.get(i) + ".prefix");
+			Message rankPrefix = Message.fromString(ranksSection.getString(ranks.get(i) + ".prefix"));
 			if (entries != null) {
 				for (String entry : entries) {
 					String[] parts = entry.split(" \\| ");
