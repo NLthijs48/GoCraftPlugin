@@ -80,6 +80,11 @@ public class SentryReporting {
 		handler.setServerName(GoCraft.getInstance().getServerId());
 		handler.setRelease(GoCraft.getInstance().getDescription().getVersion()); // Instead of this, add a timestamp into the jar and use that: https://stackoverflow.com/questions/802677/adding-the-current-date-with-maven2-filtering
 		handler.setLevel(Level.WARNING); // Only log warnings and errors
+		handler.setFilter(record -> {
+			String message = record.getMessage();
+			// Discard Skipt startup errors (one line for each error part...)
+			return !(message != null && message.trim().startsWith("#!#!"));
+		});
 
 		// Listen to all loggers (Bukkit itself and all plugins)
 		Logger.getLogger("").addHandler(handler);
