@@ -31,7 +31,17 @@ public class DisableVoidFall extends Feature {
 				plugin.message(player, "other-fallenThroughWorld");
 			}
 			player.setFallDistance(0);
-			event.setCancelled(Utils.teleportToLocation(player, Bukkit.getWorld("world").getSpawnLocation(), 15*15*15)); // Prevent infinite loop if not teleported
+			event.setCancelled(goToSpawn(player)); // Prevent infinite loop if not teleported
+			sync(() -> goToSpawn(player)); // Teleport again to prevent getting stuck?
 		}
+	}
+
+	/**
+	 * Try to teleport to spawn
+	 * @param player The player to teleport
+	 * @return true if successful, otherwise false
+	 */
+	private boolean goToSpawn(Player player) {
+		return Utils.teleportToLocation(player, Bukkit.getWorld("world").getSpawnLocation(), 15*15*15);
 	}
 }
