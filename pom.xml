@@ -46,6 +46,10 @@
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+		<repository>
+			<id>wiefferink-repo</id>
+			<url>http://jenkins.wiefferink.me/plugin/repository/everything/</url>
+		</repository>
 	</repositories>
 
 </project>

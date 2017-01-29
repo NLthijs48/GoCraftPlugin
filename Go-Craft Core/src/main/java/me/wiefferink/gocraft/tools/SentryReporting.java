@@ -7,45 +7,25 @@ import com.getsentry.raven.event.BreadcrumbBuilder;
 import com.getsentry.raven.event.EventBuilder;
 import com.getsentry.raven.jul.SentryHandler;
 import me.wiefferink.gocraft.GoCraft;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class SentryReporting {
 
 	private Raven raven;
-	private static Set<String> ignoreStack = new HashSet<>(Arrays.asList(
-			"me.wiefferink.gocraft.tools.SentryReporting.", 		// This class
-			"java.lang.Thread.getStackTrace",						// Getting the stacktrace
-			"java.util.logging.Logger.",							// Logging getting to this class
-			"com.getsentry.raven.",									// Raven building the event
-			"java.util.logging.Logger",								// Java logging
-			"org.bukkit.plugin.PluginLogger."						// Bukkit logging
-	));
-	private static String basePackage = GoCraft.getInstance().getDescription().getMain().substring(0, GoCraft.getInstance().getDescription().getMain().lastIndexOf("."));
-
-	// Mapping of package prefixes to category types
-	private static Map<String, String> categories = new HashMap<String, String>() {{
-		put("org.bukkit", "Bukkit");
-		put("org.spigotmc", "Spigot");
-		put("java", "Java");
-		put("net.minecraft", "Minecraft");
-		put("com.getsentry", "Sentry");
-		put(basePackage, GoCraft.getInstance().getName());
-	}};
-
-	// Mapping of package prefixes to breadcrumb levels (possible: navigation, http, user, warning, debug, critical, empty, last)
-	private static Map<String, String> levels = new HashMap<String, String>() {{
-		put(basePackage, "warning");
-		// TODO user other types?
-	}};
-
+	private final LinkedList<LogRecord> breadcrumbs = new LinkedList<>();
+	private static final int MAX_BREADCRUMBS = 50;
 	private String bukkitVersion;
+	private SimpleFormatter formatter;
 
 	public SentryReporting(String dsn) {
+		formatter = new SimpleFormatter();
+
+
 		// Clean Bukkit version
 		bukkitVersion = Bukkit.getBukkitVersion();
 		if(bukkitVersion.endsWith("-SNAPSHOT"))	{
@@ -86,6 +66,25 @@ public class SentryReporting {
 			return !(message != null && message.trim().startsWith("#!#!"));
 		});
 
+		// Add breadcrumb handler
+		Logger.getLogger("").addHandler(new Handler() {
+			@Override
+			public void publish(LogRecord record) {
+				synchronized(breadcrumbs) {
+					breadcrumbs.add(record);
+					if(breadcrumbs.size() > MAX_BREADCRUMBS) {
+						breadcrumbs.removeLast();
+					}
+				}
+			}
+
+			@Override
+			public void flush() {}
+
+			@Override
+			public void close() throws SecurityException {}
+		});
+
 		// Listen to all loggers (Bukkit itself and all plugins)
 		Logger.getLogger("").addHandler(handler);
 	}
@@ -98,11 +97,125 @@ public class SentryReporting {
 		return raven;
 	}
 
+
+	private void buildBreadcrumb(EventBuilder eventBuilder) {
+		List<Breadcrumb> result = new ArrayList<>();
+		synchronized(breadcrumbs) {
+			for(LogRecord record : breadcrumbs) {
+				BreadcrumbBuilder builder = new BreadcrumbBuilder();
+
+				builder.setTimestamp(new Date(record.getMillis()));
+				builder.setCategory(getBreadcrumbCategory(record));
+				builder.setLevel(getBreadcrumbLevel(record));
+				builder.setType(getBreadcrumbType(record));
+				builder.setMessage(getBreadcrumbMessage(record));
+
+				result.add(builder.build());
+			}
+		}
+		eventBuilder.withBreadcrumbs(result);
+	}
+
+	/**
+	 * Build a message from a LogRecord
+	 * @param record The LogRecord to parse
+	 * @return The message including stacktrace if there is ony
+	 */
+	private String getBreadcrumbMessage(LogRecord record) {
+		String result = "";
+		if(record.getMessage() != null) {
+			result += formatter.formatMessage(record);
+		}
+		if(record.getThrown() != null) {
+			result += ExceptionUtils.getStackTrace(record.getThrown());
+		}
+		return result;
+	}
+
+	/**
+	 * Get a breadcrumb type based on a LogRecord
+	 * @param record The record to calculate a type for
+	 * @return The type of the record
+	 */
+	private String getBreadcrumbType(LogRecord record) {
+		String message = record.getMessage();
+		if(message != null && !message.isEmpty()) {
+			if(message.contains("issued server command: ")) {
+				return "user";
+			} else if(message.contains("lost connection: ")) {
+				return "http";
+			} else if(message.contains("logged in with entity id")) {
+				return "http";
+			}
+			// Use 'navigation'?
+		}
+		return "default";
+	}
+
+	/**
+	 * Get a breadcrumb level based on a LogRecord
+	 * @param record The record to calculate a level for
+	 * @return The level of the record
+	 */
+	private String getBreadcrumbLevel(LogRecord record) {
+		if(record.getLevel() == Level.WARNING) {
+			return "warning";
+		} else if(record.getLevel() == Level.SEVERE) {
+			return "error";
+		} else {
+			return "info";
+		}
+	}
+
+	/**
+	 * Get a breadcrumb category based on a LogRecord
+	 * @param record The record to calculate a category for
+	 * @return The category of the record
+	 */
+	private String getBreadcrumbCategory(LogRecord record) {
+		return "nothing";
+	}
+
+
+
+
+
+
+
+
+
+	private static Set<String> ignoreStack = new HashSet<>(Arrays.asList(
+			"me.wiefferink.gocraft.tools.SentryReporting.",        // This class
+			"java.lang.Thread.getStackTrace",                        // Getting the stacktrace
+			"java.util.logging.Logger.",                            // Logging getting to this class
+			"com.getsentry.raven.",                                    // Raven building the event
+			"java.util.logging.Logger",                                // Java logging
+			"org.bukkit.plugin.PluginLogger."                        // Bukkit logging
+	));
+	private static String basePackage = GoCraft.getInstance().getDescription().getMain().substring(0, GoCraft.getInstance().getDescription().getMain().lastIndexOf("."));
+
+	// Mapping of package prefixes to category types
+	private static Map<String, String> categories = new HashMap<String, String>() {{
+		put("org.bukkit", "Bukkit");
+		put("org.spigotmc", "Spigot");
+		put("java", "Java");
+		put("net.minecraft", "Minecraft");
+		put("com.getsentry", "Sentry");
+		put(basePackage, GoCraft.getInstance().getName());
+	}};
+
+	// Mapping of package prefixes to breadcrumb levels (possible: navigation, http, user, warning, debug, critical, empty, last)
+	private static Map<String, String> levels = new HashMap<String, String>() {{
+		put(basePackage, "warning");
+		// TODO user other types?
+	}};
+
+
 	/**
 	 * Build a nicely formatted breadcrumb using the StackTraceElements
 	 * @param eventBuilder The stack to use (prevents more functions getting added)
 	 */
-	private void buildBreadcrumb(EventBuilder eventBuilder) {
+	private void buildStackTraceBreadcrumb(EventBuilder eventBuilder) {
 		// Build breadcrumbs with current stack
 		List<Breadcrumb> result = new ArrayList<>();
 		StackTraceElement[] elements = Thread.currentThread().getStackTrace();
