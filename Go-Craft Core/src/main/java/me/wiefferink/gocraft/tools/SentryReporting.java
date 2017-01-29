@@ -73,7 +73,7 @@ public class SentryReporting {
 				synchronized(breadcrumbs) {
 					breadcrumbs.add(record);
 					if(breadcrumbs.size() > MAX_BREADCRUMBS) {
-						breadcrumbs.removeLast();
+						breadcrumbs.removeFirst();
 					}
 				}
 			}
