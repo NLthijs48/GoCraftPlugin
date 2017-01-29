@@ -13,14 +13,17 @@ import org.bukkit.Bukkit;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.logging.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SentryReporting {
 
 	private Raven raven;
 	private final LinkedList<LogRecord> breadcrumbs = new LinkedList<>();
-	private static final int MAX_BREADCRUMBS = 50;
+	private static final int MAX_BREADCRUMBS = 25;
 	private String bukkitVersion;
 	private SimpleFormatter formatter;
+	private Pattern tagPrefix = Pattern.compile("^\\[[a-zA-Z0-9-_]+\\] ");
 
 	public SentryReporting(String dsn) {
 		formatter = new SimpleFormatter();
@@ -51,6 +54,7 @@ public class SentryReporting {
 			eventBuilder.withExtra("CraftBukkit", Bukkit.getVersion());
 		});
 
+
 		// Setup hook into logging of this plugin
 		SentryHandler handler = new SentryHandler(raven);
 		try {
@@ -66,6 +70,9 @@ public class SentryReporting {
 			return !(message != null && message.trim().startsWith("#!#!"));
 		});
 
+		// Listen to all loggers (Bukkit itself and all plugins)
+		Logger.getLogger("").addHandler(handler);
+
 		// Add breadcrumb handler
 		Logger.getLogger("").addHandler(new Handler() {
 			@Override
@@ -79,14 +86,26 @@ public class SentryReporting {
 			}
 
 			@Override
-			public void flush() {}
+			public void flush() {
+			}
 
 			@Override
-			public void close() throws SecurityException {}
+			public void close() throws SecurityException {
+			}
 		});
 
-		// Listen to all loggers (Bukkit itself and all plugins)
-		Logger.getLogger("").addHandler(handler);
+
+		// apache log4j logging
+		/*
+		<artifactId>raven-log4j2</artifactIdId>
+
+		org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger)org.apache.logging.log4j.LogManager.getRootLogger();
+		SentryAppender appender = new SentryAppender(raven);
+		appender.setServerName(GoCraft.getInstance().getServerId());
+		appender.setRelease(GoCraft.getInstance().getDescription().getVersion()); // Instead of this, add a timestamp into the jar and use that: https://stackoverflow.com/questions/802677/adding-the-current-date-with-maven2-filtering
+		//appender.setLevel(Level.WARNING); // Only log warnings and errors
+		logger.addAppender(appender);
+		*/
 	}
 
 	/**
@@ -108,7 +127,17 @@ public class SentryReporting {
 				builder.setCategory(getBreadcrumbCategory(record));
 				builder.setLevel(getBreadcrumbLevel(record));
 				builder.setType(getBreadcrumbType(record));
-				builder.setMessage(getBreadcrumbMessage(record));
+
+				String message = getBreadcrumbMessage(record).trim();
+				// Match tags in the front of the message and set that as category instead
+				Matcher matcher = tagPrefix.matcher(message);
+				if(matcher.find()) {
+					message = message.substring(matcher.group().length());
+					builder.setCategory(matcher.group().substring(1, matcher.group().length()-2));
+				}
+				builder.setMessage(message);
+
+				// Can put more in builder.setData()
 
 				result.add(builder.build());
 			}
@@ -173,7 +202,7 @@ public class SentryReporting {
 	 * @return The category of the record
 	 */
 	private String getBreadcrumbCategory(LogRecord record) {
-		return "nothing";
+		return "log";
 	}
 
 
