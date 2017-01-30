@@ -77,7 +77,7 @@ public class Shop extends Feature {
 		buttons = new HashMap<>();
 		kits = new HashMap<>();
 		categories = new HashMap<>();
-		shopSection = plugin.getConfig().getConfigurationSection("shop");
+		shopSection = getConfig().getConfigurationSection("shop");
 
 		// Check if we should really enable
 		if (shopSection == null) { // Shop not in use

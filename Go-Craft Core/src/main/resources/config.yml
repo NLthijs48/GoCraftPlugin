@@ -43,6 +43,7 @@ enableInspecting: true
 disableOpenEnderSelf: true
 disableSignUseWhileMuted: true
 clickChatMessages: true
+disableFrostWalker: false
 
 ########## ITEMS
 disableItemDrops: false

@@ -34,7 +34,7 @@ public class SyncCommandsServer extends Feature {
 	private BukkitTask reconnectTask; // Indicate if we have scheduled a reconnect task
 
 	public SyncCommandsServer() {
-		if(!plugin.getConfig().getBoolean("commandSyncEnabled")) {
+		if(!getConfig().getBoolean("commandSyncEnabled")) {
 			return;
 		}
 		shouldRun = true;
@@ -92,13 +92,13 @@ public class SyncCommandsServer extends Feature {
 		}
 
 		try {
-			int port = plugin.getConfig().getInt("commandSyncPort");
+			int port = getConfig().getInt("commandSyncPort");
 			socket = new Socket(InetAddress.getByName("localhost"), port);
 			out = new PrintWriter(socket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 			// Send our name
-			out.println("init "+plugin.getBungeeId()+" "+plugin.getConfig().getString("commandSyncVerification")+" "+plugin.getDescription().getVersion());
+			out.println("init "+plugin.getBungeeId()+" "+getConfig().getString("commandSyncVerification")+" "+plugin.getDescription().getVersion());
 			String result = in.readLine();
 			if(result.startsWith("no")) {
 				GoCraft.error("SyncCommands: error while connecting:", result.substring(result.indexOf(" ")));

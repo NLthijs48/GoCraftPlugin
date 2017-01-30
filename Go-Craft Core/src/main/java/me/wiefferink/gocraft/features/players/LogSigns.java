@@ -35,7 +35,7 @@ public class LogSigns extends Feature {
 		Player player = event.getPlayer();
 
 		if(inWorld(event) && (player.hasPermission("gocraft.signLog"))) {
-			SimpleDateFormat time = new SimpleDateFormat(config.getString("signLogTimeFormat"));
+			SimpleDateFormat time = new SimpleDateFormat(getConfig().getString("signLogTimeFormat"));
 			List<String> lines = Arrays.asList(event.getLine(0), event.getLine(1), event.getLine(2), event.getLine(3));
 			boolean empty = true;
 			for(int i=0; i<lines.size(); i++) {

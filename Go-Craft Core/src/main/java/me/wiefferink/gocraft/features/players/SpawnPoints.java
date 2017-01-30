@@ -20,7 +20,7 @@ public class SpawnPoints extends Feature {
 	public static final String PATH = "spawnPoints";
 
 	public SpawnPoints() {
-		if(config.getBoolean("spawnPoints.enable")) {
+		if(getConfig().getBoolean("spawnPoints.enable")) {
 			permission("spawnpoints.manage", "Manage spawnpoints");
 			permission("spawnpoints.spawn", "Spawn at one of the spawnpoints", PermissionDefault.TRUE);
 			command("spawnpoints", "Manage spawnpoints", "/spawnpoints <add,remove,list,tp,updatemarkers>", "sp");
@@ -44,7 +44,7 @@ public class SpawnPoints extends Feature {
 			}
 
 			// Whitelist if set
-			List<String> regions = config.getStringList("spawnPoints.regions");
+			List<String> regions = getConfig().getStringList("spawnPoints.regions");
 			if(regions.size() > 0 && plugin.getWorldGuardLink() != null) {
 				boolean inRegion = false;
 				for(String region : regions) {
@@ -63,7 +63,7 @@ public class SpawnPoints extends Feature {
 					int index = Utils.random.nextInt(spawnPoints.size());
 					Location location = Utils.configToLocation(spawnPointsSection.getConfigurationSection(spawnPoints.get(index)+".location"));
 					if(location != null) {
-						if(config.getBoolean("spawnPoints.randomizeDirection")) {
+						if(getConfig().getBoolean("spawnPoints.randomizeDirection")) {
 							location.setYaw(Utils.random.nextInt(360));
 							location.setPitch(0);
 						}
@@ -238,7 +238,7 @@ public class SpawnPoints extends Feature {
 	public void addOnDynmap(String id) {
 		Location location = Utils.configToLocation(plugin.getLocalStorage().getConfigurationSection(PATH+"."+id+".location"));
 		if(location != null) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker add id:"+id+" Spawnpoint-"+id+" icon:"+config.getString("spawnPoints.dynmapMarkerIcon")+" set:spawnpoints x:"+location.getBlockX()+" y:"+location.getBlockY()+" z:"+location.getBlockZ()+" world:"+location.getWorld().getName());
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker add id:"+id+" Spawnpoint-"+id+" icon:"+getConfig().getString("spawnPoints.dynmapMarkerIcon")+" set:spawnpoints x:"+location.getBlockX()+" y:"+location.getBlockY()+" z:"+location.getBlockZ()+" world:"+location.getWorld().getName());
 		}
 	}
 

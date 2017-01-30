@@ -113,7 +113,7 @@ public class Rewards extends Feature {
 			}
 
 			// Record that reward is given
-			SimpleDateFormat time = new SimpleDateFormat(config.getString("signLogTimeFormat"));
+			SimpleDateFormat time = new SimpleDateFormat(getConfig().getString("signLogTimeFormat"));
 			String timeString = time.format(Calendar.getInstance().getTimeInMillis());
 			plugin.getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, timeString);
 			plugin.saveLocalStorage();
@@ -126,7 +126,7 @@ public class Rewards extends Feature {
 	 * @return The configurationsection
 	 */
 	private ConfigurationSection getRewardsSection() {
-		return config.getConfigurationSection("rewards");
+		return getConfig().getConfigurationSection("rewards");
 	}
 
 }

@@ -33,7 +33,6 @@ import java.util.*;
 
 public class Feature implements Listener {
 	public static GoCraft plugin = GoCraft.getInstance();
-	public static FileConfiguration config = plugin.getConfig();
 
 	protected String configKey = null;
 
@@ -70,7 +69,7 @@ public class Feature implements Listener {
 	 */
 	protected boolean listen(String configKey) {
 		this.configKey = configKey;
-		if(configKey == null || (config.isBoolean(configKey) && config.getBoolean(configKey)) || (!config.isBoolean(configKey) && config.isSet(configKey))) {
+		if(configKey == null || (getConfig().isBoolean(configKey) && getConfig().getBoolean(configKey)) || (!getConfig().isBoolean(configKey) && getConfig().isSet(configKey))) {
 			plugin.getServer().getPluginManager().registerEvents(this, plugin);
 			return true;
 		}
@@ -198,7 +197,7 @@ public class Feature implements Listener {
 	 * @return true if the feature is enabled in the given world, otherwise false
 	 */
 	protected boolean inWorld(Object world) {
-		List<String> worlds = config.getStringList(configKey+"Worlds");
+		List<String> worlds = getConfig().getStringList(configKey+"Worlds");
 		if(configKey != null && worlds.size() != 0) {
 			String worldString = "";
 			if((world instanceof String)) {
@@ -283,6 +282,14 @@ public class Feature implements Listener {
 				runnable.run();
 			}
 		}.runTaskAsynchronously(plugin);
+	}
+
+	/**
+	 * Get the config file
+	 * @return The config file
+	 */
+	public FileConfiguration getConfig() {
+		return plugin.getConfig();
 	}
 
 	/**

@@ -20,7 +20,7 @@ import java.util.Calendar;
 public class ResourceWorlds extends Feature {
 
 	public ResourceWorlds() {
-		ConfigurationSection resourceWorldsSection = config.getConfigurationSection("worlds");
+		ConfigurationSection resourceWorldsSection = getConfig().getConfigurationSection("worlds");
 		if(resourceWorldsSection != null && resourceWorldsSection.getKeys(false).size() > 0) {
 			int count = 0;
 			for(String world : resourceWorldsSection.getKeys(false)) {
@@ -40,7 +40,7 @@ public class ResourceWorlds extends Feature {
 			return;
 		}
 		// Reset the resource worlds that need it
-		ConfigurationSection rWorldsSection = config.getConfigurationSection("worlds");
+		ConfigurationSection rWorldsSection = getConfig().getConfigurationSection("worlds");
 		if(rWorldsSection != null) {
 			for(String worldName : rWorldsSection.getKeys(false)) {
 				World world = Bukkit.getWorld(worldName);
@@ -91,7 +91,7 @@ public class ResourceWorlds extends Feature {
 	 */
 	public long getResetTime(World world) {
 		long result = -1;
-		ConfigurationSection section = config.getConfigurationSection("worlds");
+		ConfigurationSection section = getConfig().getConfigurationSection("worlds");
 		if(section != null) {
 			result = Utils.durationStringToLong(section.getString(world.getName()+".resetTime"));
 		}

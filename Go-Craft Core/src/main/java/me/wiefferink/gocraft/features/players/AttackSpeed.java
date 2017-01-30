@@ -31,7 +31,7 @@ public class AttackSpeed extends Feature {
 	 * @param player The player to set it for
 	 */
 	private void setPlayerAttributes(Player player) {
-		ConfigurationSection attributesSection = config.getConfigurationSection("playerAttributes");
+		ConfigurationSection attributesSection = getConfig().getConfigurationSection("playerAttributes");
 		if(attributesSection != null) {
 			for(String attribute : attributesSection.getKeys(false)) {
 				try {

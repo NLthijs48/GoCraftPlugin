@@ -38,7 +38,7 @@ public class EnableRegionPotionEffects extends Feature {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			playersFirst.add(player);
 		}
-		final ConfigurationSection regions = config.getConfigurationSection("regionPotionEffects");
+		final ConfigurationSection regions = getConfig().getConfigurationSection("regionPotionEffects");
 		final List<Player> players = playersFirst;
 		new BukkitRunnable() {
 			private int current = 0;

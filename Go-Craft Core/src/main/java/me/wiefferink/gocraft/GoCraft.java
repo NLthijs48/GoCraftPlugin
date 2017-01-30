@@ -511,6 +511,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new JoinLeaveMessages());
 		features.add(new ClickChatMessages());
 		features.add(new TimedServerFly());
+		features.add(new DisableFrostWalker());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());

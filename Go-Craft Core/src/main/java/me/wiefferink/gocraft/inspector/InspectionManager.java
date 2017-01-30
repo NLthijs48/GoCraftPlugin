@@ -40,7 +40,7 @@ public class InspectionManager extends Feature {
 		permission("admin", "Indicates the player is an admin", PermissionDefault.OP);
 
 		this.plugin = plugin;
-		if(!config.getBoolean("enableInspecting")) {
+		if(!getConfig().getBoolean("enableInspecting")) {
 			return;
 		}
 		permission("inspect", "Inspect players to see if they are hacking");
@@ -203,7 +203,7 @@ public class InspectionManager extends Feature {
 		// Join in inspect
 		if (!noInspectJoin
 				&& player.hasPermission("gocraft.staff")
-				&& plugin.getConfig().getBoolean("staffJoinsInInspect")
+				&& getConfig().getBoolean("staffJoinsInInspect")
 				&& player.hasPermission("gocraft.joinInInspect")
 				&& !player.isDead()) { // Prevent switching to inspect when killed by combat logging
 			final Inspection finalInspection = setupInspection(player);

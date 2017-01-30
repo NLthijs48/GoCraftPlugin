@@ -13,10 +13,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class SpawnTeleport extends Feature {
 
 	public SpawnTeleport() {
-		if(config.getBoolean("spawnTeleport")) {
+		if(listen("spawnTeleport")) {
 			permission("setgspawn", "Set the spawn of the server");
 			command("setgspawn", "Set the spawn location of the server");
-			listen();
 		}
 	}
 
