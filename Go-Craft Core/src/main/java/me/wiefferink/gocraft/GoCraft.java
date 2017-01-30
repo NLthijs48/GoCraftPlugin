@@ -22,7 +22,7 @@ import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
-import me.wiefferink.gocraft.tools.SentryReporting;
+import me.wiefferink.gocraft.tools.sentry.SentryReporting;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;

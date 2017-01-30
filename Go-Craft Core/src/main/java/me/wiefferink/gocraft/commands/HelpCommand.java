@@ -57,6 +57,8 @@ public class HelpCommand extends Feature {
 			}
 		}
 		plugin.increaseStatistic("command.help.used");
+
+		GoCraft.error("try out new log4j implementation");
 	}
 
 	/**

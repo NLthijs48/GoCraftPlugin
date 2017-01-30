@@ -169,7 +169,7 @@
         <!-- Sentry.io -->
         <dependency>
             <groupId>com.getsentry.raven</groupId>
-            <artifactId>raven</artifactId>
+            <artifactId>raven-log4j2</artifactId>
             <version>7.8.1</version>
         </dependency>
 
