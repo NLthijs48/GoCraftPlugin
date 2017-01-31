@@ -9,26 +9,34 @@ import org.apache.logging.log4j.message.Message;
 
 import java.util.HashSet;
 
-public class LevelWhitelistFilter extends AbstractFilter {
+public class LevelFilter extends AbstractFilter {
 
 	private HashSet<Integer> allowLevels;
 
 	/**
 	 * Constructor
+	 * @param onMatch The result to return when the level of an event is in the given levels
+	 * @param onMismatch The result to return wehn the level of an event is not in the given levels
 	 * @param allow The allowLevels to allow through
 	 */
-	public LevelWhitelistFilter(Level... allow) {
+	public LevelFilter(Result onMatch, Result onMismatch, Level... allow) {
+		super(onMatch, onMismatch);
 		allowLevels = new HashSet<>();
 		for(Level level : allow) {
 			allowLevels.add(level.intLevel());
 		}
 	}
 
+	/**
+	 * Return result based on the level
+	 * @param level The level to check
+	 * @return The result
+	 */
 	private Result filter(Level level) {
 		if(allowLevels.contains(level.intLevel())) {
-			return Result.NEUTRAL;
+			return onMatch;
 		} else {
-			return Result.DENY;
+			return onMismatch;
 		}
 	}
 
