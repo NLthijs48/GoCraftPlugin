@@ -13,12 +13,19 @@ import org.bukkit.Bukkit;
 import java.util.Arrays;
 import java.util.List;
 
+// TODO implement shutdown method with cleanup
+// TODO try changing System.err logging to level error instead of warn?
+
 public class SentryReporting {
 
 	private Raven raven;
 	private String bukkitVersion;
 	private BreadcrumbCollector breadcrumbCollector;
-	private List<String> filterMessages = Arrays.asList("^#!#!");
+	// TODO also use this for breadcrumb filtering?
+	private List<String> filterMessages = Arrays.asList(
+			"^#!#!", // Spammy, line-by-line exceptions from Skript
+			"^Exception in thread \"Craft Scheduler Thread - \\d+\" $" // One line warning message before printing actual exceptions from async threads (yes there is a space at the end of the message)
+	);
 
 	public SentryReporting(String dsn) {
 		// Clean Bukkit version
@@ -40,8 +47,8 @@ public class SentryReporting {
 			breadcrumbCollector.addBreadcrumbs(eventBuilder);
 
 			// Server information
-			eventBuilder.withExtra("Online players", Bukkit.getOnlinePlayers().size());
 			eventBuilder.withTag("API", bukkitVersion);
+			eventBuilder.withExtra("Online players", Bukkit.getOnlinePlayers().size());
 			eventBuilder.withExtra("Bukkit", Bukkit.getBukkitVersion());
 			eventBuilder.withExtra("CraftBukkit", Bukkit.getVersion());
 		});
@@ -56,8 +63,6 @@ public class SentryReporting {
 		logger.addAppender(appender);
 
 		breadcrumbCollector = new BreadcrumbCollector(logger);
-
-		// TODO implement shutdown method with cleanup
 	}
 
 	/**
