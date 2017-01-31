@@ -21,10 +21,13 @@ public class SentryReporting {
 	private Raven raven;
 	private String bukkitVersion;
 	private BreadcrumbCollector breadcrumbCollector;
+	private static final String USER_NAME = "[a-zA-Z0-9_]{1,16}";
 	// TODO also use this for breadcrumb filtering?
 	private List<String> filterMessages = Arrays.asList(
 			"^#!#!", // Spammy, line-by-line exceptions from Skript
-			"^Exception in thread \"Craft Scheduler Thread - \\d+\" $" // One line warning message before printing actual exceptions from async threads (yes there is a space at the end of the message)
+			"^Exception in thread \"Craft Scheduler Thread - \\d+\" $", // One line warning message before printing actual exceptions from async threads (yes there is a space at the end of the message)
+			"^"+USER_NAME+" moved too quickly!", // Probably caused by lag
+			"^"+USER_NAME+" moved wrongly!" // Probably caused by lag
 	);
 
 	public SentryReporting(String dsn) {
