@@ -309,8 +309,8 @@
                                 </relocation>
                                 <!-- Relocate messaging framework -->
                                 <relocation>
-                                    <pattern>me.wiefferink.fancymessageformat</pattern>
-                                    <shadedPattern>me.wiefferink.gocraft.messaging</shadedPattern>
+                                    <pattern>me.wiefferink.interactivemessenger</pattern>
+                                    <shadedPattern>me.wiefferink.gocraft.interactivemessenger</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
