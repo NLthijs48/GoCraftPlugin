@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.tools.sentry;
 import com.getsentry.raven.event.Breadcrumb;
 import com.getsentry.raven.event.BreadcrumbBuilder;
 import com.getsentry.raven.event.EventBuilder;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
@@ -47,7 +48,7 @@ public class BreadcrumbCollector {
 				// Match tags in the front of the message and set that as category instead
 				builder.setCategory(" "); // Empty to indicate regular logging
 				builder.setType("default");
-				String message = getBreadcrumbMessage(logEvent);
+				String message = logEvent.getMessage().getFormattedMessage();
 				Matcher matcher = tagPrefix.matcher(message);
 				if(matcher.find()) {
 					message = message.substring(matcher.group().length());
@@ -67,19 +68,16 @@ public class BreadcrumbCollector {
 				}
 				builder.setMessage(message);
 
+				Map<String, String> data = new HashMap<>();
+				if(logEvent.getThrown() != null) {
+					data.put("exception", ExceptionUtils.getStackTrace(logEvent.getThrown()));
+				}
+				builder.setData(data);
+
 				result.add(builder.build());
 			}
 		}
 		eventBuilder.withBreadcrumbs(result);
-	}
-
-	/**
-	 * Build a message from a LogRecord
-	 * @param logEvent The LogRecord to parse
-	 * @return The message including stacktrace if there is ony
-	 */
-	private String getBreadcrumbMessage(LogEvent logEvent) {
-		return logEvent.getMessage().getFormattedMessage();
 	}
 
 	/**
