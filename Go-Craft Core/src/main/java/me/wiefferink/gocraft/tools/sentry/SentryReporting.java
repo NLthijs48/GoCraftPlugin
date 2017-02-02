@@ -28,7 +28,7 @@ public class SentryReporting {
 			"^Exception in thread \"Craft Scheduler Thread - \\d+\" $", // One line warning message before printing actual exceptions from async threads (yes there is a space at the end of the message)
 			"^"+USER_NAME+" moved too quickly!", // Probably caused by lag
 			"^"+USER_NAME+" moved wrongly!", // Probably caused by lag
-			"handleDisconnection() called twice" // Annoying Bukkit bug that is supposed to be fixed but actually is not
+			"^handleDisconnection() called twice$" // Annoying Bukkit bug that is supposed to be fixed but actually is not
 	);
 
 	public SentryReporting(String dsn) {
@@ -55,6 +55,8 @@ public class SentryReporting {
 			eventBuilder.withExtra("Online players", Bukkit.getOnlinePlayers().size());
 			eventBuilder.withExtra("Bukkit", Bukkit.getBukkitVersion());
 			eventBuilder.withExtra("CraftBukkit", Bukkit.getVersion());
+
+			eventBuilder.withExtra("Stack", StackRepresentation.getStackString());
 		});
 
 		Logger logger = (Logger)LogManager.getRootLogger();
