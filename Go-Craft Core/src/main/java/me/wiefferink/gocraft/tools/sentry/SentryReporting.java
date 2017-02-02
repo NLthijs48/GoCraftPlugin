@@ -15,7 +15,51 @@ import java.util.List;
 
 // TODO implement shutdown method with cleanup
 // TODO try changing System.err logging to level error instead of warn?
+/*
+# TODO Make different filters, based on level, message, thread name, etc
+# TODO How to set servername and version?
+Config:
 
+	# Ignore certain warnings and errors and prevent them getting reported
+	# You can use regex
+	filter:
+		- ""
+		- ""
+
+	# Change level options?
+
+	breadcrumbs:
+		enabled: true
+
+		# Filter messages from getting into the breadcrumb
+		# You can use regex
+		filter:
+			- ""
+			- ""
+		# Add reportFilters to breadcrumbFilters
+		filtersIncludesReportFilters: true
+
+		# Maximum number of items that can appear in the breadcrumb
+		# Sentry does not advice to use more than 100, and reports exceeding limits might get dropped
+		maximumEntries: 50
+
+		# The default type for breadcrumb entries (determines the icon on sentry.io)
+		# Current useful values: default, debug, user, location, http (hides message), navigation
+		defaultType: "default"
+
+		# Change the type of breadcrumb entries (see 'defaultType')
+		type:
+			<regex>: <type>
+
+		# Set the default category, shown before each breadcrumb line on sentry.io (a space makes it empty)
+		defaultCategory: " "
+
+		# Change the category of breadcrumb entries (see 'defaultCategory')
+		category:
+			<regex>: <category>
+
+
+*/
 public class SentryReporting {
 
 	private Raven raven;
