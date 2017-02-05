@@ -28,6 +28,9 @@ Config:
 
 	# Change level options?
 
+	# Change fingerprint options (setup different grouping, for example group together messages that include variables)
+	# https://docs.sentry.io/learn/rollups/
+
 	breadcrumbs:
 		enabled: true
 

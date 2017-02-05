@@ -21,6 +21,14 @@ chatMessage:
   - "    command: /information %1%"
   - "%2%"
 
+# Concept for new chat
+newChatMessage:
+  - "%0%" # Rank(s)
+  - "[reset]%1%[reset]: " # Display name (might be a nickname)
+  - "    hover: %lang:action|View player information|%"
+  - "    command: /information %2%" # %2%: username
+  - "%3%%4%" # Message color and message
+
 staff-noPermission: "You are not a staff member."
 
 general-mutedSignUse: "You cannot place signs while you are muted."
