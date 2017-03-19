@@ -313,12 +313,17 @@
                                 <!-- Relocate JPA 2.0 because Spigot/Bukkit includes JPA 1.0 -->
                                 <relocation>
                                     <pattern>javax.persistence</pattern>
-                                    <shadedPattern>javax.persistencenew</shadedPattern>
+                                    <shadedPattern>me.wiefferink.gocraft.shaded.persistence</shadedPattern>
+                                </relocation>
+                                <!-- Relocate Hibernate for compatibility with other plugins -->
+                                <relocation>
+                                    <pattern>org.hibernate</pattern>
+                                    <shadedPattern>me.wiefferink.gocraft.shaded.hibernate</shadedPattern>
                                 </relocation>
                                 <!-- Relocate messaging framework -->
                                 <relocation>
                                     <pattern>me.wiefferink.interactivemessenger</pattern>
-                                    <shadedPattern>me.wiefferink.gocraft.interactivemessenger</shadedPattern>
+                                    <shadedPattern>me.wiefferink.gocraft.shaded.interactivemessenger</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
