@@ -14,6 +14,8 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<copyResultTwo>target/trash</copyResultTwo>
 		<copyResultThree>target/trash</copyResultThree>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd_HHmm</maven.build.timestamp.format>
 	</properties>
 
 	<modules>
