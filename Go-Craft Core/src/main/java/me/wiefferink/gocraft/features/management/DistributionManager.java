@@ -179,7 +179,6 @@ public class DistributionManager extends Feature {
 			}
 			Set<String> servers = resolveServers(pushTo, pluginWarnings);
 
-
 			List<String> pushedJarTo = new ArrayList<>();
 			List<String> pushedConfigTo = new ArrayList<>();
 			// Push to the specified servers
@@ -221,33 +220,39 @@ public class DistributionManager extends Feature {
 				}
 
 				// Push plugin jar
-				if (operations.contains("pluginJar") && newPluginJar != null) {
-					operationsDone.add("pluginJar");
-					// Find existing jar file
-					File oldPluginJar = null;
-					File[] existingFiles = serverPluginFolders.get(server).listFiles();
-					if (existingFiles != null) {
-						for (File file : existingFiles) {
-							if (file.isFile() && matchesFileName(pushPlugin, file)) {
-								if (oldPluginJar == null) {
-									oldPluginJar = file;
-								} else {
-									pluginWarnings.add("Found second old .jar file: " + file.getAbsolutePath());
+				if (operations.contains("pluginJar")) {
+					if(newPluginJar == null) {
+						if(!pushPluginSection.getBoolean("noJar")) {
+							pluginWarnings.add("No jar file found for plugin: " + pushPlugin);
+						}
+					} else {
+						operationsDone.add("pluginJar");
+						// Find existing jar file
+						File oldPluginJar = null;
+						File[] existingFiles = serverPluginFolders.get(server).listFiles();
+						if (existingFiles != null) {
+							for (File file : existingFiles) {
+								if (file.isFile() && matchesFileName(pushPlugin, file)) {
+									if (oldPluginJar == null) {
+										oldPluginJar = file;
+									} else {
+										pluginWarnings.add("Found second old .jar file: " + file.getAbsolutePath());
+									}
 								}
 							}
 						}
-					}
 
-					// Determine to push or not
-					if (oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
-						// Delete old one
-						if (oldPluginJar != null && !oldPluginJar.delete()) {
-							pluginWarnings.add("Deleting failed: " + oldPluginJar.getAbsolutePath());
+						// Determine to push or not
+						if (oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
+							// Delete old one
+							if (oldPluginJar != null && !oldPluginJar.delete()) {
+								pluginWarnings.add("Deleting failed: " + oldPluginJar.getAbsolutePath());
+							}
+							File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + pushPlugin + " DISTRIBUTED.jar");
+							pluginWarnings.addAll(copyFile(newPluginJar, newFileName, server));
+							jarsUpdated++;
+							pushedJarTo.add(plugin.getServerName(server));
 						}
-						File newFileName = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + pushPlugin + " DISTRIBUTED.jar");
-						pluginWarnings.addAll(copyFile(newPluginJar, newFileName, server));
-						jarsUpdated++;
-						pushedJarTo.add(plugin.getServerName(server));
 					}
 				}
 
