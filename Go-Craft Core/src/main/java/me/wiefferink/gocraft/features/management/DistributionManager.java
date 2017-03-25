@@ -44,14 +44,13 @@ public class DistributionManager extends Feature {
 			return;
 		}
 
-		String serverFilter = null;
-		String operationFilter = null;
-		if(args.length >= 1) {
-			serverFilter = args[0];
+		if(args.length == 0) {
+			plugin.message(sender, "update-help");
+			return;
 		}
-		if(args.length >= 2) {
-			operationFilter = args[1];
-		}
+
+		String serverFilter = args[0];
+		String operationFilter = args.length>=2 ? args[1] : null;
 		plugin.getDistributionManager().update(sender, serverFilter, operationFilter);
 		plugin.increaseStatistic("command.update.used");
 	}
