@@ -42,6 +42,7 @@ public class Vote {
 	public Vote(GCPlayer gcPlayer, String serviceName, String address, String givenTimestamp) {
 		this.gcPlayer = gcPlayer;
 		this.serviceName = serviceName;
+		this.address = address;
 		this.givenTimestamp = givenTimestamp;
 		this.at = new Date();
 	}
