@@ -4,6 +4,7 @@ import com.getsentry.raven.Raven;
 import com.getsentry.raven.RavenFactory;
 import com.getsentry.raven.log4j2.SentryAppender;
 import me.wiefferink.gocraft.GoCraft;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Filter;
@@ -79,43 +80,52 @@ public class SentryReporting {
 	);
 
 	public SentryReporting(String dsn) {
-		// Clean Bukkit version
-		bukkitVersion = Bukkit.getBukkitVersion();
-		if(bukkitVersion.endsWith("-SNAPSHOT"))	{
-			bukkitVersion = bukkitVersion.substring(0, bukkitVersion.lastIndexOf("-SNAPSHOT"));
+		try {
+			if (dsn == null || dsn.isEmpty()) {
+				GoCraft.warn("Not enabling Sentry reporter, no dsn provided");
+				return;
+			}
+
+			// Clean Bukkit version
+			bukkitVersion = Bukkit.getBukkitVersion();
+			if (bukkitVersion.endsWith("-SNAPSHOT")) {
+				bukkitVersion = bukkitVersion.substring(0, bukkitVersion.lastIndexOf("-SNAPSHOT"));
+			}
+
+			// Setup connection to Sentry.io
+			raven = RavenFactory.ravenInstance(dsn);
+
+			// Add function to enhance events
+			raven.addBuilderHelper(eventBuilder -> {
+				// Plugin information
+				eventBuilder.withServerName(GoCraft.getInstance().getServerId());
+				eventBuilder.withRelease(GoCraft.getInstance().getDescription().getVersion());
+
+				// Breadcrumbs
+				breadcrumbCollector.addBreadcrumbs(eventBuilder);
+
+				// Server information
+				eventBuilder.withTag("API", bukkitVersion);
+				eventBuilder.withExtra("Online players", Bukkit.getOnlinePlayers().size());
+				eventBuilder.withExtra("Bukkit", Bukkit.getBukkitVersion());
+				eventBuilder.withExtra("CraftBukkit", Bukkit.getVersion());
+
+				eventBuilder.withExtra("Stack", StackRepresentation.getStackString());
+			});
+
+			Logger logger = (Logger) LogManager.getRootLogger();
+			SentryAppender appender = new ModifiedSentryAppender(raven);
+			appender.setServerName(GoCraft.getInstance().getServerId());
+			appender.setRelease(GoCraft.getInstance().getDescription().getVersion()); // Instead of this, add a timestamp into the jar and use that: https://stackoverflow.com/questions/802677/adding-the-current-date-with-maven2-filtering
+			appender.addFilter(new LevelFilter(Filter.Result.NEUTRAL, Filter.Result.DENY, Level.ERROR, Level.WARN, Level.FATAL));
+			appender.addFilter(new RegexFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterMessages));
+			appender.start();
+			logger.addAppender(appender);
+
+			breadcrumbCollector = new BreadcrumbCollector(logger);
+		} catch (Exception e) {
+			GoCraft.warn("Setup of Sentry reporting failed:", ExceptionUtils.getStackTrace(e));
 		}
-
-		// Setup connection to Sentry.io
-		raven = RavenFactory.ravenInstance(dsn);
-
-		// Add function to enhance events
-		raven.addBuilderHelper(eventBuilder -> {
-			// Plugin information
-			eventBuilder.withServerName(GoCraft.getInstance().getServerId());
-			eventBuilder.withRelease(GoCraft.getInstance().getDescription().getVersion());
-
-			// Breadcrumbs
-			breadcrumbCollector.addBreadcrumbs(eventBuilder);
-
-			// Server information
-			eventBuilder.withTag("API", bukkitVersion);
-			eventBuilder.withExtra("Online players", Bukkit.getOnlinePlayers().size());
-			eventBuilder.withExtra("Bukkit", Bukkit.getBukkitVersion());
-			eventBuilder.withExtra("CraftBukkit", Bukkit.getVersion());
-
-			eventBuilder.withExtra("Stack", StackRepresentation.getStackString());
-		});
-
-		Logger logger = (Logger)LogManager.getRootLogger();
-		SentryAppender appender = new ModifiedSentryAppender(raven);
-		appender.setServerName(GoCraft.getInstance().getServerId());
-		appender.setRelease(GoCraft.getInstance().getDescription().getVersion()); // Instead of this, add a timestamp into the jar and use that: https://stackoverflow.com/questions/802677/adding-the-current-date-with-maven2-filtering
-		appender.addFilter(new LevelFilter(Filter.Result.NEUTRAL, Filter.Result.DENY, Level.ERROR, Level.WARN, Level.FATAL));
-		appender.addFilter(new RegexFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterMessages));
-		appender.start();
-		logger.addAppender(appender);
-
-		breadcrumbCollector = new BreadcrumbCollector(logger);
 	}
 
 	/**
