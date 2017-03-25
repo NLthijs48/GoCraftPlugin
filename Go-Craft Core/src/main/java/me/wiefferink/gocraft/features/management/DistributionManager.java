@@ -222,7 +222,7 @@ public class DistributionManager extends Feature {
 				// Push plugin jar
 				if (operations.contains("pluginJar")) {
 					if(newPluginJar == null) {
-						if(!pushPluginSection.getBoolean("noJar")) {
+						if(pushPluginSection == null || !pushPluginSection.getBoolean("noJar")) {
 							pluginWarnings.add("No jar file found for plugin: " + pushPlugin);
 						}
 					} else {
