@@ -2,18 +2,35 @@ package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +44,11 @@ public class DistributionManager extends Feature {
 
 	public DistributionManager() {
 		permission("update", "Update servers");
-		command("update", "Update servers with the latest plugin files and configurations", "/update [servers...] [pluginJar,pluginConfig,permissions,rootfiles]");
+		command("update",
+				"Update servers with the latest plugin files and configurations",
+				"/update <servers...> [pluginJar,pluginConfig,permissions,rootfiles]",
+				"forceUpdate"
+		);
 
 		self = new File(DistributionManager.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		pluginDataFolder = new File(plugin.getGeneralFolder().getAbsolutePath() + File.separator + Constant.GENERAL_PLUGIN_DATA_FOLDERNAME);
@@ -38,7 +59,7 @@ public class DistributionManager extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!sender.hasPermission("gocraft.update")) {
 			plugin.message(sender, "update-noPermission");
 			return;
@@ -49,9 +70,10 @@ public class DistributionManager extends Feature {
 			return;
 		}
 
+		boolean force = label.equalsIgnoreCase("forceUpdate");
 		String serverFilter = args[0];
 		String operationFilter = args.length>=2 ? args[1] : null;
-		plugin.getDistributionManager().update(sender, serverFilter, operationFilter);
+		update(sender, serverFilter, operationFilter, force);
 		plugin.increaseStatistic("command.update.used");
 	}
 
@@ -111,11 +133,12 @@ public class DistributionManager extends Feature {
 	 * @param executor The CommandSender that executed the update
 	 * @param serverFilter The filter specifying which servers should be pushed to
 	 * @param operationFilter The filter specifying the operations to perform
+	 * @param force Always push, regardless of age
 	 * - pluginJar
 	 * - pluginConfig
 	 * - permissions
 	 */
-	public void updateNow(final CommandSender executor, String serverFilter, String operationFilter) {
+	public void updateNow(final CommandSender executor, String serverFilter, String operationFilter, boolean force) {
 		List<String> generalWarnings = new ArrayList<>();
 
 		// Prepare operations
@@ -242,7 +265,7 @@ public class DistributionManager extends Feature {
 						}
 
 						// Determine to push or not
-						if (oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar)) {
+						if (oldPluginJar == null || FileUtils.isFileNewer(newPluginJar, oldPluginJar) || force) {
 							// Delete old one
 							if (oldPluginJar != null && !oldPluginJar.delete()) {
 								pluginWarnings.add("Deleting failed: " + oldPluginJar.getAbsolutePath());
@@ -259,7 +282,7 @@ public class DistributionManager extends Feature {
 				if (operations.contains("pluginConfig") && newPluginConfig != null) {
 					operationsDone.add("pluginConfig");
 					File targetFolder = new File(serverPluginFolders.get(server).getAbsolutePath() + File.separator + pushPlugin);
-					List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig, server);
+					List<String> result = pushStructure(newPluginConfig, targetFolder, pluginWarnings, newPluginConfig, server, force);
 					if (result.size() > 0) {
 						configsUpdated += result.size();
 						pushedConfigTo.add(plugin.getServerName(server));
@@ -298,7 +321,7 @@ public class DistributionManager extends Feature {
 		// Update root files
 		if (operations.contains("rootfiles")) {
 			operationsDone.add("rootfiles");
-			rootFilesUpdated = updateRootFiles(updateLogger, executor, include, generalWarnings);
+			rootFilesUpdated = updateRootFiles(updateLogger, executor, include, generalWarnings, force);
 		}
 
 		// Check for leftover operations
@@ -360,11 +383,11 @@ public class DistributionManager extends Feature {
 	 * @param executor The CommandSender that executed the update
 	 * @param filter The filter specifying which servers should be pushed to
 	 */
-	public void update(final CommandSender executor, final String filter, final String operationFilter) {
+	public void update(final CommandSender executor, final String filter, final String operationFilter, final boolean force) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				updateNow(executor, filter, operationFilter);
+				updateNow(executor, filter, operationFilter, force);
 			}
 		}.runTaskAsynchronously(plugin);
 	}
@@ -373,9 +396,10 @@ public class DistributionManager extends Feature {
 	 * Update root files
 	 * @param include Servers to update
 	 * @param generalWarnings List with warnings
+	 * @param force Push regardless of age
 	 * @return Count of updated files
 	 */
-	public int updateRootFiles(BufferedWriter updateLogger, CommandSender executor, Set<String> include, List<String> generalWarnings) {
+	public int updateRootFiles(BufferedWriter updateLogger, CommandSender executor, Set<String> include, List<String> generalWarnings, boolean force) {
 		int result = 0;
 		ConfigurationSection rootFiles = plugin.getGeneralConfig().getConfigurationSection("rootfiles");
 		if (rootFiles == null) {
@@ -450,7 +474,7 @@ public class DistributionManager extends Feature {
 					}
 
 					// Determine to push or not
-					if (oldFile == null || FileUtils.isFileNewer(newFile, oldFile)) {
+					if (oldFile == null || FileUtils.isFileNewer(newFile, oldFile) || force) {
 						File newFileName = new File(serverPluginFolders.get(server).getParentFile().getAbsolutePath() + File.separator + targetName);
 						fileWarnings.addAll(copyFile(newFile, newFileName, server));
 						pushedFileTo.add(plugin.getServerName(server));
@@ -478,9 +502,10 @@ public class DistributionManager extends Feature {
 	 * @param warnings The warnings list
 	 * @param rootSource The root source to format messages with
 	 * @param server The id of the server it is pushed to
+	 * @param force Always push regardless of file age
 	 * @return List with the file names that are pushed
 	 */
-	public List<String> pushStructure(File source, File target, List<String> warnings, File rootSource, String server) {
+	public List<String> pushStructure(File source, File target, List<String> warnings, File rootSource, String server, boolean force) {
 		List<String> result = new ArrayList<>();
 		File[] files = source.listFiles();
 		if (files == null) {
@@ -490,14 +515,14 @@ public class DistributionManager extends Feature {
 		for (File file : files) {
 			File fileTarget = new File(target.getAbsolutePath() + File.separator + file.getName());
 			if (file.isDirectory()) {
-				pushStructure(file, fileTarget, warnings, rootSource, server);
+				pushStructure(file, fileTarget, warnings, rootSource, server, force);
 			} else if (file.isFile()) {
 				if (fileTarget.exists() && !fileTarget.isFile()) {
 					warnings.add("Target exists but is not a file: " + fileTarget.getAbsolutePath());
 					continue;
 				}
 				fileTarget.getParentFile().mkdirs();
-				if (!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget)) {
+				if (!fileTarget.exists() || FileUtils.isFileNewer(file, fileTarget) || force) {
 					warnings.addAll(copyFile(file, fileTarget, server));
 					result.add(file.getAbsolutePath().replace(rootSource.getAbsolutePath(), "")); // Directory structure + filename starting from plugin folder to the file
 				}

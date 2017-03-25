@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.features.Feature;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class ReloadCommand extends Feature {
@@ -11,7 +12,7 @@ public class ReloadCommand extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!sender.hasPermission("gocraft.reload")) {
 			plugin.message(sender, "reload-noPermission");
 			return;

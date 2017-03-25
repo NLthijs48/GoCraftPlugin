@@ -13,11 +13,24 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class Shop extends Feature {
 
@@ -197,7 +210,7 @@ public class Shop extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(plugin.getShop() == null) {
 			plugin.message(sender, "shop-notEnabled");
 			return;

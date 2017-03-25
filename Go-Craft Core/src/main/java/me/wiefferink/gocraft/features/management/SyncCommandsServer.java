@@ -50,7 +50,7 @@ public class SyncCommandsServer extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!sender.isOp()) {
 			plugin.message(sender, "sync-noPermission");
 			return;

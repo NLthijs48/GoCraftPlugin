@@ -21,7 +21,7 @@ public class SpawnTeleport extends Feature {
 
 	// Set the spawn location
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!sender.hasPermission("gocraft.setspawn")) {
 			plugin.message(sender, "setspawn-noPermission");
 			return;

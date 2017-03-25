@@ -2,9 +2,9 @@ package me.wiefferink.gocraft.features.players;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -29,7 +29,7 @@ public class SpawnPoints extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		////////// RESPAWN
 		if("respawn".equalsIgnoreCase(command)) {
 			if(!(sender instanceof Player)) {
@@ -251,7 +251,7 @@ public class SpawnPoints extends Feature {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, String command, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		List<String> result = new ArrayList<>();
 		if(args.length == 1) {
 			result.add("add");

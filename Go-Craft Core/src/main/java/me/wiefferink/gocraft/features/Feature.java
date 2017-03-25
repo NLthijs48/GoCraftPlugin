@@ -29,7 +29,12 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Feature implements Listener {
 	public static GoCraft plugin = GoCraft.getInstance();
@@ -103,14 +108,14 @@ public class Feature implements Listener {
 		// Create new Command instance that proxies the execute() and tabComplete()
 		Command newCommand = new Command(name) {
 			@Override
-			public boolean execute(CommandSender sender, String label, String[] args) {
-				onCommand(sender, getName(), args);
+			public boolean execute(CommandSender sender, Command command, String label, String[] args) {
+				onCommand(sender, this, args);
 				return true;
 			}
 
 			@Override
 			public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-				List<String> result = onTabComplete(sender, getName(), args);
+				List<String> result = onTabComplete(sender, this, args);
 				// Filter and sort the results
 				if(result.size() > 0 && args.length > 0) {
 					SortedSet<String> set = new TreeSet<>();
@@ -240,7 +245,7 @@ public class Feature implements Listener {
 	 * @param command The command being executed
 	 * @param args    The arguments of the command
 	 */
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 	}
 
 	/**
@@ -250,7 +255,7 @@ public class Feature implements Listener {
 	 * @param args    The arguments of the command
 	 * @return A list of possible tab completions (will be filtered to match the requested prefix)
 	 */
-	public List<String> onTabComplete(CommandSender sender, String command, String[] args) {
+	public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 		List<String> result = new ArrayList<>();
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			result.add(player.getName());

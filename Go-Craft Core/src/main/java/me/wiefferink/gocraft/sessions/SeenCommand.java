@@ -22,7 +22,7 @@ public class SeenCommand extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!sender.hasPermission("gocraft.seen")) {
 			plugin.message(sender, "seen-noPermission");
 			return;

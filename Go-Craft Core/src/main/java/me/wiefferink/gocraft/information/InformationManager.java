@@ -1,10 +1,20 @@
 package me.wiefferink.gocraft.information;
 
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.information.providers.*;
+import me.wiefferink.gocraft.information.providers.BalanceInfo;
+import me.wiefferink.gocraft.information.providers.GamemodeInfo;
+import me.wiefferink.gocraft.information.providers.HealthInfo;
+import me.wiefferink.gocraft.information.providers.HungerInfo;
+import me.wiefferink.gocraft.information.providers.IPInfo;
+import me.wiefferink.gocraft.information.providers.InspectInfo;
+import me.wiefferink.gocraft.information.providers.KillInfo;
+import me.wiefferink.gocraft.information.providers.LocationInfo;
+import me.wiefferink.gocraft.information.providers.PingInfo;
+import me.wiefferink.gocraft.information.providers.SeenInfo;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -42,7 +52,7 @@ public class InformationManager extends Feature {
 
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!sender.hasPermission("gocraft.information")) {
 			plugin.message(sender, "information-noPermission");
 			return;

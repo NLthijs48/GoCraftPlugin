@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.commands;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
@@ -16,7 +17,7 @@ public class PingCommand extends Feature {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!sender.hasPermission("gocraft.ping")) {
 			plugin.message(sender, "ping-noPermission");
 			return;

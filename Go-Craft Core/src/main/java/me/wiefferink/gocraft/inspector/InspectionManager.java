@@ -22,7 +22,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class InspectionManager extends Feature {
 
@@ -409,7 +414,7 @@ public class InspectionManager extends Feature {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!(sender instanceof Player)) {
 			plugin.message(sender, "general-playerOnly");
 			return;

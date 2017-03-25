@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.commands;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.PermissionDefault;
@@ -23,7 +24,7 @@ public class RulesCommand extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!sender.hasPermission("gocraft.rules")) {
 			plugin.message(sender, "rules-noPermission");
 			return;

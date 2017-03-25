@@ -8,7 +8,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class HelpCommand extends Feature {
 
@@ -22,7 +28,7 @@ public class HelpCommand extends Feature {
 	}
 
 	@Override
-	public void onCommand(CommandSender sender, String command, String[] args) {
+	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (!sender.hasPermission("gocraft.help")) {
 			plugin.message(sender, "help-noPermission");
 			return;
