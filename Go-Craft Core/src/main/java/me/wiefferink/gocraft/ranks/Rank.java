@@ -32,4 +32,33 @@ public class Rank {
 
 	Rank() {}
 
+	public Rank(GCPlayer gcPlayer, String name, String servers) {
+		this.gcPlayer = gcPlayer;
+		this.name = name;
+		this.servers = servers;
+	}
+
+	/**
+	 * Get the player this rank is linked to
+	 * @return The GCPlayer the rank is linked to
+	 */
+	public GCPlayer getGcPlayer() {
+		return gcPlayer;
+	}
+
+	/**
+	 * Get the name of the rank
+	 * @return Name of the rank
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Get the servers
+	 * @return The servers the rank should be applied to
+	 */
+	public String getServers() {
+		return servers;
+	}
 }

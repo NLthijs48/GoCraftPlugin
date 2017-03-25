@@ -128,6 +128,12 @@
             <version>4.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.vexsoftware</groupId>
+            <artifactId>votifier</artifactId>
+            <version>1.9</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- InteractiveMessenger library -->
         <dependency>

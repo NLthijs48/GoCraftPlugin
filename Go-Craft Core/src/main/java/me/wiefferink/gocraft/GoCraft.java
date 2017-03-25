@@ -68,6 +68,7 @@ import me.wiefferink.gocraft.integration.GoPVPLink;
 import me.wiefferink.gocraft.integration.MapSwitcherLink;
 import me.wiefferink.gocraft.integration.WorldGuardLink;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
+import me.wiefferink.gocraft.ranks.RankManager;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
@@ -75,6 +76,7 @@ import me.wiefferink.gocraft.tools.sentry.SentryReporting;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
+import me.wiefferink.gocraft.votes.VoteManager;
 import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.interactivemessenger.source.LanguageManager;
 import net.milkbowl.vault.economy.Economy;
@@ -580,6 +582,8 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new ClickChatMessages());
 		features.add(new TimedServerFly());
 		features.add(new DisableFrostWalker());
+		features.add(new RankManager());
+		features.add(new VoteManager());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());

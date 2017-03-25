@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
 import me.wiefferink.gocraft.tools.DatabaseRun;
+import me.wiefferink.gocraft.votes.Vote;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -57,6 +58,7 @@ public class Database {
 					.addAnnotatedClass(BungeeSession.class)
 					.addAnnotatedClass(ServerSession.class)
 					.addAnnotatedClass(TimedFly.class)
+					.addAnnotatedClass(Vote.class)
 					.buildMetadata()
 					.buildSessionFactory();
 		} catch(Exception e) {
