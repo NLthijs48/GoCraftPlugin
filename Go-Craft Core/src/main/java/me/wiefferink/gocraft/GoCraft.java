@@ -273,7 +273,14 @@ public final class GoCraft extends JavaPlugin {
 	 * @param key The key to track it with
 	 */
 	public void increaseStatistic(String key) {
-		getLocalStorage().set("statistics." + key, getLocalStorage().getLong("statistics." + key) + 1);
+		// Month based
+		Calendar now = Calendar.getInstance();
+		String path = "statistics." + now.get(Calendar.YEAR) + "." + now.get(Calendar.MONTH) + "." + key;
+		getLocalStorage().set(path, getLocalStorage().getLong(path) + 1);
+
+		// Overall
+		getLocalStorage().set("statistics."+key, getLocalStorage().getLong("statistics."+key) + 1);
+
 		saveLocalStorage();
 	}
 
