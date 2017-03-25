@@ -12,6 +12,7 @@ public class DiscordCommand extends Feature {
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) {
 		plugin.message(sender, "discord-link");
+		plugin.increaseStatistic("command.discord.used");
 	}
 
 }

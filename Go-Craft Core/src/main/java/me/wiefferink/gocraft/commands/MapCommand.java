@@ -12,6 +12,7 @@ public class MapCommand extends Feature {
 	@Override
 	public void onCommand(CommandSender sender, String command, String[] args) {
 		plugin.message(sender, "map-link");
+		plugin.increaseStatistic("command.map.used");
 	}
 
 }
