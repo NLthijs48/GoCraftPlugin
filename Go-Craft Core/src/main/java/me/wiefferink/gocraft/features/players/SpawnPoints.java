@@ -7,6 +7,7 @@ import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class SpawnPoints extends Feature {
 	@Override
 	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		////////// RESPAWN
-		if("respawn".equalsIgnoreCase(command)) {
+		if("respawn".equalsIgnoreCase(command.getName())) {
 			if(!(sender instanceof Player)) {
 				plugin.message(sender, "general-playerOnly");
 				return;

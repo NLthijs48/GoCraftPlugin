@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.features.Feature;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -55,8 +56,8 @@ public class SyncCommandsServer extends Feature {
 			plugin.message(sender, "sync-noPermission");
 			return;
 		}
-		plugin.message(sender, "sync-added", command, StringUtils.join(args, " "));
-		runCommand(command, args);
+		plugin.message(sender, "sync-added", command.getName(), StringUtils.join(args, " "));
+		runCommand(command.getName(), args);
 	}
 
 	/**

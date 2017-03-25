@@ -6,6 +6,7 @@ import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
 

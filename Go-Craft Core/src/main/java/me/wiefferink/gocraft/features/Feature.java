@@ -108,14 +108,14 @@ public class Feature implements Listener {
 		// Create new Command instance that proxies the execute() and tabComplete()
 		Command newCommand = new Command(name) {
 			@Override
-			public boolean execute(CommandSender sender, Command command, String label, String[] args) {
-				onCommand(sender, this, args);
+			public boolean execute(CommandSender sender, String label, String[] args) {
+				onCommand(sender, this, label, args);
 				return true;
 			}
 
 			@Override
-			public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-				List<String> result = onTabComplete(sender, this, args);
+			public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+				List<String> result = onTabComplete(sender, this, label, args);
 				// Filter and sort the results
 				if(result.size() > 0 && args.length > 0) {
 					SortedSet<String> set = new TreeSet<>();

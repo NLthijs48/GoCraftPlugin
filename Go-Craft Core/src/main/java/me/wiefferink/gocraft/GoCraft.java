@@ -1,23 +1,72 @@
 package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
-import me.wiefferink.gocraft.commands.*;
+import me.wiefferink.gocraft.commands.DiscordCommand;
+import me.wiefferink.gocraft.commands.HackBanCommand;
+import me.wiefferink.gocraft.commands.HelpCommand;
+import me.wiefferink.gocraft.commands.MapCommand;
+import me.wiefferink.gocraft.commands.PingCommand;
+import me.wiefferink.gocraft.commands.RandomtpCommand;
+import me.wiefferink.gocraft.commands.ReloadCommand;
+import me.wiefferink.gocraft.commands.RulesCommand;
+import me.wiefferink.gocraft.commands.SafeTeleportCommand;
+import me.wiefferink.gocraft.commands.StaffMessagesCommands;
+import me.wiefferink.gocraft.commands.TempbanCommand;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.features.auracheck.AuraCheck;
-import me.wiefferink.gocraft.features.blocks.*;
-import me.wiefferink.gocraft.features.environment.*;
-import me.wiefferink.gocraft.features.items.*;
+import me.wiefferink.gocraft.features.blocks.DisableAnvilBreak;
+import me.wiefferink.gocraft.features.blocks.DisableBedrockBreak;
+import me.wiefferink.gocraft.features.blocks.DisableBedrockPlace;
+import me.wiefferink.gocraft.features.blocks.DisableBlockBreaking;
+import me.wiefferink.gocraft.features.blocks.DisableDispensers;
+import me.wiefferink.gocraft.features.blocks.DisableTradeSignPlacing;
+import me.wiefferink.gocraft.features.blocks.DisableWitherDamage;
+import me.wiefferink.gocraft.features.environment.DisableAboveNetherGlitching;
+import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
+import me.wiefferink.gocraft.features.environment.DisableRain;
+import me.wiefferink.gocraft.features.environment.DisableVoidFall;
+import me.wiefferink.gocraft.features.environment.ResourceWorlds;
+import me.wiefferink.gocraft.features.items.DisableBooks;
+import me.wiefferink.gocraft.features.items.DisableEnderpearl;
+import me.wiefferink.gocraft.features.items.DisableEyeOfEnder;
+import me.wiefferink.gocraft.features.items.DisableFirework;
+import me.wiefferink.gocraft.features.items.DisableItemDrops;
+import me.wiefferink.gocraft.features.items.DisableItemSpawning;
+import me.wiefferink.gocraft.features.items.DisablePotionInvisibleDrink;
+import me.wiefferink.gocraft.features.items.DisablePotionSplash;
+import me.wiefferink.gocraft.features.items.DisablePotionThrow;
+import me.wiefferink.gocraft.features.items.DisableXpBottleThrow;
 import me.wiefferink.gocraft.features.management.DistributionManager;
 import me.wiefferink.gocraft.features.management.SyncCommandsServer;
 import me.wiefferink.gocraft.features.other.AddDefaultRank;
 import me.wiefferink.gocraft.features.other.ClickChatMessages;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
 import me.wiefferink.gocraft.features.other.ResetExpiredPlots;
-import me.wiefferink.gocraft.features.players.*;
+import me.wiefferink.gocraft.features.players.AttackSpeed;
+import me.wiefferink.gocraft.features.players.DisableFallDamage;
+import me.wiefferink.gocraft.features.players.DisableFrostWalker;
+import me.wiefferink.gocraft.features.players.DisableHungerLoss;
+import me.wiefferink.gocraft.features.players.DisablePlayerDamage;
+import me.wiefferink.gocraft.features.players.DisableSignUseWhileMuted;
+import me.wiefferink.gocraft.features.players.EnablePotionEffectsOnJoin;
+import me.wiefferink.gocraft.features.players.EnableRegionPotionEffects;
+import me.wiefferink.gocraft.features.players.FixInventories;
+import me.wiefferink.gocraft.features.players.JoinLeaveMessages;
+import me.wiefferink.gocraft.features.players.LogSigns;
+import me.wiefferink.gocraft.features.players.OldHunger;
+import me.wiefferink.gocraft.features.players.OpenenderLimiter;
+import me.wiefferink.gocraft.features.players.PunishmentNotifications;
+import me.wiefferink.gocraft.features.players.Rewards;
+import me.wiefferink.gocraft.features.players.SpawnPoints;
+import me.wiefferink.gocraft.features.players.SpawnTeleport;
 import me.wiefferink.gocraft.features.players.timedfly.TimedServerFly;
 import me.wiefferink.gocraft.information.InformationManager;
 import me.wiefferink.gocraft.inspector.InspectionManager;
-import me.wiefferink.gocraft.integration.*;
+import me.wiefferink.gocraft.integration.BanManagerLink;
+import me.wiefferink.gocraft.integration.EssentialsLink;
+import me.wiefferink.gocraft.integration.GoPVPLink;
+import me.wiefferink.gocraft.integration.MapSwitcherLink;
+import me.wiefferink.gocraft.integration.WorldGuardLink;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
@@ -42,9 +91,21 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class GoCraft extends JavaPlugin {
 	// Constants
@@ -252,7 +313,7 @@ public final class GoCraft extends JavaPlugin {
 		}
 		saveLocalStorageNow();
 		if(!isReload) {
-			getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null);
+			getDistributionManager().updateNow(Bukkit.getConsoleSender(), getServerName(), null, false);
 		}
 
 		Bukkit.getScheduler().cancelTasks(this);
