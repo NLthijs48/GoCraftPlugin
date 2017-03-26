@@ -1,7 +1,9 @@
 package me.wiefferink.gocraft.information;
 
+import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.interactivemessenger.processing.Message;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -36,7 +38,11 @@ public class InformationRequest extends Feature {
 		List<InformationProvider> providers = plugin.getInformationManager().getInformationProviders();
 		providers.removeIf(provider -> !hasAccess(provider));
 		for(InformationProvider provider : providers) {
-			provider.showSync(this);
+			try {
+				provider.showSync(this);
+			} catch(Exception e) {
+				GoCraft.error("InformationProvider", provider.getClass().getSimpleName(), "failed showSync:", ExceptionUtils.getStackTrace(e));
+			}
 		}
 
 		// Add async messages
@@ -44,7 +50,11 @@ public class InformationRequest extends Feature {
 
 			// Get async messages
 			for(InformationProvider provider : providers) {
-				provider.showAsync(self);
+				try {
+					provider.showAsync(self);
+				} catch(Exception e) {
+					GoCraft.error("InformationProvider", provider.getClass().getSimpleName(), "failed showAsync:", ExceptionUtils.getStackTrace(e));
+				}
 			}
 
 			// Send the messages in sync
