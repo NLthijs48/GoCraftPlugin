@@ -23,17 +23,19 @@ public class VoteManager extends Feature {
 			return;
 		}
 
-		database((session) -> {
-			GCPlayer gcPlayer = Database.getCreatePlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
-			Vote vote = new Vote(
-					gcPlayer,
-					event.getVote().getServiceName(),
-					event.getVote().getAddress(),
-					event.getVote().getTimeStamp()
-			);
-			session.save(vote);
-			GoCraft.debug("Received vote:", vote);
-		});
+		async(() ->
+			database((session) -> {
+				GCPlayer gcPlayer = Database.getCreatePlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+				Vote vote = new Vote(
+						gcPlayer,
+						event.getVote().getServiceName(),
+						event.getVote().getAddress(),
+						event.getVote().getTimeStamp()
+				);
+				session.save(vote);
+				GoCraft.debug("Received vote:", vote);
+			})
+		);
 	}
 
 }
