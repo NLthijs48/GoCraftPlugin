@@ -13,7 +13,7 @@ public class SeenInfo extends InformationProvider {
 
 	@Override
 	public void showAsync(InformationRequest request) {
-		database((session -> {
+		database(session -> {
 			// Don't show status of staff members to normal players (vanish protection)
 			// TODO investigate if we can allow this when not inspecting
 			if(request.getAbout().hasPermission("gocraft.staff") && !request.getTo().hasPermission("gocraft.staff")) {
@@ -51,6 +51,6 @@ public class SeenInfo extends InformationProvider {
 					);
 				}
 			}
-		}));
+		});
 	}
 }

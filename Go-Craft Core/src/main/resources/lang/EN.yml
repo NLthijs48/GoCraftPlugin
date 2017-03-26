@@ -262,7 +262,7 @@ information-onlineHistory:
   - "%lang:clickable|history|%"
   - "    hover: %lang:action|View online history|%"
   - "    command: /seen %0%"
-information-balance: "[darkgreen][bold]►[reset] Balance: [gray]%0%"
+information-balance: "[darkgreen][bold]►[reset] Balance: [gray]%0%."
 information-ping: "[darkgreen][bold]►[reset] Ping: [gray]%0% milliseconds."
 information-inspect:
   - "[darkgreen][bold]►[reset] "
@@ -270,9 +270,15 @@ information-inspect:
   - "    hover: %lang:action|Inspect %0%|%"
   - "    command: /inspect %0%"
   - "."
-information-kills: "[darkgreen][bold]►[reset] Kills: [gray]%0%"
-information-deaths: "[darkgreen][bold]►[reset] Deaths: [gray]%0%"
-information-killDeath: "[darkgreen][bold]►[reset] Kills/deaths: [gray]%0%"
+information-kills: "[darkgreen][bold]►[reset] Kills: [gray]%0%."
+information-deaths: "[darkgreen][bold]►[reset] Deaths: [gray]%0%."
+information-killDeath: "[darkgreen][bold]►[reset] Kills/deaths: [gray]%0%."
+information-monthVotes:
+  - "[darkgreen][bold]►[reset] Votes this month: [gray]%0%, "
+  - "Vote Now!"
+  - "    hover: %lang:action|Vote now to receive rewards!|%"
+  - "    link: http://go-craft.com/vote"
+information-totalVotes: "[darkgreen][bold]►[reset] Votes in total: [gray]%0%."
 
 
 seen-noPermission: "You do not have permission to use this command." # Vague on purpose

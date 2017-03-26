@@ -11,6 +11,7 @@ import me.wiefferink.gocraft.information.providers.KillInfo;
 import me.wiefferink.gocraft.information.providers.LocationInfo;
 import me.wiefferink.gocraft.information.providers.PingInfo;
 import me.wiefferink.gocraft.information.providers.SeenInfo;
+import me.wiefferink.gocraft.information.providers.VoteInfo;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -95,6 +96,7 @@ public class InformationManager extends Feature {
 		addProvider(new IPInfo());
 		addProvider(new InspectInfo());
 		addProvider(new KillInfo());
+		addProvider(new VoteInfo());
 	}
 
 }

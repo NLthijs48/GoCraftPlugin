@@ -24,7 +24,7 @@ public class VoteManager extends Feature {
 		}
 
 		async(() ->
-			database((session) -> {
+			database(session -> {
 				GCPlayer gcPlayer = Database.getCreatePlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 				Vote vote = new Vote(
 						gcPlayer,
