@@ -275,7 +275,7 @@ information-deaths: "[darkgreen][bold]►[reset] Deaths: [gray]%0%."
 information-killDeath: "[darkgreen][bold]►[reset] Kills/deaths: [gray]%0%."
 information-monthVotes:
   - "[darkgreen][bold]►[reset] Votes this month: [gray]%0%, "
-  - "Vote Now!"
+  - "[b]vote Now![/b]"
   - "    hover: %lang:action|Vote now to receive rewards!|%"
   - "    link: http://go-craft.com/vote"
 information-totalVotes: "[darkgreen][bold]►[reset] Votes in total: [gray]%0%."
