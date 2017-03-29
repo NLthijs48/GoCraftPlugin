@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
 import me.wiefferink.gocraft.tools.DatabaseRun;
+import me.wiefferink.gocraft.tools.sentry.StackRepresentation;
 import me.wiefferink.gocraft.votes.Vote;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,6 +15,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import javax.persistence.NoResultException;
+import java.util.Calendar;
 import java.util.UUID;
 
 
@@ -34,7 +36,7 @@ public class Database {
 		try {
 			registry = new StandardServiceRegistryBuilder()
 					// Connection
-					.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+					.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect")
 					//.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
 					.applySetting("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider")
 					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database)
@@ -147,7 +149,15 @@ public class Database {
 	public static void run(DatabaseRun runnable) {
 		boolean hadSession = hasSession();
 		try {
+			Calendar start = Calendar.getInstance();
 			runnable.run(Database.getSession());
+			Calendar end = Calendar.getInstance();
+
+			// Check how long it took
+			long took = end.getTimeInMillis() - start.getTimeInMillis();
+			if(took > 500) {
+				System.err.println("Database session took "+took+" milliseconds! \n"+ StackRepresentation.getStackString());
+			}
 			if(!hadSession) {
 				Database.closeSession(true);
 			}
