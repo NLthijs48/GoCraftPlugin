@@ -309,6 +309,20 @@ timedfly-help: "/addtimedfly <player> <duration amount> <duration identifier>."
 timedfly-wrongDuration: "The specified duration is not recognized: %0%."
 timedfly-wrongPlayer: "The specified player cannot be found: %0%."
 
+votetop-noPermission: "You do not have permission to view the vote top 10."
+votetop-header:
+  - "[darkgreen]Vote"
+  - "    hover: %lang:action|Vote now to receive rewards!|%"
+  - "    link: http://go-craft.com/vote"
+  - "ranking of this month:"
+votetop-empty:
+  - "Nobody has voted yet this month! "
+  - "Vote now!"
+  - "    hover: %lang:action|Vote now to receive rewards!|%"
+  - "    link: http://go-craft.com/vote"
+votetop-item:
+  - "[darkgreen][bold]► %0%: %lang:player|%1%|%[bold]: [white]%2%"
+
 map-link:
   - "Check the map on "
   - "[bold]maps.go-craft.com[/bold]"
