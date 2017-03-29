@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -25,7 +25,7 @@ public class EnablePotionEffectsOnJoin extends Feature {
 			for (String effect : effects) {
 				PotionEffectType realEffect = PotionEffectType.getByName(effect);
 				if (realEffect == null) {
-					GoCraft.warn("Wrong potion effect in the config: "+effect);
+					Log.warn("Wrong potion effect in the config: "+effect);
 				} else {
 					event.getPlayer().addPotionEffect(new PotionEffect(realEffect, Integer.MAX_VALUE, getConfig().getInt(configLinePotions+"."+effect), true));
 				}

@@ -2,8 +2,15 @@ package me.wiefferink.gocraft.tools;
 
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.interactivemessenger.processing.Message;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,7 +23,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class Utils {
 
@@ -338,7 +351,7 @@ public class Utils {
 					Location attempt = attemptBase.clone();
 					attempt.setY(i);
 					if(Utils.isSafe(attempt)) {
-						//GoCraft.debug("   Utils.teleportRandomly: teleport "+player.getName()+", world: "+world.getName()+", radius: "+radius+", to: "+attempt.toString()+", attempt "+(100-current));
+						//Log.debug("   Utils.teleportRandomly: teleport "+player.getName()+", world: "+world.getName()+", radius: "+radius+", to: "+attempt.toString()+", attempt "+(100-current));
 						player.teleport(attempt);
 						callback.execute(true);
 						this.cancel();
@@ -500,10 +513,10 @@ public class Utils {
 		// Either found safe location or ran out of attempts
 		if(isSafe(safeLocation)) {
 			player.teleport(safeLocation);
-			//GoCraft.debug("Found location: "+safeLocation.toString()+" Tries: "+(checked-1));
+			//Log.debug("Found location: "+safeLocation.toString()+" Tries: "+(checked-1));
 			return true;
 		} else {
-			GoCraft.debug("No location found, checked "+(checked-1)+" spots of max "+maximumAttempts);
+			Log.debug("No location found, checked "+(checked-1)+" spots of max "+maximumAttempts);
 			return false;
 		}
 	}

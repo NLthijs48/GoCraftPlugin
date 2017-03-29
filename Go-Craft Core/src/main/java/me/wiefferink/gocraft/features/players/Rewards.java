@@ -1,9 +1,10 @@
 package me.wiefferink.gocraft.features.players;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandException;
@@ -95,7 +96,7 @@ public class Rewards extends Feature {
 						stacktrace = ExceptionUtils.getStackTrace(e);
 					}
 					if(!success) {
-						GoCraft.warn("Failed to run command of reward", key, "for player", player.getName()+":", command, stacktrace);
+						Log.warn("Failed to run command of reward", key, "for player", player.getName()+":", command, stacktrace);
 					}
 				}
 			}
@@ -117,7 +118,7 @@ public class Rewards extends Feature {
 			String timeString = time.format(Calendar.getInstance().getTimeInMillis());
 			plugin.getLocalStorage().set("players."+player.getUniqueId().toString()+".rewards."+key, timeString);
 			plugin.saveLocalStorage();
-			GoCraft.info("[Rewards]", player.getName(), "received reward", key);
+			Log.info("[Rewards]", player.getName(), "received reward", key);
 		}
 	}
 

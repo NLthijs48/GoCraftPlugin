@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
@@ -205,7 +205,7 @@ public class SpawnPoints extends Feature {
 					String key = spawnPointList.get(itemNumber);
 					Location location = Utils.configToLocation(spawnPoints.getConfigurationSection(key+".location"));
 					if(location == null) {
-						GoCraft.warn("Spawn point '"+key+"' has no proper location");
+						Log.warn("Spawn point '"+key+"' has no proper location");
 						return Message.fromKey("spawnpoints-listImproper").replacements(key);
 					}
 					return Message.fromKey("spawnpoints-listItem").replacements(key, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockY());

@@ -3,7 +3,7 @@ package me.wiefferink.gocraft.features.players;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -68,7 +68,7 @@ public class EnableRegionPotionEffects extends Feature {
 							for (String effect : effects.getKeys(false)) {
 								PotionEffectType realEffect = PotionEffectType.getByName(effect);
 								if (realEffect == null) {
-									GoCraft.warn("Wrong potion effect in the config: "+effect);
+									Log.warn("Wrong potion effect in the config: "+effect);
 								} else {
 									player.addPotionEffect(new PotionEffect(realEffect, 59, effects.getInt(effect)), true);
 								}

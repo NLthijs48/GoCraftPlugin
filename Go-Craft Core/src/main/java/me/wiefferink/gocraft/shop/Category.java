@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.shop;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
@@ -96,7 +96,7 @@ public class Category implements View, Button {
 			if (itemBuilder != null) {
 				inventory.setItem(key, itemBuilder.getItemStack());
 			} else {
-				GoCraft.warn("No button item for item "+key+" in main shop GUI");
+				Log.warn("No button item for item "+key+" in main shop GUI");
 			}
 		}
 		shop.addMenu(inventory, session);

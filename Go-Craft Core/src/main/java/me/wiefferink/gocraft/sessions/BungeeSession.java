@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.sessions;
 
-import me.wiefferink.gocraft.GoCraftBungee;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.tools.storage.Database;
 
 import javax.persistence.Column;
@@ -128,7 +128,7 @@ public class BungeeSession {
 		Database.run(session -> {
 			int fixedBungeeSessions = session.createQuery("UPDATE BungeeSession SET leftBungee = current_timestamp() WHERE leftBungee IS NULL").executeUpdate();
 			if(fixedBungeeSessions > 0) {
-				GoCraftBungee.warn("Closed", fixedBungeeSessions, " BungeeSession entries (crash recovery)");
+				Log.warn("Closed", fixedBungeeSessions, " BungeeSession entries (crash recovery)");
 			}
 		});
 	}

@@ -29,7 +29,7 @@ public class OldHunger extends Feature {
 		}
 
 		Player player = (Player)event.getEntity();
-		//GoCraft.debug("Health regen of", player.getName(), "amount:", event.getAmount(), "cause:", event.getRegainReason());
+		//Log.debug("Health regen of", player.getName(), "amount:", event.getAmount(), "cause:", event.getRegainReason());
 
 		if(event.getRegainReason() != EntityRegainHealthEvent.RegainReason.SATIATED) {
 			return;

@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.shop.signs.ShopSign;
 import me.wiefferink.gocraft.shop.signs.Sign;
@@ -52,14 +53,14 @@ public class SignManager implements Listener {
 				if ("kit".equals(type)) {
 					Kit kit = plugin.getShop().getKits().get(details.getString("kit"));
 					if (kit == null) {
-						GoCraft.warn("Kit of sign at "+details.getString("location.x")+", "+details.getString("location.y")+", "+details.getString("location.z")+" does not exist: "+details.getString("kit"));
+						Log.warn("Kit of sign at "+details.getString("location.x")+", "+details.getString("location.y")+", "+details.getString("location.z")+" does not exist: "+details.getString("kit"));
 						continue;
 					}
 					sign = new KitSign(details, signKey, kit);
 				} else if ("shop".equals(type)) {
 					sign = new ShopSign(details, signKey);
 				} else {
-					GoCraft.warn("Incorrect sign type for key "+signKey+": "+type);
+					Log.warn("Incorrect sign type for key "+signKey+": "+type);
 					continue;
 				}
 				signs.put(Utils.locationToString(sign.getLocation()), sign);

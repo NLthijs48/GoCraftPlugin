@@ -6,6 +6,7 @@ import me.confuser.banmanager.data.PlayerBanRecord;
 import me.confuser.banmanager.data.PlayerData;
 import me.confuser.banmanager.internal.ormlite.dao.CloseableIterator;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -52,11 +53,11 @@ public class HackBanCommand extends Feature {
 
 		// Execute commands
 		String target = args[0];
-		GoCraft.info("[HackBan]", sender.getName(), "is executing a /hackban on '"+target+"':");
+		Log.info("[HackBan]", sender.getName(), "is executing a /hackban on '"+target+"':");
 		Player player = Bukkit.getPlayer(target);
 		if(player != null) {
 			target = player.getName();
-			GoCraft.info("  IP address of '"+target+"' is "+player.getAddress().getHostName());
+			Log.info("  IP address of '"+target+"' is "+player.getAddress().getHostName());
 		}
 
 		boolean success = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "pvp stats "+target);
@@ -91,11 +92,11 @@ public class HackBanCommand extends Feature {
 					CloseableIterator<PlayerBanRecord> records = BmAPI.getBanRecords(playerData);
 					while(records.hasNext()) {
 						PlayerBanRecord ban = records.next();
-						GoCraft.debug("  banrecord: createdReason: "+ban.getCreatedReason()+", createdTime: "+ban.getCreated()+", reason: "+ban.getReason()+", expired: "+ban.getExpired()+", id: "+ban.getId()+", pastCreatedTime"+ban.getPastCreated());
+						Log.debug("  banrecord: createdReason: "+ban.getCreatedReason()+", createdTime: "+ban.getCreated()+", reason: "+ban.getReason()+", expired: "+ban.getExpired()+", id: "+ban.getId()+", pastCreatedTime"+ban.getPastCreated());
 						if((ban.getExpired()-ban.getPastCreated()) > 86400 // Longer than 1 day
 								&& ban.getPastCreated() > 1446336000) { // Newer than 1-11-2015 0:00
 							timesBanned++;
-							GoCraft.debug("    it counted");
+							Log.debug("    it counted");
 						}
 					}
 					double multiplier = Math.pow(2, timesBanned); // Amount of times the player is banned for 7 days
@@ -105,7 +106,7 @@ public class HackBanCommand extends Feature {
 					if(timesBanned != 0) {
 						newReason += " [ban #"+(timesBanned+1)+"]";
 					}
-					GoCraft.debug("timesBanned="+timesBanned+", multiplier="+multiplier+", toBan="+toBan+", expires="+expires);
+					Log.debug("timesBanned="+timesBanned+", multiplier="+multiplier+", toBan="+toBan+", expires="+expires);
 
 					// Ban by name and ip
 					PlayerData actorData;
@@ -117,7 +118,7 @@ public class HackBanCommand extends Feature {
 					BmAPI.ban(playerData, actorData, newReason, expires, true);
 					BmAPI.ban(playerData.getIp(), actorData, newReason, expires, true);
 				} catch(SQLException e) {
-					GoCraft.warn("Something went wrong while executing hackban:", ExceptionUtils.getStackTrace(e));
+					Log.warn("Something went wrong while executing hackban:", ExceptionUtils.getStackTrace(e));
 					success = false;
 				}
 

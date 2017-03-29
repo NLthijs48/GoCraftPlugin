@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.GoCraftBungee;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.tools.storage.Database;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -29,7 +30,7 @@ public class SessionTracker implements Listener {
 			ensureConsistentEntries();
 			plugin.getProxy().getPluginManager().registerListener(plugin, this);
 		} else {
-			GoCraftBungee.error("SessionTracker: Database is not ready yet, did not start");
+			Log.error("SessionTracker: Database is not ready yet, did not start");
 		}
 	}
 
@@ -49,7 +50,7 @@ public class SessionTracker implements Listener {
 			return;
 		}
 
-		GoCraftBungee.info("ServerConnectEvent of", event.getPlayer().getName(), "from", (event.getPlayer().getServer() == null ? "nothing" : event.getPlayer().getServer().getInfo().getName()), "to", event.getTarget().getName());
+		Log.info("ServerConnectEvent of", event.getPlayer().getName(), "from", (event.getPlayer().getServer() == null ? "nothing" : event.getPlayer().getServer().getInfo().getName()), "to", event.getTarget().getName());
 		ProxiedPlayer player = event.getPlayer();
 		ServerInfo server = event.getTarget();
 		plugin.getProxy().getScheduler().runAsync(plugin, () ->
@@ -88,7 +89,7 @@ public class SessionTracker implements Listener {
 
 	@EventHandler()
 	public void onPlayerLogout(PlayerDisconnectEvent event) {
-		GoCraftBungee.info("PlayerDisconnectEvent of", event.getPlayer().getName(), "ip:", event.getPlayer().getAddress().getHostString());
+		Log.info("PlayerDisconnectEvent of", event.getPlayer().getName(), "ip:", event.getPlayer().getAddress().getHostString());
 
 		UUID player = event.getPlayer().getUniqueId();
 		plugin.getProxy().getScheduler().runAsync(plugin, () ->

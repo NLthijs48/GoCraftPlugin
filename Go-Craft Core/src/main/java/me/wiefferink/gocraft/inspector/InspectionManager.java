@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.inspector;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
@@ -188,7 +189,7 @@ public class InspectionManager extends Feature {
 		// Restore stored inspection state
 		final Inspection inspection = restoreInspection(player);
 		if (inspection != null) {
-			GoCraft.debug("Inspect: starting restored inspection on join for", player.getName());
+			Log.debug("Inspect: starting restored inspection on join for", player.getName());
 			inspection.startInspection(true);
 			if (!player.hasPermission("gocraft.staff")) {
 				inspection.endInspection();
@@ -214,7 +215,7 @@ public class InspectionManager extends Feature {
 				&& !player.isDead()) { // Prevent switching to inspect when killed by combat logging
 			final Inspection finalInspection = setupInspection(player);
 			final boolean inPVP = Utils.isInPvpArea(player);
-			GoCraft.debug("Inspect: starting join in inspect inspection for", player.getName());
+			Log.debug("Inspect: starting join in inspect inspection for", player.getName());
 			finalInspection.startInspection();
 			plugin.increaseStatistic("command.inspect.restoredAtJoin");
 			new BukkitRunnable() {
@@ -239,7 +240,7 @@ public class InspectionManager extends Feature {
 	 * @return The Inspection object created from the stored copy if there is one, otherwise null
 	 */
 	public Inspection restoreInspection(Player player) {
-		GoCraft.debug("Inspect: trying to restore inspection from disk for", player.getName());
+		Log.debug("Inspect: trying to restore inspection from disk for", player.getName());
 		if (!getInspectorStorage().contains(player.getUniqueId().toString())) {
 			return null;
 		}
@@ -301,12 +302,12 @@ public class InspectionManager extends Feature {
 				PotionEffectType effect = PotionEffectType.getByName(effectString);
 				String optionsString = section.getString(effectString);
 				if (optionsString == null || effect == null) {
-					GoCraft.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" no effect found for "+effectString);
+					Log.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" no effect found for "+effectString);
 					continue;
 				}
 				String[] options = optionsString.split(":");
 				if (options.length < 4) {
-					GoCraft.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" not enough options for "+effectString+", "+optionsString);
+					Log.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" not enough options for "+effectString+", "+optionsString);
 					continue;
 				}
 				int duration, amplifier;
@@ -315,12 +316,12 @@ public class InspectionManager extends Feature {
 					duration = Integer.parseInt(options[0]);
 					amplifier = Integer.parseInt(options[1]);
 				} catch (NumberFormatException e) {
-					GoCraft.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" options are not numbers "+effectString+", "+optionsString);
+					Log.warn("InspectionManager.restoreInspection: potions of "+player.getName()+" options are not numbers "+effectString+", "+optionsString);
 					continue;
 				}
 				ambient = "true".equalsIgnoreCase(options[2]);
 				particles = "true".equalsIgnoreCase(options[3]);
-				//GoCraft.debug("duration=" + duration + ", amplifier=" + amplifier + ", ambient=" + ambient + ", particles=" + particles);
+				//Log.debug("duration=" + duration + ", amplifier=" + amplifier + ", ambient=" + ambient + ", particles=" + particles);
 				PotionEffect finalEffect = new PotionEffect(effect, duration, amplifier, ambient, particles);
 				effects.add(finalEffect);
 			}
@@ -331,7 +332,7 @@ public class InspectionManager extends Feature {
 		result.isFlying = getInspectorStorage().getBoolean(baseKey + "isFlying");
 		// Restore location
 		result.location = Utils.configToLocation(getInspectorStorage().getConfigurationSection(baseKey + "location"));
-		GoCraft.debug("Inspect: found stored inspection on disk for", player.getName(), "gamemode:", gamemode.toString());
+		Log.debug("Inspect: found stored inspection on disk for", player.getName(), "gamemode:", gamemode.toString());
 		return result;
 	}
 
@@ -383,7 +384,7 @@ public class InspectionManager extends Feature {
 			) {
 				inspectorStorage = UTF8Config.loadConfiguration(reader);
 			} catch (IOException e) {
-				GoCraft.warn("Loading the inspectory inventories failed: "+inspectorsFile.getAbsolutePath());
+				Log.warn("Loading the inspectory inventories failed: "+inspectorsFile.getAbsolutePath());
 			}
 		}
 		if (inspectorStorage == null) {
@@ -399,7 +400,7 @@ public class InspectionManager extends Feature {
 		try {
 			inspectorStorage.save(inspectorsFile);
 		} catch (IOException e) {
-			GoCraft.warn("Could not save inspector storage file: "+inspectorsFile.toString());
+			Log.warn("Could not save inspector storage file: "+inspectorsFile.toString());
 			return false;
 		}
 		return true;
@@ -474,7 +475,7 @@ public class InspectionManager extends Feature {
 		// Start inspection
 		inspection = plugin.getInspectionManager().setupInspection(inspector, newTarget);
 		inspection.startInspection();
-		GoCraft.debug("Inspect: starting inspection by command for", inspector.getName());
+		Log.debug("Inspect: starting inspection by command for", inspector.getName());
 		if(newTarget != null) {
 			plugin.message(inspector, "inspect-started", newTarget.getName());
 			plugin.increaseStatistic("command.inspect.withTarget");

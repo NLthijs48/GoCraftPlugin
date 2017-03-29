@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.features.management;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -102,14 +102,14 @@ public class SyncCommandsServer extends Feature {
 			out.println("init "+plugin.getBungeeId()+" "+getConfig().getString("commandSyncVerification")+" "+plugin.getDescription().getVersion());
 			String result = in.readLine();
 			if(result.startsWith("no")) {
-				GoCraft.error("SyncCommands: error while connecting:", result.substring(result.indexOf(" ")));
+				Log.error("SyncCommands: error while connecting:", result.substring(result.indexOf(" ")));
 				shouldRun = false;
 				disconnect();
 				return;
 			}
 
 			connected = true;
-			GoCraft.info("SyncCommands: Connected to server (localhost:"+port+")");
+			Log.info("SyncCommands: Connected to server (localhost:"+port+")");
 
 			// Start input/output
 			new Thread(new CommandReader()).start();
@@ -143,7 +143,7 @@ public class SyncCommandsServer extends Feature {
 		connected = false;
 
 		if(message != null && shouldRun) {
-			GoCraft.warn("SyncCommands: "+message, "(scheduling reconnect)");
+			Log.warn("SyncCommands: "+message, "(scheduling reconnect)");
 		}
 
 		if(shouldRun && reconnectTask == null) {
@@ -177,7 +177,7 @@ public class SyncCommandsServer extends Feature {
 					break; // Not send successfully, try again later
 				}
 				it.remove(); // Successful send, remove
-				GoCraft.info("SyncCommands: command send:", command);
+				Log.info("SyncCommands: command send:", command);
 			}
 		}
 	}
@@ -200,7 +200,7 @@ public class SyncCommandsServer extends Feature {
 					String input = in.readLine();
 					String[] split = input.split(" ");
 					if(split.length == 0) {
-						GoCraft.warn("SyncCommands: received empty input from Bungee");
+						Log.warn("SyncCommands: received empty input from Bungee");
 						continue;
 					}
 
@@ -217,9 +217,9 @@ public class SyncCommandsServer extends Feature {
 							exception = e;
 						}
 						if(result) {
-							GoCraft.info("SyncCommands: executed command:", command);
+							Log.info("SyncCommands: executed command:", command);
 						} else {
-							GoCraft.warn("SyncCommands: executing command failed:", command+"\n", exception != null ? ExceptionUtils.getStackTrace(exception) : "result is false");
+							Log.warn("SyncCommands: executing command failed:", command+"\n", exception != null ? ExceptionUtils.getStackTrace(exception) : "result is false");
 						}
 					}
 				} catch(IOException e) {

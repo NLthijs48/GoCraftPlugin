@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft.tools.storage;
 
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.players.timedfly.TimedFly;
 import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
@@ -7,6 +8,7 @@ import me.wiefferink.gocraft.sessions.ServerSession;
 import me.wiefferink.gocraft.tools.DatabaseRun;
 import me.wiefferink.gocraft.tools.sentry.StackRepresentation;
 import me.wiefferink.gocraft.votes.Vote;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -65,9 +67,7 @@ public class Database {
 					.buildSessionFactory();
 		} catch(Exception e) {
 			shutdown();
-			// TODO do logging through proper logging classes
-			System.out.println("Exception while setting up Hibernate SessionFactory:");
-			e.printStackTrace();
+			Log.error("Exception while setting up Hibernate SessionFactory:", ExceptionUtils.getStackTrace(e));
 		}
 		return isReady();
 	}
@@ -80,14 +80,14 @@ public class Database {
 			try {
 				sessionFactory.close();
 			} catch(Exception e) {
-				e.printStackTrace();
+				Log.error("[Database] SessionFactory shutdown failed:", ExceptionUtils.getStackTrace(e));
 			}
 		}
 		if(registry != null) {
 			try {
 				StandardServiceRegistryBuilder.destroy(registry);
 			} catch(Exception e) {
-				e.printStackTrace();
+				Log.error("[Database] Destroying registry:", ExceptionUtils.getStackTrace(e));
 			}
 		}
 	}
@@ -156,7 +156,7 @@ public class Database {
 			// Check how long it took
 			long took = end.getTimeInMillis() - start.getTimeInMillis();
 			if(took > 500) {
-				System.err.println("Database session took "+took+" milliseconds! \n"+ StackRepresentation.getStackString());
+				Log.warn("Database session took", took, "milliseconds!\n"+ StackRepresentation.getStackString());
 			}
 			if(!hadSession) {
 				Database.closeSession(true);

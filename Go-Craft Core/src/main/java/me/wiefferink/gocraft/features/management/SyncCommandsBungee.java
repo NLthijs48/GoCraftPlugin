@@ -1,9 +1,11 @@
 package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.GoCraftBungee;
+import me.wiefferink.gocraft.Log;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Command;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.io.BufferedReader;
@@ -13,7 +15,12 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class SyncCommandsBungee {
 
@@ -33,7 +40,7 @@ public class SyncCommandsBungee {
 				server = new ServerSocket(9191, 50, InetAddress.getByName("localhost"));
 				plugin.getProxy().getScheduler().runAsync(plugin, new ClientListener());
 			} catch(IOException e) {
-				GoCraftBungee.error("SyncCommands: failed to setup server:", ExceptionUtils.getStackTrace(e));
+				Log.error("SyncCommands: failed to setup server:", ExceptionUtils.getStackTrace(e));
 			}
 		});
 		plugin.getProxy().getPluginManager().registerCommand(plugin, new SyncServersCommand());
@@ -48,7 +55,7 @@ public class SyncCommandsBungee {
 			try {
 				server.close();
 			} catch(IOException e) {
-				GoCraftBungee.error("SyncCommands: error while stopping the server:", ExceptionUtils.getStackTrace(e));
+				Log.error("SyncCommands: error while stopping the server:", ExceptionUtils.getStackTrace(e));
 			}
 		}
 	}
@@ -89,11 +96,11 @@ public class SyncCommandsBungee {
 			}
 
 			// Sync to all servers
-			String runCommand = "console "+GoCraftBungee.join(commandParts, " ");
+			String runCommand = "console "+ StringUtils.join(commandParts, " ");
 			for(ServerInfo server : plugin.getProxy().getServers().values()) {
 				runCommand(server.getName(), runCommand);
 			}
-			GoCraftBungee.info("SyncCommands["+sender.getName()+"]: executed syncServers command:", runCommand);
+			Log.info("SyncCommands["+sender.getName()+"]: executed syncServers command:", runCommand);
 			sender.sendMessage("[GoCraftBungee] Command executed on "+plugin.getProxy().getServers().size()+" servers.");
 		}
 	}
@@ -109,7 +116,7 @@ public class SyncCommandsBungee {
 					plugin.getProxy().getScheduler().runAsync(plugin, new ClientHandler(server.accept()));
 				} catch(IOException e) {
 					if(shouldRun) {
-						GoCraftBungee.error("SyncCommands: exception while listening for new clients: \n"+ExceptionUtils.getStackTrace(e));
+						Log.error("SyncCommands: exception while listening for new clients: \n"+ExceptionUtils.getStackTrace(e));
 					}
 				}
 			}
@@ -141,36 +148,36 @@ public class SyncCommandsBungee {
 				String address = client.getInetAddress().getHostName()+":"+client.getPort();
 				String[] init = in.readLine().split(" ");
 				if(init.length < 4 || !init[0].equals("init")) {
-					GoCraftBungee.error("SyncCommands: connection from", address, "did not send init line");
+					Log.error("SyncCommands: connection from", address, "did not send init line");
 					disconnect();
 					return;
 				}
 				if(servers.containsKey(init[1])) {
-					GoCraftBungee.error("SyncCommands:", address, "provided name '"+name+"' which is already connected");
+					Log.error("SyncCommands:", address, "provided name '"+name+"' which is already connected");
 					out.println("no Provided name '"+init[1]+"' is already connected");
 					disconnect();
 					return;
 				}
 				name = init[1];
 				if(!init[2].equals(password)) {
-					GoCraftBungee.error("SyncCommands:", name, "provided an invalid password");
+					Log.error("SyncCommands:", name, "provided an invalid password");
 					out.println("no Password is incorrect");
 					disconnect();
 					return;
 				}
 				String version = plugin.getDescription().getVersion();
 				if(!init[3].equals(version)) {
-					GoCraftBungee.error("SyncCommands:", name, "is running version", init[3], "but we are running version", version);
+					Log.error("SyncCommands:", name, "is running version", init[3], "but we are running version", version);
 					out.println("no Version incorrect, running version "+version);
 					disconnect();
 					return;
 				}
 				out.println("connected");
 				servers.put(name, this);
-				GoCraftBungee.info("SyncCommands["+name+"]: connected");
+				Log.info("SyncCommands["+name+"]: connected");
 				plugin.getProxy().getScheduler().runAsync(plugin, this::sendCommands);
 			} catch(IOException e) {
-				GoCraftBungee.error("SyncCommands: exception while setting up listener for new client:\n", ExceptionUtils.getStackTrace(e));
+				Log.error("SyncCommands: exception while setting up listener for new client:\n", ExceptionUtils.getStackTrace(e));
 				return;
 			}
 
@@ -190,7 +197,7 @@ public class SyncCommandsBungee {
 					}
 					String[] split = input.split(" ");
 					if(split.length <= 1) {
-						GoCraftBungee.warn("SyncCommands["+name+"]: received empty input from server:", input);
+						Log.warn("SyncCommands["+name+"]: received empty input from server:", input);
 						continue;
 					}
 
@@ -203,7 +210,7 @@ public class SyncCommandsBungee {
 						for(ServerInfo server : plugin.getProxy().getServers().values()) {
 							runCommand(server.getName(), runCommand);
 						}
-						GoCraftBungee.info("SyncCommands["+name+"]: executed syncServers command:", runCommand);
+						Log.info("SyncCommands["+name+"]: executed syncServers command:", runCommand);
 					}
 
 					// Sync to bungee console
@@ -212,18 +219,18 @@ public class SyncCommandsBungee {
 						try {
 							result = plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), command);
 						} catch(Exception e) {
-							GoCraftBungee.warn("SyncCommands["+name+"]:executing syncBungee command failed:", command+"\n", ExceptionUtils.getStackTrace(e));
+							Log.warn("SyncCommands["+name+"]:executing syncBungee command failed:", command+"\n", ExceptionUtils.getStackTrace(e));
 						}
 						if(!result) {
-							GoCraftBungee.error("SyncCommands["+name+"]: executing syncBungee command was not successful:", command);
+							Log.error("SyncCommands["+name+"]: executing syncBungee command was not successful:", command);
 						} else {
-							GoCraftBungee.info("SyncCommands["+name+"]: executed syncBungee command:", command);
+							Log.info("SyncCommands["+name+"]: executed syncBungee command:", command);
 						}
 					}
 
 				} catch(IOException e) {
 					if(shouldRun) {
-						GoCraftBungee.error("SyncCommands["+name+"]: receiving commands failed:", ExceptionUtils.getStackTrace(e));
+						Log.error("SyncCommands["+name+"]: receiving commands failed:", ExceptionUtils.getStackTrace(e));
 						disconnect();
 					}
 				}
@@ -242,7 +249,7 @@ public class SyncCommandsBungee {
 			}
 			clientRun = false;
 
-			GoCraftBungee.info("SyncCommands["+name+"]: disconnected");
+			Log.info("SyncCommands["+name+"]: disconnected");
 		}
 
 
@@ -271,7 +278,7 @@ public class SyncCommandsBungee {
 						break; // Not send successfully, try again later
 					}
 					it.remove(); // Successful send, remove
-					GoCraftBungee.info("SyncCommands["+name+"]: command send:", command);
+					Log.info("SyncCommands["+name+"]: command send:", command);
 				}
 			}
 		}

@@ -8,10 +8,12 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.VoidCommandSender;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayClientUseEntity;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -172,8 +174,7 @@ public class AuraCheck extends Feature {
 			try {
 				ProtocolLibrary.getProtocolManager().sendServerPacket((Player) sender, packet);
 			} catch (InvocationTargetException e) {
-				GoCraft.warn("Something went wrong with the chat packet to choose a target:");
-				e.printStackTrace();
+				Log.warn("Something went wrong with the chat packet to choose a target:", ExceptionUtils.getStackTrace(e));
 			}
 			return;
 		}
@@ -204,7 +205,7 @@ public class AuraCheck extends Feature {
 			}
 			result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck] " + color + ChatColor.BOLD + finalPlayer.getName() + " killed " + result.killed + " out of " + result.spawned + " players.");
 			result.invoker.sendMessage(ChatColor.BLUE + "[AuraCheck]" + color + ChatColor.BOLD + " ► " + ChatColor.RESET + color + status);
-			GoCraft.info(finalPlayer.getName()+" killed "+result.killed+" out of "+result.spawned+" (checked by "+sender.getName()+")");
+			Log.info(finalPlayer.getName()+" killed "+result.killed+" out of "+result.spawned+" (checked by "+sender.getName()+")");
 		});
 		plugin.increaseStatistic("command.auracheck.used");
 	}
@@ -241,15 +242,14 @@ public class AuraCheck extends Feature {
 								if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.staffChatWarning")) {
 									Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " killed " + result.killed + "/" + result.spawned + ", further inspection required.");
 								} else if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.consoleLogging")) {
-									GoCraft.info("[AuraCheck] staffchat warning for "+result.checked.getName()+": "+result.killed+"/"+result.spawned+".");
+									Log.info("[AuraCheck] staffchat warning for "+result.checked.getName()+": "+result.killed+"/"+result.spawned+".");
 								}
 							}
 						});
 					}
 				} catch (Exception e) {
 					this.cancel();
-					GoCraft.warn("Something went wrong with automatic aura check:");
-					e.printStackTrace();
+					Log.error("Something went wrong with automatic aura check:", ExceptionUtils.getStackTrace(e));
 				}
 			}
 		}.runTaskTimer(GoCraft.getInstance(), 1, GoCraft.getInstance().getConfig().getInt("auracheck.playerIntervalTime"));

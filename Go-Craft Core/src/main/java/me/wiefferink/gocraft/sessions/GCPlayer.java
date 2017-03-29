@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.sessions;
 
-import me.wiefferink.gocraft.GoCraftBungee;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.tools.storage.Database;
 
 import javax.persistence.Column;
@@ -125,7 +125,7 @@ public class GCPlayer {
 			}
 
 			if(players.size() > 0) {
-				GoCraftBungee.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
+				Log.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
 			}
 		}));
 	}

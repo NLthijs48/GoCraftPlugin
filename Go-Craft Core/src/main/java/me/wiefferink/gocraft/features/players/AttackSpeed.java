@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.features.players;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
@@ -38,7 +38,7 @@ public class AttackSpeed extends Feature {
 					Attribute parsed = Attribute.valueOf(attribute.toUpperCase());
 					player.getAttribute(parsed).setBaseValue(attributesSection.getDouble(attribute));
 				} catch(IllegalArgumentException e) {
-					GoCraft.warn("Incorrect player attribute: "+attribute);
+					Log.warn("Incorrect player attribute: "+attribute);
 				}
 			}
 		}

@@ -1,11 +1,12 @@
 package me.wiefferink.gocraft.features.management;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -103,7 +104,7 @@ public class DistributionManager extends Feature {
 			if (serverFile.isDirectory()) {
 				serverPluginFolders.put(serverId, serverFile);
 			} else {
-				GoCraft.warn("Incorrect serverPluginFolder file: "+serverFile.getAbsolutePath()+"serverId="+serverId);
+				Log.warn("Incorrect serverPluginFolder file: "+serverFile.getAbsolutePath()+"serverId="+serverId);
 			}
 		}
 	}
@@ -121,8 +122,8 @@ public class DistributionManager extends Feature {
 				Set<String> serverGroupContent = resolveServers(serverGroupString, warnings);
 				serverGroups.put(serverGroup, serverGroupContent);
 				for (String warning : warnings) {
-					GoCraft.warn("Warnings for serverGroup "+serverGroup+":");
-					GoCraft.warn("  "+warning);
+					Log.warn("Warnings for serverGroup "+serverGroup+":");
+					Log.warn("  "+warning);
 				}
 			}
 		}
@@ -163,7 +164,7 @@ public class DistributionManager extends Feature {
 			}
 			updateLogger = new BufferedWriter(new FileWriter(updates, true));
 		} catch (IOException e) {
-			GoCraft.warn("Could not create writer to update.log:");
+			Log.warn("Could not create writer to update.log:");
 			e.printStackTrace();
 		}
 		updateMessage(updateLogger, executor, "update-started");
@@ -347,8 +348,7 @@ public class DistributionManager extends Feature {
 				updateLogger.close();
 			}
 		} catch (IOException e) {
-			GoCraft.warn("Could not correctly close the updateLogger: "+e.getMessage());
-			e.printStackTrace();
+			Log.warn("Could not correctly close the updateLogger:", ExceptionUtils.getStackTrace(e));
 		}
 	}
 

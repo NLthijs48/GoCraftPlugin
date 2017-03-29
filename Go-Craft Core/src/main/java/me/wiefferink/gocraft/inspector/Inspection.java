@@ -1,9 +1,21 @@
 package me.wiefferink.gocraft.inspector;
 
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.inspector.actions.*;
+import me.wiefferink.gocraft.Log;
+import me.wiefferink.gocraft.inspector.actions.BanInfoAction;
+import me.wiefferink.gocraft.inspector.actions.ChestAction;
+import me.wiefferink.gocraft.inspector.actions.CompassAction;
+import me.wiefferink.gocraft.inspector.actions.EnderchestAction;
+import me.wiefferink.gocraft.inspector.actions.ExitAction;
+import me.wiefferink.gocraft.inspector.actions.InventoryAction;
+import me.wiefferink.gocraft.inspector.actions.KillAuraCheckAction;
+import me.wiefferink.gocraft.inspector.actions.NCPAction;
 import me.wiefferink.gocraft.tools.Utils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Statistic;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +29,11 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Inspection {
 
@@ -95,7 +111,7 @@ public class Inspection {
 	 * @param restore true if this inspection is restored from disk, otherwise false
 	 */
 	public void startInspection(boolean restore) {
-		GoCraft.debug("Inspect:", inspector.getName(), " starts inspecting", inspected == null ? "nobody" : inspected.getName(), "restore:", restore, ", gamemode:", inspector.getGameMode().toString());
+		Log.debug("Inspect:", inspector.getName(), " starts inspecting", inspected == null ? "nobody" : inspected.getName(), "restore:", restore, ", gamemode:", inspector.getGameMode().toString());
 		plugin.getInspectionManager().addInspection(this);
 		if (!restore && !saveInspectorState()) {
 			// Ending inspection, because this is before most things apply we dont have to restore much
@@ -174,7 +190,7 @@ public class Inspection {
 				updateAll(true);
 			}
 		}.runTask(plugin);
-		GoCraft.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", newInspected==null ? "nobody" : newInspected.getName(), "gamemode:", gamemode);
+		Log.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", newInspected==null ? "nobody" : newInspected.getName(), "gamemode:", gamemode);
 	}
 
 	/**
@@ -498,7 +514,7 @@ public class Inspection {
 	 * Store the inspectors state to memory and disk
 	 */
 	public boolean saveInspectorState() {
-		GoCraft.debug("Inspect: save inventory of", inspector.getName(), "while inspecting", inspected == null ? "nobody" : inspected.getName(), "gamemode:", inspector.getGameMode());
+		Log.debug("Inspect: save inventory of", inspector.getName(), "while inspecting", inspected == null ? "nobody" : inspected.getName(), "gamemode:", inspector.getGameMode());
 		String baseKey = inspector.getUniqueId().toString() + ".";
 		YamlConfiguration storage = plugin.getInspectionManager().getInspectorStorage();
 
@@ -559,7 +575,7 @@ public class Inspection {
 	 * Restore saved inspector state from the items in memory
 	 */
 	public void restoreInspectorState() {
-		GoCraft.debug("Inspect: restore inspection from memory for", inspector.getName(), "when ending inspect of", inspected == null ? "nobody" : inspected.getName(), "restoring gamemode", gamemode.toString());
+		Log.debug("Inspect: restore inspection from memory for", inspector.getName(), "when ending inspect of", inspected == null ? "nobody" : inspected.getName(), "restoring gamemode", gamemode.toString());
 		// Restore inventory
 		for(int i = 0; i < inspector.getInventory().getSize(); i++) {
 			inspector.getInventory().setItem(i, null);

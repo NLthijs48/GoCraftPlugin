@@ -16,12 +16,12 @@ public class InventoryListener implements Listener {
 
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
-		//GoCraft.debug("clicktype=" + event.getClick() + ", rawSlot=" + event.getRawSlot() + ", slot=" + event.getSlot() + ", action=" + event.getAction() + ", clicker=" + event.getWhoClicked().getName());
+		//Log.debug("clicktype=" + event.getClick() + ", rawSlot=" + event.getRawSlot() + ", slot=" + event.getSlot() + ", action=" + event.getAction() + ", clicker=" + event.getWhoClicked().getName());
 		if (event.getWhoClicked() instanceof Player && manager.getInspectionByInspector((Player) event.getWhoClicked()) != null) {
 			if (event.getClickedInventory() instanceof PlayerInventory) {
 				// Pass clicks to inventory actions
 				int slot = event.getSlot();
-				//GoCraft.debug("size="+event.getView().getTopInventory().getSize()+", getcontents.length="+event.getView().getTopInventory().getContents().length);
+				//Log.debug("size="+event.getView().getTopInventory().getSize()+", getcontents.length="+event.getView().getTopInventory().getContents().length);
 				if (event.getView().getTopInventory().getSize() == 41) { // OpenInv uses incorrect size, and throws everything off: https://github.com/Jikoo/OpenInv/blob/master/src/com/lishid/openinv/internal/v1_8_R3/SpecialPlayerInventory.java
 					slot -= 4;
 				}
@@ -29,7 +29,7 @@ public class InventoryListener implements Listener {
 			} else {
 				// Overlay click closes inventory
 				if (event.getRawSlot() == -999 && event.getAction() == org.bukkit.event.inventory.InventoryAction.NOTHING) {
-					//GoCraft.debug("closing inventory...");
+					//Log.debug("closing inventory...");
 					event.getWhoClicked().closeInventory();
 				}
 			}

@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.PageDisplay;
@@ -31,7 +31,7 @@ public class VoteManager extends Feature {
 	public void voteEvent(VotifierEvent event) {
 		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getVote().getUsername());
 		if(offlinePlayer == null || offlinePlayer.getName() == null) {
-			GoCraft.warn("Voting user not found: ", event.getVote().getUsername());
+			Log.warn("Voting user not found: ", event.getVote().getUsername());
 			return;
 		}
 
@@ -45,7 +45,7 @@ public class VoteManager extends Feature {
 						event.getVote().getTimeStamp()
 				);
 				session.save(vote);
-				GoCraft.debug("Received vote:", vote);
+				Log.debug("Received vote:", vote);
 			})
 		);
 	}

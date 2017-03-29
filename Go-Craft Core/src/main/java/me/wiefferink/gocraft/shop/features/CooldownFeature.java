@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.shop.features;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.shop.Kit;
 import me.wiefferink.gocraft.shop.ShopSession;
 import me.wiefferink.gocraft.shop.signs.KitSign;
@@ -17,7 +18,7 @@ public class CooldownFeature extends ShopFeature {
 		super(kit);
 		rawCooldown = kit.getDetails().getString("cooldown");
 		if (rawCooldown != null && !Utils.checkDuration(rawCooldown)) {
-			GoCraft.warn("Cooldown of kit "+kit.getName()+" in wrong format: "+rawCooldown);
+			Log.warn("Cooldown of kit "+kit.getName()+" in wrong format: "+rawCooldown);
 		}
 		cooldown = Utils.durationStringToLong(rawCooldown);
 	}

@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.integration;
 
 import me.confuser.banmanager.BanManager;
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -11,7 +11,7 @@ public class BanManagerLink {
 	public BanManagerLink() {
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("BanManager");
 		if (!(plugin instanceof BanManager)) {
-			GoCraft.warn("Plugin with name BanManager found, but it is not the correct one");
+			Log.warn("Plugin with name BanManager found, but it is not the correct one");
 		} else {
 			this.banManager = (BanManager) plugin;
 		}

@@ -1,9 +1,10 @@
 package me.wiefferink.gocraft.features.environment;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.apache.commons.io.FileDeleteStrategy;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -45,7 +46,7 @@ public class ResourceWorlds extends Feature {
 			for(String worldName : rWorldsSection.getKeys(false)) {
 				World world = Bukkit.getWorld(worldName);
 				if(world == null) {
-					GoCraft.warn("World "+worldName+" does not exist and therefore cannot be used as resource world");
+					Log.warn("World "+worldName+" does not exist and therefore cannot be used as resource world");
 					continue;
 				}
 				long resetTime = getResetTime(world);
@@ -69,11 +70,11 @@ public class ResourceWorlds extends Feature {
 	public void checkWorldSpawn(Player player) {
 		long lastPlayed = player.getLastPlayed();
 		long lastReset = getLastReset(player.getWorld());
-		//GoCraft.debug("lastReset: "+lastReset+", distance: "+player.getWorld().getSpawnLocation().distance(player.getLocation())+", safe: "+Utils.isSafe(player.getLocation()));
+		//Log.debug("lastReset: "+lastReset+", distance: "+player.getWorld().getSpawnLocation().distance(player.getLocation())+", safe: "+Utils.isSafe(player.getLocation()));
 		double distanceFromSpawn = player.getWorld().getSpawnLocation().distance(player.getLocation());
 		boolean isSafe = Utils.isSafe(player.getLocation());
 		if(lastReset > 0 && (distanceFromSpawn < 10 || !isSafe)) {
-			//GoCraft.debug("teleporting "+player.getName()+", lastPlayed: "+lastPlayed+", lastReset: "+lastReset+", distance: "+distanceFromSpawn+", isSafe: "+isSafe);
+			//Log.debug("teleporting "+player.getName()+", lastPlayed: "+lastPlayed+", lastReset: "+lastReset+", distance: "+distanceFromSpawn+", isSafe: "+isSafe);
 			Utils.teleportRandomly(player, player.getWorld(), Utils.getWorldRadius(player.getWorld()), teleported -> {
 				if(teleported) {
 					plugin.message(player, "resetworld-randomtp");
@@ -129,7 +130,7 @@ public class ResourceWorlds extends Feature {
 		}
 		File regionFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+regionPath);
 		File dataFolder = new File(plugin.getDataFolder().getAbsoluteFile().getParentFile().getParentFile()+File.separator+world.getName()+File.separator+"data");
-		//GoCraft.debug("region folder of "+world.getName()+" at "+regionFolder.getAbsolutePath());
+		//Log.debug("region folder of "+world.getName()+" at "+regionFolder.getAbsolutePath());
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			if(player.getWorld().getName().equals(world.getName())) {
 				plugin.message(player, "resetworld-tp", world.getName());
@@ -137,7 +138,7 @@ public class ResourceWorlds extends Feature {
 			}
 		}
 		if(!Bukkit.getServer().unloadWorld(world, false)) {
-			GoCraft.warn("Could not unload resourceworld "+world.getName()+" for reset");
+			Log.warn("Could not unload resourceworld "+world.getName()+" for reset");
 			return;
 		}
 		// REGION folder
@@ -147,15 +148,14 @@ public class ResourceWorlds extends Feature {
 				try {
 					FileDeleteStrategy.FORCE.delete(file);
 				} catch(IOException e) {
-					GoCraft.warn("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
+					Log.error("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
 				}
 			}
 		}
 		try {
 			FileDeleteStrategy.FORCE.delete(regionFolder);
 		} catch(IOException e) {
-			GoCraft.warn("Could not reset resourceworld "+world.getName()+": "+regionFolder.getAbsolutePath());
-			e.printStackTrace();
+			Log.error("Could not reset resourceworld "+world.getName()+": "+regionFolder.getAbsolutePath(), ExceptionUtils.getStackTrace(e));
 		}
 		// DATA folder
 		File[] dataFiles = dataFolder.listFiles();
@@ -164,20 +164,19 @@ public class ResourceWorlds extends Feature {
 				try {
 					FileDeleteStrategy.FORCE.delete(file);
 				} catch(IOException e) {
-					GoCraft.warn("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
+					Log.error("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
 				}
 			}
 		}
 		try {
 			FileDeleteStrategy.FORCE.delete(dataFolder);
 		} catch(IOException e) {
-			GoCraft.warn("Could not reset resourceworld "+world.getName()+": "+dataFolder.getAbsolutePath());
-			e.printStackTrace();
+			Log.error("Could not reset resourceworld "+world.getName()+": "+dataFolder.getAbsolutePath(), ExceptionUtils.getStackTrace(e));
 		}
 
 		// Wrapup reset
 		updateResetTime(world);
-		GoCraft.info("World "+world.getName()+" has been reset");
+		Log.info("World "+world.getName()+" has been reset");
 		plugin.increaseStatistic("resourceWorldReset."+world.getName());
 		final String worldName = world.getName();
 		try {

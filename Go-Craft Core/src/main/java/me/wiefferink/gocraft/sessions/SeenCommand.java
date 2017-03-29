@@ -68,7 +68,7 @@ public class SeenCommand extends Feature {
 
 					@Override
 					public boolean renderItems(int itemStart, int itemEnd) {
-						//GoCraft.debug("renderItems: start:", itemStart, "end:", itemEnd, "count:", sessionCount);
+						//Log.debug("renderItems: start:", itemStart, "end:", itemEnd, "count:", sessionCount);
 
 						// Get the BungeeSession objects for this page
 						@SuppressWarnings("unchecked")

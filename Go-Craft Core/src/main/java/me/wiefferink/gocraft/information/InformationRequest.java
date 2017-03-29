@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.information;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -41,7 +41,7 @@ public class InformationRequest extends Feature {
 			try {
 				provider.showSync(this);
 			} catch(Exception e) {
-				GoCraft.error("InformationProvider", provider.getClass().getSimpleName(), "failed showSync:", ExceptionUtils.getStackTrace(e));
+				Log.error("InformationProvider", provider.getClass().getSimpleName(), "failed showSync:", ExceptionUtils.getStackTrace(e));
 			}
 		}
 
@@ -53,7 +53,7 @@ public class InformationRequest extends Feature {
 				try {
 					provider.showAsync(self);
 				} catch(Exception e) {
-					GoCraft.error("InformationProvider", provider.getClass().getSimpleName(), "failed showAsync:", ExceptionUtils.getStackTrace(e));
+					Log.error("InformationProvider", provider.getClass().getSimpleName(), "failed showAsync:", ExceptionUtils.getStackTrace(e));
 				}
 			}
 

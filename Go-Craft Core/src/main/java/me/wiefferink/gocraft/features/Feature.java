@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.features;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.tools.DatabaseRun;
 import me.wiefferink.gocraft.tools.Run;
 import me.wiefferink.gocraft.tools.storage.Database;
@@ -165,10 +166,10 @@ public class Feature implements Listener {
 			// Register command
 			boolean register = commandMap.register(name, plugin.getName(), newCommand);
 			if(!register) {
-				GoCraft.error("Could not register command", name, "(another command is already registered with the same name)");
+				Log.error("Could not register command", name, "(another command is already registered with the same name)");
 			}
 		} catch(NoSuchFieldException|IllegalAccessException|IllegalArgumentException|SecurityException|ClassCastException e) {
-			GoCraft.error("Could not register command", name+":", ExceptionUtils.getStackTrace(e));
+			Log.error("Could not register command", name+":", ExceptionUtils.getStackTrace(e));
 		}
 	}
 
@@ -230,7 +231,7 @@ public class Feature implements Listener {
 			} else if(world instanceof WorldEvent) {
 				worldString = ((WorldEvent)world).getWorld().getName();
 			} else {
-				GoCraft.warn("GoCraft.inWorld: Cannot get world from object:", world.getClass().getName());
+				Log.warn("GoCraft.inWorld: Cannot get world from object:", world.getClass().getName());
 			}
 			if(!worlds.contains(worldString)) {
 				return false;

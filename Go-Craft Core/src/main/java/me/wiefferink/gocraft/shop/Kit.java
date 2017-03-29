@@ -1,15 +1,21 @@
 package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.interactivemessenger.processing.Message;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.shop.buttons.BuyButton;
 import me.wiefferink.gocraft.shop.buttons.ItemButton;
 import me.wiefferink.gocraft.shop.buttons.SellButton;
-import me.wiefferink.gocraft.shop.features.*;
+import me.wiefferink.gocraft.shop.features.CooldownFeature;
+import me.wiefferink.gocraft.shop.features.ItemsFeature;
+import me.wiefferink.gocraft.shop.features.MapKitsFeature;
+import me.wiefferink.gocraft.shop.features.PermissionFeature;
+import me.wiefferink.gocraft.shop.features.PriceFeature;
+import me.wiefferink.gocraft.shop.features.ShopFeature;
 import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.tools.ItemBuilder;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,7 +23,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Kit implements Button, View {
 
@@ -58,7 +68,7 @@ public class Kit implements Button, View {
 		if (!details.isList("items")) {
 			String itemString = details.getString("items");
 			if (itemString == null || itemString.isEmpty()) {
-				GoCraft.warn("Kit with zero items: "+getName());
+				Log.warn("Kit with zero items: "+getName());
 				return;
 			}
 			ItemBuilder item = shop.stringToItem(itemString, "kit " + getName());
@@ -70,7 +80,7 @@ public class Kit implements Button, View {
 		} else {
 			List<String> itemStrings = details.getStringList("items");
 			if (itemStrings.size() == 0) {
-				GoCraft.warn("Kit with zero items: "+getName());
+				Log.warn("Kit with zero items: "+getName());
 				return;
 			}
 			// Items

@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.tools;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -66,7 +67,7 @@ public class ItemBuilder {
 					@SuppressWarnings("deprecation") Potion potion = Potion.fromDamage(item.getDurability());
 					item = potion.toItemStack(item.getAmount());
 				} catch(IllegalArgumentException e) {
-					GoCraft.warn("Wrong potion: type:", item.getType(), "durability:", item.getDurability());
+					Log.warn("Wrong potion: type:", item.getType(), "durability:", item.getDurability());
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.command.Command;
@@ -44,7 +44,7 @@ public class RulesCommand extends Feature {
 		this.rules = new ArrayList<>();
 		ConfigurationSection rulesSection = plugin.getGeneralConfig().getConfigurationSection("rules");
 		if (rulesSection == null) {
-			GoCraft.warn("Empty rules section!");
+			Log.warn("Empty rules section!");
 			return;
 		}
 		for (String ruleKey : rulesSection.getKeys(false)) {

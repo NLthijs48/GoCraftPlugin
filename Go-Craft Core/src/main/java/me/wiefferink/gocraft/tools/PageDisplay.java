@@ -130,7 +130,7 @@ public abstract class PageDisplay extends Feature {
 			message(footer);
 		}
 		long endTime = Calendar.getInstance().getTimeInMillis();
-		//GoCraft.debug("Rendering page for command '"+baseCommand+"' took", endTime-startTime, "ms");
+		//Log.debug("Rendering page for command '"+baseCommand+"' took", endTime-startTime, "ms");
 		return this;
 	}
 

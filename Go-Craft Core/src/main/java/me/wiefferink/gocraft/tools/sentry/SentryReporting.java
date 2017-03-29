@@ -4,6 +4,7 @@ import com.getsentry.raven.Raven;
 import com.getsentry.raven.RavenFactory;
 import com.getsentry.raven.log4j2.SentryAppender;
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -82,7 +83,7 @@ public class SentryReporting {
 	public SentryReporting(String dsn) {
 		try {
 			if (dsn == null || dsn.isEmpty()) {
-				GoCraft.warn("Not enabling Sentry reporter, no dsn provided");
+				Log.warn("Not enabling Sentry reporter, no dsn provided");
 				return;
 			}
 
@@ -124,7 +125,7 @@ public class SentryReporting {
 
 			breadcrumbCollector = new BreadcrumbCollector(logger);
 		} catch (Exception e) {
-			GoCraft.warn("Setup of Sentry reporting failed:", ExceptionUtils.getStackTrace(e));
+			Log.warn("Setup of Sentry reporting failed:", ExceptionUtils.getStackTrace(e));
 		}
 	}
 

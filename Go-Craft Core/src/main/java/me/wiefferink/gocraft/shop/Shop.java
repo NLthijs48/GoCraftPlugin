@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.shop;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.shop.buttons.Button;
 import me.wiefferink.gocraft.tools.ItemBuilder;
@@ -99,7 +100,7 @@ public class Shop extends Feature {
 		}
 		ConfigurationSection kitsSection = shopSection.getConfigurationSection("kits");
 		if (kitsSection == null) {
-			GoCraft.warn("Kits section of the shop is empty!");
+			Log.warn("Kits section of the shop is empty!");
 			return;
 		}
 
@@ -128,7 +129,7 @@ public class Shop extends Feature {
 						categorySection = categoriesSection.getConfigurationSection(categoryPart);
 					}
 					if (categorySection == null) {
-						GoCraft.warn("Category "+categoryPart+" specified in kit "+kitString+" not found in the categories list!");
+						Log.warn("Category "+categoryPart+" specified in kit "+kitString+" not found in the categories list!");
 						continue;
 					}
 					category = new Category(categorySection, this);
@@ -275,12 +276,12 @@ public class Shop extends Feature {
 		for (Integer key : buttons.keySet()) {
 			Button button = buttons.get(key);
 			if (button == null) {
-				GoCraft.warn("Button with key "+key+" is null");
+				Log.warn("Button with key "+key+" is null");
 				continue;
 			}
 			ItemBuilder itemBuilder = button.getButton(session);
 			if (itemBuilder == null) {
-				GoCraft.warn("ItemBuilder provided by button with key "+key+" is null");
+				Log.warn("ItemBuilder provided by button with key "+key+" is null");
 				continue;
 			}
 			itemBuilder = itemBuilder.copy();
@@ -449,19 +450,19 @@ public class Shop extends Feature {
 				int data = 0;
 				String[] split = parts[i].split(":");
 				if (split.length < 1) {
-					GoCraft.warn("  No id provided for "+debugId);
+					Log.warn("  No id provided for "+debugId);
 					return null;
 				}
 				try {
 					id = Integer.parseInt(split[0]);
 				} catch (NumberFormatException e) {
-					GoCraft.warn("  Incorrect item id "+split[0]+" for "+debugId);
+					Log.warn("  Incorrect item id "+split[0]+" for "+debugId);
 				}
 				if (split.length > 1) {
 					try {
 						data = Integer.parseInt(split[1]);
 					} catch (NumberFormatException e) {
-						GoCraft.warn("  Incorrect data value "+split[1]+" for "+debugId);
+						Log.warn("  Incorrect data value "+split[1]+" for "+debugId);
 					}
 				}
 				result = new ItemBuilder(id, 1, data);
@@ -474,7 +475,7 @@ public class Shop extends Feature {
 			else {
 				String[] split = parts[i].split(":");
 				if (split.length < 1) {
-					GoCraft.warn("  Incorrect attribute: "+parts[i]+" for "+debugId);
+					Log.warn("  Incorrect attribute: "+parts[i]+" for "+debugId);
 					continue;
 				}
 				String identifier = split[0];
@@ -486,7 +487,7 @@ public class Shop extends Feature {
 					result.setName(ChatColor.DARK_GREEN + value);
 				} else if ("color".equalsIgnoreCase(identifier)) {
 					if (split.length <= 3) {
-						GoCraft.warn("  Not enough numbers for the color attribute for", debugId+": "+parts[i]);
+						Log.warn("  Not enough numbers for the color attribute for", debugId+": "+parts[i]);
 					} else {
 						int red, green, blue;
 						try {
@@ -495,24 +496,24 @@ public class Shop extends Feature {
 							blue = Integer.parseInt(split[3]);
 							result.setColor(red, green, blue);
 						} catch (NumberFormatException e) {
-							GoCraft.warn("  Color part is not a number for", debugId+": "+parts[i]);
+							Log.warn("  Color part is not a number for", debugId+": "+parts[i]);
 						}
 					}
 				} else if ("lore".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
-						GoCraft.warn("  No arguments for lore for", debugId);
+						Log.warn("  No arguments for lore for", debugId);
 					} else {
 						result.addLore(combineFrom(split, 1, ":"));
 					}
 				} else if ("action".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
-						GoCraft.warn("  No arguments for action for", debugId);
+						Log.warn("  No arguments for action for", debugId);
 					} else {
 						result.addAction(combineFrom(split, 1, ":"));
 					}
 				} else if("potion".equalsIgnoreCase(identifier)) {
 					if(split.length < 2) {
-						GoCraft.warn("  No arguments for potion for", debugId);
+						Log.warn("  No arguments for potion for", debugId);
 					} else {
 						boolean extended = (split.length > 2 && split[2] != null && split[2].equals("true"));
 						boolean upgraded = (split.length > 3 && split[3] != null && split[3].equals("true"));
@@ -520,7 +521,7 @@ public class Shop extends Feature {
 							PotionType potionType = PotionType.valueOf(split[1].toUpperCase());
 							result.setPotionType(potionType, extended, upgraded);
 						} catch(IllegalArgumentException e) {
-							GoCraft.warn("Incorrect potionType:", identifier, "for", debugId);
+							Log.warn("Incorrect potionType:", identifier, "for", debugId);
 						}
 					}
 				} else if (enchantmentMap.containsKey(identifier.toLowerCase())) {
@@ -533,7 +534,7 @@ public class Shop extends Feature {
 					}
 					result.addEnchantment(enchantmentMap.get(identifier.toLowerCase()), number);
 				} else {
-					GoCraft.warn("  Unknown identifier: "+identifier+" (with value '"+value+"') for "+debugId);
+					Log.warn("  Unknown identifier: "+identifier+" (with value '"+value+"') for "+debugId);
 				}
 			}
 		}

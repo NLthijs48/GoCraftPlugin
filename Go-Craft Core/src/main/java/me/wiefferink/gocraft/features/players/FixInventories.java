@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.features.players;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -30,18 +31,18 @@ public class FixInventories extends Feature {
 				try {
 					FileDeleteStrategy.FORCE.delete(emptyData);
 				} catch(IOException e) {
-					GoCraft.error("Could not delete emptyData file to fix inventory:", emptyData.getAbsolutePath(), ExceptionUtils.getFullStackTrace(e));
+					Log.error("Could not delete emptyData file to fix inventory:", emptyData.getAbsolutePath(), ExceptionUtils.getFullStackTrace(e));
 				}
 			}
 			// Move current player file to empty file
 			if(normalData.exists() && !normalData.renameTo(emptyData)) {
-				GoCraft.error("Could not move current player file to empty file to fix inventory: from:", normalData.getAbsolutePath()+", to:", emptyData.getAbsolutePath());
+				Log.error("Could not move current player file to empty file to fix inventory: from:", normalData.getAbsolutePath()+", to:", emptyData.getAbsolutePath());
 			}
 			// Move offline data to player file location
 			if(!offlineData.renameTo(normalData)) {
-				GoCraft.error("Could not move offline player data file to proper location to fix inventory: from:", offlineData.getAbsolutePath()+", to:", normalData.getAbsolutePath());
+				Log.error("Could not move offline player data file to proper location to fix inventory: from:", offlineData.getAbsolutePath()+", to:", normalData.getAbsolutePath());
 			}
-			GoCraft.warn("Inventory of", event.getName(), "("+event.getUniqueId()+")", "has automatically been fixed");
+			Log.warn("Inventory of", event.getName(), "("+event.getUniqueId()+")", "has automatically been fixed");
 			GoCraft.getInstance().increaseStatistic("administration.fixedinventory");
 		}
 

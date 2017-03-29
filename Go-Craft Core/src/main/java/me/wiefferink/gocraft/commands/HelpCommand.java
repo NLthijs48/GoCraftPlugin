@@ -1,6 +1,6 @@
 package me.wiefferink.gocraft.commands;
 
-import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.interactivemessenger.processing.Message;
@@ -38,7 +38,7 @@ public class HelpCommand extends Feature {
 		plugin.message(sender, "help-header");
 		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
 		if (ranksSection == null) {
-			GoCraft.warn("[/help] ranksSection does not exist!");
+			Log.warn("[/help] ranksSection does not exist!");
 			return;
 		}
 		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
@@ -73,7 +73,7 @@ public class HelpCommand extends Feature {
 		helpMap = new HashMap<>();
 		ConfigurationSection ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
 		if (ranksSection == null) {
-			GoCraft.warn("[buildHelp] ranksSection does not exist!");
+			Log.warn("[buildHelp] ranksSection does not exist!");
 			return;
 		}
 

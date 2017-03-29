@@ -33,6 +33,7 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 	@Override
 	public void onEnable() {
 		instance = this;
+		Log.setLogger(getLogger());
 
 		// Setup general config file
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent()+File.separator+Constant.GENERAL_FOLDER_NAME);
@@ -41,8 +42,9 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 		try {
 			generalConfig = configurationProvider.load(generalConfigFile);
 		} catch(IOException e) {
-			GoCraftBungee.error("Failed to load general config file at:", generalConfigFile.getAbsolutePath());
+			Log.error("Failed to load general config file at:", generalConfigFile.getAbsolutePath());
 		}
+		Log.setDebug(getGeneralConfig().getBoolean("debug"));
 
 		// Startup database
 		Database.setup(
@@ -75,38 +77,14 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PreLoginEvent event) {
-		GoCraftBungee.info("PreLoginEvent of "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
+		Log.info("PreLoginEvent of "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 			if(player.getName().equalsIgnoreCase(event.getConnection().getName())) {
 				event.setCancelled(true);
 				event.setCancelReason(ChatColor.DARK_RED+"You cannot login with the same name as an online player!");
-				GoCraftBungee.warn("Blocked an attempt to login with the same name as an online player, name: "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
+				Log.warn("Blocked an attempt to login with the same name as an online player, name: "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
 			}
 		}
-	}
-
-	/**
-	 * Print an information message to the console
-	 * @param message The message to print
-	 */
-	public static void info(Object... message) {
-		instance.getLogger().info(join(message, " "));
-	}
-
-	/**
-	 * Print a warning to the console
-	 * @param message The message to print
-	 */
-	public static void warn(Object... message) {
-		instance.getLogger().warning(join(message, " "));
-	}
-
-	/**
-	 * Print an error to the console
-	 * @param message The message to print
-	 */
-	public static void error(Object... message) {
-		instance.getLogger().severe(join(message, " "));
 	}
 
 	/**

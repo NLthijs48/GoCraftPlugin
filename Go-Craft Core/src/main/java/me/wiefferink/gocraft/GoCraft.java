@@ -82,6 +82,7 @@ import me.wiefferink.interactivemessenger.source.LanguageManager;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -153,8 +154,9 @@ public final class GoCraft extends JavaPlugin {
 	private SentryReporting sentryReporting;
 
 	public void onEnable() {
-		reloadConfig();
 		instance = this;
+		Log.setLogger(getLogger());
+		reloadConfig();
 		saveDefaultConfig();
 		if(getConfig().isList("chatPrefix")) {
 			chatPrefix = getConfig().getStringList("chatPrefix");
@@ -162,6 +164,7 @@ public final class GoCraft extends JavaPlugin {
 			chatPrefix = Collections.singletonList(getConfig().getString("chatPrefix"));
 		}
 		this.debug = getConfig().getBoolean("debug");
+		Log.debug(debug);
 		localStorageCleaners = new HashMap<>();
 
 		final Set<String> connnected = new HashSet<>();
@@ -200,14 +203,14 @@ public final class GoCraft extends JavaPlugin {
 			economy = economyProvider.getProvider();
 			connnected.add("Vault (economy)");
 		} else {
-			getLogger().info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
+			Log.info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
 		}
 		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
 		if (permissionProvider != null) {
 			this.permissionProvider = permissionProvider.getProvider();
 			connnected.add("Vault (permissions)");
 		} else {
-			getLogger().info("Error: Vault or the Permissions plugin is not present or has not loaded correctly");
+			Log.info("Error: Vault or the Permissions plugin is not present or has not loaded correctly");
 		}
 
 		// Check if DynMap is present
@@ -226,7 +229,7 @@ public final class GoCraft extends JavaPlugin {
 					connnected.add("GoPVP");
 				}
 
-				getLogger().info("Connected plugins: " + StringUtils.join(connnected, ", "));
+				Log.info("Connected plugins:", StringUtils.join(connnected, ", "));
 			}
 		}.runTask(this);
 
@@ -239,14 +242,14 @@ public final class GoCraft extends JavaPlugin {
 				this.specificUtils = (SpecificUtilsBase) clazz.getConstructor().newInstance();
 			}
 		} catch (final Exception e) {
-			this.getLogger().severe("Could not load version specific classes (tried to load " + version + ").");
+			Log.error("Could not load version specific classes (tried to load " + version + ").");
 		}
 
 		// Assign a default if failed
 		if (specificUtils == null) {
 			specificUtils = new SpecificUtilsBase();
 		} else {
-			getLogger().info("Using " + version + " for version specific classes");
+			Log.info("Using " + version + " for version specific classes");
 		}
 
 		this.languageManager = new LanguageManager(
@@ -681,7 +684,7 @@ public final class GoCraft extends JavaPlugin {
 		File file = new File(getDataFolder() + File.separator + "logs" + File.separator);
 		if (!file.exists()) {
 			if (!file.mkdirs()) {
-				getLogger().warning("Could not create directories leading to logs folder: " + file.getAbsolutePath());
+				Log.warn("Could not create directories leading to logs folder:", file.getAbsolutePath());
 				return;
 			}
 		}
@@ -691,7 +694,7 @@ public final class GoCraft extends JavaPlugin {
 			out.newLine();
 			out.close();
 		} catch (IOException e) {
-			getLogger().info("Writing to the file failed: " + file + File.separator + fileName + ".log");
+			Log.warn("Writing to the file failed:", file + File.separator + fileName + ".log");
 		}
 	}
 
@@ -749,8 +752,7 @@ public final class GoCraft extends JavaPlugin {
 			try {
 				localStorage.save(file);
 			} catch (IOException e) {
-				this.getLogger().info("Failed to save localStorage.yml");
-				e.printStackTrace();
+				Log.error("Failed to save localStorage.yml:", ExceptionUtils.getStackTrace(e));
 			}
 			localStorageDirty = false;
 		}
@@ -768,7 +770,7 @@ public final class GoCraft extends JavaPlugin {
 			) {
 				localStorage = UTF8Config.loadConfiguration(reader);
 			} catch (IOException e) {
-				getLogger().warning("Could not load localstorage: " + localStorageFile.getAbsolutePath());
+				Log.warn("Could not load localstorage:", localStorageFile.getAbsolutePath());
 			}
 		}
 		if (localStorage == null) {
@@ -814,7 +816,7 @@ public final class GoCraft extends JavaPlugin {
 		) {
 			generalConfig = UTF8Config.loadConfiguration(reader);
 		} catch (IOException e) {
-			getLogger().warning("Could not find common config: " + commonConfigFile.getAbsolutePath());
+			Log.warn("Could not find common config: " + commonConfigFile.getAbsolutePath());
 		}
 		if (generalConfig == null) {
 			generalConfig = new UTF8Config();
@@ -855,42 +857,7 @@ public final class GoCraft extends JavaPlugin {
 	 * @param messages The message to send to the debug output
 	 */
 	public void _debug(Object... messages) {
-		if (this.debug) {
-			getLogger().info("Debug: "+StringUtils.join(messages, " "));
-		}
+		Log.debug(messages);
 	}
 
-	/**
-	 * Sends an debug message to the console
-	 * @param message The message that should be printed to the console
-	 */
-	public static void debug(Object... message) {
-		if(GoCraft.getInstance().debug) {
-			GoCraft.getInstance().getLogger().info("Debug: "+StringUtils.join(message, " "));
-		}
-	}
-
-	/**
-	 * Print an information message to the console
-	 * @param message The message to print
-	 */
-	public static void info(Object... message) {
-		GoCraft.getInstance().getLogger().info(StringUtils.join(message, " "));
-	}
-
-	/**
-	 * Print a warning to the console
-	 * @param message The message to print
-	 */
-	public static void warn(Object... message) {
-		GoCraft.getInstance().getLogger().warning(StringUtils.join(message, " "));
-	}
-
-	/**
-	 * Print an error to the console
-	 * @param message The message to print
-	 */
-	public static void error(Object... message) {
-		GoCraft.getInstance().getLogger().severe(StringUtils.join(message, " "));
-	}
 }
