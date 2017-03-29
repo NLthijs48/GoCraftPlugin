@@ -3,11 +3,27 @@ package me.wiefferink.gocraft.sessions;
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.tools.storage.Database;
 
-import javax.persistence.*;
-import java.util.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
-@Table
+@Table(indexes = {
+		@Index(columnList = "uuid", name = "uuid"),
+		@Index(columnList = "name", name = "name")
+})
 public class GCPlayer {
 
 	@Id

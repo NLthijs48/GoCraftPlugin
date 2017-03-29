@@ -2,11 +2,24 @@ package me.wiefferink.gocraft.features.players.timedfly;
 
 import me.wiefferink.gocraft.sessions.GCPlayer;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table
+@Table(indexes = {
+	@Index(columnList = "boughtAt", name = "boughtAt"),
+	@Index(columnList = "startedAt", name = "startedAt"),
+	@Index(columnList = "done", name = "done"),
+	@Index(columnList = "server", name = "server")
+})
 public class TimedFly {
 
 	@Id

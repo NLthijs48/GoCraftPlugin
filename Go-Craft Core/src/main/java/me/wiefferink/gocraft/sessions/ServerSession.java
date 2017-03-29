@@ -3,11 +3,23 @@ package me.wiefferink.gocraft.sessions;
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.tools.storage.Database;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table
+@Table(indexes = {
+		@Index(columnList = "joinedServer", name = "joinedServer"),
+		@Index(columnList = "leftServer", name = "leftServer"),
+		@Index(columnList = "serverName", name = "serverName")
+})
 public class ServerSession {
 
 	@Id

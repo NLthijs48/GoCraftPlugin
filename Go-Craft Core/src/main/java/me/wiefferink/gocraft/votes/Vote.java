@@ -7,13 +7,18 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table
+@Table(indexes = {
+		@Index(columnList = "serviceName", name = "serviceName"),
+		@Index(columnList = "address", name = "address"),
+		@Index(columnList = "at", name = "at")
+})
 public class Vote {
 
 	@Id
