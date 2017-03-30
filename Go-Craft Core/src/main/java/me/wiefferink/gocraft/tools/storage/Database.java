@@ -8,7 +8,7 @@ import me.wiefferink.gocraft.sessions.ServerSession;
 import me.wiefferink.gocraft.tools.DatabaseRun;
 import me.wiefferink.gocraft.tools.sentry.StackRepresentation;
 import me.wiefferink.gocraft.votes.Vote;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -41,7 +41,7 @@ public class Database {
 					.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect")
 					//.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
 					.applySetting("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider")
-					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database)
+					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database+"?autoReconnect=true&useSSL=false")
 					.applySetting("hibernate.connection.username", username)
 					.applySetting("hibernate.connection.password", password)
 					// Settings
