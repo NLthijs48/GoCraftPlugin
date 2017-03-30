@@ -4,7 +4,7 @@ import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import org.apache.commons.io.FileDeleteStrategy;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,7 +31,7 @@ public class FixInventories extends Feature {
 				try {
 					FileDeleteStrategy.FORCE.delete(emptyData);
 				} catch(IOException e) {
-					Log.error("Could not delete emptyData file to fix inventory:", emptyData.getAbsolutePath(), ExceptionUtils.getFullStackTrace(e));
+					Log.error("Could not delete emptyData file to fix inventory:", emptyData.getAbsolutePath(), ExceptionUtils.getStackTrace(e));
 				}
 			}
 			// Move current player file to empty file

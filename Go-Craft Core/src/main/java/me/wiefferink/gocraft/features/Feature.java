@@ -5,7 +5,7 @@ import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.tools.DatabaseRun;
 import me.wiefferink.gocraft.tools.Run;
 import me.wiefferink.gocraft.tools.storage.Database;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

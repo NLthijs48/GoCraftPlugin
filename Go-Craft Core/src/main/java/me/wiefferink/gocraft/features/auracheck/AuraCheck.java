@@ -13,7 +13,7 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.VoidCommandSender;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayClientUseEntity;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;

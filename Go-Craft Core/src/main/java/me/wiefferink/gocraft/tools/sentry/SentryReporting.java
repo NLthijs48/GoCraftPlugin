@@ -5,7 +5,7 @@ import com.getsentry.raven.RavenFactory;
 import com.getsentry.raven.log4j2.SentryAppender;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Filter;

@@ -3,7 +3,7 @@ package me.wiefferink.gocraft.tools.storage;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import me.wiefferink.gocraft.Log;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConstructor;
