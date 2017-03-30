@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class RegexFilter extends AbstractFilter {
+public class MessageFilter extends AbstractFilter {
 
 	private Set<Pattern> toFilter;
 
@@ -21,7 +21,7 @@ public class RegexFilter extends AbstractFilter {
 	 * Constructor
 	 * @param toFilter The regexes to use for filtering
 	 */
-	public RegexFilter(Result onMatch, Result onMismatch, List<String> toFilter) {
+	public MessageFilter(Result onMatch, Result onMismatch, List<String> toFilter) {
 		super(onMatch, onMismatch);
 		this.toFilter = new HashSet<>();
 		for(String filter : toFilter) {

@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 // TODO implement shutdown method with cleanup
 // TODO try changing System.err logging to level error instead of warn?
@@ -79,6 +80,9 @@ public class SentryReporting {
 			"^"+USER_NAME+" moved wrongly!", // Probably caused by lag
 			"^handleDisconnection\\(\\) called twice$" // Annoying Bukkit bug that is supposed to be fixed but actually is not
 	);
+	private List<String> filterExceptions = Arrays.asList(
+			Pattern.quote("java.lang.NoSuchMethodError: org.bukkit.Server.getOnlinePlayers()[Lorg/bukkit/entity/Player")
+	);
 
 	public SentryReporting(String dsn) {
 		try {
@@ -119,7 +123,8 @@ public class SentryReporting {
 			appender.setServerName(GoCraft.getInstance().getServerId());
 			appender.setRelease(GoCraft.getInstance().getDescription().getVersion()); // Instead of this, add a timestamp into the jar and use that: https://stackoverflow.com/questions/802677/adding-the-current-date-with-maven2-filtering
 			appender.addFilter(new LevelFilter(Filter.Result.NEUTRAL, Filter.Result.DENY, Level.ERROR, Level.WARN, Level.FATAL));
-			appender.addFilter(new RegexFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterMessages));
+			appender.addFilter(new MessageFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterMessages));
+			appender.addFilter(new MessageFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterExceptions));
 			appender.start();
 			logger.addAppender(appender);
 
