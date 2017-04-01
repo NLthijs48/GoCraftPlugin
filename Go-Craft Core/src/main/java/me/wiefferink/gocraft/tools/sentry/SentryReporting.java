@@ -124,7 +124,7 @@ public class SentryReporting {
 			appender.setRelease(GoCraft.getInstance().getDescription().getVersion()); // Instead of this, add a timestamp into the jar and use that: https://stackoverflow.com/questions/802677/adding-the-current-date-with-maven2-filtering
 			appender.addFilter(new LevelFilter(Filter.Result.NEUTRAL, Filter.Result.DENY, Level.ERROR, Level.WARN, Level.FATAL));
 			appender.addFilter(new MessageFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterMessages));
-			appender.addFilter(new MessageFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterExceptions));
+			appender.addFilter(new ExceptionFilter(Filter.Result.DENY, Filter.Result.NEUTRAL, filterExceptions));
 			appender.start();
 			logger.addAppender(appender);
 

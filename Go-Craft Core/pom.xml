@@ -183,7 +183,7 @@
             <version>1.7.22</version>
         </dependency>
 
-        <!-- Sentry.io -->
+        <!-- Sentry.io (needs spigot implementation dependency for correct logging classes) -->
         <dependency>
             <groupId>com.getsentry.raven</groupId>
             <artifactId>raven-log4j2</artifactId>
