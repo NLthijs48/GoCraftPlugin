@@ -8,8 +8,10 @@ import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -167,7 +169,7 @@ public class DistributionManager extends Feature {
 			Log.warn("Could not create writer to update.log:");
 			e.printStackTrace();
 		}
-		updateMessage(updateLogger, executor, "update-started");
+		updateMessage(updateLogger, executor, "update-started", false);
 
 		// Make sure we have the latest plugin info
 		plugin.loadGeneralConfig();
@@ -291,15 +293,15 @@ public class DistributionManager extends Feature {
 				}
 			}
 			if (pushedJarTo.size() > 0 || pushedConfigTo.size() > 0 || pluginWarnings.size() > 0) {
-				updateMessage(updateLogger, executor, "update-pluginHeader", pushPlugin);
+				updateMessage(updateLogger, executor, "update-pluginHeader", false, pushPlugin);
 				if (pushedJarTo.size() > 0) {
-					updateMessage(updateLogger, executor, "update-pushedPluginTo", StringUtils.join(pushedJarTo, ", "));
+					updateMessage(updateLogger, executor, "update-pushedPluginTo", false, StringUtils.join(pushedJarTo, ", "));
 				}
 				if (pushedConfigTo.size() > 0) {
-					updateMessage(updateLogger, executor, "update-pushedConfigTo", StringUtils.join(pushedConfigTo, ", "));
+					updateMessage(updateLogger, executor, "update-pushedConfigTo", false, StringUtils.join(pushedConfigTo, ", "));
 				}
 				for (String warning : pluginWarnings) {
-					updateMessage(updateLogger, executor, "update-warning", warning);
+					updateMessage(updateLogger, executor, "update-warning", true, warning);
 				}
 				pluginsUpdated++;
 			}
@@ -333,15 +335,15 @@ public class DistributionManager extends Feature {
 
 		// Display result (executor + log)
 		if (generalWarnings.size() > 0) {
-			updateMessage(updateLogger, executor, "update-generalWarnings");
+			updateMessage(updateLogger, executor, "update-generalWarnings", false);
 			for (String warning : generalWarnings) {
-				updateMessage(updateLogger, executor, "update-warning", warning);
+				updateMessage(updateLogger, executor, "update-warning", true, warning);
 			}
 		}
 		if (pluginsUpdated > 0 || jarsUpdated > 0 || configsUpdated > 0 || permissionsUpdated > 0 || rootFilesUpdated > 0) {
-			updateMessage(updateLogger, executor, "update-done", pluginsUpdated, jarsUpdated, configsUpdated, permissionsUpdated, rootFilesUpdated);
+			updateMessage(updateLogger, executor, "update-done", false, pluginsUpdated, jarsUpdated, configsUpdated, permissionsUpdated, rootFilesUpdated);
 		} else {
-			updateMessage(updateLogger, executor, "update-none");
+			updateMessage(updateLogger, executor, "update-none", false);
 		}
 		try {
 			if (updateLogger != null) {
@@ -367,10 +369,15 @@ public class DistributionManager extends Feature {
 	 * @param updateLogger The logger
 	 * @param target The target
 	 * @param key The message key
+	 * @param warn Send as warning
 	 * @param args The fill in arguments
 	 */
-	public void updateMessage(BufferedWriter updateLogger, Object target, String key, Object... args) {
-		plugin.messageNoPrefix(target, key, args);
+	public void updateMessage(BufferedWriter updateLogger, Object target, String key, boolean warn, Object... args) {
+		if(warn && target instanceof ConsoleCommandSender) {
+			Log.warn(ChatColor.stripColor(Message.fromKey(key).replacements(args).getPlain()));
+		} else {
+			plugin.messageNoPrefix(target, key, args);
+		}
 		StringBuilder prefix = new StringBuilder("[" + Utils.getCurrentDateTime() + "] [" + plugin.getServerName() + "] ");
 		for (int i = plugin.getServerName().length(); i < 20; i++) {
 			prefix.append(" ");
@@ -483,12 +490,12 @@ public class DistributionManager extends Feature {
 				}
 			}
 			if (pushedFileTo.size() > 0 || fileWarnings.size() > 0) {
-				updateMessage(updateLogger, executor, "update-pluginHeader", pushFile);
+				updateMessage(updateLogger, executor, "update-pluginHeader", false, pushFile);
 				if (pushedFileTo.size() > 0) {
-					updateMessage(updateLogger, executor, "update-pushedTo", StringUtils.join(pushedFileTo, ", "));
+					updateMessage(updateLogger, executor, "update-pushedTo", false, StringUtils.join(pushedFileTo, ", "));
 				}
 				for (String warning : fileWarnings) {
-					updateMessage(updateLogger, executor, "update-warning", warning);
+					updateMessage(updateLogger, executor, "update-warning", true, warning);
 				}
 			}
 		}
