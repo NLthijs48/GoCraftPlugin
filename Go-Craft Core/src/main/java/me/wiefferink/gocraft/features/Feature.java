@@ -31,7 +31,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -139,8 +138,12 @@ public class Feature implements Listener {
 		if(description != null) {
 			newCommand.setDescription(description);
 		}
+		List<String> normalizedAliases = new ArrayList<>();
 		if(aliases != null && aliases.length > 0) {
-			newCommand.setAliases(Arrays.asList(aliases));
+			for(String alias : aliases) {
+				normalizedAliases.add(alias.toLowerCase());
+			}
+			newCommand.setAliases(normalizedAliases);
 		}
 
 		// Register the new command, overriding existing commands
@@ -157,10 +160,8 @@ public class Feature implements Listener {
 
 			// Remove this command from the map to be able to override it (and possible aliases)
 			knownCommands.remove(name.toLowerCase());
-			if(aliases != null && aliases.length > 0) {
-				for(String alias : aliases) {
-					knownCommands.remove(alias);
-				}
+			for(String alias : normalizedAliases) {
+				knownCommands.remove(alias);
 			}
 
 			// Register command
