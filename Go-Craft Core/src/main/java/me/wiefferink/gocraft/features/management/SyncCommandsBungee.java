@@ -167,10 +167,10 @@ public class SyncCommandsBungee {
 				}
 				String version = plugin.getDescription().getVersion();
 				if(!init[3].equals(version)) {
-					Log.error("SyncCommands:", name, "is running version", init[3], "but we are running version", version);
-					out.println("no Version incorrect, running version "+version);
-					disconnect();
-					return;
+					Log.warn("SyncCommands:", name, "is running version", init[3], "but we are running version", version);
+					//out.println("no Version incorrect, running version "+version);
+					//disconnect();
+					//return;
 				}
 				out.println("connected");
 				servers.put(name, this);
