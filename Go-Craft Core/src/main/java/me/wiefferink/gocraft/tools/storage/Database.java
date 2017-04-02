@@ -16,7 +16,6 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import javax.persistence.NoResultException;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -196,14 +195,10 @@ public class Database {
 		if(!hasSession()) {
 			return null;
 		}
-		GCPlayer result = null;
-		try {
-			result = Database.getSession()
-					.createQuery("FROM GCPlayer WHERE uuid = :uuid", GCPlayer.class)
-					.setParameter("uuid", uuid.toString())
-					.getSingleResult();
-		} catch(NoResultException ignored) {}
-		return result;
+		return Database.getSession()
+				.createQuery("FROM GCPlayer WHERE uuid = :uuid", GCPlayer.class)
+				.setParameter("uuid", uuid.toString())
+				.uniqueResult();
 	}
 
 }

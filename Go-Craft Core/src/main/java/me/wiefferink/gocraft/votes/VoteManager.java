@@ -38,12 +38,26 @@ public class VoteManager extends Feature {
 		async(() ->
 			database(session -> {
 				GCPlayer gcPlayer = Database.getCreatePlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+
+				// Get the last vote done at the same website
+				Vote lastVote = session
+						.createQuery("FROM Vote WHERE gcPlayer = :gcPlayer AND serviceName = :service ORDER BY at DESC", Vote.class)
+						.setParameter("gcPlayer", gcPlayer)
+						.setParameter("service", event.getVote().getServiceName())
+						.setMaxResults(1)
+						.uniqueResult();
 				Vote vote = new Vote(
 						gcPlayer,
-						event.getVote().getServiceName(),
+						event.getVote().getServiceName().toLowerCase(),
 						event.getVote().getAddress(),
 						event.getVote().getTimeStamp()
 				);
+
+				if(gcPlayer != null && lastVote != null && (lastVote.getAt().getTime()+1000*60*60*11) > Calendar.getInstance().getTimeInMillis()) {
+					Log.warn("Last vote of", gcPlayer.getPlayerName(), "at", event.getVote().getServiceName(), "was too short ago (restricting to once every 11 hours):", lastVote);
+					return;
+				}
+
 				session.save(vote);
 				Log.debug("Received vote:", vote);
 			})
