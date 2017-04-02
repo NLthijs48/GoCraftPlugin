@@ -321,7 +321,7 @@ votetop-empty:
   - "    hover: %lang:action|Vote now to receive rewards!|%"
   - "    link: http://go-craft.com/vote"
 votetop-item:
-  - "[darkgreen][bold]► %0%: %lang:player|%1%|%[bold]: [white]%2%"
+  - "[darkgreen]%0%: %lang:player|%1%|%[bold]: [white]%2%"
 
 map-link:
   - "Check the map on "
