@@ -6,7 +6,7 @@ import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
 import me.wiefferink.gocraft.tools.DatabaseRun;
-import me.wiefferink.gocraft.tools.sentry.StackRepresentation;
+import me.wiefferink.gocraft.tools.StackRepresentation;
 import me.wiefferink.gocraft.votes.Vote;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.Session;

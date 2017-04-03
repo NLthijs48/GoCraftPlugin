@@ -1,12 +1,15 @@
-package me.wiefferink.gocraft.tools.sentry;
+package me.wiefferink.gocraft.tools;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// Unused
 public class StackRepresentation {
 
 	// package+class+method prefixes to ignore

@@ -72,7 +72,6 @@ import me.wiefferink.gocraft.ranks.RankManager;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
-import me.wiefferink.gocraft.tools.sentry.SentryReporting;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
@@ -150,8 +149,6 @@ public final class GoCraft extends JavaPlugin {
 
 	private ConfigurationSection serverSettings;
 	private String serverId;
-
-	private SentryReporting sentryReporting;
 
 	public void onEnable() {
 		instance = this;
@@ -290,9 +287,6 @@ public final class GoCraft extends JavaPlugin {
 			}
 		}.runTaskTimer(this, 18000L, 18000L);
 		loadedCorrectly = true;
-
-		// Setup sentry
-		sentryReporting = new SentryReporting(getStringSetting("sentryDSN"));
 	}
 
 	/**
