@@ -33,7 +33,7 @@ public class Vote {
 	@Column(nullable = false, length = 100)
 	private String serviceName;
 
-	@Column(nullable = false, length = 20)
+	@Column(nullable = false, length = 40)
 	private String address;
 
 	@Column(nullable = false)
