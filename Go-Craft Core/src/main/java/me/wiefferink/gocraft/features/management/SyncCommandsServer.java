@@ -198,6 +198,9 @@ public class SyncCommandsServer extends Feature {
 				// Retreive input from Bungee
 				try {
 					String input = in.readLine();
+					if(input == null) {
+						continue;
+					}
 					String[] split = input.split(" ");
 					if(split.length == 0) {
 						Log.warn("SyncCommands: received empty input from Bungee");
