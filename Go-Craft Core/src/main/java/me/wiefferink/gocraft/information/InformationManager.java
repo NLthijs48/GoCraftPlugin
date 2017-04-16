@@ -63,7 +63,7 @@ public class InformationManager extends Feature {
 		Player about;
 		if(args.length > 0) {
 			OfflinePlayer testPlayer = Bukkit.getOfflinePlayer(args[0]);
-			if(testPlayer == null || testPlayer.getName() == null || (testPlayer.getLastPlayed() == 0 && !testPlayer.isOnline())) {
+			if(testPlayer == null || testPlayer.getName() == null) {
 				plugin.message(sender, "information-neverPlayed", args[0]);
 				return;
 			}
