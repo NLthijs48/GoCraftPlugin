@@ -2,6 +2,8 @@ package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.tools.storage.Database;
+import me.wiefferink.gocraft.votes.Vote;
+import org.hibernate.Session;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,16 +36,19 @@ public class GCPlayer {
 	@Column(nullable = false, length = 36, unique = true)
 	private String uuid;
 
-	@Column(nullable = false, length = 16)
+	@Column(nullable = false, length = 16, unique = true)
 	private String name;
 
 	@OneToMany(mappedBy = "gcPlayer", fetch = FetchType.LAZY)
 	private Set<BungeeSession> bungeeSessions;
 
+	@OneToMany(mappedBy = "gcPlayer", fetch = FetchType.LAZY)
+	private Set<Vote> votes;
+
 	/**
 	 * Constructor for Hibernate
 	 */
-	GCPlayer() {}
+	protected GCPlayer() {}
 
 	/**
 	 * Create a new GCPlayer
@@ -65,6 +70,14 @@ public class GCPlayer {
 	}
 
 	/**
+	 * Change the uuid of the player
+	 * @param uuid The new uuid to use
+	 */
+	public void setUniqueId(String uuid) {
+		this.uuid = uuid;
+	}
+
+	/**
 	 * Get the UUID of the player
 	 * @return The unique id of the player that was online
 	 */
@@ -76,8 +89,16 @@ public class GCPlayer {
 	 * Get the name of the player
 	 * @return The name of the player
 	 */
-	public String getPlayerName() {
+	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Change the name of the player
+	 * @param name The new name of the player
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -92,42 +113,76 @@ public class GCPlayer {
 	 * Fixes duplicate player object
 	 */
 	public static void ensureConsistency() {
-		Database.run((session -> {
-			// Get duplicate players
-			List<GCPlayer> duplicatePlayers = session.createQuery("SELECT one FROM GCPlayer one WHERE (select count(*) FROM GCPlayer two WHERE one.uuid = two.uuid) > 1", GCPlayer.class)
-					.getResultList();
+		Database.run(session -> {
 
-			// Group per UUID
-			Map<String, LinkedList<GCPlayer>> players = new HashMap<>();
-			for(GCPlayer player : duplicatePlayers) {
-				LinkedList<GCPlayer> playerSet = players.get(player.getUniqueId());
-				if(playerSet == null) {
-					playerSet = new LinkedList<>();
-					players.put(player.getUniqueId(), playerSet);
+			int merged;
+			do {
+				merged = 0;
+				// Get duplicate players (using LIKE prevents trailing spaces being ignored)
+				List<GCPlayer> duplicatePlayers = session.createQuery(
+								"FROM GCPlayer one " +
+								"WHERE (" +
+									"select count(*) " +
+									"FROM GCPlayer two " +
+									"WHERE one.name=two.name AND length(one.name)=length(two.name) " +
+								") > 1" +
+								"ORDER BY one.name, one.id", GCPlayer.class)
+						.setMaxResults(20)
+						.getResultList();
+
+				// Group by name
+				Map<String, LinkedList<GCPlayer>> players = new HashMap<>();
+				for(GCPlayer player : duplicatePlayers) {
+					players.computeIfAbsent(
+							player.getName().toLowerCase(),
+							k -> new LinkedList<>()
+					).add(player);
 				}
-				playerSet.add(player);
-			}
 
-			// Fix each group of players
-			for(LinkedList<GCPlayer> samePlayers : players.values()) {
-				GCPlayer keepPlayer = samePlayers.remove();
-
-				while(!samePlayers.isEmpty()) {
-					GCPlayer mergePlayer = samePlayers.remove();
-					for(BungeeSession bungeeSession : mergePlayer.bungeeSessions) {
-						bungeeSession.setPlayer(keepPlayer);
-						session.update(bungeeSession);
-					}
-					keepPlayer.bungeeSessions.addAll(mergePlayer.bungeeSessions);
-					session.remove(mergePlayer);
+				// Fix each group of players
+				for(LinkedList<GCPlayer> samePlayers : players.values()) {
+					GCPlayer keepPlayer = samePlayers.remove();
+					int merging = samePlayers.size();
+					merge(keepPlayer, samePlayers, session);
+					merged += merging;
 				}
-				session.update(keepPlayer);
-			}
 
-			if(players.size() > 0) {
-				Log.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows");
+				if(players.size() > 0) {
+					Log.warn("Found and fixed", players.size(), "players that have duplicate GCPlayer rows (merged " + merged + ")");
+				}
+			} while(merged > 0);
+		});
+	}
+
+	/**
+	 * Merge player objects together
+	 * @param keepPlayer The player to keep
+	 * @param samePlayers The players to merge into keepPlayer
+	 * @param session The session to use for accessing the database
+	 */
+	public static void merge(GCPlayer keepPlayer, LinkedList<GCPlayer> samePlayers, Session session) {
+		Log.debug("   merging", samePlayers.size(), "into", keepPlayer+":", samePlayers);
+		while(!samePlayers.isEmpty()) {
+			GCPlayer mergePlayer = samePlayers.remove();
+
+			// Move BungeeSession list
+			for(BungeeSession bungeeSession : mergePlayer.bungeeSessions) {
+				bungeeSession.setPlayer(keepPlayer);
+				session.update(bungeeSession);
 			}
-		}));
+			keepPlayer.bungeeSessions.addAll(mergePlayer.bungeeSessions);
+
+			// Move votes
+			for(Vote vote : mergePlayer.votes) {
+				vote.setPlayer(keepPlayer);
+				session.update(vote);
+			}
+			keepPlayer.votes.addAll(mergePlayer.votes);
+
+			// Remove the duplicate player
+			session.remove(mergePlayer);
+		}
+		session.update(keepPlayer);
 	}
 
 	@Override

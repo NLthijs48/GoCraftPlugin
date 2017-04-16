@@ -42,7 +42,7 @@ public class Vote {
 	@Column(nullable = false, length = 20)
 	private String givenTimestamp;
 
-	Vote() {}
+	protected Vote() {}
 
 	public Vote(GCPlayer gcPlayer, String serviceName, String address, String givenTimestamp) {
 		this.gcPlayer = gcPlayer;
@@ -56,8 +56,16 @@ public class Vote {
 	 * Get the player that did the vote
 	 * @return The GCPlayer that voted
 	 */
-	public GCPlayer getGcPlayer() {
+	public GCPlayer getPlayer() {
 		return gcPlayer;
+	}
+
+	/**
+	 * Set the player (should normally not be needed)
+	 * @param player The player to set
+	 */
+	public void setPlayer(GCPlayer player) {
+		this.gcPlayer = player;
 	}
 
 	/**
@@ -78,6 +86,6 @@ public class Vote {
 
 	@Override
 	public String toString() {
-		return "Vote(player="+gcPlayer.getPlayerName()+", service="+serviceName+", address="+address+", givenTimestamp="+givenTimestamp+", at="+at+")";
+		return "Vote(player="+gcPlayer.getName()+", service="+serviceName+", address="+address+", givenTimestamp="+givenTimestamp+", at="+at+")";
 	}
 }

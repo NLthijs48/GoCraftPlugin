@@ -46,7 +46,7 @@ public class SeenCommand extends Feature {
 		async(() ->
 			database(session -> {
 				// Count number of records
-				GCPlayer gcPlayer = Database.getPlayer(about.getUniqueId());
+				GCPlayer gcPlayer = Database.getPlayer(about.getName(), about.getUniqueId());
 				if(gcPlayer == null) {
 					plugin.message(sender, "seen-noRecords", about.getName());
 					return;

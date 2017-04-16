@@ -54,7 +54,7 @@ public class VoteManager extends Feature {
 				);
 
 				if(gcPlayer != null && lastVote != null && (lastVote.getAt().getTime()+1000*60*60*11) > Calendar.getInstance().getTimeInMillis()) {
-					Log.warn("Last vote of", gcPlayer.getPlayerName(), "at", event.getVote().getServiceName(), "was too short ago (restricting to once every 11 hours):", lastVote);
+					Log.warn("Last vote of", gcPlayer.getName(), "at", event.getVote().getServiceName(), "was too short ago (restricting to once every 11 hours):", lastVote);
 					return;
 				}
 
@@ -100,19 +100,21 @@ public class VoteManager extends Feature {
 						// TODO check if we can prevent a select per gcPlayer
 						@SuppressWarnings("unchecked")
 						List<Map<String,Object>> playerVoteCounts = session.createQuery(
-								"SELECT new map(gcPlayer as gcPlayer, count(*) as votes) " +
-										"FROM Vote " +
+								"SELECT new map(player.name as player, count(*) as votes) " +
+										"FROM Vote vote " +
+										"INNER JOIN vote.gcPlayer as player " +
 										"WHERE at < :monthEnd AND at >= :monthStart " +
-										"GROUP BY gcPlayer_id " +
-										"ORDER BY count(*) DESC")
+										"GROUP BY player " +
+										"ORDER BY count(*) DESC, player.name ASC")
 								.setParameter("monthStart", monthStart)
 								.setParameter("monthEnd", monthEnd)
 								.setMaxResults(itemEnd - itemStart + 1)
 								.setFirstResult(itemStart).getResultList();
 						// TODO make result more pretty and typesafe
-						int index = 1;
+						int index = itemStart+1;
+						Log.debug("playerVoteCounts:", playerVoteCounts);
 						for(Map<String, Object> playerAndCount : playerVoteCounts) {
-							message(Message.fromKey("votetop-item").replacements(index, ((GCPlayer)playerAndCount.get("gcPlayer")).getPlayerName(), playerAndCount.get("votes")));
+							message(Message.fromKey("votetop-item").replacements(index, playerAndCount.get("player"), playerAndCount.get("votes")));
 							index++;
 						}
 						return true;

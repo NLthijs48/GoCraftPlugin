@@ -66,9 +66,11 @@ import me.wiefferink.gocraft.integration.BanManagerLink;
 import me.wiefferink.gocraft.integration.EssentialsLink;
 import me.wiefferink.gocraft.integration.GoPVPLink;
 import me.wiefferink.gocraft.integration.MapSwitcherLink;
+import me.wiefferink.gocraft.integration.ProtocolLibLink;
 import me.wiefferink.gocraft.integration.WorldGuardLink;
 import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.ranks.RankManager;
+import me.wiefferink.gocraft.sessions.FixGCPlayer;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
@@ -76,6 +78,7 @@ import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import me.wiefferink.gocraft.votes.VoteManager;
+import me.wiefferink.gocraft.votes.VoteScoreboard;
 import me.wiefferink.interactivemessenger.processing.Message;
 import me.wiefferink.interactivemessenger.source.LanguageManager;
 import net.milkbowl.vault.economy.Economy;
@@ -137,6 +140,7 @@ public final class GoCraft extends JavaPlugin {
 
 	private GoPVPLink goPVPLink = null;
 	private EssentialsLink essentialsLink = null;
+	private ProtocolLibLink protocolLibLink = null;
 	private WorldGuardLink worldGuardLink = null;
 	private BanManagerLink banManagerLink = null;
 	// Version specific classes
@@ -161,7 +165,7 @@ public final class GoCraft extends JavaPlugin {
 			chatPrefix = Collections.singletonList(getConfig().getString("chatPrefix"));
 		}
 		this.debug = getConfig().getBoolean("debug");
-		Log.debug(debug);
+		Log.setDebug(debug);
 		localStorageCleaners = new HashMap<>();
 
 		final Set<String> connnected = new HashSet<>();
@@ -192,6 +196,13 @@ public final class GoCraft extends JavaPlugin {
 		if (es != null && es.isEnabled()) {
 			essentialsLink = new EssentialsLink();
 			connnected.add("Essentials");
+		}
+
+		// Check if Protocollib is present
+		Plugin pl = getServer().getPluginManager().getPlugin("ProtocolLib");
+		if(pl != null && pl.isEnabled()) {
+			protocolLibLink = new ProtocolLibLink();
+			connnected.add("ProtocolLib");
 		}
 
 		// Check if Vault is present
@@ -581,6 +592,8 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new DisableFrostWalker());
 		features.add(new RankManager());
 		features.add(new VoteManager());
+		features.add(new VoteScoreboard());
+		features.add(new FixGCPlayer());
 
 		features.add(new TempbanCommand());
 		features.add(new PingCommand());
@@ -588,7 +601,9 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new ReloadCommand());
 		features.add(new RulesCommand());
 		features.add(new HelpCommand());
-		features.add(new AuraCheck());
+		if(protocolLibLink != null) {
+			features.add(new AuraCheck());
+		}
 		features.add(new ResourceWorlds());
 		features.add(new RandomtpCommand());
 		features.add(new Rewards());

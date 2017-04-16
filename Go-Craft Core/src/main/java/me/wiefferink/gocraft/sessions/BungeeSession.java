@@ -49,7 +49,7 @@ public class BungeeSession {
 	/**
 	 * Constructor for Hibernate
 	 */
-	BungeeSession() {}
+	protected BungeeSession() {}
 
 	/**
 	 * Create a new BungeeSession
@@ -135,6 +135,6 @@ public class BungeeSession {
 
 	@Override
 	public String toString() {
-		return "BungeeSession(player="+gcPlayer.getPlayerName()+", joined="+getJoined()+", left="+getLeft()+", ip="+getPlayerIp()+")";
+		return "BungeeSession(player="+gcPlayer.getName()+", joined="+getJoined()+", left="+getLeft()+", ip="+getPlayerIp()+")";
 	}
 }

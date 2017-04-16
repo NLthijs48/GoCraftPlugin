@@ -17,6 +17,8 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -178,7 +180,7 @@ public class Database {
 		if(!hasSession()) {
 			return null;
 		}
-		GCPlayer result = getPlayer(uuid);
+		GCPlayer result = getPlayer(name, uuid);
 		if(result == null) {
 			result = new GCPlayer(uuid, name);
 			Database.getSession().saveOrUpdate(result);
@@ -188,17 +190,36 @@ public class Database {
 
 	/**
 	 * Get GCPlayer for a player if it is defined in the database
-	 * @param uuid The UUID of the player to get
+	 * @param name The name of the player to get
 	 * @return The GCPlayer
 	 */
-	public static GCPlayer getPlayer(UUID uuid) {
+	public static GCPlayer getPlayer(String name, UUID uuid) {
 		if(!hasSession()) {
 			return null;
 		}
-		return Database.getSession()
-				.createQuery("FROM GCPlayer WHERE uuid = :uuid", GCPlayer.class)
-				.setParameter("uuid", uuid.toString())
-				.uniqueResult();
+
+		// Matching by case-insensitive name because BungeeCord does not know
+		// the correct casing and therefore UUID of the player
+		List<GCPlayer> players = Database.getSession()
+				.createQuery("FROM GCPlayer WHERE name = :name and length(name)=length(:name) ORDER BY id", GCPlayer.class)
+				.setParameter("name", name.toLowerCase())
+				.getResultList();
+		players.removeIf((player) -> !player.getName().equalsIgnoreCase(name));
+
+		if(players.isEmpty()) {
+			return null;
+		}
+
+		// Merge if we found more than one
+		if(players.size() > 1) {
+			Log.warn("Found multiple player object for the same name:", players);
+			LinkedList<GCPlayer> toMerge = new LinkedList<>(players);
+			toMerge.remove();
+			GCPlayer.merge(players.get(0), toMerge, Database.getSession());
+		}
+
+		// Return oldest player object
+		return players.get(0);
 	}
 
 }
