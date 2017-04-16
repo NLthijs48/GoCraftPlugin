@@ -112,7 +112,6 @@ public class VoteManager extends Feature {
 								.setFirstResult(itemStart).getResultList();
 						// TODO make result more pretty and typesafe
 						int index = itemStart+1;
-						Log.debug("playerVoteCounts:", playerVoteCounts);
 						for(Map<String, Object> playerAndCount : playerVoteCounts) {
 							message(Message.fromKey("votetop-item").replacements(index, playerAndCount.get("player"), playerAndCount.get("votes")));
 							index++;

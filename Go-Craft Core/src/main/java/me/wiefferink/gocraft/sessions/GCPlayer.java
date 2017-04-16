@@ -161,7 +161,6 @@ public class GCPlayer {
 	 * @param session The session to use for accessing the database
 	 */
 	public static void merge(GCPlayer keepPlayer, LinkedList<GCPlayer> samePlayers, Session session) {
-		Log.debug("   merging", samePlayers.size(), "into", keepPlayer+":", samePlayers);
 		while(!samePlayers.isEmpty()) {
 			GCPlayer mergePlayer = samePlayers.remove();
 
