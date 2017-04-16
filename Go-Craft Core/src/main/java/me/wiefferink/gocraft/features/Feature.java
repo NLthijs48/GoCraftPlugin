@@ -292,6 +292,34 @@ public class Feature implements Listener {
 	}
 
 	/**
+	 * Run a timer task on the main server thread
+	 *
+	 * @param runnable The BukkitRunnable to run
+	 */
+	public void syncTimer(long period, Run runnable) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				runnable.run();
+			}
+		}.runTaskTimer(plugin, 0, period);
+	}
+
+	/**
+	 * Run a timer task on an asynchronous thread
+	 *
+	 * @param runnable The BukkitRunnable to run
+	 */
+	public void asyncTimer(long period, Run runnable) {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				runnable.run();
+			}
+		}.runTaskTimerAsynchronously(plugin, 0, period);
+	}
+
+	/**
 	 * Get the config file
 	 * @return The config file
 	 */
