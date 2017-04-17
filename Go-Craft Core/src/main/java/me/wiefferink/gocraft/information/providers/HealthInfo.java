@@ -9,22 +9,22 @@ public class HealthInfo extends InformationProvider {
 
 	@Override
 	public void showSync(InformationRequest request) {
-		String health = "";
+		StringBuilder health = new StringBuilder();
 		int healthNumber = (int)request.getAbout().getHealth();
 		if(healthNumber < 7) {
-			health += ChatColor.RED;
+			health.append(ChatColor.RED);
 		} else if(healthNumber < 13) {
-			health += ChatColor.GOLD;
+			health.append(ChatColor.GOLD);
 		} else {
-			health += ChatColor.GREEN;
+			health.append(ChatColor.GREEN);
 		}
 		for(int i = 0; i < 20; i++) {
 			if(i == healthNumber) {
-				health += ChatColor.GRAY;
+				health.append(ChatColor.GRAY);
 			}
-			health += "▌";
+			health.append("▌");
 		}
 
-		request.message(Message.fromKey("information-itemHealth").replacements(health, healthNumber, Math.round(request.getAbout().getMaxHealth())));
+		request.message(Message.fromKey("information-itemHealth").replacements(health.toString(), healthNumber, Math.round(request.getAbout().getMaxHealth())));
 	}
 }

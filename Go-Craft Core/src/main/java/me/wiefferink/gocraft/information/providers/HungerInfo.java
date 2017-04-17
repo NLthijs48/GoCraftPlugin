@@ -9,26 +9,26 @@ public class HungerInfo extends InformationProvider {
 
 	@Override
 	public void showSync(InformationRequest request) {
-		String health = "";
+		StringBuilder hunger = new StringBuilder();
 		int foodNumber = request.getAbout().getFoodLevel();
 		if(foodNumber < 7) {
-			health += ChatColor.RED;
+			hunger.append(ChatColor.RED);
 		} else if(foodNumber < 13) {
-			health += ChatColor.GOLD;
+			hunger.append(ChatColor.GOLD);
 		} else {
-			health += ChatColor.GREEN;
+			hunger.append(ChatColor.GREEN);
 		}
 		for(int i = 0; i < 20; i++) {
 			if(i == foodNumber) {
-				health += ChatColor.GRAY;
+				hunger.append(ChatColor.GRAY);
 			}
-			health += "▌";
+			hunger.append("▌");
 		}
 		Message saturation = Message.empty();
 		if(request.getAbout().getSaturation() > 0) {
 			saturation = Message.fromKey("information-itemHungerSaturation").replacements(((double)Math.round(request.getAbout().getSaturation()*10))/10);
 		}
 
-		request.message(Message.fromKey("information-itemHunger").replacements(health, foodNumber, 20, saturation));
+		request.message(Message.fromKey("information-itemHunger").replacements(hunger.toString(), foodNumber, 20, saturation));
 	}
 }
