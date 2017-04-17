@@ -11,8 +11,8 @@ public class VoteInfo extends InformationProvider {
 
 	@Override
 	public void showAsync(InformationRequest request) {
-		database(session -> {
-			GCPlayer gcPlayer = Database.getPlayer(request.getAbout().getName(), request.getAbout().getUniqueId());
+		Database.run(session -> {
+			GCPlayer gcPlayer = Database.getPlayer(request.getAbout().getUniqueId(), request.getAbout().getName());
 
 			// Votes in total
 			long totalVotes = (long)session.createQuery("SELECT count(*) FROM Vote WHERE gcPlayer = :player")

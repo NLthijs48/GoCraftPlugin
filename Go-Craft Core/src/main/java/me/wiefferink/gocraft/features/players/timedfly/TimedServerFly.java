@@ -44,7 +44,7 @@ public class TimedServerFly extends Feature {
 
 		async(() -> {
 			// Save new fly reward
-			database(session -> {
+			Database.run(session -> {
 				GCPlayer buyer = Database.getCreatePlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 				TimedFly fly = new TimedFly(buyer, duration, plugin.getServerId());
 				session.save(fly);

@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.information;
 
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -49,13 +50,15 @@ public class InformationRequest extends Feature {
 		async(() -> {
 
 			// Get async messages
-			for(InformationProvider provider : providers) {
-				try {
-					provider.showAsync(self);
-				} catch(Exception e) {
-					Log.error("InformationProvider", provider.getClass().getSimpleName(), "failed showAsync:", ExceptionUtils.getStackTrace(e));
+			Database.run(session -> {
+				for(InformationProvider provider : providers) {
+					try {
+						provider.showAsync(self);
+					} catch(Exception e) {
+						Log.error("InformationProvider", provider.getClass().getSimpleName(), "failed showAsync:", ExceptionUtils.getStackTrace(e));
+					}
 				}
-			}
+			});
 
 			// Send the messages in sync
 			sync(() -> {

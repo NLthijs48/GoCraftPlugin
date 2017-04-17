@@ -5,7 +5,6 @@ import me.wiefferink.gocraft.features.players.timedfly.TimedFly;
 import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
-import me.wiefferink.gocraft.tools.DatabaseRun;
 import me.wiefferink.gocraft.tools.StackRepresentation;
 import me.wiefferink.gocraft.votes.Vote;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -147,6 +146,31 @@ public class Database {
 	 * Run code in a database session
 	 * @param runnable The code to run in a database session
 	 */
+	public static <T> T get(DatabaseGet<T> runnable) {
+		boolean hadSession = hasSession();
+		T result;
+		try {
+			Calendar start = Calendar.getInstance();
+			result = runnable.run(Database.getSession());
+			Calendar end = Calendar.getInstance();
+
+			// Check how long it took
+			long took = end.getTimeInMillis() - start.getTimeInMillis();
+			if(took > 500) {
+				Log.warn("Database session took", took, "milliseconds!\n"+ StackRepresentation.getStackString());
+			}
+			if(!hadSession) {
+				Database.closeSession(true);
+			}
+		} catch(Exception e) {
+			if(!hadSession) {
+				Database.closeSession(false);
+			}
+			throw e; // Possibly cause session above us to fail and print to console
+		}
+		return result;
+	}
+
 	public static void run(DatabaseRun runnable) {
 		boolean hadSession = hasSession();
 		try {
@@ -157,7 +181,7 @@ public class Database {
 			// Check how long it took
 			long took = end.getTimeInMillis() - start.getTimeInMillis();
 			if(took > 500) {
-				Log.warn("Database session took", took, "milliseconds!\n"+ StackRepresentation.getStackString());
+				Log.warn("Database session took", took, "milliseconds!\n" + StackRepresentation.getStackString());
 			}
 			if(!hadSession) {
 				Database.closeSession(true);
@@ -180,7 +204,7 @@ public class Database {
 		if(!hasSession()) {
 			return null;
 		}
-		GCPlayer result = getPlayer(name, uuid);
+		GCPlayer result = getPlayer(uuid, name);
 		if(result == null) {
 			result = new GCPlayer(uuid, name);
 			Database.getSession().saveOrUpdate(result);
@@ -193,7 +217,7 @@ public class Database {
 	 * @param name The name of the player to get
 	 * @return The GCPlayer
 	 */
-	public static GCPlayer getPlayer(String name, UUID uuid) {
+	public static GCPlayer getPlayer(UUID uuid, String name) {
 		if(!hasSession()) {
 			return null;
 		}

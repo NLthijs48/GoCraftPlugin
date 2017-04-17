@@ -2,9 +2,7 @@ package me.wiefferink.gocraft.features;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
-import me.wiefferink.gocraft.tools.DatabaseRun;
 import me.wiefferink.gocraft.tools.Run;
-import me.wiefferink.gocraft.tools.storage.Database;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -325,13 +323,5 @@ public class Feature implements Listener {
 	 */
 	public FileConfiguration getConfig() {
 		return plugin.getConfig();
-	}
-
-	/**
-	 * Run code in a database session
-	 * @param runnable The code to run
-	 */
-	public void database(DatabaseRun runnable) {
-		Database.run(runnable);
 	}
 }

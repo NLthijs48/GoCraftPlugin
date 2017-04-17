@@ -119,6 +119,18 @@ public class BungeeSession {
 		return serverSessions;
 	}
 
+	/**
+	 * Get the last ServerSession
+	 * @return The last ServerSession or null if none
+	 */
+	public ServerSession getLastServerSession() {
+		return Database.get(session -> session.createQuery(
+				"FROM ServerSession WHERE bungeeSession = :bungeeSession ORDER BY joinedServer DESC", ServerSession.class)
+				.setParameter("bungeeSession", this)
+				.setMaxResults(1)
+				.uniqueResult()
+		);
+	}
 
 	/**
 	 * Ensure all BungeeSession entries are consistent:

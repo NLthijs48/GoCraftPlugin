@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.votes;
 
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.sessions.GCPlayer;
+import me.wiefferink.gocraft.tools.storage.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -26,7 +27,7 @@ public class VoteScoreboard extends Feature {
 	 * Update the scoreboard (should be called async)
 	 */
 	public void updateScoreboard() {
-		database(session -> {
+		Database.run(session -> {
 			// Collect data
 			Date monthStart = VoteManager.getMonthStart().getTime();
 			Date monthEnd = VoteManager.getMonthEnd().getTime();

@@ -36,7 +36,7 @@ public class VoteManager extends Feature {
 		}
 
 		async(() ->
-			database(session -> {
+			Database.run(session -> {
 				GCPlayer gcPlayer = Database.getCreatePlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
 				// Get the last vote done at the same website
@@ -72,12 +72,12 @@ public class VoteManager extends Feature {
 		}
 
 		async(() ->
-			database(session -> {
+			Database.run(session -> {
 				Date monthStart = VoteManager.getMonthStart().getTime();
 				Date monthEnd = VoteManager.getMonthEnd().getTime();
 
 				// Count players that voted in this month
-				long playerCount = (long)session.createQuery("SELECT count(distinct gcPlayer_id) from Vote WHERE at < :monthEnd AND at >= :monthStart")
+				long playerCount = (long)session.createQuery("SELECT count(distinct gcPlayer) from Vote WHERE at < :monthEnd AND at >= :monthStart")
 						.setParameter("monthStart", monthStart)
 						.setParameter("monthEnd", monthEnd)
 						.uniqueResult();
@@ -100,12 +100,12 @@ public class VoteManager extends Feature {
 						// TODO check if we can prevent a select per gcPlayer
 						@SuppressWarnings("unchecked")
 						List<Map<String,Object>> playerVoteCounts = session.createQuery(
-								"SELECT new map(player.name as player, count(*) as votes) " +
+								"SELECT new map(votePlayer.name as player, count(*) as votes) " +
 										"FROM Vote vote " +
-										"INNER JOIN vote.gcPlayer as player " +
-										"WHERE at < :monthEnd AND at >= :monthStart " +
-										"GROUP BY player " +
-										"ORDER BY count(*) DESC, player.name ASC")
+										"INNER JOIN vote.gcPlayer as votePlayer " +
+										"WHERE vote.at < :monthEnd AND vote.at >= :monthStart " +
+										"GROUP BY votePlayer " +
+										"ORDER BY count(*) DESC, votePlayer.name ASC")
 								.setParameter("monthStart", monthStart)
 								.setParameter("monthEnd", monthEnd)
 								.setMaxResults(itemEnd - itemStart + 1)

@@ -240,7 +240,6 @@ public class InspectionManager extends Feature {
 	 * @return The Inspection object created from the stored copy if there is one, otherwise null
 	 */
 	public Inspection restoreInspection(Player player) {
-		Log.debug("Inspect: trying to restore inspection from disk for", player.getName());
 		if (!getInspectorStorage().contains(player.getUniqueId().toString())) {
 			return null;
 		}

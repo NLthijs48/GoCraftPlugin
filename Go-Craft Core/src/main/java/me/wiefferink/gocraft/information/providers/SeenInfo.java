@@ -13,36 +13,33 @@ public class SeenInfo extends InformationProvider {
 
 	@Override
 	public void showAsync(InformationRequest request) {
-		database(session -> {
+		Database.run(session -> {
 			// Don't show status of staff members to normal players (vanish protection)
 			// TODO investigate if we can allow this when not inspecting
 			if(request.getAbout().hasPermission("gocraft.staff") && !request.getTo().hasPermission("gocraft.staff")) {
 				return;
 			}
 
-			GCPlayer gcPlayer = Database.getCreatePlayer(request.getAbout().getUniqueId(), request.getAbout().getName());
-			BungeeSession lastSession = session.createQuery("FROM BungeeSession WHERE gcPlayer = :player ORDER BY joinedBungee DESC", BungeeSession.class)
-					.setParameter("player", gcPlayer)
-					.setMaxResults(1)
-					.uniqueResult();
+			GCPlayer player = Database.getPlayer(request.getAbout().getUniqueId(), request.getAbout().getName());
+			if(player == null) {
+				return;
+			}
+
+			BungeeSession lastSession = player.getLastBungeeSession();
 			if(lastSession != null) {
 				Message history = Message.fromKey("information-onlineHistory").replacements(request.getAbout().getName());
 				// Still online
 				if(lastSession.getLeft() == null) {
-					ServerSession serverSession = session.createQuery("FROM ServerSession WHERE bungeeSession = :bungeeSession ORDER BY joinedServer DESC", ServerSession.class)
-							.setParameter("bungeeSession", lastSession)
-							.setMaxResults(1)
-							.uniqueResult();
+					ServerSession lastServerSession = lastSession.getLastServerSession();
 					String server = "dont know";
-					if(serverSession != null) {
-						server = serverSession.getServerName();
+					if(lastServerSession != null) {
+						server = lastServerSession.getServerName();
 					}
 					// TODO able to click servername
 					request.message(Message.fromKey("information-nowOnline").replacements(server, history));
 				}
 				// Offline
 				else {
-					// TODO show server?
 					request.message(Message.fromKey("information-lastOnline")
 							.replacements(
 									Utils.agoMessage(lastSession.getLeft().getTime()),

@@ -1,4 +1,4 @@
-package me.wiefferink.gocraft.tools;
+package me.wiefferink.gocraft.tools.storage;
 
 import org.hibernate.Session;
 

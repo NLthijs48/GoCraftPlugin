@@ -19,10 +19,10 @@ public class FixGCPlayer extends Feature {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		// Check if name and uuid are still consistent
 		async(() ->
-			database(session -> {
+			Database.run(session -> {
 				String name = event.getPlayer().getName();
 				UUID uuid = event.getPlayer().getUniqueId();
-				GCPlayer player = Database.getPlayer(name, uuid);
+				GCPlayer player = Database.getPlayer(uuid, name);
 				if(player == null) {
 					Log.warn("Joining player does not have GCPlayer:", name, uuid);
 					return;

@@ -110,11 +110,35 @@ public class GCPlayer {
 	}
 
 	/**
+	 * Get the last BungeeSession
+	 * @return The last BungeeSession or null if none
+	 */
+	public BungeeSession getLastBungeeSession() {
+		return Database.get(session -> session.createQuery(
+			"FROM BungeeSession WHERE gcPlayer = :player ORDER BY joinedBungee DESC", BungeeSession.class)
+				.setParameter("player", this)
+				.setMaxResults(1)
+				.uniqueResult()
+		);
+	}
+
+	/**
+	 * Get the last ServerSession
+	 * @return The last ServerSession or null if none
+	 */
+	public ServerSession getLastServerSession() {
+		BungeeSession bungeeSession = getLastBungeeSession();
+		if(bungeeSession != null) {
+			return bungeeSession.getLastServerSession();
+		}
+		return null;
+	}
+
+	/**
 	 * Fixes duplicate player object
 	 */
 	public static void ensureConsistency() {
 		Database.run(session -> {
-
 			int merged;
 			do {
 				merged = 0;
