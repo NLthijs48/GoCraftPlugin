@@ -311,17 +311,17 @@ timedfly-wrongPlayer: "The specified player cannot be found: %0%."
 
 votetop-noPermission: "You do not have permission to view the vote top 10."
 votetop-header:
-  - "[darkgreen]Vote"
+  - "[darkgreen][bold]Vote ranking of %0%:"
   - "    hover: %lang:action|Vote now to receive rewards!|%"
   - "    link: http://go-craft.com/vote"
-  - "ranking of this month:"
 votetop-empty:
-  - "Nobody has voted yet this month! "
-  - "Vote now!"
+  - "Nobody has voted in %0%, "
+  - "[bold]vote now!"
   - "    hover: %lang:action|Vote now to receive rewards!|%"
   - "    link: http://go-craft.com/vote"
 votetop-item:
   - "[darkgreen]%0%: %lang:player|%1%|%[bold]: [white]%2%"
+votetop-wrongYearMonth: "Specify year and month with 'year-month', given: %0%"
 
 map-link:
   - "Check the map on "

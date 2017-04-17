@@ -26,7 +26,7 @@ public class VoteInfo extends InformationProvider {
 			}
 
 			// Votes this month
-			long monthVotes = (long)session.createQuery("SELECT count(*) from Vote WHERE gcPlayer = :player AND at < :monthEnd AND at >= :monthStart")
+			long monthVotes = (long)session.createQuery("SELECT count(*) from Vote WHERE gcPlayer = :player AND at <= :monthEnd AND at >= :monthStart")
 					.setParameter("player", player)
 					.setParameter("monthEnd", VoteManager.getMonthEnd().getTime())
 					.setParameter("monthStart", VoteManager.getMonthStart().getTime())

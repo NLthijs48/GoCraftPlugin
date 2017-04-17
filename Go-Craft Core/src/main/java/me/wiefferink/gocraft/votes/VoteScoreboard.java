@@ -29,12 +29,12 @@ public class VoteScoreboard extends Feature {
 	public void updateScoreboard() {
 		Database.run(session -> {
 			// Collect data
-			Date monthStart = VoteManager.getMonthStart().getTime();
-			Date monthEnd = VoteManager.getMonthEnd().getTime();
+			Date monthStart = VoteManager.getMonthStart();
+			Date monthEnd = VoteManager.getMonthEnd();
 			List<Object[]> playerVoteCounts = session.createQuery(
 					"SELECT gcPlayer as gcPlayer, count(*) as votes " +
 							"FROM Vote " +
-							"WHERE at < :monthEnd AND at >= :monthStart " +
+							"WHERE at <= :monthEnd AND at >= :monthStart " +
 							"GROUP BY gcPlayer_id " +
 							"ORDER BY count(*) DESC")
 					.setParameter("monthStart", monthStart)

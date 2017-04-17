@@ -947,6 +947,19 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Get input as number
+	 * @param input The input to get as number
+	 * @return The string as number, or zero if not numeric
+	 */
+	public static int asNumber(String input) {
+		try {
+			return Integer.parseInt(input);
+		} catch(NumberFormatException ignored) {
+			return 0;
+		}
+	}
+
 
 	public static Message locationMessage(World world, double x, double y, double z) {
 		return Message.fromKey("location").replacements(world.getName(), Math.round(x), Math.round(y), Math.round(z));
