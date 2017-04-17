@@ -12,11 +12,14 @@ public class VoteInfo extends InformationProvider {
 	@Override
 	public void showAsync(InformationRequest request) {
 		Database.run(session -> {
-			GCPlayer gcPlayer = Database.getPlayer(request.getAbout().getUniqueId(), request.getAbout().getName());
+			GCPlayer player = Database.getPlayer(request.getAbout().getUniqueId(), request.getAbout().getName());
+			if(player == null) {
+				return;
+			}
 
 			// Votes in total
 			long totalVotes = (long)session.createQuery("SELECT count(*) FROM Vote WHERE gcPlayer = :player")
-					.setParameter("player", gcPlayer)
+					.setParameter("player", player)
 					.uniqueResult();
 			if(totalVotes > 0) {
 				request.message(Message.fromKey("information-totalVotes").replacements(totalVotes));
@@ -24,7 +27,7 @@ public class VoteInfo extends InformationProvider {
 
 			// Votes this month
 			long monthVotes = (long)session.createQuery("SELECT count(*) from Vote WHERE gcPlayer = :player AND at < :monthEnd AND at >= :monthStart")
-					.setParameter("player", gcPlayer)
+					.setParameter("player", player)
 					.setParameter("monthEnd", VoteManager.getMonthEnd().getTime())
 					.setParameter("monthStart", VoteManager.getMonthStart().getTime())
 					.uniqueResult();
