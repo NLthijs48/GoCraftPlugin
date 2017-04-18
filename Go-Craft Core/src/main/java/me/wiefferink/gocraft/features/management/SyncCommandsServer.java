@@ -195,8 +195,12 @@ public class SyncCommandsServer extends Feature {
 					continue;
 				}
 
-				// Retreive input from Bungee
+				// Retrieve input from Bungee
 				try {
+					// TODO probably should synchronize read/write of in/output stream as well
+					if(in == null) {
+						continue;
+					}
 					String input = in.readLine();
 					if(input == null) {
 						continue;
