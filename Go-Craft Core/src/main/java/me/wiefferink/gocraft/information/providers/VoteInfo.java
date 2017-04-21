@@ -28,8 +28,8 @@ public class VoteInfo extends InformationProvider {
 			// Votes this month
 			long monthVotes = (long)session.createQuery("SELECT count(*) from Vote WHERE gcPlayer = :player AND at <= :monthEnd AND at >= :monthStart")
 					.setParameter("player", player)
-					.setParameter("monthEnd", VoteManager.getMonthEnd().getTime())
-					.setParameter("monthStart", VoteManager.getMonthStart().getTime())
+					.setParameter("monthEnd", VoteManager.getMonthEnd())
+					.setParameter("monthStart", VoteManager.getMonthStart())
 					.uniqueResult();
 			request.message(Message.fromKey("information-monthVotes").replacements(monthVotes));
 		});
