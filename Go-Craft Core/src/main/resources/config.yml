@@ -101,7 +101,7 @@ auracheck:
   ticksToKill: 10
   numberOfFakePlayers: 4
   visiblePlayers: false
-hacksConfirmedCommand: "gopvp:hackban %player% %reason%"
+hacksConfirmedCommand: "hackban %player% %reason%"
 staffJoinsInInspect: false
 enableNauseaPotions: true
 playerAttributes: # Set player attributes
