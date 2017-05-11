@@ -24,6 +24,7 @@ import java.util.Map;
 
 public class SyncCommandsBungee {
 
+	// Yeah this should be in a config file... port is localhost only luckily
 	private static final String password = "cbpyiSsZqU6Mu88gqqFcbqLmxZdJNiXr6ePj6TWmUiKQqz67MJMEPUXMaKhX63Sz";
 
 	private volatile boolean shouldRun;

@@ -1,0 +1,2 @@
+# Integration
+These classes are bridges to other plugins. The reason for these links is that the `*Link` classes are only instantiated if we know the plugin is installed. After that the class can be used to get a reference to that actual plugin.

@@ -1,3 +1,6 @@
+# This file describes the structure of the localstorage.yml file
+# All data in this file is stored for an individual server, global data is stored in SQL
+
 statistics:
   pvp:
     totalDeaths: <number>
