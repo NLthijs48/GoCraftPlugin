@@ -4,22 +4,56 @@
 # This plugin has been created by NLThijs48  #
 ##############################################
 
+# Show debug messages
+debug: true
+
+# Database settings
+settings:
+  # Database for all features of the plugin
+  sessionTracker:
+    database: "gocraft"
+    username: "your_user"
+    password: "your_password"
+
 # Server settings
 servers:
+  # Used as fallback for server settings
+  DEFAULT:
+    version: 1.11
+    nether: false
+    end: false
+    whitelist: false
+    commandBlocks: false
+    difficulty: 1
+    gamemode: 0
+    seed: ""
+    viewDistance: 10
+    resourcePack: ""
+  # Settings for individual server (falling back to DEFAULT if not set)
   <id>:
     directory: <directory name>
     name: <display name>
+
 # Server groups
 serverGroups:
   <name>: "serverIds, comma-separated"
+
+# Ranks
+ranks:
+  <id>:
+    name: RankName
+    prefix: "&2&l[RankPrefix]"
+
 # Rules
 rules:
   <servers>:
     - rules
+
 # Help
 help:
   <servers>:
     - help
+
 # Root files
 rootfiles:
   <name>:
