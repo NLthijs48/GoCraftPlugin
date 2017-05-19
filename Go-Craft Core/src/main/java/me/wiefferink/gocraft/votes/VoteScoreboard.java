@@ -69,8 +69,8 @@ public class VoteScoreboard extends Feature {
 				objective.getScore(" ").setScore(-1);
 				objective.getScore("" + ChatColor.DARK_GREEN + ChatColor.BOLD + "Month total:").setScore(-2);
 				objective.getScore(" " + monthVoteCount).setScore(-3);
-				objective.getScore("" + ChatColor.DARK_GREEN + ChatColor.BOLD + "Get rewards:").setScore(-5);
-				objective.getScore(" " + ChatColor.UNDERLINE + "/vote").setScore(-6);
+				objective.getScore("" + ChatColor.DARK_GREEN + ChatColor.BOLD + "Get rewards:").setScore(-4);
+				objective.getScore(" " + ChatColor.UNDERLINE + "/vote").setScore(-5);
 
 				// Swap to the new one
 				objective.setDisplaySlot(DisplaySlot.SIDEBAR);
