@@ -109,7 +109,8 @@
             <groupId>me.confuser</groupId>
             <artifactId>BanManager</artifactId>
             <version>5.7.2-CUSTOM</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../dependencies/BanManager.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>nl.evolutioncoding</groupId>
