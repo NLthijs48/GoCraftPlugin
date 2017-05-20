@@ -121,7 +121,8 @@
             <groupId>me.wiefferink</groupId>
             <artifactId>GoPVP</artifactId>
             <version>1.0</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../dependencies/GoPVP.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
