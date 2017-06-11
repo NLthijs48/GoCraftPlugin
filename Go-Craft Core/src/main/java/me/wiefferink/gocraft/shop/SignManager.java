@@ -124,7 +124,7 @@ public class SignManager implements Listener {
 	 * Check for placing new signs
 	 * @param event The event
 	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onSignPlace(SignChangeEvent event) {
 		if (event.getLines().length == 0 || event.getLine(0) == null) {
 			return;
