@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class Feature implements Listener {
+public abstract class Feature implements Listener {
 	public static GoCraft plugin = GoCraft.getInstance();
 
 	protected String configKey = null;

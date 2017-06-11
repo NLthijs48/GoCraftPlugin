@@ -34,10 +34,7 @@ public class EnableRegionPotionEffects extends Feature {
 	 * Refresh all potion effects
 	 */
 	public void refreshPotionEffects() {
-		List<Player> playersFirst = new ArrayList<>();
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			playersFirst.add(player);
-		}
+		List<Player> playersFirst = new ArrayList<>(Bukkit.getOnlinePlayers());
 		final ConfigurationSection regions = getConfig().getConfigurationSection("regionPotionEffects");
 		final List<Player> players = playersFirst;
 		new BukkitRunnable() {
