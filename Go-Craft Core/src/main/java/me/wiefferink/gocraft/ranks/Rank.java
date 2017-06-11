@@ -30,7 +30,7 @@ public class Rank {
 	@Column(nullable = false, length = 50)
 	private String servers;
 
-	Rank() {}
+	protected Rank() {}
 
 	public Rank(GCPlayer gcPlayer, String name, String servers) {
 		this.gcPlayer = gcPlayer;

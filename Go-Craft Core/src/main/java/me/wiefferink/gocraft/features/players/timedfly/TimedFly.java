@@ -49,7 +49,7 @@ public class TimedFly {
 	/**
 	 * Constructor for Hibernate
 	 */
-	TimedFly() {}
+	protected TimedFly() {}
 
 	/**
 	 * Create a TimedFly instance

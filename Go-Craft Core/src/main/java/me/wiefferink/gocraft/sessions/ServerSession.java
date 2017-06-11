@@ -43,7 +43,7 @@ public class ServerSession {
 	/**
 	 * Constructor for Hibernate
 	 */
-	ServerSession() {}
+	protected ServerSession() {}
 
 	/**
 	 * Create a new ServerSession
