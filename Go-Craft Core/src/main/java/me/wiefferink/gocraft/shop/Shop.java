@@ -51,7 +51,7 @@ public class Shop extends Feature {
 	private List<InventoryAction> rightClick = new ArrayList<>(Arrays.asList(InventoryAction.DROP_ONE_CURSOR, InventoryAction.PICKUP_HALF, InventoryAction.PLACE_ONE));
 	private List<InventoryAction> middleClick = new ArrayList<>(Collections.singleton(InventoryAction.CLONE_STACK));
 	private List<InventoryAction> notOnOther = new ArrayList<>(Arrays.asList(InventoryAction.COLLECT_TO_CURSOR, InventoryAction.DROP_ALL_CURSOR, InventoryAction.DROP_ALL_SLOT, InventoryAction.DROP_ONE_CURSOR, InventoryAction.DROP_ONE_SLOT, InventoryAction.HOTBAR_MOVE_AND_READD, InventoryAction.HOTBAR_SWAP, InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_HALF, InventoryAction.PICKUP_ONE, InventoryAction.PICKUP_SOME, InventoryAction.PLACE_ALL, InventoryAction.PLACE_ONE, InventoryAction.PLACE_SOME, InventoryAction.SWAP_WITH_CURSOR, InventoryAction.UNKNOWN, InventoryAction.NOTHING, InventoryAction.MOVE_TO_OTHER_INVENTORY));
-	private List<InventoryAction> notOnSelf = new ArrayList<>(Arrays.asList(InventoryAction.MOVE_TO_OTHER_INVENTORY, InventoryAction.UNKNOWN, InventoryAction.NOTHING));
+	private List<InventoryAction> notOnSelf = new ArrayList<>(Arrays.asList(InventoryAction.MOVE_TO_OTHER_INVENTORY, InventoryAction.UNKNOWN, InventoryAction.NOTHING, InventoryAction.COLLECT_TO_CURSOR));
 	private static Map<String, Enchantment> enchantmentMap;
 
 	static {

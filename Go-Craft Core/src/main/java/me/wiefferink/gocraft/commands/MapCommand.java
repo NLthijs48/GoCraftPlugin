@@ -17,21 +17,3 @@ public class MapCommand extends Feature {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
