@@ -64,6 +64,14 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>me.wiefferink</groupId>
+            <artifactId>gocraft-v1_12_R1</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
 
         <!-- Hibernate -->
         <dependency>
