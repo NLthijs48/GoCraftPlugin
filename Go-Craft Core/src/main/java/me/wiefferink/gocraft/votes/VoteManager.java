@@ -35,6 +35,11 @@ public class VoteManager extends Feature {
 
 	@EventHandler
 	public void voteEvent(VotifierEvent event) {
+		if(event.getVote().getUsername() == null || event.getVote().getUsername().isEmpty()) {
+			Log.warn("Vote with empty username:", event.getVote());
+			return;
+		}
+
 		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getVote().getUsername());
 		if(offlinePlayer == null || offlinePlayer.getName() == null) {
 			Log.warn("Voting user not found: ", event.getVote().getUsername());
