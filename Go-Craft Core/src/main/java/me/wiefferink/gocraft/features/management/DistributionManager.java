@@ -218,6 +218,7 @@ public class DistributionManager extends Feature {
 				// Search jarfile to push
 				File newPluginJar = null;
 				File newPluginConfig = null;
+				String newJarVersion = null;
 				for (File file : files) {
 					if (file.isFile() && matchesFileName(pushPlugin, file) && file.getName().toLowerCase().endsWith(".jar")) {
 						// Check if version matches
@@ -229,8 +230,10 @@ public class DistributionManager extends Feature {
 							}
 						}
 						if (versionMatches(serverVersion, jarVersion)) {
-							if (newPluginJar == null) {
+							// We don't have a jar yet or this jar is version specific while the other one is not
+							if (newPluginJar == null || (newJarVersion==null && jarVersion != null)) {
 								newPluginJar = file;
+								newJarVersion = jarVersion;
 							} else {
 								pluginWarnings.add("Found second .jar file match: " + file.getAbsolutePath() + ", first=" + newPluginJar.getAbsolutePath());
 							}
