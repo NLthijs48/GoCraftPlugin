@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.Log;
+import me.wiefferink.gocraft.api.messages.out.OnlinePlayersResponse;
 import me.wiefferink.gocraft.tools.storage.Database;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -83,6 +84,9 @@ public class SessionTracker implements Listener {
 					onlineServer.put(player.getUniqueId(), newServerSession);
 					session.save(newServerSession);
 				}
+
+				// Broadcast to website
+				GoCraftBungee.getInstance().getApi().broadcast(new OnlinePlayersResponse());
 			})
 		);
 	}
@@ -103,6 +107,9 @@ public class SessionTracker implements Listener {
 				ServerSession serverSession = onlineServer.remove(player);
 				serverSession.hasLeft();
 				session.update(serverSession);
+
+				// Broadcast to website
+				GoCraftBungee.getInstance().getApi().broadcast(new OnlinePlayersResponse());
 			})
 		);
 	}

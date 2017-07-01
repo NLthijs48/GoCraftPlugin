@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft;
 
+import me.wiefferink.gocraft.api.Api;
 import me.wiefferink.gocraft.features.management.SyncCommandsBungee;
 import me.wiefferink.gocraft.sessions.SessionTracker;
 import me.wiefferink.gocraft.tools.Constant;
@@ -25,8 +26,9 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 	private Configuration generalConfig;
 	private ConfigurationProvider configurationProvider;
 	private File generalFolder;
+	private Api api;
 
-	public GoCraftBungee getInstance() {
+	public static GoCraftBungee getInstance() {
 		return instance;
 	}
 
@@ -36,7 +38,7 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 		Log.setLogger(getLogger());
 
 		// Setup general config file
-		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent()+File.separator+Constant.GENERAL_FOLDER_NAME);
+		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent()+File.separator+ Constant.GENERAL_FOLDER_NAME);
 		configurationProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
 		File generalConfigFile = new File(generalFolder.getAbsolutePath(), Constant.GENERAL_CONFIG_NAME);
 		try {
@@ -58,12 +60,16 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 		this.getProxy().getPluginManager().registerListener(this, this);
 		syncCommandsBungee = new SyncCommandsBungee(this);
 		new SessionTracker(this);
+		api = new Api();
 	}
 
 	@Override
 	public void onDisable() {
 		if(syncCommandsBungee != null) {
 			syncCommandsBungee.stop();
+		}
+		if(api != null) {
+			api.stop();
 		}
 	}
 
@@ -85,6 +91,14 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 				Log.warn("Blocked an attempt to login with the same name as an online player, name: "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
 			}
 		}
+	}
+
+	/**
+	 * Get the api server
+	 * @return Api
+	 */
+	public Api getApi() {
+		return api;
 	}
 
 	/**

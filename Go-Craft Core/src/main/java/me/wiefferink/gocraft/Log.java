@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.logging.Logger;
 
@@ -32,7 +33,7 @@ public class Log {
 	 */
 	public static void debug(Object... message) {
 		if(debug && logger != null) {
-			logger.info("Debug: " + StringUtils.join(message, " "));
+			logger.info("Debug: " + StringUtils.join(process(message), " "));
 		}
 	}
 
@@ -42,7 +43,7 @@ public class Log {
 	 */
 	public static void info(Object... message) {
 		if(logger != null) {
-			logger.info(StringUtils.join(message, " "));
+			logger.info(StringUtils.join(process(message), " "));
 		}
 	}
 
@@ -52,7 +53,7 @@ public class Log {
 	 */
 	public static void warn(Object... message) {
 		if(logger != null) {
-			logger.warning(StringUtils.join(message, " "));
+			logger.warning(StringUtils.join(process(message), " "));
 		}
 	}
 
@@ -62,7 +63,22 @@ public class Log {
 	 */
 	public static void error(Object... message) {
 		if(logger != null) {
-			logger.severe(StringUtils.join(message, " "));
+			logger.severe(StringUtils.join(process(message), " "));
 		}
+	}
+
+	/**
+	 * Process a message for better printing
+	 * @param message Message to process
+	 * @return Processed message (exceptions as string)
+	 */
+	public static Object[] process(Object[] message) {
+		for(int i=0; i<message.length; i++) {
+			Object messagePart = message[i];
+			if(messagePart != null && messagePart instanceof Throwable) {
+				message[i] = ExceptionUtils.getStackTrace((Throwable) messagePart);
+			}
+		}
+		return message;
 	}
 }

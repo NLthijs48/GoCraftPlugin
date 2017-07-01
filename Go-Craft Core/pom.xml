@@ -193,8 +193,13 @@
             <version>1.7.22</version>
         </dependency>
 
-    </dependencies>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web</artifactId>
+            <version>3.4.2</version>
+        </dependency>
 
+    </dependencies>
 
     <profiles>
         <!-- Copy the jar file to a test server, activate by using -DcopyResult="/path/to/test/server" -->
