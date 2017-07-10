@@ -139,7 +139,9 @@ public abstract class Feature implements Listener {
 		List<String> normalizedAliases = new ArrayList<>();
 		if(aliases != null && aliases.length > 0) {
 			for(String alias : aliases) {
-				normalizedAliases.add(alias.toLowerCase());
+				if(alias != null) {
+					normalizedAliases.add(alias.toLowerCase());
+				}
 			}
 			newCommand.setAliases(normalizedAliases);
 		}

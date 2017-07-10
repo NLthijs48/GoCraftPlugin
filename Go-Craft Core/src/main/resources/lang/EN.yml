@@ -323,6 +323,11 @@ votetop-item:
   - "[darkgreen]%0%: %lang:player|%1%|%[bold]: [white]%2%"
 votetop-wrongYearMonth: "Specify year and month with 'year-month', given: %0%"
 
+switch-noPermission: "You do not have permission to switch servers by command"
+switch-notLoggedIn: "You need to be logged in to switch to other servers"
+switch-sameServer: "You are already in %0%!"
+switch-go: "Connecting to %0%..."
+
 map-link:
   - "Check the map on "
   - "[bold]maps.go-craft.com[/bold]"

@@ -83,6 +83,7 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PreLoginEvent event) {
+
 		Log.info("PreLoginEvent of "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 			if(player.getName().equalsIgnoreCase(event.getConnection().getName())) {

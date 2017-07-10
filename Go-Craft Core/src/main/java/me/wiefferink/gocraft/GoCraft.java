@@ -10,6 +10,7 @@ import me.wiefferink.gocraft.commands.RandomtpCommand;
 import me.wiefferink.gocraft.commands.ReloadCommand;
 import me.wiefferink.gocraft.commands.RulesCommand;
 import me.wiefferink.gocraft.commands.SafeTeleportCommand;
+import me.wiefferink.gocraft.commands.ServerSwitchCommands;
 import me.wiefferink.gocraft.commands.StaffMessagesCommands;
 import me.wiefferink.gocraft.commands.TempbanCommand;
 import me.wiefferink.gocraft.features.Feature;
@@ -62,6 +63,7 @@ import me.wiefferink.gocraft.features.players.SpawnTeleport;
 import me.wiefferink.gocraft.features.players.timedfly.TimedServerFly;
 import me.wiefferink.gocraft.information.InformationManager;
 import me.wiefferink.gocraft.inspector.InspectionManager;
+import me.wiefferink.gocraft.integration.AuthMeLink;
 import me.wiefferink.gocraft.integration.BanManagerLink;
 import me.wiefferink.gocraft.integration.EssentialsLink;
 import me.wiefferink.gocraft.integration.GoPVPLink;
@@ -123,6 +125,7 @@ public final class GoCraft extends JavaPlugin {
 	private DistributionManager distributionManager;
 	private InspectionManager inspectionManager;
 	private InformationManager informationManager;
+	private SyncCommandsServer syncCommandsServer;
 	private boolean debug = false;
 	private List<String> chatPrefix = null;
 	private static GoCraft instance = null;
@@ -143,6 +146,7 @@ public final class GoCraft extends JavaPlugin {
 	private ProtocolLibLink protocolLibLink = null;
 	private WorldGuardLink worldGuardLink = null;
 	private BanManagerLink banManagerLink = null;
+	private AuthMeLink authMeLink = null;
 	// Version specific classes
 	private SpecificUtilsBase specificUtils = null;
 
@@ -203,6 +207,13 @@ public final class GoCraft extends JavaPlugin {
 		if(pl != null && pl.isEnabled()) {
 			protocolLibLink = new ProtocolLibLink();
 			connnected.add("ProtocolLib");
+		}
+
+		// Check if AuthMe is present
+		Plugin authme = getServer().getPluginManager().getPlugin("Authme");
+		if(authme != null && authme.isEnabled()) {
+			authMeLink = new AuthMeLink();
+			connnected.add("AuthMe");
 		}
 
 		// Check if Vault is present
@@ -491,6 +502,10 @@ public final class GoCraft extends JavaPlugin {
 		return this.worldGuardLink;
 	}
 
+	public AuthMeLink getAuthMeLink() {
+		return this.authMeLink;
+	}
+
 	/**
 	 * Check if DynMap is installed
 	 * @return true if DynMap is installed, otherwise false
@@ -521,6 +536,14 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public SpecificUtilsBase getSpecificUtils() {
 		return specificUtils;
+	}
+
+	/**
+	 * Get the commands server to communicate with BungeeCord
+	 * @return SyncCommandsServer instance
+	 */
+	public SyncCommandsServer getSyncCommandsServer() {
+		return syncCommandsServer;
 	}
 
 	/**
@@ -582,7 +605,8 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new AddDefaultRank());
 		features.add(new NauseaPotions());
 		features.add(new FixInventories());
-		features.add(new SyncCommandsServer());
+		syncCommandsServer = new SyncCommandsServer();
+		features.add(syncCommandsServer);
 		features.add(new SpawnPoints());
 		features.add(new DisableVoidFall());
 		features.add(new OldHunger());
@@ -612,6 +636,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new DiscordCommand());
 		features.add(new SafeTeleportCommand());
 		features.add(new SeenCommand());
+		features.add(new ServerSwitchCommands());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {

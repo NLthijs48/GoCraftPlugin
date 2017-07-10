@@ -2,8 +2,13 @@ package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.Log;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -21,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class SyncCommandsBungee {
 
@@ -169,9 +175,6 @@ public class SyncCommandsBungee {
 				String version = plugin.getDescription().getVersion();
 				if(!init[3].equals(version)) {
 					Log.warn("SyncCommands:", name, "is running version", init[3], "but we are running version", version);
-					//out.println("no Version incorrect, running version "+version);
-					//disconnect();
-					//return;
 				}
 				out.println("connected");
 				servers.put(name, this);
@@ -227,6 +230,52 @@ public class SyncCommandsBungee {
 						} else {
 							Log.info("SyncCommands["+name+"]: executed syncBungee command:", command);
 						}
+					}
+
+					// Switch player to another server: switch <player> <server>
+					else if("switch".equalsIgnoreCase(type)) {
+						if(split.length < 3) {
+							Log.warn("SyncCommands["+name+"]: not enough arguments for switch:", command);
+						} else {
+							UUID playerUUID = null;
+							try {
+								playerUUID = UUID.fromString(split[1]);
+							} catch(IllegalArgumentException e) {
+								Log.warn("SyncCommands["+name+"]: wrong UUID for switch:", command);
+							}
+							if(playerUUID != null) {
+								ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerUUID);
+								if(player == null) {
+									Log.warn("SyncCommands["+name+"]: player is not online to do switch:", command);
+								} else {
+									ServerInfo server = ProxyServer.getInstance().getServerInfo(split[2]);
+									if(server == null) {
+										Log.warn("SyncCommands["+name+"]: could not find server for switch:", command);
+									} else {
+										player.connect(server, (result, error) -> {
+											if(!result) {
+												player.sendMessage(
+														ChatMessageType.CHAT,
+														new ComponentBuilder("[Go-Craft]")
+															.color(ChatColor.DARK_GREEN)
+															.append(" Could not connect you to "+server.getName())
+															.color(ChatColor.WHITE)
+															.create())
+												;
+											}
+											if(error != null) {
+												Log.warn("SyncCommands[" + name + "]: Error while trying to switch player from server:", ExceptionUtils.getStackTrace(error));
+											}
+										});
+									}
+								}
+							}
+						}
+					}
+
+					// Invalid command
+					else {
+						Log.warn("SyncCommands["+name+"]: unknown command type:", type, "args:", command);
 					}
 
 				} catch(IOException e) {

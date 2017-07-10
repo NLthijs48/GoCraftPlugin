@@ -65,7 +65,7 @@ public class SyncCommandsServer extends Feature {
 	 * @param command The command name
 	 * @param args    The arguments containing the command to execute
 	 */
-	public void runCommand(String command, String[] args) {
+	public void runCommand(String command, String... args) {
 		new BukkitRunnable() {
 			@Override
 			public void run() {

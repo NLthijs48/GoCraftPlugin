@@ -68,42 +68,38 @@ public class Rewards extends Feature {
 
 			// Check rank match
 			List<String> ranks = Utils.listOrSingle(rewardsSection, key+".ranks");
-			if(ranks != null) {
-				for(String rank : ranks) {
-					matches |= groups.contains(rank);
-				}
+			for(String rank : ranks) {
+				matches |= groups.contains(rank);
 			}
 
 			// Check uuid match
 			List<String> uuids = Utils.listOrSingle(rewardsSection, key+".uuids");
-			matches |= (uuids != null && uuids.contains(player.getUniqueId().toString()));
+			matches |= uuids.contains(player.getUniqueId().toString());
 			if(!matches) {
 				continue;
 			}
 
 			// Execute commands
 			List<String> commands = Utils.listOrSingle(rewardsSection, key+".commands");
-			if(commands != null) {
-				for(String command : commands) {
-					command = command.replace("%player%", player.getName());
-					command = command.replace("%uuid%", player.getUniqueId().toString());
-					boolean success;
-					String stacktrace = null;
-					try {
-						success = plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-					} catch(CommandException e) {
-						success = false;
-						stacktrace = ExceptionUtils.getStackTrace(e);
-					}
-					if(!success) {
-						Log.warn("Failed to run command of reward", key, "for player", player.getName()+":", command, stacktrace);
-					}
+			for(String command : commands) {
+				command = command.replace("%player%", player.getName());
+				command = command.replace("%uuid%", player.getUniqueId().toString());
+				boolean success;
+				String stacktrace = null;
+				try {
+					success = plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+				} catch(CommandException e) {
+					success = false;
+					stacktrace = ExceptionUtils.getStackTrace(e);
+				}
+				if(!success) {
+					Log.warn("Failed to run command of reward", key, "for player", player.getName()+":", command, stacktrace);
 				}
 			}
 
 			// Send message
 			List<String> messageList = Utils.listOrSingle(rewardsSection, key+".message");
-			if(messageList != null && !messageList.isEmpty()) {
+			if(!messageList.isEmpty()) {
 				// Apply replacements
 				for(int i = 0; i < messageList.size(); i++) {
 					messageList.set(i, messageList.get(i).replace("%player%", player.getName()));

@@ -50,10 +50,7 @@ public class RulesCommand extends Feature {
 		for (String ruleKey : rulesSection.getKeys(false)) {
 			Set<String> servers = plugin.getDistributionManager().resolveServers(ruleKey, new ArrayList<>());
 			if (servers.contains(plugin.getServerId())) {
-				List<String> get = Utils.listOrSingle(rulesSection, ruleKey);
-				if(get != null) {
-					rules.addAll(get);
-				}
+				rules.addAll(Utils.listOrSingle(rulesSection, ruleKey));
 			}
 		}
 	}

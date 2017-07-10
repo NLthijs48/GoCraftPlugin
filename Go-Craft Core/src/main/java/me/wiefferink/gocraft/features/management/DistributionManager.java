@@ -649,12 +649,10 @@ public class DistributionManager extends Feature {
 							groupsPermissions.put(group, groupPermissions);
 						}
 						List<String> get = Utils.listOrSingle(currentSection, "permissions");
-						if(get != null) {
-							// Prevent duplicates
-							for(String addPerm : get) {
-								if(!groupPermissions.contains(addPerm)) {
-									groupPermissions.add(addPerm);
-								}
+						// Prevent duplicates
+						for(String addPerm : get) {
+							if(!groupPermissions.contains(addPerm)) {
+								groupPermissions.add(addPerm);
 							}
 						}
 					}

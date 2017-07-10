@@ -58,6 +58,10 @@
 			<id>votifier-repo</id>
 			<url>http://repo.howaner.de/</url>
 		</repository>
+		<repository>
+			<id>authme</id>
+			<url>http://ci.xephi.fr/plugin/repository/everything/</url>
+		</repository>
 	</repositories>
 
 </project>

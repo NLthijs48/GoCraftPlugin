@@ -930,7 +930,7 @@ public class Utils {
 		} else if(section.isSet(key)) {
 			return new ArrayList<>(Collections.singletonList(section.getString(key)));
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	/**
