@@ -24,20 +24,16 @@ public class OnlinePlayersResponse extends Response {
 							"FROM ServerSession serverSession " +
 							"INNER JOIN serverSession.bungeeSession as bungeeSession " +
 							"INNER JOIN bungeeSession.gcPlayer as gcPlayer " +
-							"WHERE serverSession.leftServer=null")
+							"WHERE serverSession.leftServer=null " +
+							"ORDER BY gcPlayer.name")
 					.getResultList();
 
 			for(Map<String, Object> onlinePlayerDetails : onlinePlayers) {
 				GCPlayer player = (GCPlayer)onlinePlayerDetails.get("player");
 				ServerSession server = (ServerSession)onlinePlayerDetails.get("server");
 
-				List<WebsitePlayer> serverPlayers = players.get(server.getServerName());
-				if(serverPlayers == null) {
-					serverPlayers = new ArrayList<>();
-					players.put(server.getServerName(), serverPlayers);
-				}
-
-				serverPlayers.add(new WebsitePlayer(player.getName(), player.getUniqueId()));
+				players.computeIfAbsent(server.getServerName(), key -> new ArrayList<>())
+					.add(new WebsitePlayer(player.getName(), player.getUniqueId()));
 			}
 		});
 	}
