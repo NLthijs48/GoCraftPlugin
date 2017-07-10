@@ -35,8 +35,7 @@ public class SeenInfo extends InformationProvider {
 					if(lastServerSession != null) {
 						server = lastServerSession.getServerName();
 					}
-					// TODO able to click servername
-					request.message(Message.fromKey("information-nowOnline").replacements(server, history));
+					request.message(Message.fromKey("information-nowOnline").replacements(plugin.getServerName(server), history));
 				}
 				// Offline
 				else {
