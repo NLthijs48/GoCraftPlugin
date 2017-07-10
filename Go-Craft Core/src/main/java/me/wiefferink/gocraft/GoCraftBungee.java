@@ -2,6 +2,7 @@ package me.wiefferink.gocraft;
 
 import me.wiefferink.gocraft.api.Api;
 import me.wiefferink.gocraft.features.management.SyncCommandsBungee;
+import me.wiefferink.gocraft.features.players.SwitchJoinLeaveMessages;
 import me.wiefferink.gocraft.sessions.SessionTracker;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.storage.Database;
@@ -58,6 +59,7 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 
 		// Start features
 		this.getProxy().getPluginManager().registerListener(this, this);
+		this.getProxy().getPluginManager().registerListener(this, new SwitchJoinLeaveMessages(this));
 		syncCommandsBungee = new SyncCommandsBungee(this);
 		new SessionTracker(this);
 		api = new Api();
@@ -100,6 +102,14 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 	 */
 	public Api getApi() {
 		return api;
+	}
+
+	/**
+	 * Get SyncCommandsBungee instance
+	 * @return SyncCommandsBungee
+	 */
+	public SyncCommandsBungee getSyncCommandsBungee() {
+		return syncCommandsBungee;
 	}
 
 	/**

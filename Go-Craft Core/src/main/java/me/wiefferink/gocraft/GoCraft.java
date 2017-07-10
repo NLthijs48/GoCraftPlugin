@@ -380,7 +380,7 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public String getServerDirectory() {
 		String result = getDataFolder().getAbsoluteFile().getParentFile().getParent().replace(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent(), "");
-		if(result != null) {
+		if(result != null && (result.startsWith("/") || result.startsWith("\\"))) {
 			result = result.substring(1);
 		}
 		return result;

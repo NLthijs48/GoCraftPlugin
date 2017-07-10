@@ -37,6 +37,7 @@ general-playerOnly: "This command can only be used by a player."
 
 general-joinedServer: "[green][bold]>>> [reset]%lang:player|%0%|%[reset] joined the server."
 general-leftServer: "[red][bold]<<< [reset]%lang:player|%0%|%[reset] left the server."
+general-switchedServer: "[gold][bold]>>> [reset]%lang:player|%0%|%[reset] switched to %1%."
 
 ########## PAGES
 page-wrong: "%0% is not a correct page number."

@@ -2,11 +2,13 @@ package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -16,10 +18,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class SyncCommandsServer extends Feature {
 
@@ -228,11 +227,24 @@ public class SyncCommandsServer extends Feature {
 						} else {
 							Log.warn("SyncCommands: executing command failed:", command+"\n", exception != null ? ExceptionUtils.getStackTrace(exception) : "result is false");
 						}
-					}
+					} else if("broadcast".equals(type)) {
+						broadcast(Message.fromKey(split[1]),  Arrays.copyOfRange(split, 2, split.length));
+					} else plugin.getLogger().warning("SyncCommands: Unknown type");
 				} catch(IOException e) {
 					disconnect();
 				}
 			}
+		}
+	}
+
+	/**
+	 * Broadcast a message to all players
+	 * @param message The message to broadcast
+	 */
+	private void broadcast(Message message, String[] args) {
+		message = message.replacements(args);
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			message.send(player);
 		}
 	}
 }
