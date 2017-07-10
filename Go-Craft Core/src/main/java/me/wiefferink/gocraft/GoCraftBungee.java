@@ -113,6 +113,29 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 	}
 
 	/**
+	 * Get the name of this server
+	 *
+	 * @param result The id of the server to get the name for
+	 * @return The display name of this server
+	 */
+	public String getServerName(String result) {
+		Configuration servers = getGeneralConfig().getSection("servers");
+		if(servers != null) {
+			for(String id : servers.getKeys()) {
+				if(result.equalsIgnoreCase(id)
+						|| result.equalsIgnoreCase(servers.getString(id + ".name"))
+						|| result.equalsIgnoreCase(servers.getString(id + ".directory"))) {
+					result = servers.getString(id + ".name");
+				}
+			}
+		}
+		if(result == null || result.length() == 0) {
+			result = "UNKNOWN";
+		}
+		return result;
+	}
+
+	/**
 	 * Join string parts with a glue
 	 * @param parts The parts to join
 	 * @param glue  The glue to put between the parts

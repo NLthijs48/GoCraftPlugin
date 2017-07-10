@@ -44,7 +44,7 @@ public class SwitchJoinLeaveMessages implements Listener {
                     "broadcast general-joinedServer " + event.getPlayer().getDisplayName());
         } else if (!event.getPlayer().getServer().getInfo().getName().equals(event.getTarget().getName())) {
             plugin.getSyncCommandsBungee().runCommand(event.getPlayer().getServer().getInfo().getName(),
-                    "broadcast general-switchedServer " + event.getPlayer().getDisplayName() + " " + to);
+                    "broadcast general-switchedServer " + event.getPlayer().getDisplayName() + " " + GoCraftBungee.getInstance().getServerName(to));
         }
     }
 

@@ -18,7 +18,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class SyncCommandsServer extends Feature {
 
@@ -229,7 +233,9 @@ public class SyncCommandsServer extends Feature {
 						}
 					} else if("broadcast".equals(type)) {
 						broadcast(Message.fromKey(split[1]),  Arrays.copyOfRange(split, 2, split.length));
-					} else plugin.getLogger().warning("SyncCommands: Unknown type");
+					} else {
+					    Log.warn("SyncCommands: Unknown type:", type, "command:", command);
+                    }
 				} catch(IOException e) {
 					disconnect();
 				}
@@ -242,7 +248,7 @@ public class SyncCommandsServer extends Feature {
 	 * @param message The message to broadcast
 	 */
 	private void broadcast(Message message, String[] args) {
-		message = message.replacements(args);
+		message = message.replacements((Object[]) args);
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			message.send(player);
 		}

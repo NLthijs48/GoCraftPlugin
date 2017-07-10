@@ -35,9 +35,14 @@ general-mutedSignUse: "You cannot place signs while you are muted."
 general-noPlayer: "Player %0% is not online."
 general-playerOnly: "This command can only be used by a player."
 
-general-joinedServer: "[green][bold]>>> [reset]%lang:player|%0%|%[reset] joined the server."
-general-leftServer: "[red][bold]<<< [reset]%lang:player|%0%|%[reset] left the server."
-general-switchedServer: "[gold][bold]>>> [reset]%lang:player|%0%|%[reset] switched to %1%."
+general-joinedServer: "[green][bold]>>> [reset]%lang:player|%0%|%[reset] joined."
+general-leftServer: "[red][bold]<<< [reset]%lang:player|%0%|%[reset] left."
+general-switchedServer:
+  - "[gold][bold]>>> [reset]%lang:player|%0%|%[reset] switched to "
+  - "%1%"
+  - "    hover: %lang:action|Also join %1%|%"
+  - "    command: /%1%%"
+  - "."
 
 ########## PAGES
 page-wrong: "%0% is not a correct page number."

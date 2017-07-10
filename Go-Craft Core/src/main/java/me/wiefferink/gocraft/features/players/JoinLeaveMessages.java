@@ -29,8 +29,6 @@ public class JoinLeaveMessages extends Feature {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerKick(PlayerKickEvent event) {
-		if(inWorld(event) && event.getPlayer().hasPermission("gocraft.staff")) {
-			event.setLeaveMessage(null);
-		}
+		event.setLeaveMessage(null);
 	}
 }

@@ -258,7 +258,7 @@ public class SyncCommandsBungee {
 														ChatMessageType.CHAT,
 														new ComponentBuilder("[Go-Craft]")
 															.color(ChatColor.DARK_GREEN)
-															.append(" Could not connect you to "+server.getName())
+															.append(" Could not connect you to "+GoCraftBungee.getInstance().getServerName(server.getName()))
 															.color(ChatColor.WHITE)
 															.create())
 												;
