@@ -156,7 +156,7 @@ public class Database {
 
 			// Check how long it took
 			long took = end.getTimeInMillis() - start.getTimeInMillis();
-			if(took > 500) {
+			if(took > 1000) {
 				Log.warn("Database session took", took, "milliseconds!\n"+ StackRepresentation.getStackString());
 			}
 			if(!hadSession) {
@@ -180,7 +180,7 @@ public class Database {
 
 			// Check how long it took
 			long took = end.getTimeInMillis() - start.getTimeInMillis();
-			if(took > 500) {
+			if(took > 1000) {
 				Log.warn("Database session took", took, "milliseconds!\n" + StackRepresentation.getStackString());
 			}
 			if(!hadSession) {
