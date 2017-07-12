@@ -327,12 +327,19 @@ votetop-empty:
   - "    link: http://go-craft.com/vote"
 votetop-item:
   - "[darkgreen]%0%: %lang:player|%1%|%[bold]: [white]%2%"
-votetop-wrongYearMonth: "Specify year and month with 'year-month', given: %0%"
+votetop-wrongYearMonth: "Specify year and month with 'year-month', given: %0%."
 
-switch-noPermission: "You do not have permission to switch servers by command"
-switch-notLoggedIn: "You need to be logged in to switch to other servers"
+switch-noPermission: "You do not have permission to switch servers by command."
+switch-notLoggedIn: "You need to be logged in to switch to other servers."
 switch-sameServer: "You are already in %0%!"
 switch-go: "Connecting to %0%..."
+
+broadcast-noPermission: "You do not have permission to broadcast messages."
+broadcast-message:
+  - "\n\n\n"
+  - "[green][bold][INFO]"
+  - "    hover: Information broadcasted by a staff member"
+  - " %0%"
 
 map-link:
   - "Check the map on "

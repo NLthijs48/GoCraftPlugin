@@ -10,7 +10,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -140,7 +139,7 @@ public class HelpCommand extends Feature {
 	 * @param rank The rank required for this help entry
 	 * @param entry The help entry
 	 */
-	private void addHelpEntry(String rank, Collection<String> entry) {
+	private void addHelpEntry(String rank, List<String> entry) {
 		List<String> rankList = helpMap.get(rank);
 		if (rankList == null) {
 			rankList = new ArrayList<>();
@@ -150,7 +149,7 @@ public class HelpCommand extends Feature {
 	}
 
 	private void addHelpEntry(String rank, String entry) {
-		addHelpEntry(rank, Collections.singleton(entry));
+		addHelpEntry(rank, Collections.singletonList(entry));
 	}
 
 }

@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
+import me.wiefferink.gocraft.commands.BroadcastCommand;
 import me.wiefferink.gocraft.commands.DiscordCommand;
 import me.wiefferink.gocraft.commands.HackBanCommand;
 import me.wiefferink.gocraft.commands.HelpCommand;
@@ -637,6 +638,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new SafeTeleportCommand());
 		features.add(new SeenCommand());
 		features.add(new ServerSwitchCommands());
+		features.add(new BroadcastCommand());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {
