@@ -42,6 +42,7 @@ general-playerOnly: "This command can only be used by a player."
 general-joinedServer: "[green][bold]>>> [reset]%lang:player|%0%|%[reset] joined."
 general-leftServer: "[red][bold]<<< [reset]%lang:player|%0%|%[reset] left."
 general-switchedServer: "[gold][bold]>>> [reset]%lang:player|%0%|%[reset] switched to %lang:server|%1%|%."
+general-joinedServerFrom: "[green][bold]>>> [reset]%lang:player|%0%|%[reset] joined, came from %lang:server|%1%|%."
 
 ########## PAGES
 page-wrong: "%0% is not a correct page number."

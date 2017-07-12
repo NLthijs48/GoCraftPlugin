@@ -4,7 +4,6 @@ import me.wiefferink.gocraft.GoCraftBungee;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
@@ -20,6 +19,7 @@ public class SwitchJoinLeaveMessages implements Listener {
         if(event.getPlayer().hasPermission("gocraft.staff")) {
             return;
         }
+
         plugin.getSyncCommandsBungee().runCommand(event.getPlayer().getServer().getInfo().getName(), "broadcast general-leftServer " + event.getPlayer().getDisplayName());
     }
 
@@ -28,23 +28,24 @@ public class SwitchJoinLeaveMessages implements Listener {
         if(event.getPlayer().hasPermission("gocraft.staff")) {
             return;
         }
+
+        String from = event.getPlayer().getServer().getInfo().getName();
+        String fromName = GoCraftBungee.getInstance().getServerName(from);
         String to = event.getTarget().getName();
-        Configuration servers = plugin.getGeneralConfig().getSection("servers");
-        if (servers != null) {
-            for (String key : servers.getKeys()) {
-                if (servers.getString(key + ".bungeeId").equals(to)) {
-                    String name = servers.getString(key + ".name");
-                    if (name != null) to = name;
-                    break;
-                }
-            }
-        }
+        String toName = GoCraftBungee.getInstance().getServerName(to);
+        String player = event.getPlayer().getDisplayName();
+
+        // Leave
         if (event.getPlayer().getServer() == null) {
-            plugin.getSyncCommandsBungee().runCommand(event.getTarget().getName(),
-                    "broadcast general-joinedServer " + event.getPlayer().getDisplayName());
-        } else if (!event.getPlayer().getServer().getInfo().getName().equals(event.getTarget().getName())) {
-            plugin.getSyncCommandsBungee().runCommand(event.getPlayer().getServer().getInfo().getName(),
-                    "broadcast general-switchedServer " + event.getPlayer().getDisplayName() + " " + GoCraftBungee.getInstance().getServerName(to));
+            plugin.getSyncCommandsBungee().runCommand(to,"broadcast general-joinedServer " + player);
+        }
+
+        // Switch
+        else if (!from.equals(to)) {
+            // Old server
+            plugin.getSyncCommandsBungee().runCommand(from,"broadcast general-switchedServer " + player + " " + toName);
+            // New server
+            plugin.getSyncCommandsBungee().runCommand(to,"broadcast general-joinedServerFrom " + player + " " + fromName);
         }
     }
 
