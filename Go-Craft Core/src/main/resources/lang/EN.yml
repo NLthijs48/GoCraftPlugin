@@ -20,6 +20,10 @@ chatMessage:
   - "    hover: %lang:action|View player information|%"
   - "    command: /information %1%"
   - "%2%"
+server:
+  - "[bold]%0%[/bold]"
+  - "    hover: %lang:action|Join %0%|%"
+  - "    command: /%0%"
 
 # Concept for new chat
 newChatMessage:
@@ -37,12 +41,7 @@ general-playerOnly: "This command can only be used by a player."
 
 general-joinedServer: "[green][bold]>>> [reset]%lang:player|%0%|%[reset] joined."
 general-leftServer: "[red][bold]<<< [reset]%lang:player|%0%|%[reset] left."
-general-switchedServer:
-  - "[gold][bold]>>> [reset]%lang:player|%0%|%[reset] switched to "
-  - "%1%"
-  - "    hover: %lang:action|Also join %1%|%"
-  - "    command: /%1%%"
-  - "."
+general-switchedServer: "[gold][bold]>>> [reset]%lang:player|%0%|%[reset] switched to %lang:server|%1%|%."
 
 ########## PAGES
 page-wrong: "%0% is not a correct page number."
