@@ -328,7 +328,7 @@ public class SyncCommandsBungee {
 						break; // Not send successfully, try again later
 					}
 					it.remove(); // Successful send, remove
-					Log.info("SyncCommands["+name+"]: command send:", command);
+					//Log.info("SyncCommands["+name+"]: command send:", command);
 				}
 			}
 		}
