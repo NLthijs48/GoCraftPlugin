@@ -81,7 +81,6 @@ public class SeenCommand extends Feature {
 						@SuppressWarnings("unchecked")
 						List<ServerSession> allServerSessions = session.createQuery("FROM ServerSession WHERE bungeeSession in (:bungeeSessions) ORDER BY joinedServer DESC", ServerSession.class)
 								.setParameterList("bungeeSessions", bungeeSessions)
-								.setMaxResults(itemEnd-itemStart+1)
 								.setFirstResult(itemStart)
 								.getResultList();
 						// Bundle the ServerSession objects for the BungeeSession objects
