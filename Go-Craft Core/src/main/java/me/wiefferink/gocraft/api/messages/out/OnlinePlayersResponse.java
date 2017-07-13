@@ -25,6 +25,7 @@ public class OnlinePlayersResponse extends Response {
 							"INNER JOIN serverSession.bungeeSession as bungeeSession " +
 							"INNER JOIN bungeeSession.gcPlayer as gcPlayer " +
 							"WHERE serverSession.leftServer=null " +
+							"AND gcPlayer.invisible = false " +
 							"ORDER BY gcPlayer.name")
 					.getResultList();
 

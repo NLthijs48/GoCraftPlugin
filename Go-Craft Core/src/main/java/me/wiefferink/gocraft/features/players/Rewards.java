@@ -4,6 +4,7 @@ import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -13,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -37,14 +37,11 @@ public class Rewards extends Feature {
 			return;
 		}
 		Player player = event.getPlayer();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				if(player != null && player.isOnline()) {
-					giveRewards(player);
-				}
+		Do.syncLater(40, () -> {
+			if(player != null && player.isOnline()) {
+				giveRewards(player);
 			}
-		}.runTaskLater(GoCraft.getInstance(), 40L);
+		});
 	}
 
 	/**

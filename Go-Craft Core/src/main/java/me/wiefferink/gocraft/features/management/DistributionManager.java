@@ -4,6 +4,7 @@ import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -315,12 +315,7 @@ public class DistributionManager extends Feature {
 			List<String> serversUpdated = updatePermissionsNow(include, generalWarnings);
 			permissionsUpdated = serversUpdated.size();
 			if (permissionsUpdated > 0 && executor instanceof Player) {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						((Player) executor).performCommand("pex reload");
-					}
-				}.runTaskLater(plugin, 5L);
+				Do.syncLater(5, () -> ((Player) executor).performCommand("pex reload"));
 			}
 		}
 
@@ -394,12 +389,7 @@ public class DistributionManager extends Feature {
 	 * @param filter The filter specifying which servers should be pushed to
 	 */
 	public void update(final CommandSender executor, final String filter, final String operationFilter, final boolean force) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				updateNow(executor, filter, operationFilter, force);
-			}
-		}.runTaskAsynchronously(plugin);
+		Do.async(() -> updateNow(executor, filter, operationFilter, force));
 	}
 
 	/**

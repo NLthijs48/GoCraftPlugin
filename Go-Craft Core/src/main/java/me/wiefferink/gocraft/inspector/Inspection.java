@@ -10,7 +10,10 @@ import me.wiefferink.gocraft.inspector.actions.ExitAction;
 import me.wiefferink.gocraft.inspector.actions.InventoryAction;
 import me.wiefferink.gocraft.inspector.actions.KillAuraCheckAction;
 import me.wiefferink.gocraft.inspector.actions.NCPAction;
+import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.scheduling.Do;
+import me.wiefferink.gocraft.tools.storage.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -22,7 +25,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -118,6 +120,7 @@ public class Inspection {
 			plugin.getInspectionManager().removeInspection(this);
 			return;
 		}
+
 		// Set health to max to prevent the player dying
 		inspector.setHealth(inspector.getMaxHealth());
 		inspector.setFoodLevel(20);
@@ -138,13 +141,21 @@ public class Inspection {
 		plugin.getInspectionManager().registerUpdater();
 		// Fix for glitch in Factions and reloads
 		final Player finalPlayer = inspector;
-		new BukkitRunnable() {
-			public void run() {
-				finalPlayer.setAllowFlight(true);
-				finalPlayer.setFlying(true);
-				finalPlayer.setGameMode(GameMode.SPECTATOR);
-			}
-		}.runTaskLater(plugin, 1L);
+		Do.sync(() -> {
+			finalPlayer.setAllowFlight(true);
+			finalPlayer.setFlying(true);
+			finalPlayer.setGameMode(GameMode.SPECTATOR);
+		});
+		Do.async(() ->
+			Database.run(session -> {
+				GCPlayer player = Database.getPlayer(finalPlayer.getUniqueId(), finalPlayer.getName());
+				if(player != null) {
+					player.setInvisible(true);
+					session.update(player);
+					plugin.getSyncCommandsServer().runCommand("updatePlayers");
+				}
+			})
+		);
 	}
 
 	/**
@@ -184,12 +195,7 @@ public class Inspection {
 		//plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".target", target);
 		//plugin.getInspectionManager().getInspectorStorage().set(inspector.getUniqueId().toString() + ".targetName", targetName);
 		plugin.getInspectionManager().saveInspectors();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				updateAll(true);
-			}
-		}.runTask(plugin);
+		Do.sync(() -> updateAll(true));
 		Log.debug("Inspect: switching target for", inspector.getName(), "from", oldInspected, "to", newInspected==null ? "nobody" : newInspected.getName(), "gamemode:", gamemode);
 	}
 
@@ -497,6 +503,18 @@ public class Inspection {
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dynmap:dynmap show " + getInspector().getName());
 		}
 		plugin.getInspectionManager().registerUpdater();
+
+		Player finalPlayer = inspector;
+		Do.async(() ->
+			Database.run(session -> {
+				GCPlayer player = Database.getPlayer(finalPlayer.getUniqueId(), finalPlayer.getName());
+				if(player != null) {
+					player.setInvisible(false);
+					session.update(player);
+					plugin.getSyncCommandsServer().runCommand("updatePlayers");
+				}
+			})
+		);
 	}
 
 	/**

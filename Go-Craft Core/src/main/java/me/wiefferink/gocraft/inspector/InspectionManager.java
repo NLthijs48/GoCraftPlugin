@@ -4,7 +4,10 @@ import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.scheduling.Do;
+import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -18,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,9 +40,8 @@ public class InspectionManager extends Feature {
 	private final GoCraft plugin;
 	private UTF8Config inspectorStorage;
 	private File inspectorsFile;
-	private boolean updaterRegistered = false;
 	private UpdateListener updateListener;
-	private BukkitRunnable updateTask;
+	private BukkitTask updateTask;
 
 	public InspectionManager(final GoCraft plugin) {
 		// Does not really make sense here, no better place for it now though
@@ -62,21 +64,18 @@ public class InspectionManager extends Feature {
 
 		// Keep inspectors inside the map
 		if (plugin.getMapSwitcherLink() != null) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					for (Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
-						if (!plugin.getMapSwitcherLink().get().isInsideCurrentMap(inspection.getInspector())) {
-							plugin.message(inspection.getInspector(), "inspect-outsideMap");
-							if (inspection.hasInspected()) {
-								inspection.teleportToInspected();
-							} else {
-								inspection.getInspector().teleport(plugin.getMapSwitcherLink().get().getCurrentSpawnLocation());
-							}
+			Do.syncTimer(20, () -> {
+				for(Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
+					if(!plugin.getMapSwitcherLink().get().isInsideCurrentMap(inspection.getInspector())) {
+						plugin.message(inspection.getInspector(), "inspect-outsideMap");
+						if(inspection.hasInspected()) {
+							inspection.teleportToInspected();
+						} else {
+							inspection.getInspector().teleport(plugin.getMapSwitcherLink().get().getCurrentSpawnLocation());
 						}
 					}
 				}
-			}.runTaskTimer(plugin, 20, 20);
+			});
 		}
 
 		// Deal with players that are already in the server (for example with reloads)
@@ -169,16 +168,13 @@ public class InspectionManager extends Feature {
 			return;
 		}
 		// Player leaves next tick
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (Inspection inspect : getInspectionsByInspected(player)) {
-					plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
-					// Swap to offline inspection
-					inspect.updateAll(true);
-				}
+		Do.sync(() -> {
+			for(Inspection inspect : getInspectionsByInspected(player)) {
+				plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
+				// Swap to offline inspection
+				inspect.updateAll(true);
 			}
-		}.runTaskLater(plugin, 1L);
+		});
 	}
 
 	/**
@@ -194,19 +190,17 @@ public class InspectionManager extends Feature {
 			if (!player.hasPermission("gocraft.staff")) {
 				inspection.endInspection();
 			} else {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						if (inspection.hasInspected()) {
-							plugin.message(player, "inspect-restore", inspection.getInspected().getName());
-						} else {
-							plugin.message(player, "inspect-restoreNoTarget");
-						}
+				Do.syncLater(10, () -> {
+					if(inspection.hasInspected()) {
+						plugin.message(player, "inspect-restore", inspection.getInspected().getName());
+					} else {
+						plugin.message(player, "inspect-restoreNoTarget");
 					}
-				}.runTaskLater(plugin, 10L);
+				});
 			}
 			return;
 		}
+
 		// Join in inspect
 		if (!noInspectJoin
 				&& player.hasPermission("gocraft.staff")
@@ -218,20 +212,30 @@ public class InspectionManager extends Feature {
 			Log.debug("Inspect: starting join in inspect inspection for", player.getName());
 			finalInspection.startInspection();
 			plugin.increaseStatistic("command.inspect.restoredAtJoin");
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					plugin.message(player, "inspect-joinEnable");
-					if (inPVP) {
-						plugin.message(player, "inspect-joinEnableInPVP");
-					}
+			Do.syncLater(10, () -> {
+				plugin.message(player, "inspect-joinEnable");
+				if(inPVP) {
+					plugin.message(player, "inspect-joinEnableInPVP");
 				}
-			}.runTaskLater(plugin, 10L);
+			});
+			return;
 		}
+
 		// Player is target
 		for (Inspection insp : getInspectionsByInspected(player)) {
 			insp.updateAll(true);
 		}
+
+		async(() ->
+			Database.run(session -> {
+				GCPlayer gcPlayer = Database.getPlayer(player.getUniqueId(), player.getName());
+				if(gcPlayer != null && gcPlayer.isInvisible()) {
+					gcPlayer.setInvisible(false);
+					session.update(gcPlayer);
+					plugin.getSyncCommandsServer().runCommand("updatePlayers");
+				}
+			})
+		);
 	}
 
 	/**
@@ -348,25 +352,19 @@ public class InspectionManager extends Feature {
 	 * Register or deregister updater as needed
 	 */
 	public void registerUpdater() {
-		if (currentInspections.isEmpty() && updaterRegistered) {
+		if (currentInspections.isEmpty() && updateTask != null) {
 			HandlerList.unregisterAll(updateListener);
-			updaterRegistered = false;
 			updateListener = null;
 			updateTask.cancel();
 			updateTask = null;
-		} else if (!currentInspections.isEmpty() && !updaterRegistered) {
+		} else if (!currentInspections.isEmpty() && updateTask == null) {
 			updateListener = new UpdateListener(plugin);
 			plugin.getServer().getPluginManager().registerEvents(updateListener, plugin);
-			updaterRegistered = true;
-			updateTask = new BukkitRunnable() {
-				@Override
-				public void run() {
-					for (Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
-						inspection.updateAll();
-					}
+			updateTask = Do.syncTimer(40, () -> {
+				for(Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
+					inspection.updateAll();
 				}
-			};
-			updateTask.runTaskTimer(plugin, 40L, 40L);
+			});
 		}
 	}
 

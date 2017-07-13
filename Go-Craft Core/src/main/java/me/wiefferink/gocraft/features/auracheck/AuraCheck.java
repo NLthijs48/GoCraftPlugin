@@ -13,6 +13,7 @@ import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.VoidCommandSender;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayClientUseEntity;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -48,12 +48,7 @@ public class AuraCheck extends Feature {
 		running = new HashMap<>();
 		self = this;
 		if (GoCraft.getInstance().getConfig().getBoolean("auracheck.enablePeriodicCheck")) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					performAllPlayerCheck();
-				}
-			}.runTaskLater(GoCraft.getInstance(), getNextPeriodicDelay());
+			Do.syncLater(getNextPeriodicDelay(), this::performAllPlayerCheck);
 		}
 	}
 
@@ -214,45 +209,24 @@ public class AuraCheck extends Feature {
 	 * Check all players for using killaura
 	 */
 	public void performAllPlayerCheck() {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				performAllPlayerCheck();
-			}
-		}.runTaskLater(GoCraft.getInstance(), getNextPeriodicDelay());
-
-		new BukkitRunnable() {
-			private List<Player> players = new ArrayList<>(Bukkit.getOnlinePlayers());
-
-			@Override
-			public void run() {
-				try {
-					if (players.size() <= 0) {
-						this.cancel();
-						return;
+		Do.syncLater(getNextPeriodicDelay(), this::performAllPlayerCheck);
+		Do.forAll(Bukkit.getOnlinePlayers(), player -> {
+			if(player.isOnline() && player.getGameMode() == GameMode.SURVIVAL) {
+				new AuraCheckRun(self, player).start(new VoidCommandSender(), result -> {
+					if(result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.hacksConfirmed")) {
+						String baseCommand = GoCraft.getInstance().getConfig().getString("hacksConfirmedCommand");
+						Utils.consoleCommand(baseCommand.replace("%player%", result.checked.getName()).replace("%reason%", "Hacking is forbidden! [ac " + result.killed + "/" + result.spawned + "]"));
+						Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " got banned: " + result.killed + "/" + result.spawned + ".");
+					} else {
+						if(result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.staffChatWarning")) {
+							Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " killed " + result.killed + "/" + result.spawned + ", further inspection required.");
+						} else if(result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.consoleLogging")) {
+							Log.info("[AuraCheck] staffchat warning for " + result.checked.getName() + ": " + result.killed + "/" + result.spawned + ".");
+						}
 					}
-					Player toCheck = players.remove(0);
-					if (toCheck != null && toCheck.isOnline() && toCheck.getGameMode() == GameMode.SURVIVAL) {
-						new AuraCheckRun(self, toCheck).start(new VoidCommandSender(), result -> {
-							if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.hacksConfirmed")) {
-								String baseCommand = GoCraft.getInstance().getConfig().getString("hacksConfirmedCommand");
-								Utils.consoleCommand(baseCommand.replace("%player%", result.checked.getName()).replace("%reason%", "Hacking is forbidden! [ac " + result.killed + "/" + result.spawned + "]"));
-								Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " got banned: " + result.killed + "/" + result.spawned + ".");
-							} else {
-								if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.staffChatWarning")) {
-									Utils.sendStaffMessage("AuraCheck", result.checked.getName() + " killed " + result.killed + "/" + result.spawned + ", further inspection required.");
-								} else if (result.killed >= GoCraft.getInstance().getConfig().getInt("auracheck.consoleLogging")) {
-									Log.info("[AuraCheck] staffchat warning for "+result.checked.getName()+": "+result.killed+"/"+result.spawned+".");
-								}
-							}
-						});
-					}
-				} catch (Exception e) {
-					this.cancel();
-					Log.error("Something went wrong with automatic aura check:", ExceptionUtils.getStackTrace(e));
-				}
+				});
 			}
-		}.runTaskTimer(GoCraft.getInstance(), 1, GoCraft.getInstance().getConfig().getInt("auracheck.playerIntervalTime"));
+		});
 	}
 
 	/**

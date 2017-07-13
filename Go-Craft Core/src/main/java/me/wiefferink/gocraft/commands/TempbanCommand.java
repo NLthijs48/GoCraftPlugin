@@ -1,11 +1,11 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,24 +53,20 @@ public class TempbanCommand extends Feature {
 					}
 				}
 			}
-			boolean success = event.getPlayer().performCommand("banmanager:tempban " + arguments);
-			success = success & event.getPlayer().performCommand("banmanager:tempbanip " + arguments);
-			final boolean finalSuccess = success;
+			boolean success = event.getPlayer().performCommand("banmanager:tempban " + arguments)
+					& event.getPlayer().performCommand("banmanager:tempbanip " + arguments);
 			final Player finalPlayer = event.getPlayer();
 			final String finalReason = reason;
 			final String finalTarget = argumentArray[0];
 			final String finalLength = argumentArray[1];
 			// Delay message to first let the BanManager messages come through
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					if (finalSuccess) {
-						plugin.message(finalPlayer, "tempban-redirected", finalTarget, finalLength, finalReason);
-					} else {
-						plugin.message(finalPlayer, "tempban-failed");
-					}
+			Do.syncLater(10, () -> {
+				if(success) {
+					plugin.message(finalPlayer, "tempban-redirected", finalTarget, finalLength, finalReason);
+				} else {
+					plugin.message(finalPlayer, "tempban-failed");
 				}
-			}.runTaskLater(plugin, 10L);
+			});
 			event.setCancelled(true);
 			plugin.increaseStatistic("command.tempban.redirected");
 		}

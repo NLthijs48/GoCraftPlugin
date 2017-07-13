@@ -2,7 +2,8 @@ package me.wiefferink.gocraft.features;
 
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
-import me.wiefferink.gocraft.tools.Run;
+import me.wiefferink.gocraft.tools.scheduling.Do;
+import me.wiefferink.gocraft.tools.scheduling.Run;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +26,6 @@ import org.bukkit.event.weather.WeatherEvent;
 import org.bukkit.event.world.WorldEvent;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -270,12 +270,7 @@ public abstract class Feature implements Listener {
 	 * @param runnable The BukkitRunnable to run
 	 */
 	public void sync(Run runnable) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				runnable.run();
-			}
-		}.runTask(plugin);
+		Do.sync(runnable);
 	}
 
 	/**
@@ -283,12 +278,7 @@ public abstract class Feature implements Listener {
 	 * @param runnable The BukkitRunnable to run
 	 */
 	public void async(Run runnable) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				runnable.run();
-			}
-		}.runTaskAsynchronously(plugin);
+		Do.async(runnable);
 	}
 
 	/**
@@ -297,12 +287,7 @@ public abstract class Feature implements Listener {
 	 * @param runnable The BukkitRunnable to run
 	 */
 	public void syncTimer(long period, Run runnable) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				runnable.run();
-			}
-		}.runTaskTimer(plugin, 0, period);
+		Do.syncTimer(period, runnable);
 	}
 
 	/**
@@ -311,12 +296,7 @@ public abstract class Feature implements Listener {
 	 * @param runnable The BukkitRunnable to run
 	 */
 	public void asyncTimer(long period, Run runnable) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				runnable.run();
-			}
-		}.runTaskTimerAsynchronously(plugin, 0, period);
+		Do.asyncTimer(period, runnable);
 	}
 
 	/**

@@ -6,6 +6,7 @@ import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.shop.signs.ShopSign;
 import me.wiefferink.gocraft.shop.signs.Sign;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,7 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +31,7 @@ public class SignManager implements Listener {
 		plugin = GoCraft.getInstance();
 		signs = new HashMap<>();
 		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				importSigns();
-			}
-		}.runTask(plugin);
+		Do.sync(this::importSigns);
 	}
 
 	/**

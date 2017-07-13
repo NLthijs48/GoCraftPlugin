@@ -43,7 +43,6 @@ import me.wiefferink.gocraft.features.management.SyncCommandsServer;
 import me.wiefferink.gocraft.features.other.AddDefaultRank;
 import me.wiefferink.gocraft.features.other.ClickChatMessages;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
-import me.wiefferink.gocraft.features.other.ResetExpiredPlots;
 import me.wiefferink.gocraft.features.players.AttackSpeed;
 import me.wiefferink.gocraft.features.players.DisableFallDamage;
 import me.wiefferink.gocraft.features.players.DisableFrostWalker;
@@ -77,6 +76,7 @@ import me.wiefferink.gocraft.sessions.FixGCPlayer;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
@@ -97,7 +97,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -241,17 +240,14 @@ public final class GoCraft extends JavaPlugin {
 		}
 
 		// Check if GoPVP is present
-		new BukkitRunnable() {
-			public void run() {
-				Plugin gp = getServer().getPluginManager().getPlugin("GoPVP");
-				if (gp != null && gp.isEnabled()) {
-					goPVPLink = new GoPVPLink();
-					connnected.add("GoPVP");
-				}
-
-				Log.info("Connected plugins:", StringUtils.join(connnected, ", "));
+		Do.sync(() -> {
+			Plugin gp = getServer().getPluginManager().getPlugin("GoPVP");
+			if(gp != null && gp.isEnabled()) {
+				goPVPLink = new GoPVPLink();
+				connnected.add("GoPVP");
 			}
-		}.runTask(this);
+			Log.info("Connected plugins:", StringUtils.join(connnected, ", "));
+		});
 
 		// Setup version specific classes
 		String packageName = getServer().getClass().getPackage().getName();
@@ -302,13 +298,7 @@ public final class GoCraft extends JavaPlugin {
 			this.getServer().getPluginManager().registerEvents(shop, this);
 		}
 
-		// Save local storage timer
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				saveLocalStorageNow();
-			}
-		}.runTaskTimer(this, 18000L, 18000L);
+		Do.syncTimer(18000, this::saveLocalStorageNow);
 		loadedCorrectly = true;
 	}
 
@@ -601,7 +591,6 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new DisablePlayerDamage());
 		features.add(new DisableFallDamage());
 		// Other
-		features.add(new ResetExpiredPlots());
 		features.add(new DisableAboveNetherGlitching());
 		features.add(new AddDefaultRank());
 		features.add(new NauseaPotions());

@@ -5,11 +5,11 @@ import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayServerEntityDestroy;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -121,13 +121,8 @@ public class AuraCheckRun {
 				}
 			}
 			killInspectorEntities();
-			// Give the player a second to send back hit packets
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					wrapup();
-				}
-			}.runTaskLater(GoCraft.getInstance(), Math.max(3, Utils.getPing(checked) * 20 * 3 / 1000)); // 3 ticks or 3 times ticks of ping
+			// Give the player time to send back hit packets (at least 3 ticks, or 3 times his ping)
+			Do.syncLater(Math.max(3, Utils.getPing(checked) * 20 * 3 / 1000), this::wrapup);
 		}
 	}
 

@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.features.environment;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -12,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -180,12 +180,7 @@ public class ResourceWorlds extends Feature {
 		plugin.increaseStatistic("resourceWorldReset."+world.getName());
 		final String worldName = world.getName();
 		try {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "mv load "+worldName);
-				}
-			}.runTaskLater(plugin, 1L);
+			Do.sync(() -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "mv load " + worldName));
 		} catch(Exception ignored) {
 		}
 	}

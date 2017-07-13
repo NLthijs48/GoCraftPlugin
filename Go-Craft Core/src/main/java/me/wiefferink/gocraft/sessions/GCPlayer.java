@@ -45,6 +45,9 @@ public class GCPlayer {
 	@OneToMany(mappedBy = "gcPlayer", fetch = FetchType.LAZY)
 	private Set<Vote> votes;
 
+	@Column(nullable = false)
+	private boolean invisible = false;
+
 	/**
 	 * Constructor for Hibernate
 	 */
@@ -99,6 +102,22 @@ public class GCPlayer {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * Check if the player is invisible
+	 * @return true if invisible, otherwise false
+	 */
+	public boolean isInvisible() {
+		return invisible;
+	}
+
+	/**
+	 * Set invisibility of the player
+	 * @param invisible true to make the player invisible (from the players list, /info, website, etc.), false to make visible
+	 */
+	public void setInvisible(boolean invisible) {
+		this.invisible = invisible;
 	}
 
 	/**

@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -9,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.BufferedReader;
@@ -43,14 +43,9 @@ public class SyncCommandsServer extends Feature {
 		}
 		shouldRun = true;
 		reconnectTask = null;
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				connect();
-			}
-		}.runTaskAsynchronously(plugin);
 		command("syncbungee", "Sync a command to the BungeeCord server", "/syncbungee <command...>");
 		command("syncservers", "Sync a command to all servers", "/syncservers <command...>");
+		Do.async(this::connect);
 	}
 
 	@Override
@@ -69,13 +64,10 @@ public class SyncCommandsServer extends Feature {
 	 * @param args    The arguments containing the command to execute
 	 */
 	public void runCommand(String command, String... args) {
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				queue.add(command+" "+StringUtils.join(args, " "));
-				sendCommands();
-			}
-		}.runTaskAsynchronously(plugin);
+		Do.async(() -> {
+			queue.add(command + " " + StringUtils.join(args, " "));
+			sendCommands();
+		});
 	}
 
 	@Override
@@ -150,13 +142,10 @@ public class SyncCommandsServer extends Feature {
 		}
 
 		if(shouldRun && reconnectTask == null) {
-			reconnectTask = new BukkitRunnable() {
-				@Override
-				public void run() {
-					reconnectTask = null;
-					connect();
-				}
-			}.runTaskLaterAsynchronously(plugin, TRYCONNECT);
+			reconnectTask = Do.asyncLater(TRYCONNECT, () -> {
+				reconnectTask = null;
+				connect();
+			});
 		}
 	}
 

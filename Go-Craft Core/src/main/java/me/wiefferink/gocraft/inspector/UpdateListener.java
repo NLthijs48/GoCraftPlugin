@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.inspector;
 
 import me.wiefferink.gocraft.GoCraft;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.GameMode;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -60,15 +61,12 @@ public class UpdateListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onRespawn(PlayerRespawnEvent event) {
 		final Player finalPlayer = event.getPlayer();
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-					inspection.updateAll();
-					inspection.teleportToInspected();
-				}
+		Do.sync(() -> {
+			for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
+				inspection.updateAll();
+				inspection.teleportToInspected();
 			}
-		}.runTaskLater(plugin, 1L);
+		});
 	}
 
 	// Update when regaining health
@@ -77,14 +75,11 @@ public class UpdateListener implements Listener {
 		if (event.getEntity() instanceof Player) {
 			if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getEntity()).isEmpty()) {
 				final Player finalPlayer = (Player) event.getEntity();
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-							inspection.updateScoreboard();
-						}
+				Do.sync(() -> {
+					for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
+						inspection.updateScoreboard();
 					}
-				}.runTaskLater(plugin, 1L);
+				});
 			}
 		}
 	}
@@ -95,14 +90,11 @@ public class UpdateListener implements Listener {
 		if (event.getEntity() instanceof Player) {
 			if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getEntity()).isEmpty()) {
 				final Player finalPlayer = (Player) event.getEntity();
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-							inspection.updateScoreboard();
-						}
+				Do.sync(() -> {
+					for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
+						inspection.updateScoreboard();
 					}
-				}.runTaskLater(plugin, 1L);
+				});
 			}
 		}
 	}
@@ -118,16 +110,13 @@ public class UpdateListener implements Listener {
 		}
 		if (!players.isEmpty()) {
 			final Set<Player> finalPlayers = players;
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					for (Player player : finalPlayers) {
-						for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
-							inspection.updateInventory();
-						}
+			Do.sync(() -> {
+				for(Player player : finalPlayers) {
+					for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
+						inspection.updateInventory();
 					}
 				}
-			}.runTaskLater(plugin, 1L);
+			});
 		}
 	}
 
@@ -136,14 +125,11 @@ public class UpdateListener implements Listener {
 	public void onItemBreak(PlayerItemBreakEvent event) {
 		if (!plugin.getInspectionManager().getInspectionsByInspected(event.getPlayer()).isEmpty()) {
 			final Player finalPlayer = event.getPlayer();
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					for (Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-						inspection.updateArmor();
-					}
+			Do.sync(() -> {
+				for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
+					inspection.updateArmor();
 				}
-			}.runTaskLater(plugin, 1L);
+			});
 		}
 	}
 
@@ -168,13 +154,10 @@ public class UpdateListener implements Listener {
 		for (final Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
 			// Check if the inspection has the same target as the event
 			if (inspection.hasInspected() && inspection.getInspected().getUniqueId().equals(player.getUniqueId())) {
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						inspection.teleportToInspected();
-						plugin.message(inspection.getInspector(), "inspect-teleportedToInspected", inspection.getInspected().getName());
-					}
-				}.runTaskLater(plugin, 1L);
+				Do.sync(() -> {
+					inspection.teleportToInspected();
+					plugin.message(inspection.getInspector(), "inspect-teleportedToInspected", inspection.getInspected().getName());
+				});
 			}
 		}
 	}
@@ -190,16 +173,13 @@ public class UpdateListener implements Listener {
 	// Ensure flying is on by reenabling it immediately
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onToggleFlightMonitor(PlayerToggleFlightEvent event) {
-		final Player finalPlayer = event.getPlayer();
+		Player player = event.getPlayer();
 		if (!event.isFlying() && !event.isCancelled() && event.getPlayer().getGameMode() == GameMode.SPECTATOR) {
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					if (finalPlayer.isOnline()) {
-						finalPlayer.setFlying(true);
-					}
+			Do.sync(() -> {
+				if(player.isOnline()) {
+					player.setFlying(true);
 				}
-			}.runTaskLater(plugin, 1L);
+			});
 		}
 	}
 }

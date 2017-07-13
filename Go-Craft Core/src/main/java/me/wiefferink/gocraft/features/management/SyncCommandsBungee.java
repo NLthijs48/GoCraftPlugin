@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.Log;
+import me.wiefferink.gocraft.api.messages.out.OnlinePlayersResponse;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.CommandSender;
@@ -200,7 +201,7 @@ public class SyncCommandsBungee {
 						continue;
 					}
 					String[] split = input.split(" ");
-					if(split.length <= 1) {
+					if(split.length < 1) {
 						Log.warn("SyncCommands["+name+"]: received empty input from server:", input);
 						continue;
 					}
@@ -258,7 +259,7 @@ public class SyncCommandsBungee {
 														ChatMessageType.CHAT,
 														new ComponentBuilder("[Go-Craft]")
 															.color(ChatColor.DARK_GREEN)
-															.append(" Could not connect you to "+GoCraftBungee.getInstance().getServerName(server.getName()))
+															.append(" Could not connect you to "+plugin.getServerName(server.getName()))
 															.color(ChatColor.WHITE)
 															.create())
 												;
@@ -271,6 +272,11 @@ public class SyncCommandsBungee {
 								}
 							}
 						}
+					}
+
+					// Send new players list to the website
+					else if("updatePlayers".equalsIgnoreCase(type)) {
+						plugin.getApi().broadcast(new OnlinePlayersResponse());
 					}
 
 					// Invalid command
