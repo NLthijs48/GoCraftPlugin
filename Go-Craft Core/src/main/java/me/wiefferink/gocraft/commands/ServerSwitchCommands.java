@@ -34,6 +34,7 @@ public class ServerSwitchCommands extends Feature {
 			List<String> aliases = Utils.listOrSingle(serverSection, "alias");
 			aliases.add(name);
 			aliases.add(directory);
+			aliases.add(serverKey);
 
 			if("DEFAULT".equalsIgnoreCase(serverKey)) {
 				continue;
