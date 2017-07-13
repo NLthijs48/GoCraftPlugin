@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.features.players;
 
 import me.wiefferink.gocraft.GoCraftBungee;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -29,8 +30,7 @@ public class SwitchJoinLeaveMessages implements Listener {
             return;
         }
 
-        String from = event.getPlayer().getServer().getInfo().getName();
-        String fromName = GoCraftBungee.getInstance().getServerName(from);
+        Server fromServer = event.getPlayer().getServer();
         String to = event.getTarget().getName();
         String toName = GoCraftBungee.getInstance().getServerName(to);
         String player = event.getPlayer().getDisplayName();
@@ -41,7 +41,10 @@ public class SwitchJoinLeaveMessages implements Listener {
         }
 
         // Switch
-        else if (!from.equals(to)) {
+        else if (!fromServer.getInfo().getName().equals(to)) {
+            String from = event.getPlayer().getServer().getInfo().getName();
+            String fromName = GoCraftBungee.getInstance().getServerName(from);
+
             // Old server
             plugin.getSyncCommandsBungee().runCommand(from,"broadcast general-switchedServer " + player + " " + toName);
             // New server
