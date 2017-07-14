@@ -14,7 +14,7 @@ public class OnlinePlayersResponse extends Response {
 	public Map<String, List<WebsitePlayer>> players;
 
 	public OnlinePlayersResponse() {
-		super("onlinePlayers");
+		super("players/UPDATE");
 
 		players = new HashMap<>();
 		Database.run(session -> {

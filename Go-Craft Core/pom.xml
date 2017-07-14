@@ -205,6 +205,13 @@
             <version>3.4.2</version>
         </dependency>
 
+        <!-- Unirest -->
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+        </dependency>
+
     </dependencies>
 
     <profiles>
@@ -347,6 +354,11 @@
                                 <relocation>
                                     <pattern>me.wiefferink.interactivemessenger</pattern>
                                     <shadedPattern>me.wiefferink.gocraft.shaded.interactivemessenger</shadedPattern>
+                                </relocation>
+                                <!-- Relocate Unirest -->
+                                <relocation>
+                                    <pattern>com.mashape.unirest</pattern>
+                                    <shadedPattern>me.wiefferink.gocraft.shaded.unirest</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

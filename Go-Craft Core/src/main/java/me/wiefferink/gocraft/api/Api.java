@@ -1,5 +1,8 @@
 package me.wiefferink.gocraft.api;
 
+import com.google.gson.Gson;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import me.wiefferink.gocraft.GoCraftBungee;
@@ -21,6 +24,27 @@ public class Api implements Runnable {
 		this.plugin = GoCraftBungee.getInstance();
 		this.vertx = Vertx.vertx();
 		plugin.getProxy().getScheduler().runAsync(plugin, this);
+
+		// Setup Gson object mapping for Unirest
+		Unirest.setObjectMapper(new ObjectMapper() {
+			private Gson gson = new Gson();
+
+			public <T> T readValue(String s, Class<T> aClass) {
+				try {
+					return gson.fromJson(s, aClass);
+				} catch(Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			public String writeValue(Object o) {
+				try {
+					return gson.toJson(o);
+				} catch(Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
 	}
 
 	@Override

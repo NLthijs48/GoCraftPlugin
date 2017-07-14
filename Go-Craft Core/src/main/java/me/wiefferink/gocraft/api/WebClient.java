@@ -10,8 +10,10 @@ import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.api.messages.in.OnlinePlayersRequest;
 import me.wiefferink.gocraft.api.messages.in.Request;
+import me.wiefferink.gocraft.api.messages.in.ShopLayoutRequest;
 import me.wiefferink.gocraft.api.messages.out.OnlinePlayersResponse;
 import me.wiefferink.gocraft.api.messages.out.Response;
+import me.wiefferink.gocraft.api.messages.out.ShopLayoutResponse;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.util.HashMap;
@@ -32,6 +34,7 @@ public class WebClient {
     // Map of command type to the handler class
     public Map<String, Class<? extends Request>> requests = new HashMap<String, Class<? extends Request>>() {{
         put("onlinePlayers", OnlinePlayersRequest.class);
+        put("shopLayout", ShopLayoutRequest.class);
     }};
 
     public WebClient(ServerWebSocket websocket, Api api, UUID key) {
@@ -61,6 +64,7 @@ public class WebClient {
      */
     private void pushInitialData() {
         message(new OnlinePlayersResponse());
+        message(new ShopLayoutResponse());
     }
 
     /**
