@@ -221,7 +221,10 @@ public class SyncCommandsServer extends Feature {
 							Log.warn("SyncCommands: executing command failed:", command+"\n", exception != null ? ExceptionUtils.getStackTrace(exception) : "result is false");
 						}
 					} else if("broadcast".equals(type)) {
-						broadcast(Message.fromKey(split[1]),  Arrays.copyOfRange(split, 2, split.length));
+						Message broadcastMessage = Message.fromKey(split[1])
+								.replacements((Object[])Arrays.copyOfRange(split, 2, split.length));
+						broadcast(broadcastMessage);
+						broadcastMessage.send(Bukkit.getLogger());
 					} else {
 					    Log.warn("SyncCommands: Unknown type:", type, "command:", command);
                     }
@@ -236,8 +239,7 @@ public class SyncCommandsServer extends Feature {
 	 * Broadcast a message to all players
 	 * @param message The message to broadcast
 	 */
-	private void broadcast(Message message, String[] args) {
-		message = message.replacements((Object[]) args);
+	private void broadcast(Message message) {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			message.send(player);
 		}

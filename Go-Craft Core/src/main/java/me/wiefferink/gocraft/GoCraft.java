@@ -275,6 +275,7 @@ public final class GoCraft extends JavaPlugin {
 				"EN",
 				getChatPrefix()
 		);
+		Message.useColorsInConsole(true);
 		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent() + File.separator + Constant.GENERAL_FOLDER_NAME);
 		loadGeneralConfig();
 
