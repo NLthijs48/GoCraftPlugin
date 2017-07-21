@@ -703,7 +703,6 @@ public class Utils {
 	 * @return true if the player is in a PVP area, otherwise false
 	 */
 	public static boolean isInPvpArea(Player player) {
-		Log.debug("isInPvpArea, player:", player, "world:", player.getWorld());
 		return GoCraft.getInstance().getWorldGuardLink() != null && GoCraft.getInstance().getWorldGuardLink().get()
 				.getRegionManager(player.getWorld())
 				.getApplicableRegions(player.getLocation())
