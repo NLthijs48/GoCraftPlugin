@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,21 +39,14 @@ public class TempbanCommand extends Feature {
 				event.setCancelled(true);
 				return;
 			}
-			String reason = null;
 			String[] argumentArray = arguments.split(" ");
 			if (argumentArray.length < 3) {
 				plugin.message(event.getPlayer(), "tempban-help");
 				event.setCancelled(true);
 				return;
-			} else {
-				for (int i = 2; i < argumentArray.length; i++) {
-					if (reason == null) {
-						reason = argumentArray[i];
-					} else {
-						reason += " " + argumentArray[i];
-					}
-				}
 			}
+
+			String reason = Utils.combineFrom(argumentArray, 2, " ");
 			boolean success = event.getPlayer().performCommand("banmanager:tempban " + arguments)
 					& event.getPlayer().performCommand("banmanager:tempbanip " + arguments);
 			final Player finalPlayer = event.getPlayer();

@@ -126,7 +126,6 @@ public final class GoCraft extends JavaPlugin {
 	private InspectionManager inspectionManager;
 	private InformationManager informationManager;
 	private SyncCommandsServer syncCommandsServer;
-	private boolean debug = false;
 	private List<String> chatPrefix = null;
 	private static GoCraft instance = null;
 	private Map<String, Cleaner> localStorageCleaners;
@@ -168,8 +167,7 @@ public final class GoCraft extends JavaPlugin {
 		} else {
 			chatPrefix = Collections.singletonList(getConfig().getString("chatPrefix"));
 		}
-		this.debug = getConfig().getBoolean("debug");
-		Log.setDebug(debug);
+		Log.setDebug(getConfig().getBoolean("debug"));
 		localStorageCleaners = new HashMap<>();
 
 		final Set<String> connnected = new HashSet<>();

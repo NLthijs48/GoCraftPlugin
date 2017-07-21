@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,10 +30,7 @@ public class StaffMessagesCommands extends Feature {
 			}
 
 			String type = args[0];
-			String message = args[1];
-			for (int i = 2; i < args.length; i++) {
-				message += " " + args[i];
-			}
+			String message = Utils.combineFrom(args, 1, " ");
 			Utils.sendStaffMessage(type, message);
 
 			// Only display to players, in console it will only cause spam (it will already receive the resulting message)
@@ -52,10 +50,7 @@ public class StaffMessagesCommands extends Feature {
 			}
 
 			// Construct the message
-			String message = args[0];
-			for (int i = 1; i < args.length; i++) {
-				message += " " + args[i];
-			}
+			String message = StringUtils.join(args, " ");
 			Utils.displayStaffMessage(message);
 			plugin.increaseStatistic("command.staffbroadcast.broadcasted");
 		}

@@ -322,34 +322,34 @@ public class Inspection {
 			int currentScore = 0;
 
 			// Display food
-			String food = "" + ChatColor.YELLOW;
+			StringBuilder food = new StringBuilder(""+ChatColor.YELLOW);
 			int foodNumber = inspected.getFoodLevel();
 			for (int i = 0; i < 20; i++) {
 				if (i == foodNumber) {
-					food += ChatColor.GRAY;
+					food.append(ChatColor.GRAY);
 				}
-				food += "I";
+				food.append('I');
 			}
-			objective.getScore(food).setScore(currentScore);
+			objective.getScore(food.toString()).setScore(currentScore);
 			currentScore++;
 
 			// Display health
-			String health = "";
+			StringBuilder health = new StringBuilder();
 			int healthNumber = (int) inspected.getHealth();
 			if (healthNumber < 7) {
-				health += ChatColor.RED;
+				health.append(ChatColor.RED);
 			} else if (healthNumber < 13) {
-				health += ChatColor.GOLD;
+				health.append(ChatColor.GOLD);
 			} else {
-				health += ChatColor.GREEN;
+				health.append(ChatColor.GREEN);
 			}
 			for (int i = 0; i < 20; i++) {
 				if (i == healthNumber) {
-					health += ChatColor.GRAY;
+					health.append(ChatColor.GRAY);
 				}
-				health += "I"; // Half-block: ▌
+				health.append('I');
 			}
-			objective.getScore(health).setScore(currentScore);
+			objective.getScore(health.toString()).setScore(currentScore);
 			currentScore++;
 
 			// Display ping

@@ -16,12 +16,11 @@ public class Api implements Runnable {
 
 	public static final int PORT = 9192;
 
-	private GoCraftBungee plugin;
 	private Vertx vertx;
 	private final Map<UUID, WebClient> clients = new HashMap<>();
 
 	public Api() {
-		this.plugin = GoCraftBungee.getInstance();
+		GoCraftBungee plugin = GoCraftBungee.getInstance();
 		this.vertx = Vertx.vertx();
 		plugin.getProxy().getScheduler().runAsync(plugin, this);
 

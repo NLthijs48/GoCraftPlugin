@@ -41,14 +41,7 @@ public class HackBanCommand extends Feature {
 
 		String reason = "Hacking is forbidden!";
 		if(args.length > 1) {
-			reason = null;
-			for(int i = 1; i < args.length; i++) {
-				if(reason == null) {
-					reason = args[i];
-				} else {
-					reason += " "+args[i];
-				}
-			}
+			reason = Utils.combineFrom(args, 1, " ");
 		}
 
 		// Execute commands

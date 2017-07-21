@@ -156,6 +156,7 @@ public abstract class Feature implements Listener {
 			// Get knowCommands map from commandMap
 			Field knowCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
 			knowCommandsField.setAccessible(true);
+			@SuppressWarnings("unchecked")
 			Map<String, Command> knownCommands = (Map<String, Command>)knowCommandsField.get(commandMap);
 
 			// Remove this command from the map to be able to override it (and possible aliases)

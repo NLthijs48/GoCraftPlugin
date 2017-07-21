@@ -75,12 +75,9 @@ public class SyncCommandsBungee {
 	 */
 	public void runCommand(String server, String command) {
 		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-			List<String> commands = queue.get(server);
-			if(commands == null) {
-				commands = Collections.synchronizedList(new ArrayList<String>());
-				queue.put(server, commands);
-			}
-			commands.add(command);
+			queue
+				.computeIfAbsent(server, key -> Collections.synchronizedList(new ArrayList<>()))
+				.add(command);
 			ClientHandler handler = servers.get(server);
 			if(handler != null) {
 				handler.sendCommands();
@@ -318,14 +315,13 @@ public class SyncCommandsBungee {
 				return;
 			}
 
-			List<String> commands = queue.get(name);
-			if(commands == null) {
+			if(queue.get(name) == null) {
 				return;
 			}
 
 			// Block our queue
-			synchronized(commands) {
-				Iterator<String> it = commands.iterator();
+			synchronized(queue.get(name)) {
+				Iterator<String> it = queue.get(name).iterator();
 				while(it.hasNext()) {
 					String command = it.next();
 					out.println(command);

@@ -25,8 +25,6 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 	private static GoCraftBungee instance;
 	private SyncCommandsBungee syncCommandsBungee;
 	private Configuration generalConfig;
-	private ConfigurationProvider configurationProvider;
-	private File generalFolder;
 	private Api api;
 
 	public static GoCraftBungee getInstance() {
@@ -39,8 +37,8 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 		Log.setLogger(getLogger());
 
 		// Setup general config file
-		generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent()+File.separator+ Constant.GENERAL_FOLDER_NAME);
-		configurationProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
+		File generalFolder = new File(getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getParent()+File.separator+ Constant.GENERAL_FOLDER_NAME);
+		ConfigurationProvider configurationProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
 		File generalConfigFile = new File(generalFolder.getAbsolutePath(), Constant.GENERAL_CONFIG_NAME);
 		try {
 			generalConfig = configurationProvider.load(generalConfigFile);

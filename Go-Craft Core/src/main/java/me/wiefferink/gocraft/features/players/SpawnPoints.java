@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft.features.players;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.PageDisplay;
@@ -49,7 +50,10 @@ public class SpawnPoints extends Feature {
 			if(regions.size() > 0 && plugin.getWorldGuardLink() != null) {
 				boolean inRegion = false;
 				for(String region : regions) {
-					inRegion |= plugin.getWorldGuardLink().get().getRegionManager(player.getWorld()).getRegion(region) != null && plugin.getWorldGuardLink().get().getRegionManager(player.getWorld()).getRegion(region).contains(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+					ProtectedRegion protectedRegion = plugin.getWorldGuardLink().get().getRegionManager(player.getWorld()).getRegion(region);
+					if(protectedRegion != null) {
+						inRegion |= protectedRegion.contains(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+					}
 				}
 				if(!inRegion) {
 					plugin.message(sender, "spawnpoints-notInRegion");

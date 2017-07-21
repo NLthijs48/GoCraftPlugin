@@ -22,7 +22,7 @@ public class ClickChatMessages extends Feature {
 		int nameIndex = format.indexOf("%1$s");
 		int messageIndex = format.indexOf("%2$s");
 		if(nameIndex < 0
-				|| nameIndex < 0
+				|| messageIndex < 0
 				|| messageIndex < nameIndex) {
 			return;
 		}

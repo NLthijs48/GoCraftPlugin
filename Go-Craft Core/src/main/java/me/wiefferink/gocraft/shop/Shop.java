@@ -468,7 +468,7 @@ public class Shop extends Feature {
 				result = new ItemBuilder(id, 1, data);
 			}
 			// Optional item amount
-			else if (i == 1 && isNumber(parts[i])) {
+			else if (i == 1 && Utils.isNumeric(parts[i])) {
 				result.setAmount(Integer.parseInt(parts[i]));
 			}
 			// Other attributes
@@ -503,13 +503,13 @@ public class Shop extends Feature {
 					if (split.length < 2) {
 						Log.warn("  No arguments for lore for", debugId);
 					} else {
-						result.addLore(combineFrom(split, 1, ":"));
+						result.addLore(Utils.combineFrom(split, 1, ":"));
 					}
 				} else if ("action".equalsIgnoreCase(identifier)) {
 					if (split.length < 2) {
 						Log.warn("  No arguments for action for", debugId);
 					} else {
-						result.addAction(combineFrom(split, 1, ":"));
+						result.addAction(Utils.combineFrom(split, 1, ":"));
 					}
 				} else if("potion".equalsIgnoreCase(identifier)) {
 					if(split.length < 2) {
@@ -537,41 +537,6 @@ public class Shop extends Feature {
 					Log.warn("  Unknown identifier: "+identifier+" (with value '"+value+"') for "+debugId);
 				}
 			}
-		}
-		return result;
-	}
-
-	/**
-	 * Check if a string is a number
-	 * @param number The input to check
-	 * @return true if the string represents a number, otherwise false
-	 */
-	private boolean isNumber(String number) {
-		try {
-			//noinspection ResultOfMethodCallIgnored
-			Integer.parseInt(number);
-		} catch (NumberFormatException e) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Combine strings from the array from a certain point
-	 * @param parts The string parts
-	 * @param index The index from which it should be combined
-	 * @return Combined string
-	 */
-	private String combineFrom(String[] parts, int index, String glue) {
-		String result = null;
-		while (index < parts.length) {
-			if (result != null) {
-				result += glue;
-			} else {
-				result = "";
-			}
-			result += parts[index];
-			index++;
 		}
 		return result;
 	}

@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
@@ -72,31 +73,28 @@ public class UpdateListener implements Listener {
 	// Update when regaining health
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHealthRegen(EntityRegainHealthEvent event) {
-		if (event.getEntity() instanceof Player) {
-			if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getEntity()).isEmpty()) {
-				final Player finalPlayer = (Player) event.getEntity();
-				Do.sync(() -> {
-					for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-						inspection.updateScoreboard();
-					}
-				});
-			}
+		handleEntityEvent(event);
+	}
+
+	private void handleEntityEvent(EntityEvent event) {
+		if(!(event.getEntity() instanceof Player)) {
+			return;
+		}
+
+		if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getEntity()).isEmpty()) {
+			Player player = (Player) event.getEntity();
+			Do.sync(() -> {
+				for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
+					inspection.updateScoreboard();
+				}
+			});
 		}
 	}
 
 	// Update on change of food level
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onFoodChange(FoodLevelChangeEvent event) {
-		if (event.getEntity() instanceof Player) {
-			if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getEntity()).isEmpty()) {
-				final Player finalPlayer = (Player) event.getEntity();
-				Do.sync(() -> {
-					for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-						inspection.updateScoreboard();
-					}
-				});
-			}
-		}
+		handleEntityEvent(event);
 	}
 
 	// Update on potion change

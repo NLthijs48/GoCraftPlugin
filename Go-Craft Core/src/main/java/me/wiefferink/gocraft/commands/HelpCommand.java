@@ -53,7 +53,7 @@ public class HelpCommand extends Feature {
 					}
 					// <command> | <description>
 					else if(parts.length == 2) {
-						if(rankPrefix == null || rankPrefix.isEmpty()) {
+						if(rankPrefix.isEmpty()) {
 							plugin.messageNoPrefix(sender, "help-rule", parts[0], parts[1]);
 						} else {
 							plugin.messageNoPrefix(sender, "help-ruleRank", rankPrefix, parts[0], parts[1]);
@@ -140,12 +140,9 @@ public class HelpCommand extends Feature {
 	 * @param entry The help entry
 	 */
 	private void addHelpEntry(String rank, List<String> entry) {
-		List<String> rankList = helpMap.get(rank);
-		if (rankList == null) {
-			rankList = new ArrayList<>();
-			helpMap.put(rank, rankList);
-		}
-		rankList.addAll(entry);
+		helpMap
+				.computeIfAbsent(rank, key -> new ArrayList<>())
+				.addAll(entry);
 	}
 
 	private void addHelpEntry(String rank, String entry) {

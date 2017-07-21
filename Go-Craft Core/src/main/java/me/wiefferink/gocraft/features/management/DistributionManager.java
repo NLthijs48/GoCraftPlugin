@@ -627,17 +627,9 @@ public class DistributionManager extends Feature {
 				List<String> toGroups = Arrays.asList(rawGroups.split(",( )?"));
 				// Add permissions to the correct groups and servers
 				for (String server : toServers) {
-					Map<String, List<String>> groupsPermissions = permissions.get(server);
-					if (groupsPermissions == null) {
-						groupsPermissions = new HashMap<>();
-						permissions.put(server, groupsPermissions);
-					}
+					Map<String, List<String>> groupsPermissions = permissions.computeIfAbsent(server, key -> new HashMap<>());
 					for (String group : toGroups) {
-						List<String> groupPermissions = groupsPermissions.get(group);
-						if (groupPermissions == null) {
-							groupPermissions = new ArrayList<>();
-							groupsPermissions.put(group, groupPermissions);
-						}
+						List<String> groupPermissions = groupsPermissions.computeIfAbsent(group, key -> new ArrayList<>());
 						List<String> get = Utils.listOrSingle(currentSection, "permissions");
 						// Prevent duplicates
 						for(String addPerm : get) {

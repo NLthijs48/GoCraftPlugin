@@ -279,9 +279,6 @@ public class InspectionManager extends Feature {
 		// Restore gamemode
 		String gamemodeString = getInspectorStorage().getString(baseKey + "gamemode");
 		GameMode gamemode = GameMode.valueOf(gamemodeString);
-		if (gamemode == null) {
-			gamemode = GameMode.SURVIVAL;
-		}
 		result.gamemode = gamemode;
 		// Restore inventory
 		ItemStack[] inventory = player.getInventory().getContents();

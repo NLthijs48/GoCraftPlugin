@@ -911,11 +911,29 @@ public class Utils {
 	 * @return The start of the message with at most maximumLength characters
 	 */
 	public static String getMessageStart(Message message, int maximumLength) {
-		String messageStart = "";
+		StringBuilder messageStart = new StringBuilder(maximumLength);
 		for(int i = 0; i < message.getRaw().size() && messageStart.length() < maximumLength; i++) {
-			messageStart += message.getRaw().get(i).substring(0, Math.min(maximumLength, message.getRaw().get(i).length()));
+			messageStart.append(message.getRaw().get(i).substring(0, Math.min(maximumLength-messageStart.length(), message.getRaw().get(i).length())));
 		}
-		return messageStart.substring(0, Math.min(maximumLength, messageStart.length()));
+		return messageStart.toString();
+	}
+
+	/**
+	 * Combine strings from the array from a certain point
+	 * @param parts The string parts
+	 * @param index The index from which it should be combined
+	 * @return Combined string
+	 */
+	public static String combineFrom(String[] parts, int index, String glue) {
+		StringBuilder result = new StringBuilder();
+		while (index < parts.length) {
+			if (result.length() == 0) {
+				result.append(glue);
+			}
+			result.append(parts[index]);
+			index++;
+		}
+		return result.toString();
 	}
 
 	/**

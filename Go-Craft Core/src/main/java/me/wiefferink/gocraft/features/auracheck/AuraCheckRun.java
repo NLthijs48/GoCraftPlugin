@@ -80,12 +80,9 @@ public class AuraCheckRun {
 			for (Inspection inspection : GoCraft.getInstance().getInspectionManager().getInspectionsByInspected(checked)) {
 				int inspectEntityId = GoCraft.getInstance().getSpecificUtils().sendFakePlayer(location, inspection.getInspector(), true, name);
 				UUID uuid = inspection.getInspector().getUniqueId();
-				Set<Integer> inspectEntitiesSet = inspectEntities.get(uuid);
-				if (inspectEntitiesSet == null) {
-					inspectEntitiesSet = new HashSet<>();
-					inspectEntities.put(uuid, inspectEntitiesSet);
-				}
-				inspectEntitiesSet.add(inspectEntityId);
+				inspectEntities
+						.computeIfAbsent(uuid, key -> new HashSet<>())
+						.add(inspectEntityId);
 			}
 		}
 		final AuraCheckRun self = this;
