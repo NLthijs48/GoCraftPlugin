@@ -40,13 +40,14 @@ public class OnlinePlayersResponse extends Response {
 	}
 
 	/**
-	 * Player with details relevant for the website (just use GCPlayer in the future?)
+	 * Player with details relevant for the website
 	 */
 	private class WebsitePlayer {
 		public WebsitePlayer(String name, String uuid) {
 			this.name = name;
 			this.uuid = uuid;
 		}
+		public String game = "minecraft";
 		public String name;
 		public String uuid;
 	}
