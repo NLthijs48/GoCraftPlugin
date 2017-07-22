@@ -215,19 +215,22 @@ public final class GoCraft extends JavaPlugin {
 		}
 
 		// Check if Vault is present
-		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-		if (economyProvider != null) {
-			economy = economyProvider.getProvider();
-			connnected.add("Vault (economy)");
-		} else {
-			Log.info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
-		}
-		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-		if (permissionProvider != null) {
-			this.permissionProvider = permissionProvider.getProvider();
-			connnected.add("Vault (permissions)");
-		} else {
-			Log.info("Error: Vault or the Permissions plugin is not present or has not loaded correctly");
+		Plugin vault = getServer().getPluginManager().getPlugin("Vault");
+		if(vault != null && vault.isEnabled()) {
+			RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+			if (economyProvider != null) {
+				economy = economyProvider.getProvider();
+				connnected.add("Vault (economy)");
+			} else {
+				Log.info("Error: Vault or the Economy plugin is not present or has not loaded correctly");
+			}
+			RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+			if (permissionProvider != null) {
+				this.permissionProvider = permissionProvider.getProvider();
+				connnected.add("Vault (permissions)");
+			} else {
+				Log.info("Error: Vault or the Permissions plugin is not present or has not loaded correctly");
+			}
 		}
 
 		// Check if DynMap is present
@@ -614,7 +617,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new ReloadCommand());
 		features.add(new RulesCommand());
 		features.add(new HelpCommand());
-		if(protocolLibLink != null) {
+		if(protocolLibLink != null && worldGuardLink != null) {
 			features.add(new AuraCheck());
 		}
 		features.add(new ResourceWorlds());
