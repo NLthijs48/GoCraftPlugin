@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BroadcastCommand extends Feature {
@@ -28,8 +28,8 @@ public class BroadcastCommand extends Feature {
 				return;
 			}
 
-			List<String> doArgs = new ArrayList<>();
-			doArgs.add("localbroadcast");
+			List<String> doArgs = Arrays.asList(args);
+			doArgs.add(0, "localbroadcast");
 			plugin.getSyncCommandsServer().runCommand("syncServers", doArgs.toArray(new String[doArgs.size()]));
 			plugin.increaseStatistic("command.broadcast.used");
 		} else if("localbroadcast".equalsIgnoreCase(command.getName())) {
