@@ -337,7 +337,7 @@ switch-go: "Connecting to %0%..."
 broadcast-noPermission: "You do not have permission to broadcast messages."
 broadcast-message:
   - "\n\n\n"
-  - "[green][bold][INFO]"
+  - "[darkgreen][bold][INFO]"
   - "    hover: Information broadcasted by a staff member"
   - " %0%"
 
