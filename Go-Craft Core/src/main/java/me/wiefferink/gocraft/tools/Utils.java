@@ -247,6 +247,17 @@ public class Utils {
 	}
 
 	/**
+	 * Broadcast a message to all players
+	 * @param message The message to broadcast
+	 */
+	public static void broadcast(Message message) {
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			message.send(player);
+		}
+		message.send(Bukkit.getLogger());
+	}
+
+	/**
 	 * Perform a command in the console
 	 * @param command The command to executeBuy
 	 */

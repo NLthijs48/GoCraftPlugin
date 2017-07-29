@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.features.management;
 
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +10,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.BufferedReader;
@@ -206,7 +206,6 @@ public class SyncCommandsServer extends Feature {
 					String type = split[0];
 					String command = StringUtils.join(split, " ", 1, split.length);
 
-					// type "heartbeat" is skipped here
 					if("console".equals(type)) {
 						boolean result = false;
 						Exception exception = null;
@@ -221,10 +220,8 @@ public class SyncCommandsServer extends Feature {
 							Log.warn("SyncCommands: executing command failed:", command+"\n", exception != null ? ExceptionUtils.getStackTrace(exception) : "result is false");
 						}
 					} else if("broadcast".equals(type)) {
-						Message broadcastMessage = Message.fromKey(split[1])
-								.replacements((Object[])Arrays.copyOfRange(split, 2, split.length));
-						broadcast(broadcastMessage);
-						broadcastMessage.send(Bukkit.getLogger());
+						Utils.broadcast(Message.fromKey(split[1])
+								.replacements((Object[])Arrays.copyOfRange(split, 2, split.length)));
 					} else {
 					    Log.warn("SyncCommands: Unknown type:", type, "command:", command);
                     }
@@ -232,16 +229,6 @@ public class SyncCommandsServer extends Feature {
 					disconnect();
 				}
 			}
-		}
-	}
-
-	/**
-	 * Broadcast a message to all players
-	 * @param message The message to broadcast
-	 */
-	private void broadcast(Message message) {
-		for(Player player : Bukkit.getOnlinePlayers()) {
-			message.send(player);
 		}
 	}
 }

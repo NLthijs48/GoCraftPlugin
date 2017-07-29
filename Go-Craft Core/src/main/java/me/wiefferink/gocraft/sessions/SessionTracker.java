@@ -7,7 +7,7 @@ import me.wiefferink.gocraft.tools.storage.Database;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -45,15 +45,9 @@ public class SessionTracker implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onServerSwitch(ServerConnectEvent event) {
-		// Ignore cancelled events and initial server joins
-		if(event.isCancelled()) {
-			return;
-		}
-
-		Log.info("ServerConnectEvent of", event.getPlayer().getName(), "from", (event.getPlayer().getServer() == null ? "nothing" : event.getPlayer().getServer().getInfo().getName()), "to", event.getTarget().getName());
+	public void onServerSwitch(ServerSwitchEvent event) {
 		ProxiedPlayer player = event.getPlayer();
-		ServerInfo server = event.getTarget();
+		ServerInfo server = event.getPlayer().getServer().getInfo();
 		plugin.getProxy().getScheduler().runAsync(plugin, () ->
 			Database.run(session -> {
 				GCPlayer gcPlayer = Database.getCreatePlayer(player.getUniqueId(), player.getName());

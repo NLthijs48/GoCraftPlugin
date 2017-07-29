@@ -1,14 +1,14 @@
 package me.wiefferink.gocraft.commands;
 
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class BroadcastCommand extends Feature {
 				return;
 			}
 
-			List<String> doArgs = Arrays.asList(args);
+			List<String> doArgs = new ArrayList<>(Arrays.asList(args));
 			doArgs.add(0, "localbroadcast");
 			plugin.getSyncCommandsServer().runCommand("syncServers", doArgs.toArray(new String[doArgs.size()]));
 			plugin.increaseStatistic("command.broadcast.used");
@@ -38,10 +38,7 @@ public class BroadcastCommand extends Feature {
 				return;
 			}
 
-			Message message = Message.fromKey("broadcast-message").replacements(StringUtils.join(args, " "));
-			for(Player player : Bukkit.getOnlinePlayers()) {
-				message.send(player);
-			}
+			Utils.broadcast(Message.fromKey("broadcast-message").replacements(StringUtils.join(args, " ")));
             plugin.increaseStatistic("command.localbroadcast.used");
 		}
 	}

@@ -1,22 +1,31 @@
 package me.wiefferink.gocraft.features.players;
 
+import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.GoCraftBungee;
-import net.md_5.bungee.api.connection.Server;
+import me.wiefferink.gocraft.Log;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SwitchJoinLeaveMessages implements Listener {
     private GoCraftBungee plugin;
+    private Map<String, ServerInfo> lastOnline;
 
     public SwitchJoinLeaveMessages(GoCraftBungee plugin) {
         this.plugin = plugin;
+        this.lastOnline = new HashMap<>();
     }
 
     @EventHandler
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {
+        lastOnline.remove(event.getPlayer().getName().toLowerCase());
         if(event.getPlayer().hasPermission("gocraft.staff")) {
             return;
         }
@@ -25,24 +34,31 @@ public class SwitchJoinLeaveMessages implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void ServerConnectEvent(ServerConnectEvent event) {
+    public void playerSwitched(ServerConnectedEvent event) {
+        // Save old server, player might not actually connect to the server yet though
+        lastOnline.put(event.getPlayer().getName().toLowerCase(), event.getPlayer().getServer() != null ? event.getPlayer().getServer().getInfo() : null);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void playerJoinedServer(ServerSwitchEvent event) {
         if(event.getPlayer().hasPermission("gocraft.staff")) {
             return;
         }
 
-        Server fromServer = event.getPlayer().getServer();
-        String to = event.getTarget().getName();
+        ServerInfo fromServer = lastOnline.get(event.getPlayer().getName().toLowerCase());
+        String to = event.getPlayer().getServer().getInfo().getName();
         String toName = GoCraftBungee.getInstance().getServerName(to);
         String player = event.getPlayer().getDisplayName();
+        Log.info("ServerConnectEvent of", player, "from", (fromServer == null ? "nothing" : GoCraft.getInstance().getServerName(fromServer.getName())), "to", toName);
 
-        // Leave
-        if (event.getPlayer().getServer() == null) {
+        // Network join
+        if (fromServer == null) {
             plugin.getSyncCommandsBungee().runCommand(to,"broadcast general-joinedServer " + player);
         }
 
-        // Switch
-        else if (!fromServer.getInfo().getName().equals(to)) {
-            String from = event.getPlayer().getServer().getInfo().getName();
+        // Server switch
+        else if (!fromServer.getName().equals(to)) {
+            String from = fromServer.getName();
             String fromName = GoCraftBungee.getInstance().getServerName(from);
 
             // Old server

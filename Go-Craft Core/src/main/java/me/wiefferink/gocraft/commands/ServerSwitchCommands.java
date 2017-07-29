@@ -77,7 +77,7 @@ public class ServerSwitchCommands extends Feature {
 		}
 
 		plugin.getSyncCommandsServer().runCommand("switch", player.getUniqueId().toString(), command.getName());
-		plugin.message(sender, "switch-go", plugin.getServerName(command.getName()));
+		plugin.message(sender, "switch-go", plugin.getServerName(plugin.getServerName(command.getName())));
 	}
 
 }
