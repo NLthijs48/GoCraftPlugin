@@ -1,6 +1,5 @@
 package me.wiefferink.gocraft.tools;
 
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.interactivemessenger.processing.Message;
@@ -703,10 +702,8 @@ public class Utils {
 	 * @return true if the player is in a PVP area, otherwise false
 	 */
 	public static boolean isInPvpArea(Player player) {
-		return GoCraft.getInstance().getWorldGuardLink() != null && GoCraft.getInstance().getWorldGuardLink().get()
-				.getRegionManager(player.getWorld())
-				.getApplicableRegions(player.getLocation())
-				.testState(GoCraft.getInstance().getWorldGuardLink().get().wrapPlayer(player), DefaultFlag.PVP);
+		return GoCraft.getInstance().getWorldGuardLink() != null
+				&& GoCraft.getInstance().getWorldGuardLink().isInPvpArea(player);
 	}
 
 	/**
