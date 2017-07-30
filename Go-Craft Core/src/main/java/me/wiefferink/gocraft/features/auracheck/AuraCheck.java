@@ -73,15 +73,18 @@ public class AuraCheck extends Feature {
 	 * Register a packet listener if it has not been registered yet
 	 */
 	public void register() {
-		if (!isRegistered && running.size() > 0) {
+		if(!isRegistered && running.size() > 0) {
 			ProtocolLibrary.getProtocolManager().addPacketListener(
 					new PacketAdapter(GoCraft.getInstance(), WrapperPlayClientUseEntity.TYPE) {
 						public void onPacketReceiving(PacketEvent event) {
-							if (event.getPacketType() == WrapperPlayClientUseEntity.TYPE) {
+							if(event.getPacketType() == WrapperPlayClientUseEntity.TYPE) {
 								WrapperPlayClientUseEntity packet = new WrapperPlayClientUseEntity(event.getPacket());
 								int entID = packet.getTarget();
-								if (running.containsKey(event.getPlayer().getUniqueId()) && packet.getType().equals(EnumWrappers.EntityUseAction.ATTACK)) {
-									running.get(event.getPlayer().getUniqueId()).markAsKilled(entID);
+								if(packet.getType().equals(EnumWrappers.EntityUseAction.ATTACK)) {
+									AuraCheckRun run = running.get(event.getPlayer().getUniqueId());
+									if(run != null) {
+										run.markAsKilled(entID);
+									}
 								}
 							}
 						}
@@ -94,7 +97,7 @@ public class AuraCheck extends Feature {
 	 * Unregister the packet listener
 	 */
 	public void unregister() {
-		if (this.running.size() == 0 && isRegistered) {
+		if(this.running.size() == 0 && isRegistered) {
 			// TODO Make this compatible with possible other packet listeners
 			ProtocolLibrary.getProtocolManager().removePacketListeners(GoCraft.getInstance());
 			isRegistered = false;
@@ -119,7 +122,7 @@ public class AuraCheck extends Feature {
 	 */
 	public void addCheck(UUID player, AuraCheckRun check) {
 		AuraCheckRun previous = running.get(player);
-		if (previous != null) {
+		if(previous != null) {
 			previous.wrapup();
 		}
 		running.put(player, check);
@@ -128,11 +131,11 @@ public class AuraCheck extends Feature {
 
 	@Override
 	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args.length < 1) {
+		if(args.length < 1) {
 			plugin.message(sender, "ac-help");
 			return;
 		}
-		if (!sender.hasPermission("gocraft.auracheck")) {
+		if(!sender.hasPermission("gocraft.auracheck")) {
 			plugin.message(sender, "ac-noPermission");
 			return;
 		}

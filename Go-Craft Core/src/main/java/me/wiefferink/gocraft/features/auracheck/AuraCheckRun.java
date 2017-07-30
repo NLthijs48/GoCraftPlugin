@@ -94,6 +94,9 @@ public class AuraCheckRun {
 	 * @param entityId The id of the player to mark as killed
 	 */
 	public void markAsKilled(Integer entityId) {
+		if (ended) {
+			return;
+		}
 		if (entitiesSpawned.containsKey(entityId)) {
 			entitiesSpawned.put(entityId, true);
 			kill(entityId, checked);
