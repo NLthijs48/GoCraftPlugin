@@ -7,6 +7,7 @@ import me.wiefferink.gocraft.tools.storage.Database;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -42,6 +43,16 @@ public class SessionTracker implements Listener {
 		BungeeSession.ensureConsistency();
 		ServerSession.ensureConsistency();
 		GCPlayer.ensureConsistency();
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void postLogin(PostLoginEvent event) {
+		// Ensure the GCPlayer is created before the player joines the lobby
+		plugin.getProxy().getScheduler().runAsync(plugin, () ->
+				Database.run(session ->
+						Database.getCreatePlayer(event.getPlayer().getUniqueId(), event.getPlayer().getName())
+				)
+		);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
