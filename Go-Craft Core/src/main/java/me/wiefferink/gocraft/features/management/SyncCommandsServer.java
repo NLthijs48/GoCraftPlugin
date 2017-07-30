@@ -96,8 +96,8 @@ public class SyncCommandsServer extends Feature {
 			// Send our name
 			out.println("init "+plugin.getBungeeId()+" "+getConfig().getString("commandSyncVerification")+" "+plugin.getDescription().getVersion());
 			String result = in.readLine();
-			if(result.startsWith("no")) {
-				Log.error("SyncCommands: error while connecting:", result.substring(result.indexOf(" ")));
+			if(result == null || result.startsWith("no")) {
+				Log.error("SyncCommands: error while connecting:", result);
 				shouldRun = false;
 				disconnect();
 				return;
