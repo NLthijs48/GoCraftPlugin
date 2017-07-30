@@ -28,6 +28,10 @@ public class ServerSwitchCommands extends Feature {
 				continue;
 			}
 
+			if("DEFAULT".equalsIgnoreCase(serverKey)) {
+				continue;
+			}
+
 			String bungeeId = serverSection.getString("bungeeId");
 			String name = serverSection.getString("name");
 			String directory = serverSection.getString("directory");
@@ -35,10 +39,6 @@ public class ServerSwitchCommands extends Feature {
 			aliases.add(name);
 			aliases.add(directory);
 			aliases.add(serverKey);
-
-			if("DEFAULT".equalsIgnoreCase(serverKey)) {
-				continue;
-			}
 
 			if(bungeeId == null || name == null || directory == null) {
 				Log.warn("Cannot register server command for", serverKey, "because either bungeeId, name or directory is null:", bungeeId, name, directory);
@@ -52,7 +52,6 @@ public class ServerSwitchCommands extends Feature {
 
 	@Override
 	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
-		Log.debug("ServerSwitch, sender:", sender.getName(), "command:", command.getName(), "label:", label);
 		if(!sender.hasPermission("gocraft.switch")) {
 			plugin.message(sender, "switch-noPermission");
 			return;

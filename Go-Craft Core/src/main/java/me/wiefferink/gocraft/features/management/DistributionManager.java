@@ -415,8 +415,8 @@ public class DistributionManager extends Feature {
 		}
 
 		// Execute all root file pushing
-		List<String> pushedFileTo = new ArrayList<>();
 		for (String pushFile : rootFiles.getKeys(false)) {
+			List<String> pushedFileTo = new ArrayList<>();
 			List<String> fileWarnings = new ArrayList<>();
 			ConfigurationSection pushToSection = rootFiles.getConfigurationSection(pushFile);
 			String pushTo = null;
