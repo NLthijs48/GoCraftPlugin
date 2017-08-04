@@ -30,7 +30,7 @@ public class SyncCommandsServer extends Feature {
 
 	private final List<String> queue = Collections.synchronizedList(new ArrayList<>()); // Queue of commands to send to Bungee
 	private volatile boolean shouldRun; // Activated
-	private boolean connected; // Connected to bungee
+	private volatile boolean connected; // Connected to bungee
 	private Socket socket;
 	private PrintWriter out;
 	private BufferedReader in;
@@ -132,10 +132,10 @@ public class SyncCommandsServer extends Feature {
 			} catch(IOException ignored) {
 			}
 		}
+		connected = false;
 		socket = null;
 		out = null;
 		in = null;
-		connected = false;
 
 		if(message != null && shouldRun) {
 			Log.warn("SyncCommands: "+message, "(scheduling reconnect)");
