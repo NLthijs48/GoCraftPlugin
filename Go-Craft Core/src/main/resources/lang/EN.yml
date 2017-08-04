@@ -341,6 +341,10 @@ broadcast-message:
   - "    hover: Information broadcasted by a staff member"
   - " %0%"
 
+online-header: "[darkgreen][bold]Currently online:"
+online-server: "[darkgreen][bold]%lang:server|%0%|%:"
+online-players: "%0%."
+
 map-link:
   - "Check the map on "
   - "[bold]maps.go-craft.com[/bold]"

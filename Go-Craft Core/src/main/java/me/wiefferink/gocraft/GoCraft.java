@@ -6,6 +6,7 @@ import me.wiefferink.gocraft.commands.DiscordCommand;
 import me.wiefferink.gocraft.commands.HackBanCommand;
 import me.wiefferink.gocraft.commands.HelpCommand;
 import me.wiefferink.gocraft.commands.MapCommand;
+import me.wiefferink.gocraft.commands.OnlinePlayersCommand;
 import me.wiefferink.gocraft.commands.PingCommand;
 import me.wiefferink.gocraft.commands.RandomtpCommand;
 import me.wiefferink.gocraft.commands.ReloadCommand;
@@ -630,6 +631,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new SeenCommand());
 		features.add(new ServerSwitchCommands());
 		features.add(new BroadcastCommand());
+		features.add(new OnlinePlayersCommand());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {
