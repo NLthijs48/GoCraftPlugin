@@ -29,7 +29,19 @@ public class SwitchJoinLeaveMessages implements Listener {
             return;
         }
 
-        plugin.getSyncCommandsBungee().runCommand(event.getPlayer().getServer().getInfo().getName(), "broadcast general-leftServer " + event.getPlayer().getDisplayName());
+        ServerInfo leftServer;
+        if(event.getPlayer().getServer() != null) {
+            leftServer = event.getPlayer().getServer().getInfo();
+        } else {
+            leftServer = lastOnline.get(event.getPlayer().getName().toLowerCase());
+        }
+
+        if(leftServer == null) {
+            Log.warn("Don't know which server has been left by", event.getPlayer().getDisplayName());
+            return;
+        }
+
+        plugin.getSyncCommandsBungee().runCommand(leftServer.getName(), "broadcast general-leftServer " + event.getPlayer().getDisplayName());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

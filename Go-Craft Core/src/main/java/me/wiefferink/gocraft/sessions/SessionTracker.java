@@ -105,11 +105,19 @@ public class SessionTracker implements Listener {
 			Database.run(session -> {
 				// Bungee
 				BungeeSession bungeeSession = onlineBungee.remove(player);
+				if(bungeeSession == null) {
+					Log.warn("No BungeeSession to close for player", event.getPlayer().getDisplayName(), event.getPlayer().getUniqueId());
+					return;
+				}
 				bungeeSession.hasLeft();
 				session.update(bungeeSession);
 
 				// Server
 				ServerSession serverSession = onlineServer.remove(player);
+				if(serverSession == null) {
+					Log.warn("No ServerSession to close for player", event.getPlayer().getDisplayName(), event.getPlayer().getUniqueId());
+					return;
+				}
 				serverSession.hasLeft();
 				session.update(serverSession);
 
