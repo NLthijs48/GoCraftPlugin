@@ -1,4 +1,4 @@
-package me.wiefferink.gocraft.features.management;
+package me.wiefferink.gocraft.management.commandsync;
 
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.Log;
@@ -158,12 +158,19 @@ public class SyncCommandsBungee {
 					return;
 				}
 				if(servers.containsKey(init[1])) {
-					Log.error("SyncCommands:", address, "provided name '"+name+"' which is already connected");
+					Log.error("SyncCommands:", address, "provided name '"+init[1]+"' which is already connected");
 					out.println("no Provided name '"+init[1]+"' is already connected");
 					disconnect();
 					return;
 				}
 				name = init[1];
+				if(ProxyServer.getInstance().getServerInfo(name) == null) {
+					Log.error("SyncCommands: ", address, "provided name '"+name+"' which is not registered as a server in BungeeCord.");
+					out.println("no Provided name '"+name+"' which is not registered as a server in BungeeCord.");
+					disconnect();
+					return;
+				}
+
 				if(!init[2].equals(password)) {
 					Log.error("SyncCommands:", name, "provided an invalid password");
 					out.println("no Password is incorrect");

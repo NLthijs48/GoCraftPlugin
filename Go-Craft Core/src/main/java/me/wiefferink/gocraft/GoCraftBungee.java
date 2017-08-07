@@ -1,8 +1,8 @@
 package me.wiefferink.gocraft;
 
 import me.wiefferink.gocraft.api.Api;
-import me.wiefferink.gocraft.features.management.SyncCommandsBungee;
 import me.wiefferink.gocraft.features.players.SwitchJoinLeaveMessages;
+import me.wiefferink.gocraft.management.commandsync.SyncCommandsBungee;
 import me.wiefferink.gocraft.sessions.SessionTracker;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.storage.Database;

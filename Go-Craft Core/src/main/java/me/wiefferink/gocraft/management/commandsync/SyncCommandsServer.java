@@ -1,4 +1,4 @@
-package me.wiefferink.gocraft.features.management;
+package me.wiefferink.gocraft.management.commandsync;
 
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
