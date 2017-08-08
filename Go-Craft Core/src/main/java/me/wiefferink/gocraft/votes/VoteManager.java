@@ -3,6 +3,7 @@ package me.wiefferink.gocraft.votes;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
+import me.wiefferink.gocraft.rewards.Reward;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
@@ -12,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -71,12 +73,69 @@ public class VoteManager extends Feature {
 
 				session.save(vote);
 				Log.debug("Received vote:", vote);
+
+				// Setup rewards
+				ConfigurationSection servers = plugin.getGeneralConfig().getConfigurationSection("servers");
+				if(servers != null) {
+
+					// Rewards for each server
+					for(String serverKey : servers.getKeys(false)) {
+						ConfigurationSection serverRewards = servers.getConfigurationSection(serverKey + ".voteRewards");
+						if(serverRewards == null) {
+							continue;
+						}
+
+						// Server rewards
+						for(String rewardKey : serverRewards.getKeys(false)) {
+							ConfigurationSection rewardSection = serverRewards.getConfigurationSection(rewardKey);
+							if(rewardSection == null) {
+								continue;
+							}
+
+							Reward reward = new Reward(gcPlayer, Reward.RewardSource.VOTING);
+							// Main type
+							if(rewardSection.isDouble("money") || rewardSection.isInt("money")) {
+								reward.money(rewardSection.getDouble("money"));
+							} else if(rewardSection.isString("command")) {
+								reward.command(rewardSection.getString("command"));
+							} else {
+								Log.warn("Vote reward", rewardKey, "for server", serverKey, "has no money or command!");
+								continue;
+							}
+
+							// Slots condition
+							if(rewardSection.isInt("requiredSlots")) {
+								reward.requiredSlots(rewardSection.getInt("requiredSlots"));
+							}
+
+							// Message
+							if(rewardSection.isString("message")) {
+								String message = rewardSection.getString("message");
+								message = message.replace("{service}", vote.getServiceName());
+								reward.message(message);
+							}
+
+							session.save(reward);
+						}
+					}
+				}
 			})
 		);
 	}
 
 	@Override
 	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
+
+		com.vexsoftware.votifier.model.Vote vote = new com.vexsoftware.votifier.model.Vote();
+		vote.setAddress("0.1.2.3");
+		vote.setServiceName("FakeService");
+		vote.setTimeStamp("no idea");
+		vote.setUsername("NLThijs48");
+
+		Bukkit.getPluginManager().callEvent(new VotifierEvent(vote));
+
+
+
 		if(!sender.hasPermission("gocraft.votetop")) {
 			plugin.message(sender, "votetop-noPermission");
 			return;

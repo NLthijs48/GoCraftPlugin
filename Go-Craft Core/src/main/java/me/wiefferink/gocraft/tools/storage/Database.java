@@ -2,6 +2,7 @@ package me.wiefferink.gocraft.tools.storage;
 
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.players.timedfly.TimedFly;
+import me.wiefferink.gocraft.rewards.Reward;
 import me.wiefferink.gocraft.sessions.BungeeSession;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
@@ -63,6 +64,7 @@ public class Database {
 					.addAnnotatedClass(ServerSession.class)
 					.addAnnotatedClass(TimedFly.class)
 					.addAnnotatedClass(Vote.class)
+					.addAnnotatedClass(Reward.class)
 					.buildMetadata()
 					.buildSessionFactory();
 		} catch(Exception e) {
