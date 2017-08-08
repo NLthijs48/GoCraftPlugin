@@ -73,6 +73,7 @@ import me.wiefferink.gocraft.interfaces.SpecificUtilsBase;
 import me.wiefferink.gocraft.management.commandsync.SyncCommandsServer;
 import me.wiefferink.gocraft.management.distribution.DistributionManager;
 import me.wiefferink.gocraft.ranks.RankManager;
+import me.wiefferink.gocraft.rewards.RewardClaim;
 import me.wiefferink.gocraft.sessions.FixGCPlayer;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
@@ -632,6 +633,7 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new ServerSwitchCommands());
 		features.add(new BroadcastCommand());
 		features.add(new OnlinePlayersCommand());
+		features.add(new RewardClaim());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {

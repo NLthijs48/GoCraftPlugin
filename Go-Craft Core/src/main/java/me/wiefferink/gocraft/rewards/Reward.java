@@ -181,11 +181,26 @@ public class Reward {
 	}
 
 	/**
+	 * Mark as completed
+	 */
+	public void complete() {
+		completed = true;
+	}
+
+	/**
 	 * Get the message that should be send when giving the reward
 	 * @return Message that should be send, or null if none
 	 */
 	public String getMessage() {
 		return message;
+	}
+
+	/**
+	 * Get the server this reward is for
+	 * @return Id of the server this reward should be given on
+	 */
+	public String getServer() {
+		return server;
 	}
 
 	/**

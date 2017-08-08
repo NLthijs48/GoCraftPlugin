@@ -345,6 +345,9 @@ online-header: "[darkgreen][bold]Currently online:"
 online-server: "[darkgreen][bold]%lang:server|%0%|%:"
 online-players: "%0%."
 
+rewards-none: "There are no rewards waiting for you, vote to get some!"
+rewards-message: "[gold]%0%"
+
 map-link:
   - "Check the map on "
   - "[bold]maps.go-craft.com[/bold]"
