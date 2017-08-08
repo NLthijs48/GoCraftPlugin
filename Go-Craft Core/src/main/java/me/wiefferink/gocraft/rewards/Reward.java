@@ -46,6 +46,9 @@ public class Reward {
 	@Column(nullable = false)
 	private boolean completed;
 
+	@Column(nullable = false)
+	private String server;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private RewardSource source;
@@ -76,9 +79,10 @@ public class Reward {
 	 * @param gcPlayer Player that should receive the rewards
 	 * @param source Source of the reward
 	 */
-	public Reward(GCPlayer gcPlayer, RewardSource source) {
+	public Reward(GCPlayer gcPlayer, RewardSource source, String server) {
 		this.gcPlayer = gcPlayer;
 		this.source = source;
+		this.server = server;
 		this.at = new Date();
 	}
 

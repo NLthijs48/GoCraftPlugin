@@ -92,7 +92,7 @@ public class VoteManager extends Feature {
 								continue;
 							}
 
-							Reward reward = new Reward(gcPlayer, Reward.RewardSource.VOTING);
+							Reward reward = new Reward(gcPlayer, Reward.RewardSource.VOTING, serverKey);
 							// Main type
 							if(rewardSection.isDouble("money") || rewardSection.isInt("money")) {
 								reward.money(rewardSection.getDouble("money"));
@@ -125,17 +125,6 @@ public class VoteManager extends Feature {
 
 	@Override
 	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
-
-		com.vexsoftware.votifier.model.Vote vote = new com.vexsoftware.votifier.model.Vote();
-		vote.setAddress("0.1.2.3");
-		vote.setServiceName("FakeService");
-		vote.setTimeStamp("no idea");
-		vote.setUsername("NLThijs48");
-
-		Bukkit.getPluginManager().callEvent(new VotifierEvent(vote));
-
-
-
 		if(!sender.hasPermission("gocraft.votetop")) {
 			plugin.message(sender, "votetop-noPermission");
 			return;
