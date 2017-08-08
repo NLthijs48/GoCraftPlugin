@@ -23,7 +23,7 @@ public class OnlinePlayersCommand extends Feature {
 	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
 		async(() -> {
 			// Get online players per server
-			Map<String, List<GCPlayer>> players = new HashMap<>();
+			List<Message> messages = new ArrayList<>();
 			Database.run(session -> {
 				@SuppressWarnings("unchecked")
 				List<Map<String,Object>> onlinePlayers = session.createQuery(
@@ -36,6 +36,8 @@ public class OnlinePlayersCommand extends Feature {
 								"ORDER BY gcPlayer.name")
 						.getResultList();
 
+				// Group players per server
+				Map<String, List<GCPlayer>> players = new HashMap<>();
 				for(Map<String, Object> onlinePlayerDetails : onlinePlayers) {
 					GCPlayer player = (GCPlayer)onlinePlayerDetails.get("player");
 					ServerSession server = (ServerSession)onlinePlayerDetails.get("server");
@@ -43,13 +45,11 @@ public class OnlinePlayersCommand extends Feature {
 					players.computeIfAbsent(server.getServerName(), key -> new ArrayList<>())
 							.add(player);
 				}
-			});
 
-			// Display online list
-			sync(() -> {
-				plugin.message(sender, "online-header");
+				// Build messages for the online list
+				messages.add(Message.fromKey("online-header"));
 				for(String server : players.keySet()) {
-					plugin.message(sender, "online-server", plugin.getServerName(server));
+					messages.add(Message.fromKey("online-server").replacements(plugin.getServerName(server)));
 					Message serverPlayers = Message.empty();
 					// TODO this might break max message length?
 					for(GCPlayer player : players.get(server)) {
@@ -65,9 +65,13 @@ public class OnlinePlayersCommand extends Feature {
 							serverPlayers.append("[white]");
 						}
 					}
-					plugin.message(sender, "online-players", serverPlayers);
+					messages.add(Message.fromKey("online-players").replacements(serverPlayers));
 				}
+
 			});
+
+			// Display online list
+			sync(() -> messages.forEach(message -> message.send(sender)));
 		});
 
 		plugin.increaseStatistic("command.online.used");
