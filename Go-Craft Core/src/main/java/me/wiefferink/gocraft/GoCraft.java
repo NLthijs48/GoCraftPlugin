@@ -128,6 +128,7 @@ public final class GoCraft extends JavaPlugin {
 	private InspectionManager inspectionManager;
 	private InformationManager informationManager;
 	private SyncCommandsServer syncCommandsServer;
+	private RewardClaim rewardClaim;
 	private List<String> chatPrefix = null;
 	private static GoCraft instance = null;
 	private Map<String, Cleaner> localStorageCleaners;
@@ -550,11 +551,19 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	/**
+	 * Get the RewardClaim feature
+	 * @return RewardClaim feature
+	 */
+	public RewardClaim getRewardClaim() {
+		return rewardClaim;
+	}
+
+	/**
 	 * Register all listener and command classes
 	 */
 	public void addListeners() {
 		// TODO replace by dynamic instantiation: https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
-
+		// and getter by .class
 
 		features = new ArrayList<>();
 		// Blocks
@@ -633,7 +642,8 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new ServerSwitchCommands());
 		features.add(new BroadcastCommand());
 		features.add(new OnlinePlayersCommand());
-		features.add(new RewardClaim());
+		rewardClaim = new RewardClaim();
+		features.add(rewardClaim);
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {

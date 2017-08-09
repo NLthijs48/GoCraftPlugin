@@ -14,6 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.permissions.PermissionDefault;
 
@@ -67,7 +68,7 @@ public class VoteManager extends Feature {
 						event.getVote().getTimeStamp()
 				);
 
-				if(gcPlayer != null && lastVote != null && (lastVote.getAt().getTime()+1000*60*60*11) > Calendar.getInstance().getTimeInMillis()) {
+				if(gcPlayer != null && lastVote != null && (lastVote.getAt().getTime() + 1000 * 60 * 60 * 11) > Calendar.getInstance().getTimeInMillis()) {
 					Log.warn("Last vote of", gcPlayer.getName(), "at", event.getVote().getServiceName(), "was too short ago (restricting to once every 11 hours):", lastVote);
 					return;
 				}
@@ -119,6 +120,12 @@ public class VoteManager extends Feature {
 							session.save(reward);
 						}
 					}
+				}
+
+				// Immediately give rewards if the player is online, using same database transaction
+				Player player = Bukkit.getPlayer(offlinePlayer.getUniqueId());
+				if(player != null && player.isOnline()) {
+					plugin.getRewardClaim().giveRewards(player, false);
 				}
 			})
 		);
