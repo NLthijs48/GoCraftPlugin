@@ -328,6 +328,14 @@ votetop-empty:
 votetop-item:
   - "[darkgreen]%0%: %lang:player|%1%|%[bold]: [white]%2%"
 votetop-wrongYearMonth: "Specify year and month with 'year-month', given: %0%."
+vote-link:
+  - "[darkgreen]------------------------------------"
+  - "[darkgreen]You can vote every 24 hours to"
+  - "[darkgreen]get a bunch of rewards!"
+  - "[darkgreen]www.go-craft.com/vote"
+  - "    hover: %lang:action|Open the website to vote!|%"
+  - "    link: http://go-craft.com/vote"
+  - "[darkgreen]------------------------------------"
 
 switch-noPermission: "You do not have permission to switch servers by command."
 switch-notLoggedIn: "You need to be logged in to switch to other servers."

@@ -33,6 +33,7 @@ public class VoteManager extends Feature {
 		listen("collectVotes");
 		command("votetop", "Vote top 10", "/votetop [year-month] [page]");
 		permission("votetop", "Access to the /votetop command", PermissionDefault.TRUE);
+		command("vote", "Get the vote link", "/vote", "votelink", "vote-link");
 	}
 
 	@EventHandler
@@ -125,6 +126,12 @@ public class VoteManager extends Feature {
 
 	@Override
 	public void onCommand(CommandSender sender, Command command, String label, String[] args) {
+		// Vote link message
+		if("vote".equalsIgnoreCase(command.getName())) {
+			plugin.message(sender, "vote-link");
+			return;
+		}
+
 		if(!sender.hasPermission("gocraft.votetop")) {
 			plugin.message(sender, "votetop-noPermission");
 			return;
