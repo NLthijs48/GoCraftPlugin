@@ -19,6 +19,7 @@ import java.util.Date;
 @Entity
 @Table(indexes = {
 		@Index(columnList = "completed", name = "completed"),
+		@Index(columnList = "server", name = "server"),
 })
 public class Reward {
 
