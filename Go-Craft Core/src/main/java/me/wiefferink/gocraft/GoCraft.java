@@ -2,6 +2,7 @@ package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.commands.BroadcastCommand;
+import me.wiefferink.gocraft.commands.Debug;
 import me.wiefferink.gocraft.commands.DiscordCommand;
 import me.wiefferink.gocraft.commands.HackBanCommand;
 import me.wiefferink.gocraft.commands.HelpCommand;
@@ -644,6 +645,8 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new OnlinePlayersCommand());
 		rewardClaim = new RewardClaim();
 		features.add(rewardClaim);
+
+		features.add(new Debug());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {

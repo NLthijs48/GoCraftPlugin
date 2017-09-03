@@ -17,13 +17,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.permissions.PermissionDefault;
+import org.hibernate.transform.Transformers;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class VoteManager extends Feature {
 
@@ -198,21 +198,22 @@ public class VoteManager extends Feature {
 					public boolean renderItems(int itemStart, int itemEnd) {
 						// Fetch the players and vote counts
 						@SuppressWarnings("unchecked")
-						List<Map<String,Object>> playerVoteCounts = session.createQuery(
-								"SELECT new map(votePlayer.name as player, count(*) as votes) " +
+						List<PlayerVoteCount> playerVoteCounts = session.createQuery(
+								"SELECT votePlayer.name as player, count(*) as votes " +
 										"FROM Vote vote " +
 										"INNER JOIN vote.gcPlayer as votePlayer " +
 										"WHERE vote.at <= :monthEnd AND vote.at >= :monthStart " +
 										"GROUP BY votePlayer " +
-										"ORDER BY count(*) DESC, votePlayer.name ASC")
+										"ORDER BY count(*) DESC, votePlayer.name ASC", PlayerVoteCount.class)
 								.setParameter("monthStart", monthStart)
 								.setParameter("monthEnd", monthEnd)
+								.unwrap(org.hibernate.query.Query.class)
+								.setResultTransformer(Transformers.aliasToBean(PlayerVoteCount.class))
 								.setMaxResults(itemEnd - itemStart + 1)
 								.setFirstResult(itemStart).getResultList();
-						// TODO make result more pretty and typesafe
 						int index = itemStart+1;
-						for(Map<String, Object> playerAndCount : playerVoteCounts) {
-							message(Message.fromKey("votetop-item").replacements(index, playerAndCount.get("player"), playerAndCount.get("votes")));
+						for(PlayerVoteCount playerAndCount : playerVoteCounts) {
+							message(Message.fromKey("votetop-item").replacements(index, playerAndCount.player, playerAndCount.votes));
 							index++;
 						}
 						return true;
@@ -222,6 +223,11 @@ public class VoteManager extends Feature {
 				sync(display::show);
 			})
 		);
+	}
+
+	public class PlayerVoteCount {
+		public String player;
+		public long votes;
 	}
 
 	/**
