@@ -116,7 +116,10 @@ public class InspectionManager extends Feature {
 	 * @param inspection Inspection to start and add
 	 */
 	public void addInspection(Inspection inspection) {
-		currentInspections.put(inspection.getInspector().getUniqueId(), inspection);
+		Inspection oldInspection = currentInspections.put(inspection.getInspector().getUniqueId(), inspection);
+		if(oldInspection != null) {
+			Log.warn("Found old Inspection while adding new one, inspector: ", inspection.getInspector().getName(), "inspected:", inspection.getInspected().getName());
+		}
 	}
 
 	/**
@@ -167,7 +170,7 @@ public class InspectionManager extends Feature {
 		if (player == null) {
 			return;
 		}
-		// Player leaves next tick
+		// Player leaves next tick, then update inspections watching this player
 		Do.sync(() -> {
 			for(Inspection inspect : getInspectionsByInspected(player)) {
 				plugin.message(inspect.getInspector(), "inspect-inspectedLeft", inspect.getInspected().getName());
@@ -175,6 +178,12 @@ public class InspectionManager extends Feature {
 				inspect.updateAll(true);
 			}
 		});
+
+		// Remove inspection of the player that left
+		Inspection inspection = getInspectionByInspector(player);
+		if(inspection != null) {
+			removeInspection(inspection);
+		}
 	}
 
 	/**
