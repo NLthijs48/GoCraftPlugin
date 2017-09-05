@@ -20,6 +20,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionType;
 
@@ -318,7 +319,11 @@ public class Shop extends Feature {
 	 * @param session The session to add
 	 */
 	public void addSession(ShopSession session) {
-		shopSessions.put(session.getPlayer().getUniqueId(), session);
+		ShopSession oldSession = shopSessions.put(session.getPlayer().getUniqueId(), session);
+		if(oldSession != null) {
+			Log.warn("Found old ShopSession while adding a new one, player:", session.getPlayer().getName());
+			oldSession.close();
+		}
 	}
 
 	/**
@@ -333,7 +338,7 @@ public class Shop extends Feature {
 	 * Inventory closing, remove the ShopSession
 	 * @param event The InventoryCloseEvent
 	 */
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryClose(InventoryCloseEvent event) {
 		shopSessions.remove(event.getPlayer().getUniqueId());
 	}
@@ -401,6 +406,14 @@ public class Shop extends Feature {
 			session.getPlayer().closeInventory();
 		}
 		shopSessions.clear();
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerLeave(PlayerQuitEvent event) {
+		ShopSession session = getShopSession(event.getPlayer().getUniqueId());
+		if(session != null) {
+			removeSession(session);
+		}
 	}
 
 	/**
