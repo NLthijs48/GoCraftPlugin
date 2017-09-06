@@ -138,9 +138,7 @@ public abstract class PageDisplay extends Feature {
 	 * Show the rendered page
 	 */
 	public void show() {
-		for(Message message : rendered) {
-			message.send(target);
-		}
+		rendered.forEach(message -> message.send(target));
 	}
 
 	/**

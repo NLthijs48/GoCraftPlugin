@@ -367,9 +367,7 @@ public class InspectionManager extends Feature {
 			updateListener = new UpdateListener(plugin);
 			plugin.getServer().getPluginManager().registerEvents(updateListener, plugin);
 			updateTask = Do.syncTimer(40, () -> {
-				for(Inspection inspection : plugin.getInspectionManager().getCurrentInspections().values()) {
-					inspection.updateAll();
-				}
+				plugin.getInspectionManager().getCurrentInspections().values().forEach(Inspection::updateAll);
 			});
 		}
 	}

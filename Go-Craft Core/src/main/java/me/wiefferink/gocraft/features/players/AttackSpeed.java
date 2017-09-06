@@ -13,9 +13,7 @@ public class AttackSpeed extends Feature {
 
 	public AttackSpeed() {
 		if(listen("playerAttributes")) {
-			for(Player player : Bukkit.getOnlinePlayers()) {
-				setPlayerAttributes(player);
-			}
+			Bukkit.getOnlinePlayers().forEach(this::setPlayerAttributes);
 		}
 	}
 

@@ -67,9 +67,7 @@ public class Api implements Runnable {
 	 */
 	public void stop() {
 		synchronized(clients) {
-			for(WebClient client : clients.values()) {
-				client.stop();
-			}
+			clients.values().forEach(WebClient::stop);
 		}
 		this.vertx.close();
 	}
@@ -81,9 +79,7 @@ public class Api implements Runnable {
 	public void broadcast(Response response) {
 		String responseString = response.toString();
 		synchronized(clients) {
-			for(WebClient client : clients.values()) {
-				client.message(responseString);
-			}
+			clients.values().forEach(webClient -> webClient.message(responseString));
 		}
 	}
 

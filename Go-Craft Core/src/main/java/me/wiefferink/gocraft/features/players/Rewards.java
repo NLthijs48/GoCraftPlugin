@@ -25,9 +25,7 @@ public class Rewards extends Feature {
 	public Rewards() {
 		if(getRewardsSection() != null && listen()) {
 			// Give currently online people rewards (after a reload for example)
-			for(Player player : Bukkit.getOnlinePlayers()) {
-				giveRewards(player);
-			}
+			Bukkit.getOnlinePlayers().forEach(this::giveRewards);
 		}
 	}
 

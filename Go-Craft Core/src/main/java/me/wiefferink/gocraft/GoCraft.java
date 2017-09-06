@@ -96,7 +96,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -122,7 +121,7 @@ public final class GoCraft extends JavaPlugin {
 	public static final SimpleDateFormat shortTimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 	public static final SimpleDateFormat longTimeFormat = new SimpleDateFormat("dd MMMMMMMMMMMMMMMMM yyyy HH:mm");
 	// Variables
-	private ArrayList<Listener> features;
+	private ArrayList<Feature> features;
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
 	private InspectionManager inspectionManager;
@@ -316,11 +315,7 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public void onDisable() {
 		// Call stop methods of the registered features
-		for(Listener listener : features) {
-			if (listener instanceof Feature) {
-				((Feature) listener).stopFeature();
-			}
-		}
+		features.forEach(Feature::stopFeature);
 		if (shop != null) {
 			shop.handleServerStop();
 		}
@@ -641,11 +636,7 @@ public final class GoCraft extends JavaPlugin {
 		rewardClaim = new RewardClaim();
 		features.add(rewardClaim);
 
-		for(Listener listener : features) {
-			if (listener instanceof Feature) {
-				((Feature) listener).startFeature();
-			}
-		}
+		features.forEach(Feature::startFeature);
 	}
 
 	/**
@@ -679,15 +670,11 @@ public final class GoCraft extends JavaPlugin {
 			messages.add(Message.fromKey("help-resetall"));
 		}
 		messages.add(Message.fromKey("help-stats"));
-		for(Message message : messages) {
-			message.send(target);
-		}
+		messages.forEach(message -> message.send(target));
 	}
 
 	public void deRegisterEvents() {
-		for(Listener listener : features) {
-			HandlerList.unregisterAll(listener);
-		}
+		features.forEach(HandlerList::unregisterAll);
 	}
 
 	/**

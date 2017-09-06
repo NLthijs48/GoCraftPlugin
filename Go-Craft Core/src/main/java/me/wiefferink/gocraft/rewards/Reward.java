@@ -48,6 +48,9 @@ public class Reward {
 	private boolean completed;
 
 	@Column(nullable = false)
+	private boolean failed;
+
+	@Column(nullable = false)
 	private String server;
 
 	@Enumerated(EnumType.STRING)
@@ -186,6 +189,21 @@ public class Reward {
 	 */
 	public void complete() {
 		completed = true;
+	}
+
+	/**
+	 * Check if giving this reward failed
+	 * @return If we failed to give this reward
+	 */
+	public boolean hasFailed() {
+		return failed;
+	}
+
+	/**
+	 * Mark that giving this reward has failed
+	 */
+	public void failed() {
+		failed = true;
 	}
 
 	/**

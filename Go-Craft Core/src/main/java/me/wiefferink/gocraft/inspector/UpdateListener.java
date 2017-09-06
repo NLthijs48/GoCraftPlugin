@@ -84,9 +84,8 @@ public class UpdateListener implements Listener {
 		if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getEntity()).isEmpty()) {
 			Player player = (Player) event.getEntity();
 			Do.sync(() -> {
-				for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
-					inspection.updateScoreboard();
-				}
+				plugin.getInspectionManager().getInspectionsByInspected(player)
+						.forEach(Inspection::updateScoreboard);
 			});
 		}
 	}
@@ -108,13 +107,11 @@ public class UpdateListener implements Listener {
 		}
 		if (!players.isEmpty()) {
 			final Set<Player> finalPlayers = players;
-			Do.sync(() -> {
-				for(Player player : finalPlayers) {
-					for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(player)) {
-						inspection.updateInventory();
-					}
-				}
-			});
+			Do.sync(() -> finalPlayers
+				.forEach(player -> plugin.getInspectionManager().getInspectionsByInspected(player)
+					.forEach(Inspection::updateInventory)
+				)
+			);
 		}
 	}
 
@@ -123,11 +120,9 @@ public class UpdateListener implements Listener {
 	public void onItemBreak(PlayerItemBreakEvent event) {
 		if (!plugin.getInspectionManager().getInspectionsByInspected(event.getPlayer()).isEmpty()) {
 			final Player finalPlayer = event.getPlayer();
-			Do.sync(() -> {
-				for(Inspection inspection : plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)) {
-					inspection.updateArmor();
-				}
-			});
+			Do.sync(() -> plugin.getInspectionManager().getInspectionsByInspected(finalPlayer)
+				.forEach(Inspection::updateArmor)
+			);
 		}
 	}
 

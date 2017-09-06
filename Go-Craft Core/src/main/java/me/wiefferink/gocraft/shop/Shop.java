@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 public class Shop extends Feature {
@@ -401,10 +400,8 @@ public class Shop extends Feature {
 	 * Call when server is stopping
 	 */
 	public void handleServerStop() {
-		Set<ShopSession> sessions = new HashSet<>(shopSessions.values());
-		for(ShopSession session : sessions) {
-			session.getPlayer().closeInventory();
-		}
+		new HashSet<>(shopSessions.values())
+			.forEach(shopSession -> shopSession.getPlayer().closeInventory());
 		shopSessions.clear();
 	}
 

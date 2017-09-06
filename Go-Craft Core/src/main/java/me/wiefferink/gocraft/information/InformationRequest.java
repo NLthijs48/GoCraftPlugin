@@ -69,9 +69,7 @@ public class InformationRequest extends Feature {
 				}
 
 				// Send messages
-				for(Message message : messages) {
-					message.send(to);
-				}
+				messages.forEach(message -> message.send(to));
 			});
 		});
 	}

@@ -223,9 +223,7 @@ public class SpawnPoints extends Feature {
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dmarker addset id:spawnpoints Spawnpoints");
 			ConfigurationSection spawnPoints = plugin.getLocalStorage().getConfigurationSection(PATH);
 			if(spawnPoints != null) {
-				for(String id : spawnPoints.getKeys(false)) {
-					addOnDynmap(id);
-				}
+				spawnPoints.getKeys(false).forEach(this::addOnDynmap);
 			}
 			plugin.message(sender, "spawnpoints-markersUpdated");
 

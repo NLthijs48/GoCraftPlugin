@@ -251,9 +251,7 @@ public class Utils {
 	 * @param message The message to broadcast
 	 */
 	public static void broadcast(Message message) {
-		for(Player player : Bukkit.getOnlinePlayers()) {
-			message.send(player);
-		}
+		Bukkit.getOnlinePlayers().forEach(message::send);
 		message.send(Bukkit.getLogger());
 	}
 
