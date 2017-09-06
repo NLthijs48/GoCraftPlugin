@@ -2,7 +2,6 @@ package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.gocraft.commands.BroadcastCommand;
-import me.wiefferink.gocraft.commands.Debug;
 import me.wiefferink.gocraft.commands.DiscordCommand;
 import me.wiefferink.gocraft.commands.HackBanCommand;
 import me.wiefferink.gocraft.commands.HelpCommand;
@@ -79,6 +78,7 @@ import me.wiefferink.gocraft.sessions.FixGCPlayer;
 import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
+import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
@@ -110,7 +110,6 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -166,11 +165,7 @@ public final class GoCraft extends JavaPlugin {
 		Log.setLogger(getLogger());
 		reloadConfig();
 		saveDefaultConfig();
-		if(getConfig().isList("chatPrefix")) {
-			chatPrefix = getConfig().getStringList("chatPrefix");
-		} else {
-			chatPrefix = Collections.singletonList(getConfig().getString("chatPrefix"));
-		}
+		chatPrefix = Utils.listOrSingle(getConfig(), "chatPrefix");
 		Log.setDebug(getConfig().getBoolean("debug"));
 		localStorageCleaners = new HashMap<>();
 
@@ -645,8 +640,6 @@ public final class GoCraft extends JavaPlugin {
 		features.add(new OnlinePlayersCommand());
 		rewardClaim = new RewardClaim();
 		features.add(rewardClaim);
-
-		features.add(new Debug());
 
 		for(Listener listener : features) {
 			if (listener instanceof Feature) {

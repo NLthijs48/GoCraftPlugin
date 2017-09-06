@@ -7,6 +7,7 @@ import me.wiefferink.gocraft.rewards.Reward;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
+import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.Bukkit;
@@ -20,8 +21,10 @@ import org.bukkit.permissions.PermissionDefault;
 import org.hibernate.transform.Transformers;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +38,8 @@ public class VoteManager extends Feature {
 		command("votetop", "Vote top 10", "/votetop [year-month] [page]");
 		permission("votetop", "Access to the /votetop command", PermissionDefault.TRUE);
 		command("vote", "Get the vote link", "/vote", "votelink", "vote-link");
+
+		Do.asyncTimer(20*60*5, this::voteReminder);
 	}
 
 	@EventHandler
@@ -228,6 +233,34 @@ public class VoteManager extends Feature {
 	public class PlayerVoteCount {
 		public String player;
 		public long votes;
+	}
+
+	/**
+	 * Send out vote reminders (to be called async)
+	 */
+	private void voteReminder() {
+		Database.run(session -> {
+			List<Player> toMessage = new ArrayList<>();
+			for(Player player : new HashSet<>(Bukkit.getOnlinePlayers())) {
+				Date lastVoted = session.createQuery("" +
+						"select max(vote.at) " +
+						"from " +
+						"Vote as vote " +
+						"where " +
+						"vote.gcPlayer = :player ", Date.class)
+						.setParameter("player", Database.getPlayer(player.getUniqueId(), player.getName()))
+						.getSingleResult();
+
+				// Add to message list if not voted for a day
+				Date dayAgo = new Date(Calendar.getInstance().getTimeInMillis() - 1000*60*60*24);
+				if(lastVoted.before(dayAgo)) {
+					toMessage.add(player);
+				}
+			}
+
+			Message message = Message.fromKey("vote-now");
+			Do.sync(() -> toMessage.forEach(message::send));
+		});
 	}
 
 	/**
