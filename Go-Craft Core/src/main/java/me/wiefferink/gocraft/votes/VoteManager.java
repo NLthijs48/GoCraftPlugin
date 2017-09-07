@@ -253,7 +253,7 @@ public class VoteManager extends Feature {
 
 				// Add to message list if not voted for a day
 				Date dayAgo = new Date(Calendar.getInstance().getTimeInMillis() - 1000*60*60*24);
-				if(lastVoted.before(dayAgo)) {
+				if(lastVoted == null || lastVoted.before(dayAgo)) {
 					toMessage.add(player);
 				}
 			}
