@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft.rewards;
 
+import com.vexsoftware.votifier.model.VotifierEvent;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.sessions.GCPlayer;
@@ -36,6 +37,17 @@ public class RewardClaim extends Feature {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Do.asyncLater(20, () -> giveRewards(event.getPlayer(), false));
+	}
+
+	@EventHandler
+	public void voteEvent(VotifierEvent event) {
+		// Delay a bit to make sure the lobby has put the rewards in the database
+		Do.syncLater(20, () -> {
+			Player player = Bukkit.getPlayer(event.getVote().getUsername());
+			if(player != null) {
+				Do.async(() -> giveRewards(player, false));
+			}
+		});
 	}
 
 	/**
