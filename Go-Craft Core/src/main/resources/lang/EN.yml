@@ -27,11 +27,12 @@ server:
 
 # Concept for new chat
 newChatMessage:
-  - "%0%" # Rank(s)
-  - "[reset]%1%[reset]: " # Display name (might be a nickname)
+  - "%factionsPrefix%%prefix%" # Rank(s)
+  - "[reset]%nickname%[reset][bold]:[/bold] " # Display name (might be a nickname)
   - "    hover: %lang:action|View player information|%"
-  - "    command: /information %2%" # %2%: username
-  - "%3%%4%" # Message color and message
+  - "    hover: [grey]Real username: %player%"
+  - "    command: /information %player%" # %2%: username
+  - "%messageColor%%message%" # Message color and message
 
 staff-noPermission: "You are not a staff member."
 

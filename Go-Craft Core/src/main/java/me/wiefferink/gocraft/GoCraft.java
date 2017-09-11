@@ -65,6 +65,7 @@ import me.wiefferink.gocraft.inspector.InspectionManager;
 import me.wiefferink.gocraft.integration.AuthMeLink;
 import me.wiefferink.gocraft.integration.BanManagerLink;
 import me.wiefferink.gocraft.integration.EssentialsLink;
+import me.wiefferink.gocraft.integration.FactionsLink;
 import me.wiefferink.gocraft.integration.GoPVPLink;
 import me.wiefferink.gocraft.integration.MapSwitcherLink;
 import me.wiefferink.gocraft.integration.ProtocolLibLink;
@@ -148,6 +149,8 @@ public final class GoCraft extends JavaPlugin {
 	private WorldGuardLink worldGuardLink = null;
 	private BanManagerLink banManagerLink = null;
 	private AuthMeLink authMeLink = null;
+	private FactionsLink factionsLink = null;
+
 	// Version specific classes
 	private SpecificUtilsBase specificUtils = null;
 
@@ -210,6 +213,13 @@ public final class GoCraft extends JavaPlugin {
 		if(authme != null && authme.isEnabled()) {
 			authMeLink = new AuthMeLink();
 			connnected.add("AuthMe");
+		}
+
+		// Check if Factions is present
+		Plugin factions = getServer().getPluginManager().getPlugin("Factions");
+		if(factions != null && factions.isEnabled()) {
+			factionsLink = new FactionsLink();
+			connnected.add("Factions");
 		}
 
 		// Check if Vault is present
@@ -470,6 +480,14 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public EssentialsLink getEssentialsLink() {
 		return essentialsLink;
+	}
+
+	/**
+	 * Get the link to the Factions plugin
+	 * @return FactionsLink
+	 */
+	public FactionsLink getFactionsLink() {
+		return factionsLink;
 	}
 
 	/**

@@ -163,6 +163,20 @@
             <version>5.3.2</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.massivecraft.factions</groupId>
+            <artifactId>Factions</artifactId>
+            <version>2.13.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../dependencies/Factions.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.massivecraft.massivecore</groupId>
+            <artifactId>MassiveCore</artifactId>
+            <version>2.13.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../dependencies/MassiveCore.jar</systemPath>
+        </dependency>
 
         <!-- InteractiveMessenger library -->
         <dependency>

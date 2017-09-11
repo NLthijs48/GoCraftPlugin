@@ -1,6 +1,6 @@
 name: GoCraft
 main: me.wiefferink.gocraft.GoCraft
 version: "${timestamp}"
-softdepend: [BanManager, WorldGuard, Vault, MapSwitcher, Essentials, dynmap, ProtocolLib]
+softdepend: [BanManager, WorldGuard, Vault, MapSwitcher, Essentials, dynmap, ProtocolLib, Factions, AuthMe]
 author: NLThijs48
 website: http://go-craft.com
