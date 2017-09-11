@@ -107,7 +107,7 @@ public class Shop extends Feature {
 		permission("placeKitSign", "Place kit shop signs to buy kits (for possibly another price)");
 		permission("placeShopSign", "Place shop sign that opens the shop when clicked");
 		permission("shop", "Use the item shop");
-		command("shop", "Open the item shop", "/shop", "kit");
+		command("shop", "Open the item shop", "/shop");
 		listen();
 
 		// Setup kits and start
