@@ -933,7 +933,7 @@ public class Utils {
 	public static String combineFrom(String[] parts, int index, String glue) {
 		StringBuilder result = new StringBuilder();
 		while (index < parts.length) {
-			if (result.length() == 0) {
+			if (result.length() != 0) {
 				result.append(glue);
 			}
 			result.append(parts[index]);
