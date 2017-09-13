@@ -43,7 +43,7 @@ public class HelpCommand extends Feature {
 		List<String> ranks = new ArrayList<>(ranksSection.getKeys(false));
 		for (int i = ranks.size() - 1; i >= 0; i--) {
 			List<String> entries = helpMap.get(ranks.get(i));
-			Message rankPrefix = Message.fromString(ranksSection.getString(ranks.get(i) + ".prefix"));
+			Message rankPrefix = Message.fromString(ranksSection.getString(ranks.get(i) + ".prefix", ""));
 			if (entries != null) {
 				for (String entry : entries) {
 					String[] parts = entry.split(" \\| ");
