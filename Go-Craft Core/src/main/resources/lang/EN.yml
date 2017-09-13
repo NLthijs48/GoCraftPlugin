@@ -28,7 +28,7 @@ server:
 # Concept for new chat
 newChatMessage:
   - "%factionsPrefix%%prefix%" # Rank(s)
-  - "[reset]%nickname%[reset][bold]:[/bold] " # Display name (might be a nickname)
+  - "[reset]%nickname%[reset]: " # Display name (might be a nickname)
   - "    hover: %lang:action|View player information|%"
   - "    hover: [grey]Real username: %player%"
   - "    command: /information %player%" # %2%: username
