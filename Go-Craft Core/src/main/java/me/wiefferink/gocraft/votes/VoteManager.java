@@ -55,7 +55,7 @@ public class VoteManager extends Feature {
 			return;
 		}
 
-		async(() ->
+		async(() -> {
 			Database.run(session -> {
 				GCPlayer gcPlayer = Database.getCreatePlayer(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
@@ -132,8 +132,10 @@ public class VoteManager extends Feature {
 				if(player != null && player.isOnline()) {
 					plugin.getRewardClaim().giveRewards(player, false);
 				}
-			})
-		);
+			});
+
+			plugin.getSyncCommandsServer().runCommand("updateVoteStatus", event.getVote().getAddress());
+		});
 	}
 
 	@Override

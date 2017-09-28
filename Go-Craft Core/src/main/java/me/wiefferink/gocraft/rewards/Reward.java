@@ -137,6 +137,14 @@ public class Reward {
 	}
 
 	/**
+	 * Change the player this reward belongs to
+	 * @param gcPlayer The new GCPlayer
+	 */
+	public void setPlayer(GCPlayer gcPlayer) {
+		this.gcPlayer = gcPlayer;
+	}
+
+	/**
 	 * Get the vote date
 	 * @return The date at which has been voted
 	 */

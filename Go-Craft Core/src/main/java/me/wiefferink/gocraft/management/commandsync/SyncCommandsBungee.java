@@ -2,7 +2,9 @@ package me.wiefferink.gocraft.management.commandsync;
 
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.Log;
+import me.wiefferink.gocraft.api.WebClient;
 import me.wiefferink.gocraft.api.messages.out.OnlinePlayersResponse;
+import me.wiefferink.gocraft.api.messages.out.VoteStatusReponse;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.CommandSender;
@@ -212,6 +214,7 @@ public class SyncCommandsBungee {
 
 					String type = split[0];
 					String command = GoCraftBungee.join(split, " ", 1);
+					// TODO fork to async thread before handling command? Otherwise the complete queue is locked until the command is complete
 
 					// Sync to all servers
 					if("syncServers".equalsIgnoreCase(type)) {
@@ -281,6 +284,19 @@ public class SyncCommandsBungee {
 					// Send new players list to the website
 					else if("updatePlayers".equalsIgnoreCase(type)) {
 						plugin.getApi().broadcast(new OnlinePlayersResponse());
+					}
+
+					else if("updateVoteStatus".equalsIgnoreCase(type)) {
+						if(split.length < 2) {
+							Log.warn("SyncCommands["+name+"]: no ip given for updateVoteStatus command");
+						} else {
+							String votedIp = split[1];
+							for(WebClient client : plugin.getApi().getClients().values()) {
+								if(votedIp.equals(client.getIp())) {
+									client.message(new VoteStatusReponse(client));
+								}
+							}
+						}
 					}
 
 					// Invalid command

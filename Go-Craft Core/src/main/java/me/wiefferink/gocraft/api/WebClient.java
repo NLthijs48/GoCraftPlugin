@@ -14,6 +14,7 @@ import me.wiefferink.gocraft.api.messages.in.ShopLayoutRequest;
 import me.wiefferink.gocraft.api.messages.out.OnlinePlayersResponse;
 import me.wiefferink.gocraft.api.messages.out.Response;
 import me.wiefferink.gocraft.api.messages.out.ShopLayoutResponse;
+import me.wiefferink.gocraft.api.messages.out.VoteStatusReponse;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.util.HashMap;
@@ -60,10 +61,21 @@ public class WebClient {
     }
 
     /**
-     * Push all data to the client we expect it needs
+     * Get the ip address of the connected user
+     * @return String witht he ip address
+     */
+    public String getIp() {
+        return websocket.remoteAddress().host();
+    }
+
+    /**
+     * Push all the initial data to the client we expect it needs
      */
     private void pushInitialData() {
         message(new OnlinePlayersResponse());
+        message(new VoteStatusReponse(this));
+
+        // This one might be slow, request to MinecraftMarket
         message(new ShopLayoutResponse());
     }
 

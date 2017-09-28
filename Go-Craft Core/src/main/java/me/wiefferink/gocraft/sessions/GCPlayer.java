@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft.sessions;
 
 import me.wiefferink.gocraft.Log;
+import me.wiefferink.gocraft.rewards.Reward;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.votes.Vote;
 import org.hibernate.Session;
@@ -44,6 +45,9 @@ public class GCPlayer {
 
 	@OneToMany(mappedBy = "gcPlayer", fetch = FetchType.LAZY)
 	private Set<Vote> votes;
+
+	@OneToMany(mappedBy = "gcPlayer", fetch = FetchType.LAZY)
+	private Set<Reward> rewards;
 
 	@Column(nullable = false)
 	private boolean invisible = false;
@@ -220,6 +224,13 @@ public class GCPlayer {
 				session.update(vote);
 			}
 			keepPlayer.votes.addAll(mergePlayer.votes);
+
+			// Move rewards
+			for(Reward reward : mergePlayer.rewards) {
+				reward.setPlayer(keepPlayer);
+				session.update(reward);
+			}
+			keepPlayer.rewards.addAll(mergePlayer.rewards);
 
 			// Remove the duplicate player
 			session.remove(mergePlayer);

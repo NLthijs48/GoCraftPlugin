@@ -8,16 +8,16 @@ import io.vertx.core.http.HttpServer;
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.api.messages.out.Response;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Api implements Runnable {
 
 	public static final int PORT = 9192;
 
 	private Vertx vertx;
-	private final Map<UUID, WebClient> clients = new HashMap<>();
+	private final Map<UUID, WebClient> clients = new ConcurrentHashMap<>();
 
 	public Api() {
 		GoCraftBungee plugin = GoCraftBungee.getInstance();
@@ -78,9 +78,7 @@ public class Api implements Runnable {
 	 */
 	public void broadcast(Response response) {
 		String responseString = response.toString();
-		synchronized(clients) {
-			clients.values().forEach(webClient -> webClient.message(responseString));
-		}
+		clients.values().forEach(webClient -> webClient.message(responseString));
 	}
 
 	/**
@@ -88,9 +86,7 @@ public class Api implements Runnable {
 	 * @param client WebClient to add
 	 */
 	public void addClient(WebClient client) {
-		synchronized(clients) {
-			clients.put(client.getKey(), client);
-		}
+		clients.put(client.getKey(), client);
 	}
 
 	/**
@@ -98,8 +94,14 @@ public class Api implements Runnable {
 	 * @param client WebClient to remove
 	 */
 	public void removeClient(WebClient client) {
-		synchronized(clients) {
-			clients.remove(client.getKey());
-		}
+		clients.remove(client.getKey());
+	}
+
+	/**
+	 * Get the connected clients
+	 * @return Map with the connected clients (thread-safe)
+	 */
+	public Map<UUID, WebClient> getClients() {
+		return clients;
 	}
 }
