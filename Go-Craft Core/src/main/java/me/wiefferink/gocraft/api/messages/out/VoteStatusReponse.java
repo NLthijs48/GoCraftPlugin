@@ -22,7 +22,7 @@ public class VoteStatusReponse extends Response {
 			// Try to find the connected client
 			Log.debug("Building status, client ip:", client.getIp());
 			@SuppressWarnings("unchecked")
-			List<Map<String, Object>> voteSites = session.createQuery("" +
+			List<Object[]> voteSites = session.createQuery("" +
 					"select max(vote.at) as lastVoted, serviceName " +
 					"from " +
 					"Vote as vote " +
@@ -34,9 +34,9 @@ public class VoteStatusReponse extends Response {
 
 			// Collect results
 			status = new HashMap<>();
-			for(Map<String, Object> voteSiteDetails : voteSites) {
-				Date lastVoted = (Date)voteSiteDetails.get("lastVoted");
-				String serviceId = (String)voteSiteDetails.get("serviceName");
+			for(Object[] voteSiteDetails : voteSites) {
+				Date lastVoted = (Date)voteSiteDetails[0];
+				String serviceId = (String)voteSiteDetails[1];
 
 				status.put(serviceId, new VoteSiteStatus(lastVoted));
 			}
