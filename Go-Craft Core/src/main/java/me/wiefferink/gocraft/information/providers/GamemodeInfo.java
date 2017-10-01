@@ -14,6 +14,10 @@ public class GamemodeInfo extends InformationProvider {
 			return;
 		}
 
+		if(request.getAbout().getGameMode() == null || request.getAbout().getGameMode().name() == null) {
+			return;
+		}
+
 		Message OPPart = Message.empty();
 		if(request.getAboutOffline().isOp()) {
 			OPPart = Message.fromKey("information-gameModeOP");
