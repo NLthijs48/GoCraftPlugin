@@ -18,7 +18,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.permissions.PermissionDefault;
-import org.hibernate.transform.Transformers;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -205,22 +204,20 @@ public class VoteManager extends Feature {
 					public boolean renderItems(int itemStart, int itemEnd) {
 						// Fetch the players and vote counts
 						@SuppressWarnings("unchecked")
-						List<PlayerVoteCount> playerVoteCounts = session.createQuery(
-								"SELECT votePlayer.name as player, count(*) as votes " +
+						List<Object[]> playerVoteCounts = session.createQuery(
+								"SELECT votePlayer.name, count(*) " +
 										"FROM Vote vote " +
 										"INNER JOIN vote.gcPlayer as votePlayer " +
 										"WHERE vote.at <= :monthEnd AND vote.at >= :monthStart " +
 										"GROUP BY votePlayer " +
-										"ORDER BY count(*) DESC, votePlayer.name ASC", PlayerVoteCount.class)
+										"ORDER BY count(*) DESC, votePlayer.name ASC")
 								.setParameter("monthStart", monthStart)
 								.setParameter("monthEnd", monthEnd)
-								.unwrap(org.hibernate.query.Query.class)
-								.setResultTransformer(Transformers.aliasToBean(PlayerVoteCount.class))
 								.setMaxResults(itemEnd - itemStart + 1)
 								.setFirstResult(itemStart).getResultList();
 						int index = itemStart+1;
-						for(PlayerVoteCount playerAndCount : playerVoteCounts) {
-							message(Message.fromKey("votetop-item").replacements(index, playerAndCount.player, playerAndCount.votes));
+						for(Object[] playerAndCount : playerVoteCounts) {
+							message(Message.fromKey("votetop-item").replacements(index, playerAndCount[0], playerAndCount[0]));
 							index++;
 						}
 						return true;
@@ -230,11 +227,6 @@ public class VoteManager extends Feature {
 				sync(display::show);
 			})
 		);
-	}
-
-	public class PlayerVoteCount {
-		public String player;
-		public long votes;
 	}
 
 	/**
