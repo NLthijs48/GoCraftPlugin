@@ -197,6 +197,8 @@ public class SyncCommandsServer extends Feature {
 					if(input == null) {
 						continue;
 					}
+
+					// TODO fork to async here
 					String[] split = input.split(" ");
 					if(split.length == 0) {
 						Log.warn("SyncCommands: received empty input from Bungee");
@@ -205,7 +207,6 @@ public class SyncCommandsServer extends Feature {
 
 					String type = split[0];
 					String command = StringUtils.join(split, " ", 1, split.length);
-
 					if("console".equals(type)) {
 						boolean result = false;
 						Exception exception = null;

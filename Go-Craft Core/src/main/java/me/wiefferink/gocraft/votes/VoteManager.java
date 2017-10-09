@@ -217,7 +217,7 @@ public class VoteManager extends Feature {
 								.setFirstResult(itemStart).getResultList();
 						int index = itemStart+1;
 						for(Object[] playerAndCount : playerVoteCounts) {
-							message(Message.fromKey("votetop-item").replacements(index, playerAndCount[0], playerAndCount[0]));
+							message(Message.fromKey("votetop-item").replacements(index, playerAndCount[0], playerAndCount[1]));
 							index++;
 						}
 						return true;
