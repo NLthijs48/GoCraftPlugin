@@ -52,7 +52,7 @@ public class KitSign extends Sign {
 	 */
 	public String getFormattedPrice() {
 		if (getPrice() == 0) {
-			return "For free";
+			return "Get for free";
 		}
 		return Utils.formatCurrency(getPrice());
 	}

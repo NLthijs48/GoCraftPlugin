@@ -36,8 +36,6 @@ public class SellButton implements Button {
 		}
 		if (allowed) {
 			result.addAction("Sell");
-		} else {
-			result.setAmount(0);
 		}
 		return result;
 	}

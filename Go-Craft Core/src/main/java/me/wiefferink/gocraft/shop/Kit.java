@@ -41,6 +41,7 @@ public class Kit implements Button, View {
 	private String identifier;
 	private boolean onNewLine;
 	private Map<String, ShopFeature> features;
+	private boolean doBuy, doSell;
 
 	public Kit(ConfigurationSection details, String identifier, Shop shop) {
 		this.details = details;
@@ -92,10 +93,12 @@ public class Kit implements Button, View {
 		}
 
 		// Sell/buy buttons
-		if (details.isSet("price")) {
+		doBuy = details.isSet("price");
+		if (doBuy) {
 			buttons.put(shop.getInventorySize() - 1, new BuyButton(this));
 		}
-		if (details.isSet("sellPrice")) {
+		doSell = details.isSet("sellPrice");
+		if (doSell) {
 			buttons.put(shop.getInventorySize() - 2, new SellButton(this));
 		}
 
@@ -133,8 +136,31 @@ public class Kit implements Button, View {
 			result = result.copy();
 			boolean allowBuy = true;
 			List<ShopFeature> list = new ArrayList<>(features.values());
+			int sellLines = 0;
+			for(int i = list.size() - 1; i >= 0; i--) {
+				if(doSell) {
+					String line = list.get(i).getSellStatusLine(session);
+					if(line != null) {
+						sellLines++;
+						result.addLore(line, true);
+					}
+				}
+			}
+
+			int buyLines = 0;
 			for (int i = list.size() - 1; i >= 0; i--) {
-				result.addLore(list.get(i).getBuyStatusLine(session), true);
+				if(doBuy) {
+					String line = list.get(i).getBuyStatusLine(session);
+					if(line != null) {
+						// Separator between sell and buy lines
+						if(sellLines > 0 && buyLines == 0) {
+							result.addLore(" ", true);
+						}
+
+						result.addLore(line, true);
+						buyLines++;
+					}
+				}
 				allowBuy &= list.get(i).allowsBuy(session);
 			}
 			if (allowBuy) {

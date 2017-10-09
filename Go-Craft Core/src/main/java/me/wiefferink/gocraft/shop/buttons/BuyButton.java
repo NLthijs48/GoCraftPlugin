@@ -40,8 +40,6 @@ public class BuyButton implements Button {
 		}
 		if (allowed) {
 			result.addAction("Buy");
-		} else {
-			result.setAmount(0);
 		}
 		return result;
 	}

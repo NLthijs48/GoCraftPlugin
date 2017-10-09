@@ -14,10 +14,12 @@ public class PriceFeature extends ShopFeature {
 
 	public PriceFeature(Kit kit) {
 		super(kit);
+
 		price = kit.getDetails().getDouble("price");
 		if (price < 0) {
 			price = Double.MAX_VALUE;
 		}
+
 		sellPrice = kit.getDetails().getDouble("sellPrice");
 		if (sellPrice < 0) {
 			sellPrice = Double.MAX_VALUE;
@@ -70,7 +72,7 @@ public class PriceFeature extends ShopFeature {
 			return null;
 		}
 		if (getPrice() == 0) {
-			return "&2For free";
+			return "&2Get for free";
 		} else {
 			if (session.getBalance() >= getPrice()) {
 				return "&2Price: &l" + getFormattedPrice();
@@ -85,7 +87,7 @@ public class PriceFeature extends ShopFeature {
 		if (session == null) {
 			return null;
 		}
-		if (getPrice() == 0) {
+		if (getSellPrice() == 0) {
 			return "&2Give away";
 		} else {
 			return "&2Sell price: &l" + getFormattedSellPrice();
