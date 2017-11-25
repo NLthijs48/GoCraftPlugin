@@ -1,11 +1,11 @@
 package me.wiefferink.gocraft.features.auracheck;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.tools.Callback;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.gocraft.tools.packetwrapper.WrapperPlayServerEntityDestroy;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;

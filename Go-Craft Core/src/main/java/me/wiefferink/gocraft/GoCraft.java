@@ -1,6 +1,7 @@
 package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.commands.BroadcastCommand;
 import me.wiefferink.gocraft.commands.DiscordCommand;
 import me.wiefferink.gocraft.commands.HackBanCommand;
@@ -80,7 +81,6 @@ import me.wiefferink.gocraft.sessions.SeenCommand;
 import me.wiefferink.gocraft.shop.Shop;
 import me.wiefferink.gocraft.tools.Constant;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.gocraft.tools.storage.Cleaner;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
@@ -164,6 +164,7 @@ public final class GoCraft extends JavaPlugin {
 
 	public void onEnable() {
 		instance = this;
+		Do.init(this);
 		Log.setLogger(getLogger());
 		reloadConfig();
 		saveDefaultConfig();

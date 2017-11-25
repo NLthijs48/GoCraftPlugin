@@ -1,13 +1,13 @@
 package me.wiefferink.gocraft.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.rewards.Reward;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.PageDisplay;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.bukkit.Bukkit;

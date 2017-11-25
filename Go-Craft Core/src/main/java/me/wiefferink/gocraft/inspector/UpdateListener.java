@@ -1,7 +1,7 @@
 package me.wiefferink.gocraft.inspector;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.GoCraft;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.GameMode;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

@@ -1,12 +1,12 @@
 package me.wiefferink.gocraft.shop;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.shop.signs.KitSign;
 import me.wiefferink.gocraft.shop.signs.ShopSign;
 import me.wiefferink.gocraft.shop.signs.Sign;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

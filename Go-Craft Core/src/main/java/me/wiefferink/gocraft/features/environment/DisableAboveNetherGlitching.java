@@ -1,8 +1,8 @@
 package me.wiefferink.gocraft.features.environment;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

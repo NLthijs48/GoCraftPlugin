@@ -1,9 +1,9 @@
 package me.wiefferink.gocraft.management.commandsync;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.interactivemessenger.processing.Message;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;

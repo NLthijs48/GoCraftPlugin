@@ -185,6 +185,13 @@
             <version>1.1-SNAPSHOT</version>
         </dependency>
 
+        <!-- BukkitDo library -->
+        <dependency>
+            <groupId>me.wiefferink</groupId>
+            <artifactId>bukkitdo</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- BungeeCord dependencies -->
         <dependency>
             <groupId>net.md-5</groupId>
@@ -368,6 +375,11 @@
                                 <relocation>
                                     <pattern>me.wiefferink.interactivemessenger</pattern>
                                     <shadedPattern>me.wiefferink.gocraft.shaded.interactivemessenger</shadedPattern>
+                                </relocation>
+                                <!-- Relocate BukkitDo -->
+                                <relocation>
+                                    <pattern>me.wiefferink.bukkitdo</pattern>
+                                    <shadedPattern>me.wiefferink.gocraft.shaded.bukkitdo</shadedPattern>
                                 </relocation>
                                 <!-- Relocate Unirest -->
                                 <relocation>

@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft.inspector;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.inspector.actions.BanInfoAction;
@@ -12,7 +13,6 @@ import me.wiefferink.gocraft.inspector.actions.KillAuraCheckAction;
 import me.wiefferink.gocraft.inspector.actions.NCPAction;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.gocraft.tools.storage.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

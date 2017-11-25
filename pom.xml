@@ -62,6 +62,10 @@
 			<id>authme</id>
 			<url>http://ci.xephi.fr/plugin/repository/everything/</url>
 		</repository>
+		<repository>
+			<id>nlthijs48</id>
+			<url>https://jenkins.wiefferink.me</url>
+		</repository>
 	</repositories>
 
 </project>

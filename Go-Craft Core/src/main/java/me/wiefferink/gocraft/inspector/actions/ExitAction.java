@@ -1,8 +1,8 @@
 package me.wiefferink.gocraft.inspector.actions;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.inspector.Inspection;
 import me.wiefferink.gocraft.tools.ItemBuilder;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.Material;
 
 public class ExitAction extends InventoryAction {

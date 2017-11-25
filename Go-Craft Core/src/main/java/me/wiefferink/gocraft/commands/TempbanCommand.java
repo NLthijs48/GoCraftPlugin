@@ -1,8 +1,8 @@
 package me.wiefferink.gocraft.commands;
 
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

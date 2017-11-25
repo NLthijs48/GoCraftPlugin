@@ -1,12 +1,12 @@
 package me.wiefferink.gocraft.inspector;
 
 import com.google.common.base.Charsets;
+import me.wiefferink.bukkitdo.Do;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.Utils;
-import me.wiefferink.gocraft.tools.scheduling.Do;
 import me.wiefferink.gocraft.tools.storage.Database;
 import me.wiefferink.gocraft.tools.storage.UTF8Config;
 import org.bukkit.Bukkit;

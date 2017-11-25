@@ -1,9 +1,9 @@
 package me.wiefferink.gocraft.features;
 
+import me.wiefferink.bukkitdo.Do;
+import me.wiefferink.bukkitdo.Run;
 import me.wiefferink.gocraft.GoCraft;
 import me.wiefferink.gocraft.Log;
-import me.wiefferink.gocraft.tools.scheduling.Do;
-import me.wiefferink.gocraft.tools.scheduling.Run;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
