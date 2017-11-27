@@ -1,17 +1,7 @@
 package me.wiefferink.gocraft.information;
 
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.information.providers.BalanceInfo;
-import me.wiefferink.gocraft.information.providers.GamemodeInfo;
-import me.wiefferink.gocraft.information.providers.HealthInfo;
-import me.wiefferink.gocraft.information.providers.HungerInfo;
-import me.wiefferink.gocraft.information.providers.IPInfo;
-import me.wiefferink.gocraft.information.providers.InspectInfo;
-import me.wiefferink.gocraft.information.providers.KillInfo;
-import me.wiefferink.gocraft.information.providers.LocationInfo;
-import me.wiefferink.gocraft.information.providers.PingInfo;
-import me.wiefferink.gocraft.information.providers.SeenInfo;
-import me.wiefferink.gocraft.information.providers.VoteInfo;
+import me.wiefferink.gocraft.information.providers.*;
 import me.wiefferink.gocraft.tools.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -97,6 +87,9 @@ public class InformationManager extends Feature {
 		addProvider(new InspectInfo());
 		addProvider(new KillInfo());
 		addProvider(new VoteInfo());
+		if (plugin.getBanManagerLink() != null) {
+			addProvider(new PunishmentInfo());
+		}
 	}
 
 }
