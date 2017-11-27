@@ -286,9 +286,11 @@ information-monthVotes:
   - "    hover: %lang:action|Vote now to receive rewards!|%"
   - "    link: http://go-craft.com/vote"
 information-totalVotes: "[darkgreen][bold]►[reset] Votes in total: [gray]%0%."
-information-punishments: "[darkgreen][bold]►[reset] Total bans: [gray]%0%\n"
-  - "[darkgreen][bold]►[reset] Total kicks: [gray]%1%.\n"
-  - "[darkgreen][bold]►[reset] Total mutes: [gray]%2%."
+information-punishments-bancount: "[darkgreen][bold]►[reset] Total bans: [gray]%0%"
+information-punishments-kickcount: "[darkgreen][bold]►[reset] Total kicks: [gray]%0%"
+information-punishments-mutecount: "[darkgreen][bold]►[reset] Total mutes: [gray]%0%"
+information-punishments-currentban: "[darkgreen][bold]►[reset] Ban expires in [gray]%0%[reset]: %1%"
+information-punishments-currentmute: "[darkgreen][bold]►[reset] Mute expires in [gray]%0%[reset]: %1%"
 
 seen-noPermission: "You do not have permission to use this command." # Vague on purpose
 seen-wrongPlayer: "Could not find player '%0%'."
