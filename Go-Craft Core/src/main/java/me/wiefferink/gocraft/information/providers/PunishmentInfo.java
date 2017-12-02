@@ -4,6 +4,7 @@ import me.confuser.banmanager.BanManager;
 import me.confuser.banmanager.BmAPI;
 import me.confuser.banmanager.data.PlayerBanData;
 import me.confuser.banmanager.data.PlayerData;
+import me.confuser.banmanager.data.PlayerMuteData;
 import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.information.InformationProvider;
 import me.wiefferink.gocraft.information.InformationRequest;
@@ -23,13 +24,13 @@ public class PunishmentInfo extends InformationProvider {
             UUID uuid = request.getAboutOffline().getUniqueId();
             PlayerData playerData = BmAPI.getPlayer(uuid);
 
-            if (BmAPI.isBanned(uuid)) {
+            if(BmAPI.isBanned(uuid)) {
                 PlayerBanData ban = BmAPI.getCurrentBan(uuid);
                 request.message(Message.fromKey("information-punishments-currentban").replacements(Utils.agoMessage(ban.getExpires()), ban.getReason()));
             }
 
-            if (BmAPI.isMuted(uuid)) {
-                PlayerBanData mute = BmAPI.getCurrentBan(uuid);
+            if(BmAPI.isMuted(uuid)) {
+                PlayerMuteData mute = BmAPI.getCurrentMute(uuid);
                 request.message(Message.fromKey("information-punishments-currentmute").replacements(Utils.agoMessage(mute.getExpires()), mute.getReason()));
             }
 
@@ -37,16 +38,16 @@ public class PunishmentInfo extends InformationProvider {
             long kickCount = manager.getPlayerKickStorage().getCount(playerData);
             long muteCount = manager.getPlayerMuteRecordStorage().getCount(playerData);
 
-            if (banCount != 0) {
+            if(banCount != 0) {
                 request.message(Message.fromKey("information-punishments-bancount").replacements(banCount));
             }
 
-            if (kickCount != 0) {
-                request.message(Message.fromKey("information-punishments-kickcount").replacements(kickCount));
+            if(muteCount != 0) {
+                request.message(Message.fromKey("information-punishments-mutecount").replacements(muteCount));
             }
 
-            if (muteCount != 0) {
-                request.message(Message.fromKey("information-punishments-mutecount").replacements(muteCount));
+            if(kickCount != 0) {
+                request.message(Message.fromKey("information-punishments-kickcount").replacements(kickCount));
             }
 
         } catch (SQLException e) {
