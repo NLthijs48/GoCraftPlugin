@@ -10,6 +10,8 @@ import me.wiefferink.gocraft.information.InformationProvider;
 import me.wiefferink.gocraft.information.InformationRequest;
 import me.wiefferink.gocraft.tools.Utils;
 import me.wiefferink.interactivemessenger.processing.Message;
+import me.wiefferink.interactivemessenger.processing.Replacement;
+import me.wiefferink.interactivemessenger.processing.ReplacementProvider;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -38,16 +40,17 @@ public class PunishmentInfo extends InformationProvider {
             long kickCount = manager.getPlayerKickStorage().getCount(playerData);
             long muteCount = manager.getPlayerMuteRecordStorage().getCount(playerData);
 
+            ReplacementProvider playerReplacement = Replacement.name("player", request.getAboutOffline().getName());
             if(banCount != 0) {
-                request.message(Message.fromKey("information-punishments-bancount").replacements(banCount));
+                request.message(Message.fromKey("information-punishments-bancount").replacements(banCount, playerReplacement));
             }
 
             if(muteCount != 0) {
-                request.message(Message.fromKey("information-punishments-mutecount").replacements(muteCount));
+                request.message(Message.fromKey("information-punishments-mutecount").replacements(muteCount, playerReplacement));
             }
 
             if(kickCount != 0) {
-                request.message(Message.fromKey("information-punishments-kickcount").replacements(kickCount));
+                request.message(Message.fromKey("information-punishments-kickcount").replacements(kickCount, playerReplacement));
             }
 
         } catch (SQLException e) {

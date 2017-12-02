@@ -286,11 +286,15 @@ information-monthVotes:
   - "    hover: %lang:action|Vote now to receive rewards!|%"
   - "    link: http://go-craft.com/vote"
 information-totalVotes: "[darkgreen][bold]►[reset] Votes in total: [gray]%0%."
-information-punishments-bancount: "[darkgreen][bold]►[reset] Banned: [gray]%0% times"
-information-punishments-mutecount: "[darkgreen][bold]►[reset] Muted: [gray]%0% times"
-information-punishments-kickcount: "[darkgreen][bold]►[reset] Kicked: [gray]%0% times"
-information-punishments-currentban: "[darkgreen][bold]►[reset] Banned, expires in [gray]%0%[reset]: %1%"
-information-punishments-currentmute: "[darkgreen][bold]►[reset] Muted, expires in [gray]%0%[reset]: %1%"
+information-banManagerLink:
+  - "%0%"
+  - "    hover: %lang:action|View details online|%"
+  - "    link: http://bans.go-craft.com/index.php?action=viewplayer&player=%player%&server=0"
+information-punishments-bancount: "[darkgreen][bold]►[reset] Banned: %lang:information-banManagerLink|[gray]%0% times|%"
+information-punishments-mutecount: "[darkgreen][bold]►[reset] Muted: %lang:information-banManagerLink|[gray]%0% times|%"
+information-punishments-kickcount: "[darkgreen][bold]►[reset] Kicked: %lang:information-banManagerLink|[gray]%0% times|%"
+information-punishments-currentban: "[darkgreen][bold]►[reset] Banned, expires in [gray]%0%[reset]: %lang:information-banManagerLink|%1%|%"
+information-punishments-currentmute: "[darkgreen][bold]►[reset] Muted, expires in [gray]%0%[reset]: %lang:information-banManagerLink|%1%|%"
 
 seen-noPermission: "You do not have permission to use this command." # Vague on purpose
 seen-wrongPlayer: "Could not find player '%0%'."
