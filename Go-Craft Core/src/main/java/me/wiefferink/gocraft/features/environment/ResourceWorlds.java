@@ -142,37 +142,8 @@ public class ResourceWorlds extends Feature {
 			return;
 		}
 		// REGION folder
-		File[] files = regionFolder.listFiles();
-		if(files != null) {
-			for(File file : files) {
-				try {
-					FileDeleteStrategy.FORCE.delete(file);
-				} catch(IOException e) {
-					Log.error("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
-				}
-			}
-		}
-		try {
-			FileDeleteStrategy.FORCE.delete(regionFolder);
-		} catch(IOException e) {
-			Log.error("Could not reset resourceworld "+world.getName()+": "+regionFolder.getAbsolutePath(), ExceptionUtils.getStackTrace(e));
-		}
-		// DATA folder
-		File[] dataFiles = dataFolder.listFiles();
-		if(dataFiles != null) {
-			for(File file : dataFiles) {
-				try {
-					FileDeleteStrategy.FORCE.delete(file);
-				} catch(IOException e) {
-					Log.error("Could not delete file of resourceworld "+world.getName()+": "+file.getAbsolutePath());
-				}
-			}
-		}
-		try {
-			FileDeleteStrategy.FORCE.delete(dataFolder);
-		} catch(IOException e) {
-			Log.error("Could not reset resourceworld "+world.getName()+": "+dataFolder.getAbsolutePath(), ExceptionUtils.getStackTrace(e));
-		}
+		deleteFolder(regionFolder, world.getName());
+		deleteFolder(dataFolder, world.getName());
 
 		// Wrapup reset
 		updateResetTime(world);
@@ -182,6 +153,26 @@ public class ResourceWorlds extends Feature {
 		try {
 			Do.sync(() -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "mv load " + worldName));
 		} catch(Exception ignored) {
+		}
+	}
+
+	private void deleteFolder(File folder, String world) {
+		// Delete files
+		File[] files = folder.listFiles();
+		if(files != null) {
+			for(File file : files) {
+				try {
+					FileDeleteStrategy.FORCE.delete(file);
+				} catch(IOException e) {
+					Log.error("Could not delete file of resourceworld", world+":", file.getAbsolutePath());
+				}
+			}
+		}
+		// Delete folder itself
+		try {
+			FileDeleteStrategy.FORCE.delete(folder);
+		} catch(IOException e) {
+			Log.error("Could not reset resourceworld", world+":", folder.getAbsolutePath(), ExceptionUtils.getStackTrace(e));
 		}
 	}
 

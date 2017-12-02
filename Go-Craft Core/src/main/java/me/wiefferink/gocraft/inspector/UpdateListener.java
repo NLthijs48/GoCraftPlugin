@@ -83,10 +83,8 @@ public class UpdateListener implements Listener {
 
 		if (!plugin.getInspectionManager().getInspectionsByInspected((Player) event.getEntity()).isEmpty()) {
 			Player player = (Player) event.getEntity();
-			Do.sync(() -> {
-				plugin.getInspectionManager().getInspectionsByInspected(player)
-						.forEach(Inspection::updateScoreboard);
-			});
+			Do.sync(() -> plugin.getInspectionManager().getInspectionsByInspected(player)
+					.forEach(Inspection::updateScoreboard));
 		}
 	}
 

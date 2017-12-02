@@ -14,11 +14,15 @@ public class CooldownFeature extends ShopFeature {
 	private long cooldown;
 	private String rawCooldown;
 
+	/**
+	 * Constructor
+	 * @param kit Kit this cooldown is for
+	 */
 	public CooldownFeature(Kit kit) {
 		super(kit);
 		rawCooldown = kit.getDetails().getString("cooldown");
 		if (rawCooldown != null && !Utils.checkDuration(rawCooldown)) {
-			Log.warn("Cooldown of kit "+kit.getName()+" in wrong format: "+rawCooldown);
+			Log.warn("Cooldown of kit", kit.getName(), "in wrong format:", rawCooldown);
 		}
 		cooldown = Utils.durationStringToLong(rawCooldown);
 	}
@@ -79,19 +83,19 @@ public class CooldownFeature extends ShopFeature {
 	}
 
 	/**
-	 * Check if a cooldown is defined
-	 * @return true if a cooldown applies, otherwise false
-	 */
-	public boolean hasCooldown() {
-		return cooldown > 0;
-	}
-
-	/**
 	 * Get the cooldown
 	 * @return The cooldown time in milliseconds
 	 */
 	public long getCooldown() {
 		return cooldown;
+	}
+
+	/**
+	 * Check if a cooldown is defined
+	 * @return true if a cooldown applies, otherwise false
+	 */
+	public boolean hasCooldown() {
+		return cooldown > 0;
 	}
 
 	/**

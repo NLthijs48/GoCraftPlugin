@@ -19,7 +19,7 @@ public class OnlinePlayersResponse extends Response {
 		players = new HashMap<>();
 		Database.run(session -> {
 			@SuppressWarnings("unchecked")
-			List<Map<String,Object>> onlinePlayers = session.createQuery(
+			List<Map<String, Object>> onlinePlayers = session.createQuery(
 					"SELECT new map(gcPlayer as player, serverSession as server) " +
 							"FROM ServerSession serverSession " +
 							"INNER JOIN serverSession.bungeeSession as bungeeSession " +
@@ -30,11 +30,11 @@ public class OnlinePlayersResponse extends Response {
 					.getResultList();
 
 			for(Map<String, Object> onlinePlayerDetails : onlinePlayers) {
-				GCPlayer player = (GCPlayer)onlinePlayerDetails.get("player");
-				ServerSession server = (ServerSession)onlinePlayerDetails.get("server");
+				GCPlayer player = (GCPlayer) onlinePlayerDetails.get("player");
+				ServerSession server = (ServerSession) onlinePlayerDetails.get("server");
 
 				players.computeIfAbsent(server.getServerName(), key -> new ArrayList<>())
-					.add(new WebsitePlayer(player.getName(), player.getUniqueId()));
+						.add(new WebsitePlayer(player.getName(), player.getUniqueId()));
 			}
 		});
 	}
@@ -47,6 +47,7 @@ public class OnlinePlayersResponse extends Response {
 			this.name = name;
 			this.uuid = uuid;
 		}
+
 		public String game = "minecraft";
 		public String name;
 		public String uuid;

@@ -84,11 +84,11 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PreLoginEvent event) {
 
-		Log.info("PreLoginEvent of "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
+		Log.info("PreLoginEvent of", event.getConnection().getName(), " ip:", event.getConnection().getAddress().getHostString());
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
 			if(player.getName().equalsIgnoreCase(event.getConnection().getName())) {
 				event.setCancelled(true);
-				event.setCancelReason(ChatColor.DARK_RED+"You cannot login with the same name as an online player!");
+				event.setCancelReason(ChatColor.DARK_RED + "You cannot login with the same name as an online player!");
 				Log.warn("Blocked an attempt to login with the same name as an online player, name: "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
 			}
 		}
