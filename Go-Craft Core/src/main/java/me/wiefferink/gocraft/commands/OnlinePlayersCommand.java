@@ -47,7 +47,7 @@ public class OnlinePlayersCommand extends Feature {
 				}
 
 				// Build messages for the online list
-				messages.add(Message.fromKey("online-header"));
+				messages.add(Message.fromKey("online-header").prefix());
 				for(String server : players.keySet()) {
 					messages.add(Message.fromKey("online-server").replacements(plugin.getServerName(server)));
 					Message serverPlayers = Message.empty();
