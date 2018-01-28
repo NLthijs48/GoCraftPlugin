@@ -48,7 +48,14 @@ public class Api implements Runnable {
 
 	@Override
 	public void run() {
-		HttpServer server = vertx.createHttpServer()
+		/* TODO SSL: https://gist.github.com/InfoSec812/a45eb3b7ba9d4b2a9b94
+		HttpServerOptions httpOpts = new HttpServerOptions();
+		httpOpts.setPemKeyCertOptions(new PemKeyCertOptions()
+				.setCertPath("")
+				.setKeyPath(""));
+		httpOpts.setSsl(true);
+		*/
+		HttpServer server = vertx.createHttpServer() // (htpOpts)
 			.websocketHandler(websocket -> {
 				synchronized(clients) {
 					UUID key;
