@@ -14,6 +14,9 @@ settings:
     database: "gocraft"
     username: "your_user"
     password: "your_password"
+  certificate:
+    cert: ""
+    key: ""
 
 # Server settings
 servers:

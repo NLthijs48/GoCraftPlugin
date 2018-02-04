@@ -5,7 +5,10 @@ import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.net.PemKeyCertOptions;
 import me.wiefferink.gocraft.GoCraftBungee;
+import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.api.messages.out.Response;
 
 import java.util.Map;
@@ -48,14 +51,24 @@ public class Api implements Runnable {
 
 	@Override
 	public void run() {
-		/* TODO SSL: https://gist.github.com/InfoSec812/a45eb3b7ba9d4b2a9b94
+		// Setup certificate, based on: https://gist.github.com/InfoSec812/a45eb3b7ba9d4b2a9b94
+		String certPath = GoCraftBungee.getInstance().getGeneralConfig().getString("settings.certificate.cert");
+		if(certPath == null || certPath.isEmpty()) {
+			Log.error("Empty certificate path for the REST API!");
+		}
+		String certKeyPath = GoCraftBungee.getInstance().getGeneralConfig().getString("settings.certificate.key");
+		if(certKeyPath == null || certKeyPath.isEmpty()) {
+			Log.error("Empty certificate path for the REST API!");
+		}
+
 		HttpServerOptions httpOpts = new HttpServerOptions();
 		httpOpts.setPemKeyCertOptions(new PemKeyCertOptions()
-				.setCertPath("")
-				.setKeyPath(""));
+				.setCertPath(certPath)
+				.setKeyPath(certKeyPath));
 		httpOpts.setSsl(true);
-		*/
-		HttpServer server = vertx.createHttpServer() // (htpOpts)
+
+		// Create server
+		HttpServer server = vertx.createHttpServer(httpOpts)
 			.websocketHandler(websocket -> {
 				synchronized(clients) {
 					UUID key;
