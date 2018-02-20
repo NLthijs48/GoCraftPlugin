@@ -93,8 +93,12 @@ public class SyncCommandsServer extends Feature {
 			out = new PrintWriter(socket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-			// Send our name
-			out.println("init "+plugin.getBungeeId()+" "+getConfig().getString("commandSyncVerification")+" "+plugin.getDescription().getVersion());
+			// Send initialization: password and name
+			String password = plugin.getGeneralConfig().getString("settings.commandSync.password");
+			if(password == null || password.isEmpty()) {
+				Log.warn("Command sync password is missing in the general config!");
+			}
+			out.println("init "+plugin.getBungeeId()+" "+password+" "+plugin.getDescription().getVersion());
 			String result = in.readLine();
 			if(result == null || result.startsWith("no")) {
 				Log.error("SyncCommands: error while connecting:", result);

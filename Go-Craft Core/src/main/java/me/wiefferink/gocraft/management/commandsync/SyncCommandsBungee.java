@@ -33,9 +33,6 @@ import java.util.UUID;
 
 public class SyncCommandsBungee {
 
-	// Yeah this should be in a config file... port is localhost only luckily
-	private static final String password = "cbpyiSsZqU6Mu88gqqFcbqLmxZdJNiXr6ePj6TWmUiKQqz67MJMEPUXMaKhX63Sz";
-
 	private volatile boolean shouldRun;
 	private ServerSocket server;
 	private GoCraftBungee plugin;
@@ -173,7 +170,7 @@ public class SyncCommandsBungee {
 					return;
 				}
 
-				if(!init[2].equals(password)) {
+				if(!init[2].equals(plugin.getGeneralConfig().getString("settings.commandSync.password"))) {
 					Log.error("SyncCommands:", name, "provided an invalid password");
 					out.println("no Password is incorrect");
 					disconnect();
