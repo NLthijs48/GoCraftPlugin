@@ -30,6 +30,7 @@ public class ClickChatMessages extends Feature {
 			ranksSection = plugin.getGeneralConfig().getConfigurationSection("ranks");
 			if(ranksSection == null) {
 				Log.warn("No ranks section found in the general config, not applying chat formatting!");
+				return;
 			}
 
 			// Cache rank priority, prefix and chat color
