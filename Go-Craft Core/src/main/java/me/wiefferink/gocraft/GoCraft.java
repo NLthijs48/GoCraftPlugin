@@ -2,20 +2,7 @@ package me.wiefferink.gocraft;
 
 import com.google.common.base.Charsets;
 import me.wiefferink.bukkitdo.Do;
-import me.wiefferink.gocraft.commands.BroadcastCommand;
-import me.wiefferink.gocraft.commands.DiscordCommand;
-import me.wiefferink.gocraft.commands.HackBanCommand;
-import me.wiefferink.gocraft.commands.HelpCommand;
-import me.wiefferink.gocraft.commands.MapCommand;
-import me.wiefferink.gocraft.commands.OnlinePlayersCommand;
-import me.wiefferink.gocraft.commands.PingCommand;
-import me.wiefferink.gocraft.commands.RandomtpCommand;
-import me.wiefferink.gocraft.commands.ReloadCommand;
-import me.wiefferink.gocraft.commands.RulesCommand;
-import me.wiefferink.gocraft.commands.SafeTeleportCommand;
-import me.wiefferink.gocraft.commands.ServerSwitchCommands;
-import me.wiefferink.gocraft.commands.StaffMessagesCommands;
-import me.wiefferink.gocraft.commands.TempbanCommand;
+import me.wiefferink.gocraft.commands.*;
 import me.wiefferink.gocraft.features.Feature;
 import me.wiefferink.gocraft.features.auracheck.AuraCheck;
 import me.wiefferink.gocraft.features.blocks.DisableAnvilBreak;
@@ -30,36 +17,11 @@ import me.wiefferink.gocraft.features.environment.DisableMobSpawning;
 import me.wiefferink.gocraft.features.environment.DisableRain;
 import me.wiefferink.gocraft.features.environment.DisableVoidFall;
 import me.wiefferink.gocraft.features.environment.ResourceWorlds;
-import me.wiefferink.gocraft.features.items.DisableBooks;
-import me.wiefferink.gocraft.features.items.DisableEnderpearl;
-import me.wiefferink.gocraft.features.items.DisableEyeOfEnder;
-import me.wiefferink.gocraft.features.items.DisableFirework;
-import me.wiefferink.gocraft.features.items.DisableItemDrops;
-import me.wiefferink.gocraft.features.items.DisableItemSpawning;
-import me.wiefferink.gocraft.features.items.DisablePotionInvisibleDrink;
-import me.wiefferink.gocraft.features.items.DisablePotionSplash;
-import me.wiefferink.gocraft.features.items.DisablePotionThrow;
-import me.wiefferink.gocraft.features.items.DisableXpBottleThrow;
+import me.wiefferink.gocraft.features.items.*;
 import me.wiefferink.gocraft.features.other.AddDefaultRank;
 import me.wiefferink.gocraft.features.other.ClickChatMessages;
 import me.wiefferink.gocraft.features.other.NauseaPotions;
-import me.wiefferink.gocraft.features.players.AttackSpeed;
-import me.wiefferink.gocraft.features.players.DisableFallDamage;
-import me.wiefferink.gocraft.features.players.DisableFrostWalker;
-import me.wiefferink.gocraft.features.players.DisableHungerLoss;
-import me.wiefferink.gocraft.features.players.DisablePlayerDamage;
-import me.wiefferink.gocraft.features.players.DisableSignUseWhileMuted;
-import me.wiefferink.gocraft.features.players.EnablePotionEffectsOnJoin;
-import me.wiefferink.gocraft.features.players.EnableRegionPotionEffects;
-import me.wiefferink.gocraft.features.players.FixInventories;
-import me.wiefferink.gocraft.features.players.JoinLeaveMessages;
-import me.wiefferink.gocraft.features.players.LogSigns;
-import me.wiefferink.gocraft.features.players.OldHunger;
-import me.wiefferink.gocraft.features.players.OpenenderLimiter;
-import me.wiefferink.gocraft.features.players.PunishmentNotifications;
-import me.wiefferink.gocraft.features.players.Rewards;
-import me.wiefferink.gocraft.features.players.SpawnPoints;
-import me.wiefferink.gocraft.features.players.SpawnTeleport;
+import me.wiefferink.gocraft.features.players.*;
 import me.wiefferink.gocraft.features.players.timedfly.TimedServerFly;
 import me.wiefferink.gocraft.information.InformationManager;
 import me.wiefferink.gocraft.inspector.InspectionManager;
@@ -122,7 +84,7 @@ public final class GoCraft extends JavaPlugin {
 	public static final SimpleDateFormat shortTimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 	public static final SimpleDateFormat longTimeFormat = new SimpleDateFormat("dd MMMMMMMMMMMMMMMMM yyyy HH:mm");
 	// Variables
-	private ArrayList<Feature> features;
+	private Map<Class, Feature> features;
 	private LanguageManager languageManager;
 	private DistributionManager distributionManager;
 	private InspectionManager inspectionManager;
@@ -326,7 +288,7 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public void onDisable() {
 		// Call stop methods of the registered features
-		features.forEach(Feature::stopFeature);
+		features.values().forEach(Feature::stopFeature);
 		if (shop != null) {
 			shop.handleServerStop();
 		}
@@ -573,89 +535,96 @@ public final class GoCraft extends JavaPlugin {
 	 */
 	public void addListeners() {
 		// TODO replace by dynamic instantiation: https://stackoverflow.com/questions/1429172/how-do-i-list-the-files-inside-a-jar-file
-		// and getter by .class
 
-		features = new ArrayList<>();
+		features = new HashMap<>();
+
+		List<Feature> f = new ArrayList<>();
 		// Blocks
-		features.add(new DisableBedrockBreak());
-		features.add(new DisableBedrockPlace());
-		features.add(new DisableDispensers());
-		features.add(new DisableTradeSignPlacing());
-		features.add(new DisableBlockBreaking());
-		features.add(new DisableAnvilBreak());
-		features.add(new DisableWitherDamage());
+		f.add(new DisableBedrockBreak());
+		f.add(new DisableBedrockPlace());
+		f.add(new DisableDispensers());
+		f.add(new DisableTradeSignPlacing());
+		f.add(new DisableBlockBreaking());
+		f.add(new DisableAnvilBreak());
+		f.add(new DisableWitherDamage());
 		// General
-		features.add(new DisableRain());
-		features.add(new DisableMobSpawning());
-		features.add(new DisableHungerLoss());
-		features.add(new EnablePotionEffectsOnJoin());
-		features.add(new SpawnTeleport());
-		features.add(new EnableRegionPotionEffects());
+		f.add(new DisableRain());
+		f.add(new DisableMobSpawning());
+		f.add(new DisableHungerLoss());
+		f.add(new EnablePotionEffectsOnJoin());
+		f.add(new SpawnTeleport());
+		f.add(new EnableRegionPotionEffects());
 		if (getBanManagerLink() != null) {
-			features.add(new PunishmentNotifications());
-			features.add(new HackBanCommand());
+			f.add(new PunishmentNotifications());
+			f.add(new HackBanCommand());
 		}
-		features.add(new OpenenderLimiter());
-		features.add(new DisableSignUseWhileMuted());
+		f.add(new OpenenderLimiter());
+		f.add(new DisableSignUseWhileMuted());
 		// Items
-		features.add(new DisableItemDrops());
-		features.add(new DisableItemSpawning());
-		features.add(new DisablePotionSplash());
-		features.add(new DisablePotionThrow());
-		features.add(new DisablePotionInvisibleDrink());
-		features.add(new DisableXpBottleThrow());
-		features.add(new DisableFirework());
-		features.add(new DisableEnderpearl());
-		features.add(new DisableEyeOfEnder());
-		features.add(new DisableBooks());
+		f.add(new DisableItemDrops());
+		f.add(new DisableItemSpawning());
+		f.add(new DisablePotionSplash());
+		f.add(new DisablePotionThrow());
+		f.add(new DisablePotionInvisibleDrink());
+		f.add(new DisableXpBottleThrow());
+		f.add(new DisableFirework());
+		f.add(new DisableEnderpearl());
+		f.add(new DisableEyeOfEnder());
+		f.add(new DisableBooks());
 		// Logging
-		features.add(new LogSigns());
+		f.add(new LogSigns());
 		// PVP
-		features.add(new DisablePlayerDamage());
-		features.add(new DisableFallDamage());
+		f.add(new DisablePlayerDamage());
+		f.add(new DisableFallDamage());
 		// Other
-		features.add(new DisableAboveNetherGlitching());
-		features.add(new AddDefaultRank());
-		features.add(new NauseaPotions());
-		features.add(new FixInventories());
+		f.add(new DisableAboveNetherGlitching());
+		f.add(new AddDefaultRank());
+		f.add(new NauseaPotions());
+		f.add(new FixInventories());
 		syncCommandsServer = new SyncCommandsServer();
-		features.add(syncCommandsServer);
-		features.add(new SpawnPoints());
-		features.add(new DisableVoidFall());
-		features.add(new OldHunger());
-		features.add(new JoinLeaveMessages());
-		features.add(new ClickChatMessages());
-		features.add(new TimedServerFly());
-		features.add(new DisableFrostWalker());
-		features.add(new RankManager());
-		features.add(new VoteManager());
-		features.add(new VoteScoreboard());
-		features.add(new FixGCPlayer());
+		f.add(syncCommandsServer);
+		f.add(new SpawnPoints());
+		f.add(new DisableVoidFall());
+		f.add(new OldHunger());
+		f.add(new JoinLeaveMessages());
+		f.add(new ClickChatMessages());
+		f.add(new TimedServerFly());
+		f.add(new DisableFrostWalker());
+		f.add(new RankManager());
+		f.add(new VoteManager());
+		f.add(new VoteScoreboard());
+		f.add(new FixGCPlayer());
 
-		features.add(new TempbanCommand());
-		features.add(new PingCommand());
-		features.add(new StaffMessagesCommands());
-		features.add(new ReloadCommand());
-		features.add(new RulesCommand());
-		features.add(new HelpCommand());
+		f.add(new TempbanCommand());
+		f.add(new PingCommand());
+		f.add(new StaffMessagesCommands());
+		f.add(new ReloadCommand());
+		f.add(new RulesCommand());
+		f.add(new HelpCommand());
 		if(protocolLibLink != null && worldGuardLink != null) {
-			features.add(new AuraCheck());
+			f.add(new AuraCheck());
 		}
-		features.add(new ResourceWorlds());
-		features.add(new RandomtpCommand());
-		features.add(new Rewards());
-		features.add(new AttackSpeed());
-		features.add(new MapCommand());
-		features.add(new DiscordCommand());
-		features.add(new SafeTeleportCommand());
-		features.add(new SeenCommand());
-		features.add(new ServerSwitchCommands());
-		features.add(new BroadcastCommand());
-		features.add(new OnlinePlayersCommand());
+		f.add(new ResourceWorlds());
+		f.add(new RandomtpCommand());
+		f.add(new Rewards());
+		f.add(new AttackSpeed());
+		f.add(new MapCommand());
+		f.add(new DiscordCommand());
+		f.add(new SafeTeleportCommand());
+		f.add(new SeenCommand());
+		f.add(new ServerSwitchCommands());
+		f.add(new BroadcastCommand());
+		f.add(new OnlinePlayersCommand());
 		rewardClaim = new RewardClaim();
-		features.add(rewardClaim);
+		f.add(rewardClaim);
 
-		features.forEach(Feature::startFeature);
+		f.forEach(feature -> features.put(feature.getClass(), feature));
+		features.values().forEach(Feature::startFeature);
+	}
+
+	public <T> T getFeature(Class<T> type) {
+		//noinspection unchecked
+		return (T)features.get(type);
 	}
 
 	/**
@@ -693,7 +662,7 @@ public final class GoCraft extends JavaPlugin {
 	}
 
 	public void deRegisterEvents() {
-		features.forEach(HandlerList::unregisterAll);
+		features.values().forEach(HandlerList::unregisterAll);
 	}
 
 	/**

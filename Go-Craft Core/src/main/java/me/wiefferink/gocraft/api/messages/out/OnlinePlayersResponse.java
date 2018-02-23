@@ -1,5 +1,6 @@
 package me.wiefferink.gocraft.api.messages.out;
 
+import me.wiefferink.gocraft.api.types.WebsitePlayer;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.sessions.ServerSession;
 import me.wiefferink.gocraft.tools.storage.Database;
@@ -39,17 +40,4 @@ public class OnlinePlayersResponse extends Response {
 		});
 	}
 
-	/**
-	 * Player with details relevant for the website
-	 */
-	private class WebsitePlayer {
-		public WebsitePlayer(String name, String uuid) {
-			this.name = name;
-			this.uuid = uuid;
-		}
-
-		public String game = "minecraft";
-		public String name;
-		public String uuid;
-	}
 }

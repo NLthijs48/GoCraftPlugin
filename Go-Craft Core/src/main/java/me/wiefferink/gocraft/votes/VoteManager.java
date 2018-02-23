@@ -152,7 +152,7 @@ public class VoteManager extends Feature {
 
 		int pageIndex = 0;
 		Calendar getAt = Calendar.getInstance();
-		getAt.setTime(getMonthStart()); // Move to start of the month, or else changing month from jan -> feb while day is > 28 it would be wrong
+		getAt.setTime(VoteTop.getMonthStart()); // Move to start of the month, or else changing month from jan -> feb while day is > 28 it would be wrong
 
 		// Detect year-month argument
 		String baseCommand = "/votetop";
@@ -179,11 +179,11 @@ public class VoteManager extends Feature {
 		final String finalBaseCommand = baseCommand;
 		async(() ->
 			Database.run(session -> {
-				Date monthStart = getMonthStart(getAt);
-				Date monthEnd = getMonthEnd(getAt);
+				Date monthStart = VoteTop.getMonthStart(getAt);
+				Date monthEnd = VoteTop.getNextMonthStart(getAt);
 
 				// Count players that voted in this month
-				long playerCount = (long)session.createQuery("SELECT count(distinct gcPlayer) from Vote WHERE at <= :monthEnd AND at >= :monthStart")
+				long playerCount = (long)session.createQuery("SELECT count(distinct gcPlayer) from Vote WHERE at < :monthEnd AND at >= :monthStart")
 						.setParameter("monthStart", monthStart)
 						.setParameter("monthEnd", monthEnd)
 						.uniqueResult();
@@ -202,23 +202,9 @@ public class VoteManager extends Feature {
 
 					@Override
 					public boolean renderItems(int itemStart, int itemEnd) {
-						// Fetch the players and vote counts
-						@SuppressWarnings("unchecked")
-						List<Object[]> playerVoteCounts = session.createQuery(
-								"SELECT votePlayer.name, count(*) " +
-										"FROM Vote vote " +
-										"INNER JOIN vote.gcPlayer as votePlayer " +
-										"WHERE vote.at <= :monthEnd AND vote.at >= :monthStart " +
-										"GROUP BY votePlayer " +
-										"ORDER BY count(*) DESC, votePlayer.name ASC")
-								.setParameter("monthStart", monthStart)
-								.setParameter("monthEnd", monthEnd)
-								.setMaxResults(itemEnd - itemStart + 1)
-								.setFirstResult(itemStart).getResultList();
-						int index = itemStart+1;
-						for(Object[] playerAndCount : playerVoteCounts) {
-							message(Message.fromKey("votetop-item").replacements(index, playerAndCount[0], playerAndCount[1]));
-							index++;
+						List<VoteTopEntry> entries = VoteTop.getVoteTop(monthStart, monthEnd, itemStart, itemEnd-itemStart+1);
+						for(VoteTopEntry entry : entries) {
+							message(Message.fromKey("votetop-item").replacements(entry.rank, entry.player.getName(), entry.votes));
 						}
 						return true;
 					}
@@ -228,6 +214,8 @@ public class VoteManager extends Feature {
 			})
 		);
 	}
+
+
 
 	/**
 	 * Send out vote reminders (to be called async)
@@ -257,48 +245,5 @@ public class VoteManager extends Feature {
 		});
 	}
 
-	/**
-	 * Get the start of the month
-	 * @param at Date to get the start from
-	 * @return Start of the month
-	 */
-	public static Date getMonthStart(Calendar at) {
-		at.set(Calendar.DAY_OF_MONTH, at.getActualMinimum(Calendar.DAY_OF_MONTH));
-		at.set(Calendar.HOUR_OF_DAY, 0);
-		at.set(Calendar.MINUTE, 0);
-		at.set(Calendar.SECOND, 0);
-		at.set(Calendar.MILLISECOND, 0);
-		return at.getTime();
-	}
-
-	/**
-	 * Get the start of the current month
-	 * @return Start of the current month
-	 */
-	public static Date getMonthStart() {
-		return getMonthStart(Calendar.getInstance());
-	}
-
-	/**
-	 * Get the end of the month
-	 * @param at Date to get the end from
-	 * @return End of the month
-	 */
-	public static Date getMonthEnd(Calendar at) {
-		at.set(Calendar.DAY_OF_MONTH, at.getActualMaximum(Calendar.DAY_OF_MONTH));
-		at.set(Calendar.HOUR_OF_DAY, 23);
-		at.set(Calendar.MINUTE, 59);
-		at.set(Calendar.SECOND, 59);
-		at.set(Calendar.MILLISECOND, 999);
-		return at.getTime();
-	}
-
-	/**
-	 * Get the end of the current month
-	 * @return End of the current month
-	 */
-	public static Date getMonthEnd() {
-		return getMonthEnd(Calendar.getInstance());
-	}
 
 }

@@ -5,6 +5,7 @@ import me.wiefferink.gocraft.Log;
 import me.wiefferink.gocraft.api.WebClient;
 import me.wiefferink.gocraft.api.messages.out.OnlinePlayersResponse;
 import me.wiefferink.gocraft.api.messages.out.VoteStatusReponse;
+import me.wiefferink.gocraft.api.messages.out.VoteTopResponse;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.CommandSender;
@@ -24,6 +25,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -284,6 +286,7 @@ public class SyncCommandsBungee {
 					}
 
 					else if("updateVoteStatus".equalsIgnoreCase(type)) {
+						// Send status update to clients with the given ip
 						if(split.length < 2) {
 							Log.warn("SyncCommands["+name+"]: no ip given for updateVoteStatus command");
 						} else {
@@ -294,6 +297,8 @@ public class SyncCommandsBungee {
 								}
 							}
 						}
+						// Send new vote top to everyone
+						GoCraftBungee.async(() -> plugin.getApi().broadcast(new VoteTopResponse(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH)+1, 0, 10)));
 					}
 
 					// Invalid command

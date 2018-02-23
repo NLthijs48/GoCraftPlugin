@@ -1,7 +1,6 @@
 package me.wiefferink.gocraft.votes;
 
 import me.wiefferink.gocraft.features.Feature;
-import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.storage.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,21 +28,12 @@ public class VoteScoreboard extends Feature {
 	public void updateScoreboard() {
 		Database.run(session -> {
 			// Collect data
-			Date monthStart = VoteManager.getMonthStart();
-			Date monthEnd = VoteManager.getMonthEnd();
-			List<Object[]> playerVoteCounts = session.createQuery(
-					"SELECT gcPlayer as gcPlayer, count(*) as votes " +
-							"FROM Vote " +
-							"WHERE at <= :monthEnd AND at >= :monthStart " +
-							"GROUP BY gcPlayer_id " +
-							"ORDER BY count(*) DESC")
+			Date monthStart = VoteTop.getMonthStart();
+			Date nextMonthStart = VoteTop.getNextMonthStart();
+			List<VoteTopEntry> voteTopEntries = VoteTop.getVoteTop(monthStart, nextMonthStart, 0, 10);
+			long monthVoteCount = (long) session.createQuery("SELECT count(*) from Vote WHERE at < :nextMonthStart AND at >= :monthStart")
 					.setParameter("monthStart", monthStart)
-					.setParameter("monthEnd", monthEnd)
-					.setMaxResults(10)
-					.getResultList();
-			long monthVoteCount = (long) session.createQuery("SELECT count(*) from Vote WHERE at < :monthEnd AND at >= :monthStart")
-					.setParameter("monthStart", monthStart)
-					.setParameter("monthEnd", monthEnd)
+					.setParameter("nextMonthStart", nextMonthStart)
 					.uniqueResult();
 
 			// Update scoreboard
@@ -60,9 +50,9 @@ public class VoteScoreboard extends Feature {
 				objective.setDisplayName("" + ChatColor.DARK_GREEN + ChatColor.BOLD + "Vote Top 10");
 
 				// Add top 10
-				for(Object[] row : playerVoteCounts) {
-					Score score = objective.getScore(((GCPlayer)row[0]).getName());
-					score.setScore(((Long)row[1]).intValue());
+				for(VoteTopEntry entry : voteTopEntries) {
+					Score score = objective.getScore(entry.player.getName());
+					score.setScore((int)entry.votes);
 				}
 
 				// Add general stats

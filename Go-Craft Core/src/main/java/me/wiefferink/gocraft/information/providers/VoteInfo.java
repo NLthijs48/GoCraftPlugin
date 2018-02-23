@@ -4,7 +4,7 @@ import me.wiefferink.gocraft.information.InformationProvider;
 import me.wiefferink.gocraft.information.InformationRequest;
 import me.wiefferink.gocraft.sessions.GCPlayer;
 import me.wiefferink.gocraft.tools.storage.Database;
-import me.wiefferink.gocraft.votes.VoteManager;
+import me.wiefferink.gocraft.votes.VoteTop;
 import me.wiefferink.interactivemessenger.processing.Message;
 
 public class VoteInfo extends InformationProvider {
@@ -26,10 +26,10 @@ public class VoteInfo extends InformationProvider {
 			}
 
 			// Votes this month
-			long monthVotes = (long)session.createQuery("SELECT count(*) from Vote WHERE gcPlayer = :player AND at <= :monthEnd AND at >= :monthStart")
+			long monthVotes = (long)session.createQuery("SELECT count(*) from Vote WHERE gcPlayer = :player AND at < :nextMonthStart AND at >= :monthStart")
 					.setParameter("player", player)
-					.setParameter("monthEnd", VoteManager.getMonthEnd())
-					.setParameter("monthStart", VoteManager.getMonthStart())
+					.setParameter("nextMonthStart", VoteTop.getNextMonthStart())
+					.setParameter("monthStart", VoteTop.getMonthStart())
 					.uniqueResult();
 			request.message(Message.fromKey("information-monthVotes").replacements(monthVotes));
 		});

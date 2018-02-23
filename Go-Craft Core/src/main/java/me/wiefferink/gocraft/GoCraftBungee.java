@@ -134,6 +134,14 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 	}
 
 	/**
+	 * Execute an async task
+	 * @param task Task to execute
+	 */
+	public static void async(Runnable task) {
+		GoCraftBungee.getInstance().getProxy().getScheduler().runAsync(GoCraftBungee.getInstance(), task);
+	}
+
+	/**
 	 * Join string parts with a glue
 	 * @param parts The parts to join
 	 * @param glue  The glue to put between the parts

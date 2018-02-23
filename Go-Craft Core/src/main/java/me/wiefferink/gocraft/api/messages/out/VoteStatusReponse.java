@@ -14,7 +14,7 @@ public class VoteStatusReponse extends Response {
 	public Map<String, VoteSiteStatus> status;
 
 	public VoteStatusReponse(WebClient client) {
-		super("voteSites/STATUS_UPDATE");
+		super("voting/STATUS_UPDATE");
 
 		Database.run(session -> {
 			// TODO improve by getting GCPlayers by ip, then getting votes for those players as well (maybe only if 1 player found?)
