@@ -28,6 +28,12 @@ public class Database {
 	private static final ThreadLocal<Session> threadSession = new ThreadLocal<>();
 	private static StandardServiceRegistry registry;
 
+	private static String database;
+	private static String username;
+	private static String password;
+	private static boolean debug;
+	private static boolean connecting;
+
 	/**
 	 * Setup database connection
 	 * @param database The database name
@@ -36,13 +42,26 @@ public class Database {
 	 * @return true if the database is ready for usage, otherwise false
 	 */
 	public static boolean setup(String database, String username, String password, boolean debug) {
+		Database.database = database;
+		Database.username = username;
+		Database.password = password;
+		Database.debug = debug;
+
+		return connect();
+	}
+
+	private static boolean connect() {
+		if(connecting) {
+			return false;
+		}
+		connecting = true;
 		try {
 			registry = new StandardServiceRegistryBuilder()
 					// Connection
 					.applySetting("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect")
 					//.applySetting("hibernate.connection.driver_class", "com.mysql.jdbc.Driver")
 					.applySetting("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider")
-					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/"+database+"?autoReconnect=true&useSSL=false")
+					.applySetting("hibernate.connection.url", "jdbc:mysql://localhost/" + database + "?autoReconnect=true&useSSL=false")
 					.applySetting("hibernate.connection.username", username)
 					.applySetting("hibernate.connection.password", password)
 					// Settings
@@ -71,6 +90,7 @@ public class Database {
 			shutdown();
 			Log.error("Exception while setting up Hibernate SessionFactory:", ExceptionUtils.getStackTrace(e));
 		}
+		connecting = false;
 		return isReady();
 	}
 
@@ -115,6 +135,9 @@ public class Database {
 	 * @return The Session
 	 */
 	private static Session getSession() {
+		if(sessionFactory == null) {
+			connect();
+		}
 		Session result = threadSession.get();
 		if(result == null) {
 			result = sessionFactory.openSession();
