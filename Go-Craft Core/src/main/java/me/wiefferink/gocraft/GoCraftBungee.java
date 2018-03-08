@@ -19,6 +19,7 @@ import net.md_5.bungee.event.EventPriority;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements Listener {
 
@@ -83,13 +84,31 @@ public class GoCraftBungee extends net.md_5.bungee.api.plugin.Plugin implements 
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PreLoginEvent event) {
+		String userIP = event.getConnection().getAddress().getHostString();
+		String userName = event.getConnection().getName();
 
-		Log.info("PreLoginEvent of", event.getConnection().getName(), " ip:", event.getConnection().getAddress().getHostString());
+		Configuration ipRestrictSection = getGeneralConfig().getSection("ipRestrict");
+		if(ipRestrictSection != null) {
+			List<String> allowedIPs = ipRestrictSection.getStringList(userName.toLowerCase());
+			String allowedIP = ipRestrictSection.getString(userName.toLowerCase(), null);
+			if(allowedIP != null) {
+				allowedIPs.add(allowedIP);
+			}
+
+			if(allowedIPs.size() > 0 && !allowedIPs.contains(userIP)) {
+				event.setCancelled(true);
+				event.setCancelReason(ChatColor.DARK_RED + "You are not the owner of this account!");
+				Log.warn("Blocked an attempt from ip", userIP, "to log into account", userName, "(allowed ips: "+join(allowedIPs.toArray(), ", ")+")");
+				return;
+			}
+		}
+
+		Log.info("PreLoginEvent of", userName, " ip:", userIP);
 		for(ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-			if(player.getName().equalsIgnoreCase(event.getConnection().getName())) {
+			if(player.getName().equalsIgnoreCase(userName)) {
 				event.setCancelled(true);
 				event.setCancelReason(ChatColor.DARK_RED + "You cannot login with the same name as an online player!");
-				Log.warn("Blocked an attempt to login with the same name as an online player, name: "+event.getConnection().getName()+", ip: "+event.getConnection().getAddress().getHostString());
+				Log.warn("Blocked an attempt to login with the same name as an online player, name: "+userName+", ip: "+userIP);
 			}
 		}
 	}
