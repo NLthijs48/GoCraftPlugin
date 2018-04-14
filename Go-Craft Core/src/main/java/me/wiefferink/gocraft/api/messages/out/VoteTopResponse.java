@@ -20,6 +20,7 @@ public class VoteTopResponse extends Response {
 		this.ranking.month = month;
 		this.ranking.start = start;
 		this.ranking.end = start+items;
+		this.ranking.updated = Calendar.getInstance().getTimeInMillis();
 
 		Calendar date = Calendar.getInstance();
 		date.set(Calendar.YEAR, year);
@@ -37,6 +38,7 @@ public class VoteTopResponse extends Response {
 		public int month;
 		public int start;
 		public int end;
+		public long updated;
 	}
 
 	/**

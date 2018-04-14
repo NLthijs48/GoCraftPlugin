@@ -8,14 +8,8 @@ import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.JsonObject;
 import me.wiefferink.gocraft.GoCraftBungee;
 import me.wiefferink.gocraft.Log;
-import me.wiefferink.gocraft.api.messages.in.OnlinePlayersRequest;
-import me.wiefferink.gocraft.api.messages.in.Request;
-import me.wiefferink.gocraft.api.messages.in.ShopLayoutRequest;
-import me.wiefferink.gocraft.api.messages.out.OnlinePlayersResponse;
-import me.wiefferink.gocraft.api.messages.out.Response;
-import me.wiefferink.gocraft.api.messages.out.ShopLayoutResponse;
-import me.wiefferink.gocraft.api.messages.out.VoteStatusReponse;
-import me.wiefferink.gocraft.api.messages.out.VoteTopResponse;
+import me.wiefferink.gocraft.api.messages.in.*;
+import me.wiefferink.gocraft.api.messages.out.*;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import java.util.Calendar;
@@ -38,6 +32,8 @@ public class WebClient {
 	public Map<String, Class<? extends Request>> requests = new HashMap<String, Class<? extends Request>>() {{
 		put("onlinePlayers", OnlinePlayersRequest.class);
 		put("shopLayout", ShopLayoutRequest.class);
+		put("voteStatus", VoteStatusRequest.class);
+		put("voteTop", VoteTopRequest.class);
 	}};
 
 	public WebClient(ServerWebSocket websocket, Api api, UUID key) {
@@ -49,7 +45,7 @@ public class WebClient {
 		name = websocket.remoteAddress().port()+"";
 		websocket.closeHandler(v -> stop());
 		websocket.exceptionHandler((e) -> error("exception:", ExceptionUtils.getStackTrace(e)));
-		websocket.handler(this::onMessage);
+		websocket.handler(message -> GoCraftBungee.getInstance().getProxy().getScheduler().runAsync(GoCraftBungee.getInstance(), () -> onMessage(message)));
 
 		GoCraftBungee.getInstance().getProxy().getScheduler().runAsync(GoCraftBungee.getInstance(), this::pushInitialData);
 	}
