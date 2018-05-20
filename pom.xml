@@ -54,10 +54,12 @@
 			<id>votifier-repo</id>
 			<url>http://repo.howaner.de/</url>
 		</repository>
+		<!-- BROKEN
 		<repository>
 			<id>authme</id>
 			<url>http://ci.xephi.fr/plugin/repository/everything/</url>
 		</repository>
+		-->
 		<repository>
 			<id>nlthijs48</id>
 			<url>https://jenkins.wiefferink.me</url>
