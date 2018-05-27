@@ -377,9 +377,9 @@ rewards-message: "[gold]%0%"
 
 map-link:
   - "Check the map on "
-  - "[bold]maps.go-craft.com[/bold]"
+  - "[bold]go-craft.com/maps[/bold]"
   - "    hover: %lang:action|Click to open the map|%"
-  - "    link: http://maps.go-craft.com"
+  - "    link: http://go-craft.com/maps"
   - "."
 
 discord-link:
