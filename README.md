@@ -1,5 +1,8 @@
 # Go-Craft
-Private Spigot and BungeeCord plugin that powers the Go-Craft server network.
+Spigot and BungeeCord plugin for the Go-Craft server, which currently does not exist anymore.
+
+Published because some code might still be useful, and I generally like to keep code alive if possible.
+Most likely this does not compile correctly anymore, some Maven repositories and such are probably gone, sorry!
 
 ## Building
 * Clone this repository
